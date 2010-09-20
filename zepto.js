@@ -1,6 +1,6 @@
 var $ = function(selector){
-  return { dom: Array.prototype.slice.apply(document.querySelectorAll(selector)), 
-    anim: $.anim, css: $.css, html: $.html };
+  return { dom: Array.prototype.slice.apply(document.querySelectorAll(selector)),
+    css: $.css, html: $.html };
 }
 
 $.html = function(html){
