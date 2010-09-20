@@ -19,7 +19,7 @@ Syntax & features:
 For now:
 $('some css selector').html('set contents').css('set styles');
 
-Best used if you stick in the contents of zepto.min.js into a <style> tag in your HTML (no need to load it form an external file).
+Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
 
 I'd love some help on this, so please feel free to mess around!
 
