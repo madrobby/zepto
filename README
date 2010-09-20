@@ -1,6 +1,8 @@
 zepto.js is a minimalist inlinable framework for mobile WebKit browsers,
 with a jQuery-like chaining syntax
 
+The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done. 
+
 Primary target platforms are:
 
 * iOS 4+
@@ -12,3 +14,13 @@ Secondary platforms are:
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
 
+Syntax & features:
+
+For now:
+$('some css selector').html('set contents').css('set styles');
+
+Best used if you stick in the contents of zepto.min.js into a <style> tag in your HTML (no need to load it form an external file).
+
+I'd love some help on this, so please feel free to mess around!
+
+Have fun!
