@@ -27,6 +27,8 @@ Supported element functions:
   html('new html'): set the contents of the element(s)
   css('css properties'): set styles of the element(s)
   append, prepend: like html, but append or prepend to element contents
+  anim(transform, opacity, duration):
+    use -webkit-transform/opacity and do an animation
   
 Event handlers ("live" events):
 

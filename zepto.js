@@ -21,6 +21,10 @@ $.fn = {
   css: function(style){
     return $(function(el){ el.style.cssText += ';'+style });
   },
+  anim: function(transform, opacity, dur){
+    return $.fn.css('-webkit-transition:all '+(dur||0.5)+'s;'+
+      '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
+  },
   live: function(event, callback){
     var selector = $._;
     document.body.addEventListener(event, function(event){
