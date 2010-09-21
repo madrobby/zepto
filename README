@@ -16,8 +16,23 @@ Secondary platforms are:
 
 Syntax & features:
 
-For now:
-$('some css selector').html('set contents').css('set styles');
+Basic call:
+   
+   $('some css selector').html('set contents').css('set styles');
+
+Supported element functions:
+
+    get(): return array of all elements found
+    get(0): return first element found
+    html('new html'): set the contents of the element(s)
+    css('css properties'): set styles of the element(s)
+    append, prepend: like html, but append or prepend to element contents
+    
+Ajax:
+
+  $.get(url, callback)
+  $.post(url, callback)
+  $.getJSON(url, callback)
 
 Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
 

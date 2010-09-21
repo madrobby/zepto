@@ -22,11 +22,11 @@
     Evidence.TestCase.extend('ÉmileTest', {
       
       testDollar: function(t){
-        t.assert($('#some_element').dom.length == 1);
-        t.assert($('#some_element').dom[0] == document.getElementById('some_element'));
+        t.assert($('#some_element').get().length == 1);
+        t.assert($('#some_element').get(0) == document.getElementById('some_element'));
         
-        t.assert($('span').dom.length == 3);
-        t.assert($('p>span.yay').dom.length == 1);      
+        t.assert($('span').get().length == 3);
+        t.assert($('p>span.yay').get().length == 1);      
       },
       
       testChaining: function(t){
