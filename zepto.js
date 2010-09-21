@@ -28,6 +28,7 @@ $.fn = {
       while(target && nodes.indexOf(target)<0) target = target.parentNode;
       if(target && !(target===document)) callback.call(target, event);
     }, false);
+    return $.fn;
   }
 };
 
