@@ -14,11 +14,11 @@
   </p>
   <div id="some_element"></div>
   <p>
-    <span class="yay"></span>
+    <span class="yay">yay</span>
     <span></span>
-    <span class="nay" id="nay"></span>
+    <span class="nay" id="nay">nay</span>
   </p>
-  <script>
+  <script>  
     Evidence.TestCase.extend('ÉmileTest', {
       
       testDollar: function(t){
@@ -30,7 +30,7 @@
       },
       
       testChaining: function(t){
-        t.assert(document.getElementById('nay').innerHTML == "");
+        t.assert(document.getElementById('nay').innerHTML == "nay");
         $('span.nay').css('color:red').html('test');
         t.assert(document.getElementById('nay').innerHTML == "test");
       }

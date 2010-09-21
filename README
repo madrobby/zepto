@@ -18,15 +18,19 @@ Syntax & features:
 
 Basic call:
    
-   $('some css selector').html('set contents').css('set styles');
+  $('some css selector').html('set contents').css('set styles');
 
 Supported element functions:
 
-    get(): return array of all elements found
-    get(0): return first element found
-    html('new html'): set the contents of the element(s)
-    css('css properties'): set styles of the element(s)
-    append, prepend: like html, but append or prepend to element contents
+  get(): return array of all elements found
+  get(0): return first element found
+  html('new html'): set the contents of the element(s)
+  css('css properties'): set styles of the element(s)
+  append, prepend: like html, but append or prepend to element contents
+  
+Event handlers ("live" events):
+
+  $('some selector').live('touchstart', function(event){ alert("I'm touched!") });
     
 Ajax:
 
