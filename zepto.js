@@ -1,19 +1,21 @@
-var $ = function(selector){
-  $.dom = [].slice.apply(document.querySelectorAll(selector)); return $;
+var $ = function(_){
+  if(typeof _ == 'function') $.dom.forEach(_)
+    else $.dom = [].slice.apply(document.querySelectorAll(_));
+  return $;
 }
 
 $.html = function(html){
-  $.dom.forEach(function(el){ el.innerHTML = html }); return $;
+  return $(function(el){ el.innerHTML = html });
 }
 
 $.append = function(html){
-  $.dom.forEach(function(el){ el.insertAdjacentHTML('beforeEnd',html) }); return $;
+  return $(function(el){ el.insertAdjacentHTML('beforeEnd',html) });
 }
 
 $.prepend = function(html){
-  $.dom.forEach(function(el){ el.insertAdjacentHTML('afterBegin',html) }); return $;
+  return $(function(el){ el.insertAdjacentHTML('afterBegin',html) });
 }
 
 $.css = function(style){
-  $.dom.forEach(function(el){ el.style.cssText += ';'+style }); return $;
+  return $(function(el){ el.style.cssText += ';'+style });
 }
