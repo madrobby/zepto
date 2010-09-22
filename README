@@ -26,7 +26,7 @@ Supported element functions:
   get(0): return first element found
   html('new html'): set the contents of the element(s)
   css('css properties'): set styles of the element(s)
-  append, prepend: like html, but append or prepend to element contents
+  append, prepend, before, after: like html, but add html to element contents (or before and after)
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
   
