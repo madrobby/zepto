@@ -38,11 +38,11 @@
 			if(selector && context instanceof zepto){
 				matched = [];
 				context.each(function(el){
-					matched = matched.concat( this.makeArray(el.querySelectorAll(selector)) );
+					matched = matched.concat( zepto.makeArray(el.querySelectorAll(selector)) );
 				});
-				matched = this.unique(matched);
+				matched = zepto.unique(matched);
 			}else if(selector){ //avoid querySelector if `selector` is a DOMElement
-				matched = this.makeArray( this.context.querySelectorAll(selector) );
+				matched = zepto.makeArray( this.context.querySelectorAll(selector) );
 			}
 			
 			Array.prototype.push.apply(this, matched); //copy reference of matched elements to $[n] and save length (convert `zepto` into a pseudo-array object)
@@ -62,49 +62,10 @@
 	this.zepto = this.$ = zepto; //export '$' and 'zepto' to global scope
 	
 	
-	zepto.prototype = {
-		
-		/**
-		 * Copy properties from one Object into another (mixin).
-		 * - will extend zepto by default if `second` is `undefined`
-		 * @param {Object} first
-		 * @param {Object} [second]
-		 * @return {Object}
-		 */
-		extend : function(first, second){
-			var key;
-			if(! second){ //extend zepto by default
-				second = first;
-				first = this;
-			}
-			for(key in second){
-				if(second.hasOwnProperty(key)){ //avoid copying properties from prototype and makes JSLint happy! :)
-					first[key] = second[key];
-				}
-			}
-			return first;
-		},
-		
-		/**
-		 * Return Array without any duplicate items.
-		 * @param {Array} array
-		 * @return {Array}
-		 */
-		unique : function(array){
-			function unique(item, i, arr){
-				return arr.indexOf(item) === i;
-			}
-			return array.filter(unique);
-		},
-		
-		/**
-		 * Convert Array-like object into a true Array
-		 * @param {Array} obj
-		 * @return {Array}
-		 */
-		makeArray : function(obj){
-			return Array.prototype.slice.call(obj);
-		},
+	/**
+	 * @namespace reference to zepto.prototype for easy plugin developement
+	 */
+	zepto.fn = zepto.prototype = {
 		
 		/**
 		 * Execute a function for each matched element.
@@ -137,7 +98,7 @@
 		 * @return {Array|HTMLElement} All matched elements if `index` is `undefined` or a single element if `index` is specified.
 		 */
 		get : function(index){
-			return (typeof index !== 'undefined')? this[parseInt(index, 10)] : this.makeArray(this);
+			return (typeof index !== 'undefined')? this[parseInt(index, 10)] : zepto.makeArray(this);
 		},
 		
 		/**
@@ -268,6 +229,50 @@
 			});
 		}
 		
+	};
+	
+	//------------------------------ Helpers ------------------------------//
+	
+	/**
+	 * Copy properties from one Object into another (mixin).
+	 * - will extend zepto by default if `second` is `undefined`
+	 * @param {Object} first
+	 * @param {Object} [second]
+	 * @return {Object}
+	 */
+	zepto.extend = zepto.fn.extend = function(first, second){
+		var key;
+		if(! second){ //extend zepto by default
+			second = first;
+			first = this;
+		}
+		for(key in second){
+			if(second.hasOwnProperty(key)){ //avoid copying properties from prototype and makes JSLint happy! :)
+				first[key] = second[key];
+			}
+		}
+		return first;
+	};
+	
+	/**
+	 * Return Array without any duplicate items.
+	 * @param {Array} array
+	 * @return {Array}
+	 */
+	zepto.unique = function(array){
+		function unique(item, i, arr){
+			return arr.indexOf(item) === i;
+		}
+		return array.filter(unique);
+	};
+	
+	/**
+	 * Convert Array-like object into a true Array
+	 * @param {Array} obj
+	 * @return {Array}
+	 */
+	zepto.makeArray = function(obj){
+		return Array.prototype.slice.call(obj);
 	};
 	
 	
