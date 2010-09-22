@@ -40,7 +40,7 @@ var $ = (function() {
   function ajax(method, url, success){
     var r = new XMLHttpRequest();
     r.onreadystatechange = function(){
-      if(r.readyState==4 && r.status==200) 
+      if(r.readyState==4 && (r.status==200 || r.status==0))
         success(r.responseText);
     };
     r.open(method,url,true);
