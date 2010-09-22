@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Zepto unit tests</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="../src/zepto.js"></script>
+  <script src="evidence.js"></script>
+</head>
+<body>
+  <h1>Zepto unit tests</h1>
+  <p>
+    See the browser console for results.
+  </p>
+  <div id="some_element"></div>
+  <p>
+    <span class="yay">yay</span>
+    <span></span>
+    <span class="nay" id="nay">nay</span>
+  </p>
+  <script>  
+    Evidence.TestCase.extend('ZeptoTest', {
+      
+      testDollar: function(t){
+        t.assert($('#some_element').get().length == 1);
+        t.assert($('#some_element').get(0) == document.getElementById('some_element'));
+        
+        t.assert($('span').get().length == 3);
+        t.assert($('p>span.yay').get().length == 1);      
+      },
+      
+      testCSS: function(t){
+        var el = $('#some_element').get(0);
+        
+        $('#some_element').css('color:#f00;border:1px solid rgba(255,0,0,1)');
+        t.assertEqual('rgb(255, 0, 0)', el.style.color);
+        t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
+        t.assertEqual('1px', el.style.borderLeftWidth);
+      },
+      
+      testChaining: function(t){
+        t.assert(document.getElementById('nay').innerHTML == "nay");
+        $('span.nay').css('color:red').html('test');
+        t.assert(document.getElementById('nay').innerHTML == "test");
+      },
+      
+      testPlugins: function(t){
+        var el = $('#some_element').get(0);
+        
+        $.fn.plugin = function(){
+          return $(function(el){ el.innerHTML = 'plugin!' });
+        };
+        $('#some_element').plugin();
+        t.assertEqual('plugin!', el.innerHTML);
+      }
+
+    });
+  </script>
+</body>
+</html>
