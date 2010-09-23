@@ -5,6 +5,7 @@
   <title>Zepto unit tests</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <script src="../src/zepto.js"></script>
+  <script src="../src/classlist.js"></script>
   <script src="evidence.js"></script>
 </head>
 <body>
@@ -61,7 +62,7 @@
         var originalClassName = el.className;
         
         //-- used indexOf to test for classes existence since we can't rely on the order of the class names
-        
+        /* */
         //single add
         $el.addClass('foo');
         t.assert(el.className.indexOf('foo') >= 0);
@@ -212,7 +213,7 @@
         	t.assert(el.className.indexOf(c) == el.className.lastIndexOf(c));
         	t.assert($el.hasClass(c));
         });
-        
+        /* */
       }
 
     });

@@ -23,7 +23,12 @@
 		<tstamp>
 			<format property="build.date" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
 		</tstamp>
-		<copy todir="${js_deploy.dir}" file="${src.dir}/zepto.js" />
+		<concat destfile="${js_deploy.dir}/${dist.name}" fixlastline="yes" eol="unix">
+			<filelist dir="${src.dir}">
+				<file name="zepto.js" />
+				<file name="classlist.js" />
+			</filelist>
+		</concat>
 		<replace file="${js_deploy.dir}/${dist.name}">
 			<replacefilter token="{{version_number}}" value="${version_number}" />
 			<replacefilter token="{{build_number}}" value="${build.number}" />
@@ -34,7 +39,7 @@
 	
 	<target name="minify">
 		<echo message="Building ${dist.min.name}..." />
-		<jscomp compilationLevel="simple" warning="verbose" debug="false" output="${js_deploy.dir}/zepto.min.js">
+		<jscomp compilationLevel="simple" warning="default" debug="false" output="${js_deploy.dir}/zepto.min.js">
 			<externs dir="${build.dir}/closure_compiler-externs">
 				<file name="zepto-externs.js" />
 			</externs>
