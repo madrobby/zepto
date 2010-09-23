@@ -98,7 +98,7 @@
 		 * @return {Array|HTMLElement} All matched elements if `index` is `undefined` or a single element if `index` is specified.
 		 */
 		get : function(index){
-			return (typeof index !== 'undefined')? this[parseInt(index, 10)] : zepto.makeArray(this);
+			return zepto.isDef(index)? this[parseInt(index, 10)] : zepto.makeArray(this);
 		},
 		
 		/**
@@ -119,12 +119,12 @@
 		 * @return {zepto|string}
 		 */
 		html : function(html){
-			if(typeof html === 'undefined'){
-				return this.get(0).innerHTML;
-			}else{
+			if(zepto.isDef(html)){
 				return this.each(function(el){ 
 					el.innerHTML = html;
 				});
+			}else{
+				return this.get(0).innerHTML;
 			}
 		},
 		
@@ -275,6 +275,13 @@
 		return Array.prototype.slice.call(obj);
 	};
 	
+	/**
+	 * Check if parameter is different than `undefined`.
+	 * @return {boolean} `true` if parameter isn't `undefined`.
+	 */
+	zepto.isDef = function(param){
+		return (typeof param !== 'undefined');
+	};
 	
 	//------------------------------ Ajax ---------------------------------//
 	
