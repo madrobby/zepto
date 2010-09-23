@@ -52,6 +52,167 @@
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
+      },
+      
+      testClassList: function(t){
+        var $el = $('#some_element');
+        var el = $el.get(0);
+        
+        var originalClassName = el.className;
+        
+        //-- used indexOf to test for classes existence since we can't rely on the order of the class names
+        
+        //single add
+        $el.addClass('foo');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert($el.hasClass('foo'));
+        
+        //multiple add
+        $el.addClass('foo bar');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        
+        //-- now we have sure we have/haven't all the classes we want to check
+        
+        //single add
+        $el.addClass('mixedCase');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //single remove
+        $el.removeClass('mixedCase');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        //single remove
+        $el.removeClass('bar');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert($el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        //multiple add
+        $el.addClass('foo bar mixedCase');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //single toggle #1
+        $el.toggleClass('foo');
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert(! $el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //single toggle #2
+        $el.toggleClass('foo');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //multiple toggle #1
+        $el.toggleClass('mixedCase bar foo');
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert(! $el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        //multiple toggle #2
+        $el.toggleClass('mixedCase bar foo');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //multiple toggle #3
+        $el.toggleClass('foo bar');
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert(! $el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //remove all
+        $el.removeClass();
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert(! $el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        //remove all #2 - test is something weird happens if called multiple times
+        $el.removeClass();
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert(! $el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        //multiple add
+        $el.toggleClass('mixedCase bar foo');
+        t.assert(el.className.indexOf('foo') >= 0);
+        t.assert(el.className.indexOf('bar') >= 0);
+        t.assert(el.className.indexOf('mixedCase') >= 0);
+        t.assert($el.hasClass('foo'));
+        t.assert($el.hasClass('bar'));
+        t.assert($el.hasClass('mixedCase'));
+        
+        //multiple add #2 - ensure it is not adding same string multiple times
+        $el.toggleClass('mixedCase bar foo');
+        t.assert(el.className.indexOf('foo') == el.className.lastIndexOf('foo'));
+        t.assert(el.className.indexOf('bar') == el.className.lastIndexOf('bar'));
+        t.assert(el.className.indexOf('mixedCase') == el.className.lastIndexOf('mixedCase'));
+        
+        //single add - ensure it is not adding same string multiple times
+        $el.toggleClass('mixedCase lorem');
+        t.assert(el.className.indexOf('foo') == el.className.lastIndexOf('foo'));
+        t.assert(el.className.indexOf('bar') == el.className.lastIndexOf('bar'));
+        t.assert(el.className.indexOf('mixedCase') == el.className.lastIndexOf('mixedCase'));
+        t.assert(el.className.indexOf('lorem') == el.className.lastIndexOf('lorem'));
+        
+        //restore previous state and check if worked properly
+        $el.removeClass();
+        t.assert(el.className.indexOf('foo') == -1);
+        t.assert(el.className.indexOf('bar') == -1);
+        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assert(! $el.hasClass('foo'));
+        t.assert(! $el.hasClass('bar'));
+        t.assert(! $el.hasClass('mixedCase'));
+        
+        $el.addClass(originalClassName);
+        originalClassName.split(/ +/g).forEach(function(c){
+        	t.assert(el.className.indexOf(c) >= 0);
+        	t.assert(el.className.indexOf(c) == el.className.lastIndexOf(c));
+        	t.assert($el.hasClass(c));
+        });
+        
       }
 
     });

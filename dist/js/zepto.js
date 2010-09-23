@@ -2,7 +2,7 @@
  * @license zepto.js v0.2
  * - original by Thomas Fuchs (http://github.com/madrobby/zepto), forked by Miller Medeiros (http://github.com/millermedeiros/zepto).
  * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
- * Build: 4 - Date: 09/22/2010 06:11 PM
+ * Build: 5 - Date: 09/22/2010 11:57 PM
  */
  
 (function(window, document){
@@ -73,10 +73,9 @@
 		 * @return {zepto}
 		 */
 		each : function(fn){
-			var scope = this;
 			this.get().forEach(function(el){
-				fn.call(scope, el); //bind `this` to zepto object
-			});
+				fn.call(this, el); //bind `this` to zepto object
+			}, this);
 			return this;
 		},
 		
@@ -98,7 +97,7 @@
 		 * @return {Array|HTMLElement} All matched elements if `index` is `undefined` or a single element if `index` is specified.
 		 */
 		get : function(index){
-			return (typeof index !== 'undefined')? this[parseInt(index, 10)] : zepto.makeArray(this);
+			return zepto.isDef(index)? this[parseInt(index, 10)] : zepto.makeArray(this);
 		},
 		
 		/**
@@ -119,12 +118,12 @@
 		 * @return {zepto|string}
 		 */
 		html : function(html){
-			if(typeof html === 'undefined'){
-				return this.get(0).innerHTML;
-			}else{
+			if(zepto.isDef(html)){
 				return this.each(function(el){ 
 					el.innerHTML = html;
 				});
+			}else{
+				return this.get(0).innerHTML;
 			}
 		},
 		
@@ -173,6 +172,80 @@
 		 */
 		after : function(html){
 			return this.insertAdjacentHTML('afterEnd', html);
+		},
+		
+		
+		//------------------------------ ClassList ---------------------------------//
+		
+		// As of 2010/09/22 native HTML5 Element.classList is only supported by Firefox 3.6+ 
+		
+		//TODO: convert classList into a plugin and store in another file and clean up code.
+		
+		/**
+		 * Check if any matched element has given class.
+		 * @param {string} className
+		 * @return {boolean}
+		 */
+		hasClass : function(className){
+			var ret = false,
+				regexHasClass = new RegExp('(?:^| )'+ className +'(?: |$)'); //no need "global" flag since it should only match once.
+			this.each(function(el){
+				if(el.className.match(regexHasClass)){
+					ret = true;
+				}
+			});
+			return ret;
+		},
+		
+		/**
+		 * Add class(es) from each matched element.
+		 * @param {string} className	One or more class names separated by spaces.
+		 * @return {zepto}
+		 */
+		addClass : function(className){
+			this.removeClass(className); //remove all classes before to avoid adding same className multiple times
+			return this.each(function(el){
+				el.className += ((el.className !== '')? ' ' : '') + zepto.unique(className.trim().split(/ +/g)).join(' ');
+			});
+		},
+		
+		/**
+		 * Remove class(es) from each matched element.
+		 * @param {string} [className]	One or more class names separated by spaces, removes all classes if `null`.
+		 * @return {zepto}
+		 */
+		removeClass : function(className){
+			className = className || '.+';
+			var regexRemoveClass = new RegExp('(?:^| )'+ className.trim().replace(/ +/g, '|') +'(?: |$)', 'g'); //match all words contained on `className` string
+			return this.each(function(el){
+				el.className = el.className.replace(regexRemoveClass, ' ').replace(/ +/g, ' ').trim(); //remove multiple spaces and trailing spaces
+			});
+		},
+		
+		/**
+		 * Add or remove one or more classes from each element in the set of matched elements.
+		 * @param {string} className	One or more class names (separate by space) to be toggled.
+		 * @param {boolean} isAdd	Switch value, if `true` add class is `false` removes it.
+		 */
+		toggleClass : function(className, isAdd){
+			if(zepto.isDef(isAdd)){
+				(isAdd)? this.addClass(className) : this.removeClass(className); 
+			}else{
+				var classes = className.trim().split(' '),
+					regexHasClass,
+					elements = this.get(); //for scope and performance 
+				classes.forEach(function(c){
+					regexHasClass = new RegExp('(?:^| )'+ c +'( |$)', 'g'); //match "class" surrounded by spaces/begin/end of string, needs to be gobal to sanitize className (remove duplicates) - (space|end = $1)
+					elements.forEach(function(el){
+						if(el.className.match(regexHasClass)){ //TODO: use same methods for toggle/add/remove (combine them into a private function)
+							el.className = el.className.replace(regexHasClass, ' ').replace(/ +/g, ' ').trim();
+						}else{
+							el.className += ((el.className !== '')? ' ' : '') + c;
+						}
+					});
+				});
+			}
+			return this;
 		},
 		
 		
@@ -275,6 +348,13 @@
 		return Array.prototype.slice.call(obj);
 	};
 	
+	/**
+	 * Check if parameter is different than `undefined`.
+	 * @return {boolean} `true` if parameter isn't `undefined`.
+	 */
+	zepto.isDef = function(param){
+		return (typeof param !== 'undefined');
+	};
 	
 	//------------------------------ Ajax ---------------------------------//
 	

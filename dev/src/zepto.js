@@ -73,10 +73,9 @@
 		 * @return {zepto}
 		 */
 		each : function(fn){
-			var scope = this;
 			this.get().forEach(function(el){
-				fn.call(scope, el); //bind `this` to zepto object
-			});
+				fn.call(this, el); //bind `this` to zepto object
+			}, this);
 			return this;
 		},
 		
@@ -193,7 +192,6 @@
 			this.each(function(el){
 				if(el.className.match(regexHasClass)){
 					ret = true;
-					break;
 				}
 			});
 			return ret;
@@ -217,8 +215,8 @@
 		 * @return {zepto}
 		 */
 		removeClass : function(className){
-			className = className.trim() || '.+';
-			var regexRemoveClass = new RegExp('(?:^| )'+ className.replace(/ +/g, '|') +'(?: |$)', 'g'); //match any class on string
+			className = className || '.+';
+			var regexRemoveClass = new RegExp('(?:^| )'+ className.trim().replace(/ +/g, '|') +'(?: |$)', 'g'); //match all words contained on `className` string
 			return this.each(function(el){
 				el.className = el.className.replace(regexRemoveClass, ' ').replace(/ +/g, ' ').trim(); //remove multiple spaces and trailing spaces
 			});
