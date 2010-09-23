@@ -1,8 +1,5 @@
-/**
- * zepto.js - Element.classList plugin
- * @author Miller Medeiros (http://millermedeiros.com/)
- * @version 0.1 (2010/09/23)
- * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+/*
+ * zepto.js - Element.classList module
  */
  
  /**

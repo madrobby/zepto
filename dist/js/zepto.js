@@ -1,14 +1,11 @@
 /**
- * @license zepto.js v0.1.1
+ * @license zepto.js v0.1.2
  * - original by Thomas Fuchs (http://github.com/madrobby/zepto), forked by Miller Medeiros (http://github.com/millermedeiros/zepto).
  * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
- * Build: 6 - Date: 09/23/2010 01:43 AM
+ * Build: 7 - Date: 09/23/2010 02:07 AM
  */
  
 (function(window, document){
-
-
-	//------------------------------ Core ---------------------------------//
 	
 	/**
 	 * zepto.js
@@ -59,7 +56,7 @@
 	 * @param {string|zepto|HTMLElement} [selector]
 	 * @param {HTMLElement|Document|zepto} [context]
 	 */
-	this.zepto = this.$ = zepto; //export '$' and 'zepto' to global scope
+	window.zepto = window.$ = zepto; //export '$' and 'zepto' to global scope
 	
 	
 	/**
@@ -78,9 +75,6 @@
 			}, this);
 			return this;
 		},
-		
-		
-		//------------------------------ Traversing ---------------------------------//
 		
 		/**
 		 * Find descendant node based on selector.
@@ -107,125 +101,6 @@
 		 */
 		eq : function(index){
 			return new zepto(this.get(index));
-		},
-		
-		
-		//------------------------------ Manipulation ---------------------------------//
-		
-		/**
-		 * Get/Set elements innerHTML.
-		 * @param {string} [html]
-		 * @return {zepto|string}
-		 */
-		html : function(html){
-			if(zepto.isDef(html)){
-				return this.each(function(el){ 
-					el.innerHTML = html;
-				});
-			}else{
-				return this.get(0).innerHTML;
-			}
-		},
-		
-		/**
-		 * Insert HTML text at specified position.
-		 * @param {string} position	['beforeEnd', 'afterBegin', 'beforeBegin', 'afterEnd']
-		 * @param {string} html
-		 */
-		insertAdjacentHTML : function(position, html){
-			return this.each(function(el){
-				el.insertAdjacentHTML(position, html); 
-			});
-		},
-		
-		/**
-		 * Insert HTML text before end of element.
-		 * @param {string} html
-		 * @return {zepto}
-		 */
-		append : function(html){
-			return this.insertAdjacentHTML('beforeEnd', html);
-		},
-		
-		/**
-		 * Insert HTML text after begin of element.
-		 * @param {string} html
-		 * @return {zepto}
-		 */
-		prepend : function(html){
-			return this.insertAdjacentHTML('afterBegin', html);
-		},
-		
-		/**
-		 * Insert HTML text before element.
-		 * @param {string} html
-		 * @return {zepto}
-		 */
-		before : function(html){
-			return this.insertAdjacentHTML('beforeBegin', html);
-		},
-		
-		/**
-		 * Insert HTML text after element.
-		 * @param {string} html
-		 * @return {zepto}
-		 */
-		after : function(html){
-			return this.insertAdjacentHTML('afterEnd', html);
-		},
-		
-		
-		//------------------------------ Style ---------------------------------//
-		
-		/**
-		 * Set style of matched elements. 
-		 * @param {string} style	CSS string.
-		 * @return {zepto}
-		 */
-		css : function(style){
-			return this.each(function(el){
-				el.style.cssText += ';'+ style; 
-			});
-		},
-		
-		/**
-		 * Apply webkit transition to matched elements.
-		 * @param {string} transform
-		 * @param {number} opacity
-		 * @param {number} duration
-		 * @return {zepto}
-		 */
-		anim : function(transform, opacity, duration){
-			return this.css('-webkit-transition:all '+ (duration||0.5) +'s;'+'-webkit-transform:'+ transform +';opacity:'+ (opacity===0?0:opacity||1) );
-		},
-		
-		
-		//------------------------------ Event ---------------------------------//
-		
-		/**
-		 * @param {string} selector
-		 * @param {string} eventType
-		 * @param {Function} callback
-		 * @return {zepto}
-		 */
-		delegate : function(selector, eventType, callback){
-			return this.each(function(elm){
-				var 
-					root = elm,
-					targets = this.find(selector).matched;
-				
-				function delegateHandler(evt){
-					var node = evt.target;
-					while(node && targets.indexOf(node)<0){
-						node = node.parentNode;
-					}
-					if(node && node !== root){
-						callback.call(node, evt);
-					}
-				}
-				
-				elm.addEventListener(eventType, delegateHandler, false);
-			});
 		}
 		
 	};
@@ -234,7 +109,7 @@
 	
 	/**
 	 * Copy properties from one Object into another (mixin).
-	 * - will extend zepto by default if `second` is `undefined`
+	 * - will extend `zepto` or `zepto.fn` by default if `second` is `undefined`.
 	 * @param {Object} first
 	 * @param {Object} [second]
 	 * @return {Object}
@@ -253,37 +128,179 @@
 		return first;
 	};
 	
-	/**
-	 * Return Array without any duplicate items.
-	 * @param {Array} array
-	 * @return {Array}
-	 */
-	zepto.unique = function(array){
-		function unique(item, i, arr){
-			return arr.indexOf(item) === i;
+	//static methods
+	zepto.extend({
+	
+		/**
+		 * Return Array without any duplicate items.
+		 * @param {Array} array
+		 * @return {Array}
+		 */
+		unique : function(array){
+			function unique(item, i, arr){
+				return arr.indexOf(item) === i;
+			}
+			return array.filter(unique);
+		},
+		
+		/**
+		 * Convert Array-like object into a true Array
+		 * @param {Array} obj
+		 * @return {Array}
+		 */
+		makeArray : function(obj){
+			return Array.prototype.slice.call(obj);
+		},
+		
+		/**
+		 * Check if parameter is different than `undefined`.
+		 * @return {boolean} `true` if parameter isn't `undefined`.
+		 */
+		isDef : function(param){
+			return (typeof param !== 'undefined');
 		}
-		return array.filter(unique);
-	};
+		
+	});
+	
+}(window, document));
+/*
+ * zepto.js - HTML manipulation module
+ */
+ 
+zepto.fn.extend({
+		
+	/**
+	 * Get/Set elements innerHTML.
+	 * @param {string} [html]
+	 * @return {zepto|string}
+	 */
+	html : function(html){
+		if(zepto.isDef(html)){
+			return this.each(function(el){ 
+				el.innerHTML = html;
+			});
+		}else{
+			return this.get(0).innerHTML;
+		}
+	},
 	
 	/**
-	 * Convert Array-like object into a true Array
-	 * @param {Array} obj
-	 * @return {Array}
+	 * Insert HTML text at specified position.
+	 * @param {string} position	['beforeEnd', 'afterBegin', 'beforeBegin', 'afterEnd']
+	 * @param {string} html
 	 */
-	zepto.makeArray = function(obj){
-		return Array.prototype.slice.call(obj);
-	};
+	insertAdjacentHTML : function(position, html){
+		return this.each(function(el){
+			el.insertAdjacentHTML(position, html); 
+		});
+	},
 	
 	/**
-	 * Check if parameter is different than `undefined`.
-	 * @return {boolean} `true` if parameter isn't `undefined`.
+	 * Insert HTML text before end of element.
+	 * @param {string} html
+	 * @return {zepto}
 	 */
-	zepto.isDef = function(param){
-		return (typeof param !== 'undefined');
-	};
+	append : function(html){
+		return this.insertAdjacentHTML('beforeEnd', html);
+	},
 	
-	//------------------------------ Ajax ---------------------------------//
+	/**
+	 * Insert HTML text after begin of element.
+	 * @param {string} html
+	 * @return {zepto}
+	 */
+	prepend : function(html){
+		return this.insertAdjacentHTML('afterBegin', html);
+	},
 	
+	/**
+	 * Insert HTML text before element.
+	 * @param {string} html
+	 * @return {zepto}
+	 */
+	before : function(html){
+		return this.insertAdjacentHTML('beforeBegin', html);
+	},
+	
+	/**
+	 * Insert HTML text after element.
+	 * @param {string} html
+	 * @return {zepto}
+	 */
+	after : function(html){
+		return this.insertAdjacentHTML('afterEnd', html);
+	}
+	
+});
+/*
+ * zepto.js - style module
+ */
+ 
+zepto.fn.extend({
+	
+	/**
+	 * Set style of matched elements. 
+	 * @param {string} style	CSS string.
+	 * @return {zepto}
+	 */
+	css : function(style){
+		return this.each(function(el){
+			el.style.cssText += ';'+ style; 
+		});
+	},
+	
+	/**
+	 * Apply webkit transition to matched elements.
+	 * @param {string} transform
+	 * @param {number} opacity
+	 * @param {number} duration
+	 * @return {zepto}
+	 */
+	anim : function(transform, opacity, duration){
+		return this.css('-webkit-transition:all '+ (duration||0.5) +'s;'+'-webkit-transform:'+ transform +';opacity:'+ (opacity===0?0:opacity||1) );
+	}
+	
+});
+/*
+ * zepto.js - event module
+ */
+
+zepto.fn.extend({
+	
+	/**
+	 * @param {string} selector
+	 * @param {string} eventType
+	 * @param {Function} callback
+	 * @return {zepto}
+	 */
+	delegate : function(selector, eventType, callback){
+		return this.each(function(elm){
+			var 
+				root = elm,
+				targets = this.find(selector).matched;
+			
+			function delegateHandler(evt){
+				var node = evt.target;
+				while(node && targets.indexOf(node)<0){
+					node = node.parentNode;
+				}
+				if(node && node !== root){
+					callback.call(node, evt);
+				}
+			}
+			
+			elm.addEventListener(eventType, delegateHandler, false);
+		});
+	}
+	
+});
+/*
+ * zepto.js - ajax module
+ */
+
+//static methods
+zepto.extend({
+
 	/**
 	 * XML Http Request
 	 * @param {string} method	Request Method
@@ -292,7 +309,7 @@
 	 * @param {Function} [error]	Error Callback
 	 * @return {zepto}
 	 */
-	zepto.ajax = function(method, url, success, error){
+	ajax : function(method, url, success, error){
 		var xhr = new XMLHttpRequest();
 		
 		function xhrStateHandler(){
@@ -314,7 +331,7 @@
 		xhr.send(null);
 		
 		return this;
-	};
+	},
 	
 	/**
 	 * Ajax GET
@@ -323,9 +340,9 @@
 	 * @param {Function} [error]	Error Callback
 	 * @return {zepto}
 	 */
-	zepto.get = function(url, success, error){
+	get : function(url, success, error){
 		return zepto.ajax('GET', url, success, error);
-	};
+	},
 	
 	/**
 	 * Ajax POST
@@ -334,9 +351,9 @@
 	 * @param {Function} [error]	Error Callback
 	 * @return {zepto}
 	 */
-	zepto.post = function(url, success, error){
+	post : function(url, success, error){
 		return zepto.ajax('POST', url, success, error);
-	};
+	},
 	
 	/**
 	 * Ajax GET with pre-built JSON.parse 
@@ -345,18 +362,15 @@
 	 * @param {Function} [error]	Error Callback
 	 * @return {zepto}
 	 */
-	zepto.getJSON = function(url, success, error){
+	getJSON : function(url, success, error){
 		return zepto.get(url, function(data){
 			success(JSON.parse(data));
 		}, error);
-	};
-	
-}(window, document));
-/**
- * zepto.js - Element.classList plugin
- * @author Miller Medeiros (http://millermedeiros.com/)
- * @version 0.1 (2010/09/23)
- * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+	}
+
+});
+/*
+ * zepto.js - Element.classList module
  */
  
  /**

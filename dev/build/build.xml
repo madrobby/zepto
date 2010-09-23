@@ -25,7 +25,11 @@
 		</tstamp>
 		<concat destfile="${js_deploy.dir}/${dist.name}" fixlastline="yes" eol="unix">
 			<filelist dir="${src.dir}">
-				<file name="zepto.js" />
+				<file name="core.js" />
+				<file name="manipulation.js" />
+				<file name="style.js" />
+				<file name="event.js" />
+				<file name="ajax.js" />
 				<file name="classlist.js" />
 			</filelist>
 		</concat>
