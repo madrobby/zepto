@@ -38,10 +38,15 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
  - `.append`, `prepend`, `after`, `before` : Like `html`, but append/prepend to element contents or before/after element.
  - `.anim(transform, opacity, duration)` : Use -webkit-transform/opacity and do an animation.
  - `.delegate(selector, eventType, handler)` : Attach an Event listener to matched elements using the event delegation pattern.
+ - `.hasClass(className)` : Check if any matched element has given class.
+ - `.addClass(className)` : Add one or more classes (separated by spaces) into each matched element.
+ - `.removeClass(className)` : Removes one or more class names (separated by spaces) from mathched elements, removes all classes if `null`.
+ - `.toggleClass(className, switch)` : Add or remove one or more classes from each element in the set of matched elements.
 
 
 ### Helpers ###
   
+ - `$.isDef (param)` : Check if parameter is different than `undefined`.
  - `$.unique(array)` : Return a new array that contain only unique items.
  - `$.makeArray(obj)` : Convert an array-like Object into an real array.
  - `$.extend(firstObj, secondObj)` : Mixin, copy properties from one object into another, will extend `zepto` by default if second parameter is omitted.
@@ -69,8 +74,7 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
 ### Future improvements ###
 
  - Add sniffing based on feature detection, maybe only load *zepto.min.js* and subsequent files if browser support required features.
- - Split source code into multiple files and group based on function use (e.g. DOM, XHR, helpers, etc).
- - Maybe create different builds that removes specific modules (maybe using a preprocessor + require.js).
+ - Maybe create different builds that removes specific modules.
  - Add JSLint to build process.
 
 ### Recommendations ###
