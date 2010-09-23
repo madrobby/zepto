@@ -2,7 +2,7 @@
  * @license zepto.js v0.1.3
  * - original by Thomas Fuchs (http://github.com/madrobby/zepto), forked by Miller Medeiros (http://github.com/millermedeiros/zepto).
  * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
- * Build: 8 - Date: 09/23/2010 04:21 PM
+ * Build: 9 - Date: 09/23/2010 05:03 PM
  */
  
 (function(window, document){
@@ -320,7 +320,7 @@ zepto.fn.extend({
 		return this.each(function(elm){
 			var 
 				root = elm,
-				targets = this.find(selector).matched;
+				targets = this.find(selector).get();
 			
 			function delegateHandler(evt){
 				var node = evt.target;

@@ -14,7 +14,7 @@ zepto.fn.extend({
 		return this.each(function(elm){
 			var 
 				root = elm,
-				targets = this.find(selector).matched;
+				targets = this.find(selector).get();
 			
 			function delegateHandler(evt){
 				var node = evt.target;
