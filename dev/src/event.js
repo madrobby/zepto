@@ -7,7 +7,7 @@ zepto.fn.extend({
 	/**
 	 * @param {string} selector
 	 * @param {string} eventType
-	 * @param {Function} callback
+	 * @param {function(this:HTMLElement, Event)} callback
 	 * @return {zepto}
 	 */
 	delegate : function(selector, eventType, callback){

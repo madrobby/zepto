@@ -67,7 +67,7 @@
 		},
 		
 		/**
-		 * Add class(es) from each matched element.
+		 * Add one or more class(es) into each matched element.
 		 * @param {string} className	One or more class names separated by spaces.
 		 * @return {zepto}
 		 */

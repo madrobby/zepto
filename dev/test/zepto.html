@@ -27,11 +27,11 @@
     Evidence.TestCase.extend('ZeptoTest', {
       
       testDollar: function(t){
-        t.assert($('#some_element').get().length == 1);
-        t.assert($('#some_element').get(0) == document.getElementById('some_element'));
+        t.assertEqual($('#some_element').get().length, 1);
+        t.assertEqual($('#some_element').get(0), document.getElementById('some_element'));
         
-        t.assert($('span').get().length == 3);
-        t.assert($('p>span.yay').get().length == 1);      
+        t.assertEqual($('span').get().length, document.getElementsByTagName('span').length);
+        t.assertEqual($('p>span.yay').get().length, 1);
       },
       
       testCSS: function(t){
@@ -44,9 +44,9 @@
       },
       
       testChaining: function(t){
-        t.assert(document.getElementById('nay').innerHTML == "nay");
+        t.assertEqual(document.getElementById('nay').innerHTML, "nay");
         $('span.nay').css('color:red').html('test');
-        t.assert(document.getElementById('nay').innerHTML == "test");
+        t.assertEqual(document.getElementById('nay').innerHTML, "test");
       },
       
       testPlugins: function(t){
@@ -94,7 +94,7 @@
         $el.removeClass('mixedCase');
         t.assert(el.className.indexOf('foo') >= 0);
         t.assert(el.className.indexOf('bar') >= 0);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('mixedCase'), -1);
         t.assert($el.hasClass('foo'));
         t.assert($el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
@@ -102,8 +102,8 @@
         //single remove
         $el.removeClass('bar');
         t.assert(el.className.indexOf('foo') >= 0);
-        t.assert(el.className.indexOf('bar') == -1);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
+        t.assertEqual(el.className.indexOf('mixedCase'),-1);
         t.assert($el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
@@ -119,7 +119,7 @@
         
         //single toggle #1
         $el.toggleClass('foo');
-        t.assert(el.className.indexOf('foo') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
         t.assert(el.className.indexOf('bar') >= 0);
         t.assert(el.className.indexOf('mixedCase') >= 0);
         t.assert(! $el.hasClass('foo'));
@@ -137,9 +137,9 @@
         
         //multiple toggle #1
         $el.toggleClass('mixedCase bar foo');
-        t.assert(el.className.indexOf('foo') == -1);
-        t.assert(el.className.indexOf('bar') == -1);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
+        t.assertEqual(el.className.indexOf('mixedCase'), -1);
         t.assert(! $el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
@@ -155,8 +155,8 @@
         
         //multiple toggle #3
         $el.toggleClass('foo bar');
-        t.assert(el.className.indexOf('foo') == -1);
-        t.assert(el.className.indexOf('bar') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
         t.assert(el.className.indexOf('mixedCase') >= 0);
         t.assert(! $el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
@@ -164,18 +164,18 @@
         
         //remove all
         $el.removeClass();
-        t.assert(el.className.indexOf('foo') == -1);
-        t.assert(el.className.indexOf('bar') == -1);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
+        t.assertEqual(el.className.indexOf('mixedCase'), -1);
         t.assert(! $el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
         
         //remove all #2 - test is something weird happens if called multiple times
         $el.removeClass();
-        t.assert(el.className.indexOf('foo') == -1);
-        t.assert(el.className.indexOf('bar') == -1);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
+        t.assertEqual(el.className.indexOf('mixedCase'), -1);
         t.assert(! $el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
@@ -191,22 +191,22 @@
         
         //multiple add #2 - ensure it is not adding same string multiple times
         $el.toggleClass('mixedCase bar foo');
-        t.assert(el.className.indexOf('foo') == el.className.lastIndexOf('foo'));
-        t.assert(el.className.indexOf('bar') == el.className.lastIndexOf('bar'));
-        t.assert(el.className.indexOf('mixedCase') == el.className.lastIndexOf('mixedCase'));
+        t.assertEqual(el.className.indexOf('foo'), el.className.lastIndexOf('foo'));
+        t.assertEqual(el.className.indexOf('bar'), el.className.lastIndexOf('bar'));
+        t.assertEqual(el.className.indexOf('mixedCase'), el.className.lastIndexOf('mixedCase'));
         
         //single add - ensure it is not adding same string multiple times
         $el.toggleClass('mixedCase lorem');
-        t.assert(el.className.indexOf('foo') == el.className.lastIndexOf('foo'));
-        t.assert(el.className.indexOf('bar') == el.className.lastIndexOf('bar'));
-        t.assert(el.className.indexOf('mixedCase') == el.className.lastIndexOf('mixedCase'));
-        t.assert(el.className.indexOf('lorem') == el.className.lastIndexOf('lorem'));
+        t.assertEqual(el.className.indexOf('foo'), el.className.lastIndexOf('foo'));
+        t.assertEqual(el.className.indexOf('bar'), el.className.lastIndexOf('bar'));
+        t.assertEqual(el.className.indexOf('mixedCase'), el.className.lastIndexOf('mixedCase'));
+        t.assertEqual(el.className.indexOf('lorem'), el.className.lastIndexOf('lorem'));
         
         //restore previous state and check if worked properly
         $el.removeClass();
-        t.assert(el.className.indexOf('foo') == -1);
-        t.assert(el.className.indexOf('bar') == -1);
-        t.assert(el.className.indexOf('mixedCase') == -1);
+        t.assertEqual(el.className.indexOf('foo'), -1);
+        t.assertEqual(el.className.indexOf('bar'), -1);
+        t.assertEqual(el.className.indexOf('mixedCase') , -1);
         t.assert(! $el.hasClass('foo'));
         t.assert(! $el.hasClass('bar'));
         t.assert(! $el.hasClass('mixedCase'));
@@ -214,10 +214,52 @@
         $el.addClass(originalClassName);
         originalClassName.split(/ +/g).forEach(function(c){
         	t.assert(el.className.indexOf(c) >= 0);
-        	t.assert(el.className.indexOf(c) == el.className.lastIndexOf(c));
+        	t.assertEqual(el.className.indexOf(c), el.className.lastIndexOf(c));
         	t.assert($el.hasClass(c));
         });
         /* */
+      },
+      
+      testMapStatic : function(t){
+      	var 
+      		//original
+      		a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+      		b = ['a', 1, 'b', 2, 'c', 3],
+      		
+      		//expected result
+      		a2 = [1, 3, 5, 7, 9],
+      		b2 = ['a', 'b', 'c'],
+      		
+      		//mapped
+      		am = zepto.map(a, function(item, i, arr){
+      			if(item % 2) return item;
+      		}),
+      		bm = zepto.map(b, function(item, i, arr){
+      			return (typeof item === 'string')? item : null; //test if returning null really removes item
+      		});
+      		
+      	t.assertEqual(a2.join(','), am.join(','));
+      	t.assertEqual(b2.join(','), bm.join(','));
+      },
+      
+      testMapZepto : function(t){
+      	var $el = $('span'),
+      		n = $el.length,
+      		i,
+      		compare = [],
+      		mapped;
+      		
+      	for(i=0; i < n; i++){
+      		if(i % 2) compare.push(i);
+      	}
+      	
+      	mapped = $el.map(function(i, el){
+      		t.assert('nodeType' in this); //check if `this` is an HTML node
+      		t.assert('nodeType' in el);
+      		t.assertEqual(parseInt(i), i);
+      		return (i % 2)? i : null; //convert nodes into numbers and remove few items
+      	});
+      	t.assertEqual(mapped.get().join(','), compare.join(','));
       }
 
     });

@@ -42,7 +42,8 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
  - `.addClass(className)` : Add one or more classes (separated by spaces) into each matched element.
  - `.removeClass(className)` : Removes one or more class names (separated by spaces) from mathched elements, removes all classes if `null`.
  - `.toggleClass(className, switch)` : Add or remove one or more classes from each element in the set of matched elements.
-
+ - `.add(elementsArray)` : Add a set of elements to the matched elements set.
+ - `.map(callbackFn(i, element))` : Pass each element in the current matched set through a function, producing a new zepto object containing the return values.
 
 ### Helpers ###
   
@@ -50,7 +51,7 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
  - `$.unique(array)` : Return a new array that contain only unique items.
  - `$.makeArray(obj)` : Convert an array-like Object into an real array.
  - `$.extend(firstObj, secondObj)` : Mixin, copy properties from one object into another, will extend `zepto` by default if second parameter is omitted.
-
+ - `$.map(array, callbackFn)` : Translate all items in an array or array-like object to another array of items. (similar to similar to `jQuery.map` and not to `Array.prototype.map`)
 
 ### Event Handlers ("live" events) ###
 

@@ -1,8 +1,8 @@
 /**
- * @license zepto.js v0.1.2
+ * @license zepto.js v0.1.3
  * - original by Thomas Fuchs (http://github.com/madrobby/zepto), forked by Miller Medeiros (http://github.com/millermedeiros/zepto).
  * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
- * Build: 7 - Date: 09/23/2010 02:07 AM
+ * Build: 8 - Date: 09/23/2010 04:21 PM
  */
  
 (function(window, document){
@@ -16,33 +16,36 @@
 	 */
 	var zepto = function(selector, context){
 		if(this instanceof zepto){ //enforce `new` on constructor (scope-safe).
+			context = context || document;
+			
 			var	matched;
 			
 			//inspired by jQuery.init method (highly simplified)
-			
-			if(selector && selector.nodeType){ //DOMElement
-				context = selector;
-				matched = [selector];
-				selector = null; //important!
-			}else if(selector instanceof zepto){ //zepto object
-				selector = selector.selector;
-				context = selector.context;
+			if(selector){
+				
+				if(selector.nodeType){ //DOMElement
+					context = selector;
+					matched = [selector];
+					selector = null;
+				}else if(selector instanceof zepto){ //zepto object
+					selector = selector.selector;
+					context = selector.context;
+				}
+				
+				if(context instanceof zepto){
+					matched = [];
+					context.each(function(el){
+						matched = matched.concat( zepto.makeArray(el.querySelectorAll(selector)) );
+					});
+					matched = zepto.unique(matched);
+				}else if(! matched){ //avoid querySelector if `selector` is a DOMElement
+					matched = zepto.makeArray( context.querySelectorAll(selector) );
+				}
 			}
 			
 			this.selector = selector;
-			this.context = context || document;
-			
-			if(selector && context instanceof zepto){
-				matched = [];
-				context.each(function(el){
-					matched = matched.concat( zepto.makeArray(el.querySelectorAll(selector)) );
-				});
-				matched = zepto.unique(matched);
-			}else if(selector){ //avoid querySelector if `selector` is a DOMElement
-				matched = zepto.makeArray( this.context.querySelectorAll(selector) );
-			}
-			
-			Array.prototype.push.apply(this, matched); //copy reference of matched elements to $[n] and save length (convert `zepto` into a pseudo-array object)
+			this.context = context;
+			this.add(matched);
 			
 		}else{
 			return new zepto(selector, context);
@@ -66,7 +69,7 @@
 		
 		/**
 		 * Execute a function for each matched element.
-		 * @param {Function} fn
+		 * @param {function(this:zepto, HTMLElement)} fn
 		 * @return {zepto}
 		 */
 		each : function(fn){
@@ -82,7 +85,7 @@
 		 * @return {zepto}
 		 */
 		find : function(selector){
-			return new zepto(selector, this);
+			return zepto(selector, this);
 		},
 		
 		/**
@@ -100,7 +103,26 @@
 		 * @return {zepto}
 		 */
 		eq : function(index){
-			return new zepto(this.get(index));
+			return zepto(this.get(index));
+		},
+		
+		/**
+		 * Add a set of elements to the stack. 
+		 * @param {Array} elements	Selector string or Elements to be added to current stack.
+		 */
+		add : function(elements){
+			Array.prototype.push.apply(this, elements); //copy reference of elements to $[n] and update length (convert `zepto` into a pseudo-array object)
+			return this;
+		},
+		
+		/**
+		 * Pass each element in the current matched set through a function, producing a new zepto object containing the return values. 
+		 * @param {function(this:Element, number, Element):*} callback	Function that will be called for each element.
+		 */
+		map : function(callback){
+			return zepto().add(zepto.map(this, function(el, i){
+				return callback.call(el, i, el);
+			}));
 		}
 		
 	};
@@ -128,7 +150,7 @@
 		return first;
 	};
 	
-	//static methods
+	//generics (static methods)
 	zepto.extend({
 	
 		/**
@@ -158,6 +180,27 @@
 		 */
 		isDef : function(param){
 			return (typeof param !== 'undefined');
+		},
+		
+		/**
+		 * Translate all items in an array or array-like object to another array of items.
+		 * - similar to `jQuery.map` and not to `Array.prototype.map`
+		 * @param {Array} target	Array or Array-like Object to be mapped.
+		 * @param {function(*, number, Array): *} callback	Function called for each item on the array passing "item" as first parameter and "index" as second parameter and "base array" as 3rd, if callback returns any value besides `null` will add value to "mapped" array.  
+		 */
+		map : function(target, callback){
+			//didn't used `Array.prototype.map` because `jQuery.map` works different than JavaScript 1.6 `Array.map`
+			var ret = [],
+				value,
+				i,
+				n = target.length;
+			for(i = 0; i < n; i++){
+				value = callback(target[i], i);
+				if(value != null){
+					ret[ret.length] = value; //faster than push
+				}
+			}
+			return ret;
 		}
 		
 	});
@@ -270,7 +313,7 @@ zepto.fn.extend({
 	/**
 	 * @param {string} selector
 	 * @param {string} eventType
-	 * @param {Function} callback
+	 * @param {function(this:HTMLElement, Event)} callback
 	 * @return {zepto}
 	 */
 	delegate : function(selector, eventType, callback){
@@ -438,7 +481,7 @@ zepto.extend({
 		},
 		
 		/**
-		 * Add class(es) from each matched element.
+		 * Add one or more class(es) into each matched element.
 		 * @param {string} className	One or more class names separated by spaces.
 		 * @return {zepto}
 		 */
