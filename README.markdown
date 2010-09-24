@@ -40,7 +40,7 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
  - `.delegate(selector, eventType, handler)` : Attach an Event listener to matched elements using the event delegation pattern.
  - `.hasClass(className)` : Check if any matched element has given class.
  - `.addClass(className)` : Add one or more classes (separated by spaces) into each matched element.
- - `.removeClass(className)` : Removes one or more class names (separated by spaces) from mathched elements, removes all classes if `null`.
+ - `.removeClass(className)` : Removes one or more class names (separated by spaces) from matched elements, removes all classes if `null`.
  - `.toggleClass(className, switch)` : Add or remove one or more classes from each element in the set of matched elements.
  - `.add(elementsArray)` : Add a set of elements to the matched elements set.
  - `.map(callbackFn(i, element))` : Pass each element in the current matched set through a function, producing a new zepto object containing the return values.
@@ -53,12 +53,30 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
  - `$.extend(firstObj, secondObj)` : Mixin, copy properties from one object into another, will extend `zepto` by default if second parameter is omitted.
  - `$.map(array, callbackFn)` : Translate all items in an array or array-like object to another array of items. (similar to similar to `jQuery.map` and not to `Array.prototype.map`)
 
-### Event Handlers ("live" events) ###
+### Event Handlers ###
 
-#### delegate ####
+#### bind/unbind ####
 
-    $('body').delegate('div.touchable', 'touchstart', function(evt){
-    	alert("I'm touched!");
+ - `.bind(eventType, eventHandler)` : Attach event listener onto each matched element.
+ - `.unbind(eventType, eventHandler)` : Remove event listener from each matched element, *(both parameters are required)*.
+
+##### example #####
+
+    var handler = function(evt){
+        $(this).unbind('touchstart', handler); //remove listener after first call, so it will be called only once per matched element
+        alert("yay!");
+    };
+	
+    $('#my_div').bind('touchstart', handler); //add listener
+
+
+#### delegate ("live" event) ####
+
+`.delegate(selector, eventType, eventHandler)` : Listen for events triggered by descendant nodes of matched elements - A.K.A "event delegation".
+
+    //will trigger when any descendant element of "#my_div" that has the class ".touchable" is touched
+    $('#my_div').delegate('.touchable', 'touchstart', function(evt){
+        alert("I'm touched!");
     });
 
 
@@ -80,7 +98,9 @@ The ultimate goal is to have a ~2k library that handles most basic dredge work f
 
 ### Recommendations ###
 
-Best used if you stick in the contents of zepto.min.js into a `<script>` tag in your HTML (no need to load it form an external file).
+ - Make sure the site still works without JavaScript since many devices doesn't support it! Use it as an enhancement and not as a prerequisite.
+ - Best used if you stick in the contents of zepto.min.js into a `<script>` tag in your HTML (no need to load it form an external file).
+ - Compress your JavaScript files before deploying.
 
 I'd love some help on this, so please feel free to mess around!
 

@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Events test</title>
+		<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
+		<style>
+			html, body, div{margin:0; padding:0}
+			body{font-family:sans-serif; font-size:x-small}
+			h1{text-align:center; margin:0.5em 0 0}
+			h2{margin-bottom:0.3em; margin-top:0}
+			h3{margin-top:0.3em}
+			.holder{width:280px; padding:20px 20px 30px; margin:0 auto}
+			.hitArea{background-color:#eee; border:1px solid #aaa; padding:20px; text-align:center; border-radius:10px; font-weight:bold}
+			.hitSwipe{padding:60px 20px}
+			#delegate_test1{text-align:center; width:100%}
+			#delegate_test1 td{border:1px solid #aaa; background-color:#eee; padding:20px}
+			#delegate_test2 .hitArea{width:auto; margin:5px; padding:40px 20px}
+			.container{border:1px solid #aaa; padding:5px; background-color:rgba(170, 170, 170, 0.2)}
+		</style>
+	</head>
+	<body>
+		
+		<div class="holder">
+			<h1>zepto.js event tests</h1>
+		</div>
+		
+		<!-- ========================================= -->
+		
+		<hr />
+		
+		<div class="holder">
+			<h2>mouse events</h2>
+			<h3>simple event bind test</h3>
+			<p>click/rollover/rollout to test, it should blink/change colors.</p>
+			<p><small>PS: mouseover/mouseout doesn't work properly on mobile devices, used just for testing.</small></p>
+			<div id="mouse_test" class="hitArea">
+				click/hover me
+			</div>
+		</div>
+		
+		<!-- ========================================= -->
+		
+		<hr />
+		
+		<div class="holder">
+			<h2>swipe #1</h2>
+			<h3>default settings</h3>
+			<p>should change colors based on direction and blink each time event dispatch.</p>
+			<div id="swipe_test1" class="hitArea hitSwipe">
+				swipe me
+			</div>
+		</div>
+		
+		<!-- ========================================= -->
+		
+		<hr />
+		
+		<div class="holder">
+			<h2>swipe #2</h2>
+			<h3>bigger threshold and using aliases "swipeLeft/swipeRight/etc"</h3>
+			<p>should change colors based on direction and blink each time event dispatch.</p>
+			<p>needs a "longer" swipe than #1.</p>
+			<div id="swipe_test2" class="hitArea hitSwipe">
+				swipe me too but "harder"!
+			</div>
+		</div>
+		
+		<!-- ========================================= -->
+		
+		<hr />
+		
+		<div class="holder">
+			<h2>delegate test #1</h2>
+			<h3>table</h3>
+			<p>click table cell to test, it should blink.</p>
+			<table id="delegate_test1">
+				<tr>
+					<td>1</td>
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+				</tr>
+				<tr>
+					<td>6</td>
+					<td>7</td>
+					<td>8</td>
+					<td>9</td>
+					<td>10</td>
+				</tr>
+				<tr>
+					<td>11</td>
+					<td>12</td>
+					<td>13</td>
+					<td>14</td>
+					<td>15</td>
+				</tr>
+				<tr>
+					<td>16</td>
+					<td>17</td>
+					<td>18</td>
+					<td>19</td>
+					<td>20</td>
+				</tr>
+			</table>
+		</div>
+		
+		<!-- ========================================= -->
+		
+		<hr />
+		
+		<div class="holder">
+			<h2>delegate test #2</h2>
+			<h3>nested divs</h3>
+			<p>click numered divs to test, it should blink.</p>
+			<div id="delegate_test2" class="container">
+				<div class="hitArea">1</div>
+				<div class="container">
+					<div class="hitArea">2</div>
+					<div class="container">
+						<div class="hitArea">3</div>
+						<div class="container">
+							<div class="hitArea">4</div>
+							<div class="container">
+								<div class="hitArea">5</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<!-- =============== Scripts ====================== -->
+		
+		<script src="../src/core.js"></script>
+		<script src="../src/style.js"></script>
+		<script src="../src/event.js"></script>
+		<script src="../src/extras/swipe.js"></script>
+		
+		<script>
+			
+			function blink($el){
+				$el.anim(null, 0.3, 0.01);
+				setTimeout(function(){
+					$el.anim(null, 1, 0.2);
+				}, 100);
+			}
+			
+			//-- swipe 1 --/
+			
+			//test if using a single handler for multiple directions work properly
+			function multipleSwipeHandler(evtInfo){
+				var css,
+					$el = $(this);
+				
+				if(! zepto.isDef(evtInfo.changeX) || ! zepto.isDef(evtInfo.changeY)){ //expected properties of the event info object
+					console.warn('can\'t find `evtInfo.changeX` or `evtInfo.changeY` for swipe event.');
+				}
+				
+				switch(evtInfo.direction){ //evtInfo stores swipe direction
+					case 'left':
+						css = 'background-color:#0F0';
+						break;
+					case 'right':
+						css = 'background-color:#0FF';
+						break;
+					case 'up':
+						css = 'background-color:#00F';
+						break;
+					case 'down':
+						css = 'background-color:#FF0';
+						break;
+				}
+				
+				$el.css(css);
+				blink($el);
+			}
+			
+			$('#swipe_test1')
+				.swipe('left', multipleSwipeHandler)
+				.swipe('right', multipleSwipeHandler)
+				.swipe('up', multipleSwipeHandler)
+				.swipe('down', multipleSwipeHandler);
+			
+			
+			//-- click/mouse events (mouseout/mouseover doesn't work properly on mobile devices, just for testing) --//
+			
+			$('#mouse_test')
+				.anim(null, 1, 0.2)
+				.bind('click', function(e){
+					blink($(this));
+				})
+				.bind('mouseover', function(e){
+					$(this).css('background-color:#0c5');
+				})
+				.bind('mouseout', function(e){
+					$(this).css('background-color:#eee');
+				});
+			
+			
+			//-- swipe 2 --/
+			
+			//test aliases and custom threshold
+			$('#swipe_test2')
+				.swipeLeft(function(evtInfo){
+					var $el = $(this);
+					$el.css('background-color:#0F0');
+					blink($el);
+				}, {x:100, y:20})
+				.swipeRight(function(){
+					var $el = $(this);
+					$el.css('background-color:#0FF');
+					blink($el);
+				}, {x:100, y:20})
+				.swipeUp(function(){
+					var $el = $(this);
+					$el.css('background-color:#00F');
+					blink($el);
+				}, {x:20, y:80})
+				.swipeDown(function(){
+					var $el = $(this);
+					$el.css('background-color:#FF0');
+					blink($el);
+				}, {x:20, y:80});
+			
+			
+			//-- delegate #1 --/
+			
+			$('#delegate_test1').delegate('td', 'click', function(evt){
+				$(this).css('background-color:#ccc');
+				blink($(this));
+			});
+			
+			//-- delegate #2 --/
+			
+			$('#delegate_test2').delegate('.hitArea', 'click', function(evt){
+				$(this).css('background-color:#ddd');
+				blink($(this));
+			});
+			
+		</script>
+	</body>
+</html>

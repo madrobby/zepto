@@ -27,12 +27,12 @@
 					context = selector;
 					matched = [selector];
 					selector = null;
-				}else if(selector instanceof zepto){ //zepto object
+				}else if(selector instanceof zepto){ //"clone" zepto object
 					selector = selector.selector;
 					context = selector.context;
 				}
 				
-				if(context instanceof zepto){
+				if(context instanceof zepto){ //if finding descendant node(s) of all matched elements
 					matched = [];
 					context.each(function(el){
 						matched = matched.concat( zepto.makeArray(el.querySelectorAll(selector)) );

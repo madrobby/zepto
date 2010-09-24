@@ -54,7 +54,13 @@
 		<echo message="${dist.min.name} built." />
 	</target>
 	
-	<target name="all" depends="build, minify">
+	<target name="copyExtras">
+		<copy todir="${js_deploy.dir}/extras">
+			<fileset dir="${src.dir}/extras" />
+		</copy>
+	</target>
+	
+	<target name="all" depends="build, minify, copyExtras">
 		<echo message="Build Complete." />
 	</target>
 	

@@ -9,7 +9,8 @@
 	
 	//--- As of 2010/09/23 native HTML5 Element.classList is only supported by Firefox 3.6+ ---//
 	
-	var regexSpaces = /\s+/g;
+	var regexSpaces = /\s+/g,
+		regexTrim = /^\s+|\s+$/g;
 	
 	/**
 	 * remove multiple spaces and trailing spaces
@@ -17,7 +18,16 @@
 	 * @return {string}
 	 */
 	function sanitize(className){
-		return className.replace(regexSpaces, ' ').trim();
+		return trim( className.replace(regexSpaces, ' ') );
+	}
+	
+	/**
+	 * Remove white spaces from begining and end of string
+	 * - as of 2010/09/24 Safari Mobile doesn't support `String.prototype.trim`
+	 * @param {string} str
+	 */
+	function trim(str){
+		return str.replace(regexTrim, '');
 	}
 	
 	/**
@@ -100,7 +110,7 @@
 			if(zepto.isDef(isAdd)){
 				(isAdd)? this.addClass(className) : this.removeClass(className); 
 			}else{
-				var classes = className.trim().split(' '),
+				var classes = trim(className).split(' '),
 					regex,
 					elements = this.get(); //for scope and performance
 				classes.forEach(function(c){

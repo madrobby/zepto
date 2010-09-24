@@ -260,7 +260,16 @@
       		return (i % 2)? i : null; //convert nodes into numbers and remove few items
       	});
       	t.assertEqual(mapped.get().join(','), compare.join(','));
-      }
+      }/*,
+      
+      testText : function(t){
+      	$(document.body).append('<div id="test_text" class="test">lorem<ul><li>ipsum</li><li>dolor</li></ul><img src="none.gif" alt="foo" /></div>');
+      	t.assertEqual($('#test_text').text(), 'lorem ipsum dolor');
+      	$('#test_text').text('foo bar');
+      	t.assertEqual($('#test_text').text(), 'foo bar');
+      	t.assertEqual($('#test_text').get(0).innerHTML, 'foo bar');
+      	$('#test_text')
+      }*/
 
     });
   </script>

@@ -1,8 +1,8 @@
 /**
- * @license zepto.js v0.1.3
+ * @license zepto.js v0.1.4
  * - original by Thomas Fuchs (http://github.com/madrobby/zepto), forked by Miller Medeiros (http://github.com/millermedeiros/zepto).
  * Released under the MIT license (http://www.opensource.org/licenses/mit-license.php)
- * Build: 9 - Date: 09/23/2010 05:03 PM
+ * Build: 14 - Date: 09/24/2010 05:36 PM
  */
  
 (function(window, document){
@@ -27,12 +27,12 @@
 					context = selector;
 					matched = [selector];
 					selector = null;
-				}else if(selector instanceof zepto){ //zepto object
+				}else if(selector instanceof zepto){ //"clone" zepto object
 					selector = selector.selector;
 					context = selector.context;
 				}
 				
-				if(context instanceof zepto){
+				if(context instanceof zepto){ //if finding descendant node(s) of all matched elements
 					matched = [];
 					context.each(function(el){
 						matched = matched.concat( zepto.makeArray(el.querySelectorAll(selector)) );
@@ -283,12 +283,12 @@ zepto.fn.extend({
 	
 	/**
 	 * Set style of matched elements. 
-	 * @param {string} style	CSS string.
+	 * @param {string} css	CSS string.
 	 * @return {zepto}
 	 */
-	css : function(style){
+	css : function(css){
 		return this.each(function(el){
-			el.style.cssText += ';'+ style; 
+			el.style.cssText += ';'+ css; 
 		});
 	},
 	
@@ -300,6 +300,7 @@ zepto.fn.extend({
 	 * @return {zepto}
 	 */
 	anim : function(transform, opacity, duration){
+		//TODO: change the way anim works, since it's overwriting the "-webkit-transition:all" it's hard to change other CSS values later without animation.
 		return this.css('-webkit-transition:all '+ (duration||0.5) +'s;'+'-webkit-transform:'+ transform +';opacity:'+ (opacity===0?0:opacity||1) );
 	}
 	
@@ -311,28 +312,44 @@ zepto.fn.extend({
 zepto.fn.extend({
 	
 	/**
-	 * @param {string} selector
-	 * @param {string} eventType
+	 * @param {string} eventType	Event type.
+	 * @param {function(Event)}	handler	Event handler.
+	 */
+	bind : function(eventType, handler){
+		return this.each(function(el){
+			el.addEventListener(eventType, handler, false);
+		});
+	},
+	
+	/**
+	 * @param {string} eventType	Event type.
+	 * @param {function(Event)}	handler	Event handler.
+	 */
+	unbind : function(eventType, handler){
+		return this.each(function(el){
+			el.removeEventListener(eventType, handler, false);
+		});
+	},
+	
+	/**
+	 * @param {string} selector	Selector
+	 * @param {string} eventType	Event type that it should listen to. (supports a single kind of event)
 	 * @param {function(this:HTMLElement, Event)} callback
 	 * @return {zepto}
 	 */
 	delegate : function(selector, eventType, callback){
-		return this.each(function(elm){
-			var 
-				root = elm,
-				targets = this.find(selector).get();
-			
+		var targets = this.find(selector).get();
+		return this.each(function(el){
 			function delegateHandler(evt){
 				var node = evt.target;
 				while(node && targets.indexOf(node)<0){
 					node = node.parentNode;
 				}
-				if(node && node !== root){
+				if(node && node !== el){
 					callback.call(node, evt);
 				}
 			}
-			
-			elm.addEventListener(eventType, delegateHandler, false);
+			el.addEventListener(eventType, delegateHandler, false);
 		});
 	}
 	
@@ -423,7 +440,8 @@ zepto.extend({
 	
 	//--- As of 2010/09/23 native HTML5 Element.classList is only supported by Firefox 3.6+ ---//
 	
-	var regexSpaces = /\s+/g;
+	var regexSpaces = /\s+/g,
+		regexTrim = /^\s+|\s+$/g;
 	
 	/**
 	 * remove multiple spaces and trailing spaces
@@ -431,7 +449,16 @@ zepto.extend({
 	 * @return {string}
 	 */
 	function sanitize(className){
-		return className.replace(regexSpaces, ' ').trim();
+		return trim( className.replace(regexSpaces, ' ') );
+	}
+	
+	/**
+	 * Remove white spaces from begining and end of string
+	 * - as of 2010/09/24 Safari Mobile doesn't support `String.prototype.trim`
+	 * @param {string} str
+	 */
+	function trim(str){
+		return str.replace(regexTrim, '');
 	}
 	
 	/**
@@ -514,7 +541,7 @@ zepto.extend({
 			if(zepto.isDef(isAdd)){
 				(isAdd)? this.addClass(className) : this.removeClass(className); 
 			}else{
-				var classes = className.trim().split(' '),
+				var classes = trim(className).split(' '),
 					regex,
 					elements = this.get(); //for scope and performance
 				classes.forEach(function(c){
