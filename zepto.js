@@ -4,7 +4,7 @@ var $ = (function() {
   
   function $(_){
     function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
-    fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+    fn.dom = slice.call(document.querySelectorAll($.selector = _));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
@@ -23,7 +23,7 @@ var $ = (function() {
     },
     live: function(event, callback){
       document.body.addEventListener(event, function(event){
-        var target = event.target, nodes = slice.call(document.querySelectorAll(this.selector));
+        var target = event.target, nodes = slice.call(document.querySelectorAll($.selector));
         while(target && nodes.indexOf(target)<0) target = target.parentNode;
         if(target && !(target===document)) callback.call(target, event);
       }, false);
