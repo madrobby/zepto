@@ -33,13 +33,13 @@ var $ = (function() {
   
   for(k in ADJ_OPS)
     $.fn[k] = (function(op){ 
-      return function(html){ return $(function(el){ console.log(op); el.insertAdjacentHTML(op,html) }) };
+      return function(html){ return $(function(el){ el.insertAdjacentHTML(op,html) }) };
     })(ADJ_OPS[k]);
   
   function ajax(method, url, success){
     var r = new XMLHttpRequest();
     r.onreadystatechange = function(){
-      if(r.readyState==4 && r.status==200) 
+      if(r.readyState==4 && (r.status==200 || r.status==0))
         success(r.responseText);
     };
     r.open(method,url,true);
