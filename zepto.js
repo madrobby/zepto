@@ -3,32 +3,31 @@ var $ = (function() {
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
   
   function $(_){
-    if(typeof _ == 'function') $.dom.forEach(_)
-    else
-      $.dom = slice.call(document.querySelectorAll($._ = _));
-    return $.fn;
+    function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
+    fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+    for(k in $.fn) fn[k] = $.fn[k];
+    return fn;
   }
 
   $.fn = {
-    get: function(idx){ return idx === undefined ? $.dom : $.dom[idx] },
+    get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
     html: function(html){
-      return $(function(el){ el.innerHTML = html });
+      return this(function(el){ el.innerHTML = html });
     },
     css: function(style){
-      return $(function(el){ el.style.cssText += ';'+style });
+      return this(function(el){ el.style.cssText += ';'+style });
     },
     anim: function(transform, opacity, dur){
-      return $.fn.css('-webkit-transition:all '+(dur||0.5)+'s;'+
+      return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
         '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
     live: function(event, callback){
-      var selector = $._;
       document.body.addEventListener(event, function(event){
-        var target = event.target, nodes = slice.call(document.querySelectorAll(selector));
+        var target = event.target, nodes = slice.call(document.querySelectorAll(this.selector));
         while(target && nodes.indexOf(target)<0) target = target.parentNode;
         if(target && !(target===document)) callback.call(target, event);
       }, false);
-      return $.fn;
+      return this;
     }
   };
   
