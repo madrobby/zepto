@@ -44,11 +44,18 @@
         t.assert(document.getElementById('nay').innerHTML == "test");
       },
       
+      testCachingForLater: function(t){
+        var one = $('div');
+        var two = $('span');
+        
+        t.assert(one.get(0) !== two.get(0));
+      },
+      
       testPlugins: function(t){
         var el = $('#some_element').get(0);
         
         $.fn.plugin = function(){
-          return $(function(el){ el.innerHTML = 'plugin!' });
+          return this(function(el){ el.innerHTML = 'plugin!' });
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
