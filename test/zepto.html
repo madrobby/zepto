@@ -18,6 +18,8 @@
     <span></span>
     <span class="nay" id="nay">nay</span>
   </p>
+  <div id="attrElement" data-id="someId" data-name="someName"></div>
+  <div id="attrElement2" data-id="someId" data-name="someName"></div>
   <script>  
     Evidence.TestCase.extend('ZeptoTest', {
       
@@ -59,6 +61,17 @@
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
+      },
+
+      testAttributes: function(t){
+	var _el=$('#attrElement,#attrElement2');
+        t.assertEqual('someId', _el.attr("data-id")); //original
+        t.assertEqual('someName', _el.attr("data-name"));//original
+        _el.attr("data-id","someOtherId");//new attribute
+        _el.attr("data-name","someOtherName");//new attribute
+        t.assertEqual('someOtherId', _el.attr("data-id"));//test new attribute has been set
+        t.assertEqual('someOtherName', _el.attr("data-name"));//test new attribute has been set
+        t.assertEqual(undefined,_el.attr("nonExistentAttribute"));//test non-existent attribute returns undefined
       }
 
     });

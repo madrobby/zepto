@@ -14,6 +14,12 @@ var $ = (function() {
     html: function(html){
       return this(function(el){ el.innerHTML = html });
     },
+    attr: function(name,value){
+      if(value){
+        return this(function(el){ el.setAttribute(name,value); });
+      }
+      return document.querySelectorAll(this.selector)[0].getAttribute(name) || undefined;
+    },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });
     },
