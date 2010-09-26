@@ -36,7 +36,10 @@
         t.assert($('#some_element').get(0) == document.getElementById('some_element'));
         
         t.assert($('span').get().length == 3);
-        t.assert($('p>span.yay').get().length == 1);      
+        t.assert($('p>span.yay').get().length == 1);
+        
+        var el = document.getElementById('some_element');
+        t.assertEqual($(el).get(0), el);
       },
       
       testCSS: function(t){

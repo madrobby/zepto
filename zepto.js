@@ -4,7 +4,7 @@ var $ = (function() {
   
   function $(_){
     function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
-    fn.dom = slice.call(document.querySelectorAll(fn.selector = _));
+    fn.dom = _ instanceof Element ? [_] : slice.call(document.querySelectorAll(fn.selector = _));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
