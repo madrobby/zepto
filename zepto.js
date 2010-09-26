@@ -22,11 +22,11 @@ var $ = (function() {
       return this(function(el){ el.style.cssText += ';'+style });
     },
     anim: function(transform, opacity, dur){
-      var css3type = (typeof this.dom[0].style['webkitTransform'] !== 'undefined')
-          ? '-webkit-'
-          : ((typeof this.dom[0].style['MozTransform'] !== 'undefined') ? '-moz-' : '');
-      return this.css(css3type + 'transition:all '+(dur||0.5)+'s;'+
-        css3type + 'transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
+      var s = this.dom[0].style,
+        t = typeof s['webkitTransform']!=='undefined'?'-webkit-':
+        ((typeof s['MozTransform']!=='undefined')?'-moz-':'');
+      return this.css(t+'transition:all '+(dur||0.5)+'s;'+
+        t+'transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
     live: function(event, callback){
       var selector = this.selector;
