@@ -18,7 +18,13 @@
     <span></span>
     <span class="nay" id="nay">nay</span>
   </p>
-  <script>  
+  <script>
+    function click(el){
+      var event = document.createEvent('MouseEvents');
+      event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+      el.dispatchEvent(event);
+    }
+  
     Evidence.TestCase.extend('ZeptoTest', {
       
       testDollar: function(t){
@@ -36,6 +42,25 @@
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
+      },
+      
+      testLive: function(t){
+        var counter = 0, pcounter = 0;
+        $('#some_element').live('click', function(){ counter++ });
+        $('span.yay').live('click', function(){ counter++ });
+        $('p').live('click', function(){ pcounter++ });
+        
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+        
+        click($('span.yay').get(0));
+        t.assertEqual(2, counter);
+        
+        click($('span.nay').get(0));
+        t.assertEqual(2, counter);
+        
+        click($('p').get(0));
+        t.assertEqual(3, pcounter);
       },
       
       testChaining: function(t){

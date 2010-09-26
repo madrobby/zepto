@@ -22,8 +22,9 @@ var $ = (function() {
         '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
     live: function(event, callback){
+      var selector = this.selector;
       document.body.addEventListener(event, function(event){
-        var target = event.target, nodes = slice.call(document.querySelectorAll(this.selector));
+        var target = event.target, nodes = slice.call(document.querySelectorAll(selector));
         while(target && nodes.indexOf(target)<0) target = target.parentNode;
         if(target && !(target===document)) callback.call(target, event);
       }, false);
