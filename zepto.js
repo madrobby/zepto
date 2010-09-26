@@ -16,7 +16,7 @@ var $ = (function() {
     },
     attr: function(name,value){
       if(value === undefined) return this.dom[0].getAttribute(name) || undefined;
-      return this(function(el){ el.setAttribute(name,value); });;
+      return this(function(el){ el.setAttribute(name,value) });
     },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });
