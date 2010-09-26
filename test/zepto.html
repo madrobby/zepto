@@ -18,13 +18,17 @@
     <span></span>
     <span class="nay" id="nay">nay</span>
   </p>
+  
+  <div id="attr_1" data-id="someId1" data-name="someName1"></div>
+  <div id="attr_2" data-id="someId2" data-name="someName2"></div>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
       el.dispatchEvent(event);
     }
-  
+
     Evidence.TestCase.extend('ZeptoTest', {
       
       testDollar: function(t){
@@ -61,6 +65,28 @@
         
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+      },
+      
+      testAttr: function(t){
+        var els = $('#attr_1, #attr_2');
+        
+        t.assertEqual('someId1', els.attr("data-id"));
+        t.assertEqual('someName1', els.attr("data-name"));
+        
+        els.attr("data-id","someOtherId");
+        els.attr("data-name","someOtherName");
+        
+        t.assertEqual('someOtherId', els.attr("data-id"));
+        t.assertEqual('someOtherName', els.attr("data-name"));
+        t.assertEqual('someOtherId', $('#attr_2').attr('data-id'));
+
+        t.assertUndefined(els.attr("nonExistentAttribute"));
+        
+        els.attr("data-id", false);
+        t.assertEqual("false", els.attr("data-id"));
+        
+        els.attr("data-id", 0);
+        t.assertEqual("0", els.attr("data-id"));
       },
       
       testChaining: function(t){
