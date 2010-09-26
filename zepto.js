@@ -1,7 +1,7 @@
 var $ = (function() {
-  var slice = [].slice, k, 
+  var slice = [].slice, k,
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
-  
+
   function $(_){
     function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
     fn.dom = _ instanceof Element ? [_] : slice.call(document.querySelectorAll(fn.selector = _));
@@ -22,8 +22,11 @@ var $ = (function() {
       return this(function(el){ el.style.cssText += ';'+style });
     },
     anim: function(transform, opacity, dur){
-      return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
-        '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
+      var css3type = (typeof this.dom[0].style['webkitTransform'] !== 'undefined')
+          ? '-webkit-'
+          : ((typeof this.dom[0].style['MozTransform'] !== 'undefined') ? '-moz-' : '');
+      return this.css(css3type + 'transition:all '+(dur||0.5)+'s;'+
+        css3type + 'transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
     live: function(event, callback){
       var selector = this.selector;
@@ -35,12 +38,12 @@ var $ = (function() {
       return this;
     }
   };
-  
+
   for(k in ADJ_OPS)
-    $.fn[k] = (function(op){ 
+    $.fn[k] = (function(op){
       return function(html){ return this(function(el){ el.insertAdjacentHTML(op,html) }) };
     })(ADJ_OPS[k]);
-  
+
   function ajax(method, url, success){
     var r = new XMLHttpRequest();
     r.onreadystatechange = function(){
@@ -50,10 +53,10 @@ var $ = (function() {
     r.open(method,url,true);
     r.send(null);
   }
-  
+
   $.get = function(url, success){ ajax('GET', url, success); };
   $.post = function(url, success){ ajax('POST', url, success); };
-  $.getJSON = function(url, success){ 
+  $.getJSON = function(url, success){
     $.get(url, function(json){ success(JSON.parse(json)) });
   };
 
