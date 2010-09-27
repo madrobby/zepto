@@ -147,6 +147,13 @@
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
+      },
+      
+      testIndex: function(t){
+        t.assertEqual($("p > span").index("#nay"), 2);
+        t.assertEqual($("p > span").index(".yay"), 0);
+        t.assertEqual($("span").index("span"), 0);
+        t.assertEqual($("span").index("boo"), -1);
       }
 
     });
