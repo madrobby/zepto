@@ -24,8 +24,13 @@ Supported element functions:
 
   get(): return array of all elements found
   get(0): return first element found
+  remove(): remove element
+  each(callback): iterate over array of all elements found
   html('new html'): set the contents of the element(s)
+  attr('attribute'): get element attribute
+  attr('attribute', 'value'): set element attribute
   css('css properties'): set styles of the element(s)
+  index('selector'): return an integer indicating the position of 'selector' in array of all elements found
   append, prepend, before, after: like html, but add html to element contents (or before and after)
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
