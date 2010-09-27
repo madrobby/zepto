@@ -8,6 +8,8 @@ var $ = (function() {
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
+  
+  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
 
   $.fn = {
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
@@ -32,6 +34,16 @@ var $ = (function() {
           while(target && nodes.indexOf(target)<0) target = target.parentNode;
           if(target && !(target===el) && !(target===document)) callback.call(target, event);
         }, false);
+      });
+    },
+    addClass: function(name){
+      return this(function(el){
+        !classRE(name).test(el.className) && (el.className += (el.className ? ' ' : '') + name);
+      });
+    },
+    removeClass: function(name){
+      return this(function(el){
+        el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
       });
     }
   };
