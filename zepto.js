@@ -1,10 +1,10 @@
-var $ = (function() {
-  var slice = [].slice, k, 
+var $ = (function(d) {
+  var slice = [].slice, 
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
   
   function $(_){
     function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
-    fn.dom = _ instanceof Element ? [_] : slice.call(document.querySelectorAll(fn.selector = _));
+    fn.dom = _ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
@@ -13,6 +13,12 @@ var $ = (function() {
 
   $.fn = {
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
+    remove: function(){
+      return this(function(el){ el.parentNode.removeChild(el) });
+    },
+    each: function(callback){
+      return this(function(e){ callback(e) });
+    },
     html: function(html){
       return this(function(el){ el.innerHTML = html });
     },
@@ -32,7 +38,7 @@ var $ = (function() {
         el.addEventListener(event, function(event){
           var target = event.target, nodes = slice.call(el.querySelectorAll(selector));
           while(target && nodes.indexOf(target)<0) target = target.parentNode;
-          if(target && !(target===el) && !(target===document)) callback.call(target, event);
+          if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);
       });
     },
@@ -70,4 +76,4 @@ var $ = (function() {
   };
 
   return $;
-})();
+})(document);
