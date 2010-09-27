@@ -131,6 +131,18 @@
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
+      },
+      
+      testToggleClass: function(t){
+        var el = $('#some_element').get(0);
+        
+        $('#some_element').get(0).className = '';
+        $('#some_element').toggleClass('green');
+        t.assertEqual('green', el.className);
+        $('#some_element').toggleClass('red');
+        t.assertEqual('green red', el.className);
+        $('#some_element').toggleClass('green');
+        t.assertEqual('red', el.className);
       }
 
     });

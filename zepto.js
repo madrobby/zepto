@@ -10,6 +10,8 @@ var $ = (function() {
   }
   
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
+  function classAdd(el, name){ !classRE(name).test(el.className) && (el.className += (el.className ? ' ' : '') + name) }
+  function classRemove(el, name){ el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '') }
 
   $.fn = {
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
@@ -37,14 +39,13 @@ var $ = (function() {
       });
     },
     addClass: function(name){
-      return this(function(el){
-        !classRE(name).test(el.className) && (el.className += (el.className ? ' ' : '') + name);
-      });
+      return this(function(el){ classAdd(el, name) });
     },
     removeClass: function(name){
-      return this(function(el){
-        el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
-      });
+      return this(function(el){ classRemove(el, name) });
+    },
+    toggleClass: function(name){
+      return this(function(el){ classRE(name).test(el.className) ? classRemove(el, name) : classAdd(el, name) });
     }
   };
   
