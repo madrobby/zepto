@@ -24,7 +24,8 @@ var $ = (function() {
     anim: function(transform, opacity, dur){
       var s = this.dom[0].style,
         t = typeof s['webkitTransform']!=='undefined'?'-webkit-':
-        ((typeof s['MozTransform']!=='undefined')?'-moz-':'');
+        (typeof s['MozTransform']!=='undefined'?'-moz-':
+        (typeof s['oTransform']!=='undefined'?'-o-':''));
       return this.css(t+'transition:all '+(dur||0.5)+'s;'+
         t+'transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
