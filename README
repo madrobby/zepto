@@ -1,7 +1,6 @@
-zepto.js is a minimalist inlinable framework for mobile WebKit browsers,
-with a jQuery-like chaining syntax
+zepto.js is a minimalist inlinable framework for mobile WebKit browsers, with a jQuery-like chaining syntax.
 
-The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done. 
+The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done.
 
 Primary target platforms are:
 
@@ -27,12 +26,12 @@ Supported element functions:
   html('new html'): set the contents of the element(s)
   css('css properties'): set styles of the element(s)
   append, prepend, before, after: like html, but add html to element contents (or before and after)
-  anim(transform, opacity, duration):
-    use -webkit-transform/opacity and do an animation
+  anim(transform, opacity, duration): use -webkit-transform/opacity and do an animation
+  addClass('name'), removeClass('name'), toggleClass('name'): modify the class names of the element(s)
   
-Event handlers ("live" events):
+Event delegation:
 
-  $('some selector').live('touchstart', function(event){ alert("I'm touched!") });
+  $('some selector').delegate('child selector', 'touchstart', function(event){ alert("I'm touched!") });
     
 Ajax:
 
