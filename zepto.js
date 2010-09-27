@@ -33,6 +33,18 @@ var $ = (function() {
         if(target && !(target===document)) callback.call(target, event);
       }, false);
       return this;
+    },
+    addClass: function(name){
+      return this(function(el){
+        if (!new RegExp("(^|\\s)"+name+"(\\s|$)").test(el.className))
+          el.className += (el.className ? ' ' : '') + name;
+      });
+    },
+    removeClass: function(name){
+      return this(function(el){
+        el.className = el.className.replace(
+          new RegExp("(^|\\s+)"+name+"(\\s+|$)"), ' ').replace(/^\s+|\s+$/g, '');
+      });
     }
   };
   
