@@ -25,14 +25,14 @@ var $ = (function() {
       return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
         '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
     },
-    live: function(event, callback){
-      var selector = this.selector;
-      document.body.addEventListener(event, function(event){
-        var target = event.target, nodes = slice.call(document.querySelectorAll(selector));
-        while(target && nodes.indexOf(target)<0) target = target.parentNode;
-        if(target && !(target===document)) callback.call(target, event);
-      }, false);
-      return this;
+    delegate: function(selector, event, callback){
+      return this(function(el){
+        el.addEventListener(event, function(event){
+          var target = event.target, nodes = slice.call(el.querySelectorAll(selector));
+          while(target && nodes.indexOf(target)<0) target = target.parentNode;
+          if(target && !(target===el) && !(target===document)) callback.call(target, event);
+        }, false);
+      });
     }
   };
   
