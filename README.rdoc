@@ -74,6 +74,18 @@ Adding an event listener on multiple events:
 Adding one event listener that uses event delegation to be only active on a range of children/grandchildren (as given with the subselector):
   
   $('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") });
+  
+= Touch events
+
+Tapping:
+  $('some selector').tap(function(){ ... });
+
+Double-tapping:
+  $('some selector').doubleTap(function(){ ... });
+
+Swiping:
+  $('some selector').swipeLeft(function(){ ... });
+  $('some selector').swipeRight(function(){ ... });
     
 = Ajax:
 

@@ -90,6 +90,40 @@ var $ = (function(d) {
       })};
     })(ADJ_OPS[k]);
 
+  ['swipeLeft', 'swipeRight', 'doubleTap', 'tap'].forEach(function(m){
+    $.fn[m] = function(callback){ return this.bind(m, callback) }
+  });
+
+  function dispatch(event, target) {
+    var e = document.createEvent('Events');
+    e.initEvent(event, true, false);
+    target.dispatchEvent(e);
+  }
+
+  d.ontouchstart = function(e) {
+    var now = Date.now(), t = e.touches[0].target, delta = now - (t.last || now);
+    t.x1 = e.touches[0].pageX;
+    if (delta > 0 && delta <= 800) {
+      dispatch('doubleTap', t);
+      t.last = 0;
+    } else t.last = now;
+  }
+
+  d.ontouchmove = function(e) {
+    e.touches[0].target.x2 = e.touches[0].pageX;
+  }
+
+  d.ontouchend = function(e) {
+    var t = e.target;
+    if (t.x2 > 0) {
+      t.x1 - t.x2 > 30 && dispatch('swipeLeft', t);
+      t.x1 - t.x2 < -30 && dispatch('swipeRight', t);
+      t.x1 = t.x2 = t.last = 0;
+    } else if (t.last != 0) {
+      dispatch('tap', t);
+    }
+  }
+
   function ajax(method, url, success){
     var r = new XMLHttpRequest();
     r.onreadystatechange = function(){
