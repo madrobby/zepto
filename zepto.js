@@ -1,5 +1,5 @@
 var $ = (function(d) {
-  var slice = [].slice, 
+  var slice = [].slice, k,
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
   
   function $(_){
