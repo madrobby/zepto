@@ -1,14 +1,14 @@
 var $ = (function(d) {
   var slice = [].slice, k,
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
-  
+
   function $(_){
-    function fn(_){ return arguments.callee.dom.forEach(_), arguments.callee; }
+    function fn(_){ return fn.dom.forEach(_), fn }
     fn.dom = _ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
-  
+
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
 
   $.fn = {
@@ -58,8 +58,10 @@ var $ = (function(d) {
   };
   
   for(k in ADJ_OPS)
-    $.fn[k] = (function(op){ 
-      return function(html){ return this(function(el){ el.insertAdjacentHTML(op,html) }) };
+    $.fn[k] = (function(op){
+      return function(html){ return this(function(el){
+        el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op,html)
+      })};
     })(ADJ_OPS[k]);
   
   function ajax(method, url, success){
