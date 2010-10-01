@@ -103,7 +103,7 @@ var $ = (function(d) {
   });
 
   function dispatch(event, target) {
-    var e = document.createEvent('Events');
+    var e = d.createEvent('Events');
     e.initEvent(event, true, false);
     target.dispatchEvent(e);
   }
