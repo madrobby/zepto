@@ -34,6 +34,10 @@ var $ = (function(d) {
           else el.setAttribute(name,value);
         });
     },
+    offset: function(){
+      var obj = this.dom[0].getBoundingClientRect();
+      return { left: obj.left+document.body.scrollLeft, top: obj.top+document.body.scrollTop, width: obj.width, height: obj.height };
+    },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });
     },

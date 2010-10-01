@@ -42,6 +42,8 @@
     <span>5<span>6</span></span>
   </p>
   
+  <div style="position:absolute" id="offset">test</div>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -76,6 +78,10 @@
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
+      },
+      
+      testOffset: function(t){
+        // TODO
       },
       
       testFind: function(t){
