@@ -37,7 +37,7 @@ var $ = (function(d) {
       return this(function(el){ el.style.cssText += ';'+style });
     },
     index: function(target){
-      return [].indexOf.call(this.dom, $(target).get(0));
+      return this.dom.indexOf($(target).get(0));
     },
     anim: function(transform, opacity, dur){
       return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
