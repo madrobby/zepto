@@ -4,12 +4,13 @@ var $ = (function(d) {
 
   function $(_){
     function fn(_){ return fn.dom.forEach(_), fn }
-    fn.dom = _ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _));
+    fn.dom = _ instanceof Array ? _ : (_ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _)));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
 
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
+  function elSelect(el, selector){ return slice.call(el.querySelectorAll(selector)) }
 
   $.fn = {
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
@@ -18,6 +19,9 @@ var $ = (function(d) {
     },
     each: function(callback){
       return this(function(e){ callback(e) });
+    },
+    find: function(selector){
+      return $(this.dom.map(function(el){ return elSelect(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
     html: function(html){
       return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
@@ -47,7 +51,7 @@ var $ = (function(d) {
     delegate: function(selector, event, callback){
       return this(function(el){
         el.addEventListener(event, function(event){
-          var target = event.target, nodes = slice.call(el.querySelectorAll(selector));
+          var target = event.target, nodes = elSelect(el, selector);
           while(target && nodes.indexOf(target)<0) target = target.parentNode;
           if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);

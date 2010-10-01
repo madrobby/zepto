@@ -28,6 +28,20 @@
   
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
   
+  <p id="find1">
+    <span class="findme">1</span>
+    <span class="findme">2</span>
+    <b>3<span class="findme">4</span></b>
+    <span class="findme">5<span>6</span></span>
+  </p>
+  
+  <p id="find2">
+    <span>1</span>
+    <span>2</span>
+    <span>3<span>4</span></span>
+    <span>5<span>6</span></span>
+  </p>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -47,11 +61,23 @@
         t.assert($('#some_element').get().length == 1);
         t.assert($('#some_element').get(0) == document.getElementById('some_element'));
         
-        t.assert($('span').get().length == 3);
+        t.assert($('p').get().length == 4);
         t.assert($('p>span.yay').get().length == 1);
         
         var el = document.getElementById('some_element');
         t.assertEqual($(el).get(0), el);
+      },
+      
+      testFind: function(t){
+        var found = $('p#find1').find('span.findme');
+        t.assertEqual(4, found.get().length);
+        t.assertEqual('1', found.get(0).innerHTML);
+        t.assertEqual('2', found.get(1).innerHTML);
+        t.assertEqual('4', found.get(2).innerHTML);
+        t.assertEqual('5<span>6</span>', found.get(3).innerHTML);
+        
+        var found = $('p#find1, #find2').find('span');
+        t.assertEqual(11, found.get().length);
       },
       
       testCSS: function(t){
