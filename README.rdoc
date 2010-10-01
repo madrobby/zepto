@@ -49,7 +49,15 @@ Basic call:
 
 Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
 
+= Contributing!
+
 I'd love some help on this, so please feel free to mess around!
+
+If you don't know how a method should behave, please use jQuery as a reference. Zepto.js should closely emulate it.
+Note that emulation of all features of jQuery is not a project goal, rather we want the most useful parts while keeping
+to the ~2k minified goal.
+
+Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
 Have fun!
 
