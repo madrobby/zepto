@@ -51,6 +51,9 @@ Context and .find calls are equivalent:
   html('new html'): set the contents of the element(s)
   append, prepend, before, after: like html, but add html to element contents (or before and after)
   html(): get first elements .innerHTML
+  show(): forces elements to be displayed (only works correctly for block elements right now)
+  hide(): removes a elements from layout
+
   offset(): get object with top: left: width: height: properties (in px)
   height(): get first elements height in px
   width(): get first elements width in px

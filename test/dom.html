@@ -52,6 +52,18 @@
     </li>
   <ul>
   
+  <style>
+    .hidden { display: none; }
+  </style>
+  
+  <div id="show_hide_div1" style="display:none"></div>
+  <div id="show_hide_div2" class="hidden"></div>
+  <div id="show_hide_div3"></div>
+  
+  <div id="show_hide_span1" style="display:none"></div>
+  <div id="show_hide_span2" class="hidden"></div>
+  <div id="show_hide_span3"></div>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -86,6 +98,49 @@
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
+      },
+      
+      // for now, we brute-force "display:block" for show/hide
+      // need to change that to work better with inline elements in the future
+      
+      testShow: function(t){
+        $('#show_hide_div1').show();
+        t.assertEqual('block', $('#show_hide_div1').get(0).style.display);
+        
+        $('#show_hide_div2').show();
+        t.assertEqual('block', $('#show_hide_div2').get(0).style.display);
+        
+        $('#show_hide_div3').show();
+        t.assertEqual('block', $('#show_hide_div3').get(0).style.display);
+        
+        $('#show_hide_span1').show();
+        t.assertEqual('block', $('#show_hide_span1').get(0).style.display);
+        
+        $('#show_hide_span2').show();
+        t.assertEqual('block', $('#show_hide_span2').get(0).style.display);
+        
+        $('#show_hide_span3').show();
+        t.assertEqual('block', $('#show_hide_span3').get(0).style.display);
+      },
+      
+      testHide: function(t){
+        $('#show_hide_div1').hide();
+        t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
+        
+        $('#show_hide_div2').hide();
+        t.assertEqual('none', $('#show_hide_div2').get(0).style.display);
+        
+        $('#show_hide_div3').hide();
+        t.assertEqual('none', $('#show_hide_div3').get(0).style.display);
+        
+        $('#show_hide_span1').hide();
+        t.assertEqual('none', $('#show_hide_span1').get(0).style.display);
+        
+        $('#show_hide_span2').hide();
+        t.assertEqual('none', $('#show_hide_span2').get(0).style.display);
+        
+        $('#show_hide_span3').hide();
+        t.assertEqual('none', $('#show_hide_span3').get(0).style.display);
       },
       
       testOffset: function(t){
