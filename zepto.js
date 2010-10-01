@@ -2,9 +2,10 @@ var $ = (function(d) {
   var slice = [].slice, k,
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
 
-  function $(_){
+  function $(_, context){
+    if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
-    fn.dom = _ instanceof Array ? _ : (_ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _)));
+    fn.dom = (typeof _ == 'function' && 'dom' in _) ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _))));
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }

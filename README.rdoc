@@ -17,9 +17,24 @@ Secondary platforms are:
 
 = Syntax & features:
 
-Basic call:
+Basic call with CSS selector:
    
-  $('some css selector').html('set contents').css('set styles');
+  $('p>span').html('yoho').css('color:red');
+  
+Instead of a selector, a DOM Element, or a list of nodes can be passed in.
+
+The $ function takes an optional context argument, which can be a DOM Element or a Zepto object:
+
+  $('span', $('p'))  // -> find all <span> elements in <p> elements
+  
+  $('p').bind('click', function(){
+    $('span', this).css('color:red'); // affects "span" children/grandchildren
+  });
+  
+Context and .find calls are equivalent:
+
+  $('span', $('p'))    // same
+  $('p').find('span')  // same
 
 = Element functions:
 

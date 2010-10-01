@@ -68,6 +68,16 @@
         t.assertEqual($(el).get(0), el);
       },
       
+      testDollarWithContext: function(t){
+        // Zepto object
+        var zepto = $('p#find1, #find2');
+        t.assertEqual(11, $('span', zepto).get().length);
+        
+        // DOM Element
+        var el = document.getElementById('find1');
+        t.assertEqual(4, $('span.findme', el).get().length);
+      },
+      
       testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertEqual(4, found.get().length);
