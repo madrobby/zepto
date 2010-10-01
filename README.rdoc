@@ -45,6 +45,8 @@ Context and .find calls are equivalent:
   
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): traverses the DOM upwards to find the first matching element
+  next(): next siblings
+  prev(): previous siblings
   
   remove(): remove element
   

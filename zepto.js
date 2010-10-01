@@ -1,19 +1,23 @@
 var $ = (function(d) {
   var slice = [].slice, k,
-    CN = "className", AEL = "addEventListener", PN = "parentNode",
+    CN = "className", AEL = "addEventListener", PN = "parentNode", QSA = "querySelectorAll",
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
 
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
-    fn.dom = (typeof _ == 'function' && 'dom' in _) ? 
-      _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : slice.call(d.querySelectorAll(fn.selector = _))));
+    fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
+      _.dom : (_ instanceof Array ? _ : 
+        (_ instanceof Element ? [_] : 
+          slice.call(d[QSA](fn.selector = _))))).filter(function(el){
+            return el !== void 0 && el !== null;
+          });
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
 
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function elSelect(el, selector){ return slice.call(el.querySelectorAll(selector)) }
+  function elSelect(el, selector){ return slice.call(el[QSA](selector)) }
 
   $.fn = {
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
@@ -33,6 +37,8 @@ var $ = (function(d) {
     },
     show: function(){ return this.css('display:block') },
     hide: function(){ return this.css('display:none') },
+    prev: function(){ return $(this.dom.map(function(el){ return el.previousElementSibling })) },
+    next: function(){ return $(this.dom.map(function(el){ return el.nextElementSibling })) },
     html: function(html){
       return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
     },

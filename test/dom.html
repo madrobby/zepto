@@ -90,6 +90,20 @@
         t.assertEqual($(el).get(0), el);
       },
       
+      testDollarWithArrays: function(t){
+        var z1 = $([document.getElementById('some_element')]);
+        t.assert(1, z1.get().length);
+        t.assert(z1.get(0) == document.getElementById('some_element'))
+        
+        var z2 = $([document.getElementById('some_element'), null, undefined]);
+        t.assert(1, z2.get().length);
+        t.assert(z2.get(0) == document.getElementById('some_element'))
+        
+        var z3 = $([null, document.getElementById('some_element'), null]);
+        t.assert(1, z3.get().length);
+        t.assert(z3.get(0) == document.getElementById('some_element'))
+      },
+      
       testDollarWithContext: function(t){
         // Zepto object
         var zepto = $('p#find1, #find2');
@@ -98,6 +112,16 @@
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
+      },
+      
+      testNext: function(t){
+        t.assertEqual('P', $('#some_element').next().get(0).tagName);
+        t.assertEqual('DIV', $('p').next().get(0).tagName);
+      },
+      
+      testPrev: function(t){
+        t.assertEqual('H1', $('p').prev().get(0).tagName);
+        t.assertEqual('DIV', $('ul').prev().get(0).tagName);
       },
       
       // for now, we brute-force "display:block" for show/hide
