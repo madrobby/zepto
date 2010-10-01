@@ -20,12 +20,11 @@ var $ = (function(d) {
       return this(function(e){ callback(e) });
     },
     html: function(html){
-        if(html === undefined) return this.dom[0].innerHTML || undefined;
-        return this(function(el){ el.innerHTML = html });
+      return (html === undefined) ? this.dom[0].innerHTML : this(function(el){ el.innerHTML = html });
     },
     attr: function(name,value){
-      if(value === undefined) return this.dom[0].getAttribute(name) || undefined;
-      return this(function(el){ el.setAttribute(name,value) });
+      return (value === undefined) ? this.dom[0].getAttribute(name) || undefined :
+        this(function(el){ el.setAttribute(name,value) });
     },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });

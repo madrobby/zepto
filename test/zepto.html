@@ -22,6 +22,10 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   
+  <div class="htmltest" id="htmltest1"></div>
+  <div class="htmltest" id="htmltest2"></div>
+  <div id="htmltest3"></div>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -49,6 +53,18 @@
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
+      },
+      
+      testHtml: function(t){
+        var div = $('div.htmltest');
+        div.html('yowza');
+        
+        t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML);
+        t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML);
+        
+        t.assertEqual('yowza', $('div.htmltest').html());
+        
+        t.assertEqual("", $('#htmltest3').html());
       },
       
       testDelegate: function(t){
