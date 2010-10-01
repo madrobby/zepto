@@ -40,17 +40,24 @@ Context and .find calls are equivalent:
 
   get(): return array of all elements found
   get(0): return first element found
-  remove(): remove element
   each(callback): iterate over array of all elements found
+  index('selector'): return an integer indicating the position of 'selector' in array of all elements found
+  
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): traverses the DOM upwards to find the first matching element
+  
+  remove(): remove element
+  
   html('new html'): set the contents of the element(s)
+  append, prepend, before, after: like html, but add html to element contents (or before and after)
   html(): get first elements .innerHTML
+  offset(): get object with top: left: width: height: properties (in px)
+  height(): get first elements height in px
+  width(): get first elements width in px
+  
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
   css('css properties'): set styles of the element(s)
-  index('selector'): return an integer indicating the position of 'selector' in array of all elements found
-  append, prepend, before, after: like html, but add html to element contents (or before and after)
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
   

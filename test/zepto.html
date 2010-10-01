@@ -42,7 +42,7 @@
     <span>5<span>6</span></span>
   </p>
   
-  <div style="position:absolute" id="offset">test</div>
+  <div style="position:absolute;width:100px;height:50px" id="offset">test</div>
   
   <ul>
     <li id="li1">
@@ -90,6 +90,14 @@
       
       testOffset: function(t){
         // TODO
+      },
+      
+      testWidth: function(t){
+        t.assertEqual(100, $('#offset').width());
+      },
+      
+      testHeight: function(t){
+        t.assertEqual(50, $('#offset').height());
       },
       
       testClosest: function(t){
