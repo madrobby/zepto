@@ -20,7 +20,8 @@ var $ = (function(d) {
       return this(function(e){ callback(e) });
     },
     html: function(html){
-      return this(function(el){ el.innerHTML = html });
+        if (html === undefined) return this.dom[0].innerHTML || undefined;
+        return this(function(el){ el.innerHTML = html });
     },
     attr: function(name,value){
       if(value === undefined) return this.dom[0].getAttribute(name) || undefined;
