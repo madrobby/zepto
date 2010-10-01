@@ -281,35 +281,36 @@
       },
       
       testAjaxGet: function(t){
-            t.pause();
-            $.get('http://example.com/', function(response){
-                t.resume(function(){
-                    this.assert(response);
-                });
-            });
-        },
+        t.pause();
+        $.get('http://example.com/', function(response){
+          t.resume(function(){
+            this.assert(response);
+          });
+        });
+      },
 
-        testAjaxPost: function(t){
-              t.pause();
-              $.post('http://example.com/', function(response){
-                  t.resume(function(){
-                      this.assert(response);
-                  });
-              });
-          },
+      testAjaxPost: function(t){
+        t.pause();
+        $.post('http://example.com/', function(response){
+          t.resume(function(){
+            this.assert(response);
+          });
+        });
+      },
 
-          testAjaxGetJSON: function(t){
-                t.pause();
-                $.getJSON('zepto.json', function(data){
-                    t.resume(function(){
-                        this.assertEqual(data.zepto, 'awesomeness');
-                    });
-                });
-            },
+      testAjaxGetJSON: function(t){
+        t.pause();
+        $.getJSON('zepto.json', function(data){
+          t.resume(function(){
+            this.assertEqual(data.zepto, 'awesomeness');
+          });
+        });
+      },
 
-          testAjaxRequestHeader: function(t){
-              // @see Net Panel/Resources
-          }
+      testAjaxRequestHeader: function(t){
+        // @see Net Panel/Resources
+        // TODO
+      }
 
     });
   </script>
