@@ -34,6 +34,12 @@
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
       el.dispatchEvent(event);
     }
+    
+    function mousedown(el){
+      var event = document.createEvent('MouseEvents');
+      event.initMouseEvent('mousedown', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+      el.dispatchEvent(event);
+    }
 
     Evidence.TestCase.extend('ZeptoTest', {
       
@@ -72,6 +78,19 @@
         t.assertEqual("", $('#htmltest3').html());
         
         t.assertNull($('doesnotexist').html());
+      },
+      
+      testBind: function(t){
+        var counter = 0;
+        $(document.body).bind('click', function(){ counter++ });
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+        
+        counter = 0;
+        $('#some_element').bind('click mousedown', function(){ counter++ });
+        click($('#some_element').get(0));
+        mousedown($('#some_element').get(0));
+        t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
       
       testDelegate: function(t){

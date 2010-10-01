@@ -37,9 +37,19 @@ Basic call:
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
   
-= Event handlers ("live" events):
+= Event handlers
 
-  $('some selector').live('touchstart', function(event){ alert("I'm touched!") });
+Adding an event listener:
+
+  $('some selector').bind('click', function(event){ ... });
+  
+Adding an event listener on multiple events:
+  
+  $('some selector').bind('touchstart touchmove touchend', function(event){ ... });
+  
+Adding one event listener that uses event delegation to be only active on a range of children/grandchildren (as given with the subselector):
+  
+  $('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") });
     
 = Ajax:
 
