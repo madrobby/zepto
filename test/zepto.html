@@ -44,6 +44,14 @@
   
   <div style="position:absolute" id="offset">test</div>
   
+  <ul>
+    <li id="li1">
+      <ul>
+        <li id="li2">
+      </ul>
+    </li>
+  <ul>
+  
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -82,6 +90,11 @@
       
       testOffset: function(t){
         // TODO
+      },
+      
+      testClosest: function(t){
+        t.assert($('#li1').get(0) === $('#li2').closest('li').get(0));
+        t.assertEqual(0, $('#li2').closest('div').get().length);
       },
       
       testFind: function(t){

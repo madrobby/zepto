@@ -43,6 +43,7 @@ Context and .find calls are equivalent:
   remove(): remove element
   each(callback): iterate over array of all elements found
   find('selector'): find all children/grandchildren that match the given selector
+  closest('selector'): traverses the DOM upwards to find the first matching element
   html('new html'): set the contents of the element(s)
   html(): get first elements .innerHTML
   attr('attribute'): get element attribute
