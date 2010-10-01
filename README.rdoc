@@ -88,9 +88,8 @@ Tapping:
 Double-tapping:
   $('some selector').doubleTap(function(){ ... });
 
-Swiping:
-  $('some selector').swipeLeft(function(){ ... });
-  $('some selector').swipeRight(function(){ ... });
+Swiping (e.g. "delete" button when swiping over a list entry):
+  $('some selector').swipe(function(){ ... });
     
 = Ajax:
 
