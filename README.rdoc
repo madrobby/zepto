@@ -1,5 +1,6 @@
-zepto.js is a minimalist inlinable framework for mobile WebKit browsers,
-with a jQuery-like chaining syntax
+== Zepto.js: a minimalist framework for mobile WebKit browsers
+
+Zepto.js is a minimalist inlinable framework for mobile WebKit browsers, with a jQuery-like chaining syntax
 
 The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done. 
 
@@ -14,19 +15,20 @@ Secondary platforms are:
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
 
-Syntax & features:
+= Syntax & features:
 
 Basic call:
    
   $('some css selector').html('set contents').css('set styles');
 
-Supported element functions:
+= Element functions:
 
   get(): return array of all elements found
   get(0): return first element found
   remove(): remove element
   each(callback): iterate over array of all elements found
   html('new html'): set the contents of the element(s)
+  html(): get first elements .innerHTML
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
   css('css properties'): set styles of the element(s)
@@ -35,11 +37,11 @@ Supported element functions:
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
   
-Event handlers ("live" events):
+= Event handlers ("live" events):
 
   $('some selector').live('touchstart', function(event){ alert("I'm touched!") });
     
-Ajax:
+= Ajax:
 
   $.get(url, callback)
   $.post(url, callback)
@@ -50,3 +52,7 @@ Best used if you stick in the contents of zepto.min.js into a <script> tag in yo
 I'd love some help on this, so please feel free to mess around!
 
 Have fun!
+
+= License
+
+Zepto.js is is licensed under the terms of the MIT License, see the included MIT-LICENSE file.
