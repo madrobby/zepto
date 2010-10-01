@@ -1,5 +1,6 @@
 var $ = (function(d) {
   var slice = [].slice, k,
+    CN = "className", AEL = "addEventListener", PN = "parentNode",
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
 
   function $(_, context){
@@ -17,7 +18,7 @@ var $ = (function(d) {
   $.fn = {
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
     remove: function(){
-      return this(function(el){ el.parentNode.removeChild(el) });
+      return this(function(el){ el[PN].removeChild(el) });
     },
     each: function(callback){
       return this(function(e){ callback(e) });
@@ -26,8 +27,8 @@ var $ = (function(d) {
       return $(this.dom.map(function(el){ return elSelect(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
     closest: function(selector){
-      var el = this.dom[0].parentNode, nodes = elSelect(d, selector);
-      while(el && nodes.indexOf(el)<0) el = el.parentNode;
+      var el = this.dom[0][PN], nodes = elSelect(d, selector);
+      while(el && nodes.indexOf(el)<0) el = el[PN];
       return $(el && !(el===d) ? el : []);
     },
     html: function(html){
@@ -42,7 +43,7 @@ var $ = (function(d) {
     },
     offset: function(){
       var obj = this.dom[0].getBoundingClientRect();
-      return { left: obj.left+document.body.scrollLeft, top: obj.top+document.body.scrollTop, width: obj.width, height: obj.height };
+      return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
     },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });
@@ -56,26 +57,26 @@ var $ = (function(d) {
     },
     bind: function(event, callback){
       return this(function(el){
-        event.split(/\s/).forEach(function(event){ el.addEventListener(event, callback, false); });
+        event.split(/\s/).forEach(function(event){ el[AEL](event, callback, false); });
       });
     },
     delegate: function(selector, event, callback){
       return this(function(el){
-        el.addEventListener(event, function(event){
+        el[AEL](event, function(event){
           var target = event.target, nodes = elSelect(el, selector);
-          while(target && nodes.indexOf(target)<0) target = target.parentNode;
+          while(target && nodes.indexOf(target)<0) target = target[PN];
           if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);
       });
     },
     addClass: function(name){
       return this(function(el){
-        !classRE(name).test(el.className) && (el.className += (el.className ? ' ' : '') + name);
+        !classRE(name).test(el[CN]) && (el[CN] += (el[CN] ? ' ' : '') + name);
       });
     },
     removeClass: function(name){
       return this(function(el){
-        el.className = el.className.replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
+        el[CN] = el[CN].replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
       });
     }
   };
