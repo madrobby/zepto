@@ -97,6 +97,7 @@ var $ = (function(d) {
         success(r.responseText);
     };
     r.open(method,url,true);
+    r.setRequestHeader('X-Requested-With','XMLHttpRequest');
     r.send(null);
   }
 

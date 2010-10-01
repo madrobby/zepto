@@ -278,7 +278,38 @@
         t.assertEqual($("p > span").index(".yay"), 0);
         t.assertEqual($("span").index("span"), 0);
         t.assertEqual($("span").index("boo"), -1);
-      }
+      },
+      
+      testAjaxGet: function(t){
+            t.pause();
+            $.get('http://example.com/', function(response){
+                t.resume(function(){
+                    this.assert(response);
+                });
+            });
+        },
+
+        testAjaxPost: function(t){
+              t.pause();
+              $.post('http://example.com/', function(response){
+                  t.resume(function(){
+                      this.assert(response);
+                  });
+              });
+          },
+
+          testAjaxGetJSON: function(t){
+                t.pause();
+                $.getJSON('zepto.json', function(data){
+                    t.resume(function(){
+                        this.assertEqual(data.zepto, 'awesomeness');
+                    });
+                });
+            },
+
+          testAjaxRequestHeader: function(t){
+              // @see Net Panel/Resources
+          }
 
     });
   </script>
