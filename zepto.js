@@ -20,11 +20,14 @@ var $ = (function(d) {
       return this(function(e){ callback(e) });
     },
     html: function(html){
-      return (html === void 0) ? this.dom[0].innerHTML : this(function(el){ el.innerHTML = html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
     },
     attr: function(name,value){
-      return (value === void 0) ? this.dom[0].getAttribute(name) || undefined :
-        this(function(el){ el.setAttribute(name,value) });
+      return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
+        this(function(el){ 
+          if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
+          else el.setAttribute(name,value);
+        });
     },
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });

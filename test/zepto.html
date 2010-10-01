@@ -70,6 +70,8 @@
         t.assertEqual('', document.getElementById('htmltest2').innerHTML);
         
         t.assertEqual("", $('#htmltest3').html());
+        
+        t.assertNull($('doesnotexist').html());
       },
       
       testDelegate: function(t){
@@ -111,6 +113,13 @@
         
         els.attr("data-id", 0);
         t.assertEqual("0", els.attr("data-id"));
+        
+        t.assertNull($('doesnotexist').attr('yo'));
+        
+        els.attr({ 'data-id': 'id', 'data-name': 'name' });
+        t.assertEqual('id', els.attr("data-id"));
+        t.assertEqual('name', els.attr("data-name"));
+        t.assertEqual('id', $('#attr_2').attr('data-id'));
       },
       
       testChaining: function(t){
