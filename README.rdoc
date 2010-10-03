@@ -132,6 +132,8 @@ to the ~2k minified goal.
 
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
+Join #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs.
+
 Have fun!
 
 = License
