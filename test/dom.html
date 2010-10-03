@@ -113,6 +113,13 @@
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
       },
+
+      testDollarUtilityFunctions: function(t){
+        t.assertTrue($.isFunction(function(){}));
+        t.assertFalse($.isFunction([]));
+        t.assertFalse($.isFunction({}));
+        t.assertFalse($.isFunction(" "));
+      },
       
       testNext: function(t){
         t.assertEqual('P', $('#some_element').next().get(0).tagName);

@@ -18,6 +18,10 @@ var $ = (function(d) {
 
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   function elSelect(el, selector){ return slice.call(el[QSA](selector)) }
+  
+  $.isFunction = function (f) {
+    return toString.call(f) === "[object Function]";
+  }
 
   $.fn = {
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
