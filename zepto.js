@@ -1,8 +1,9 @@
-var $ = (function(d) {
-  var slice = [].slice, k,
+var Zepto = (function() {
+  var slice = [].slice, d = document,
     CN = "className", AEL = "addEventListener", PN = "parentNode", QSA = "querySelectorAll",
     ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    touch = {}, touchTimeout, e;
+    touch = {}, touchTimeout,
+    e, k;
 
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
@@ -123,8 +124,7 @@ var $ = (function(d) {
       dispatch('doubleTap', touch.target);
       touch = {};
     } else if (touch.x2 > 0) {
-      touch.x1 - touch.x2 > 30 && dispatch('swipe', touch.target);
-      touch.x1 - touch.x2 < -30 && dispatch('swipe', touch.target);
+      Math.abs(touch.x1-touch.x2)>30 && dispatch('swipe', touch.target);
       touch.x1 = touch.x2 = touch.last = 0;
     } else if ('last' in touch) {
       touchTimeout = setTimeout(function(){
@@ -153,4 +153,6 @@ var $ = (function(d) {
   };
 
   return $;
-})(document);
+})();
+
+if(!('$' in window)) window.$ = Zepto;
