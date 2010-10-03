@@ -44,7 +44,7 @@ var $ = (function(d) {
     prev: function(){ return $(this.dom.map(function(el){ return el.previousElementSibling })) },
     next: function(){ return $(this.dom.map(function(el){ return el.nextElementSibling })) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = $.isFunction(html) ? html.call(el,el.innerHTML) : html });
     },
     attr: function(name,value){
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :

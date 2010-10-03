@@ -221,6 +221,12 @@
         
         t.assertEqual('yowza', $('div.htmltest').html());
         
+        div.html(function(){return "jumba"});
+        t.assertEqual('jumba', document.getElementById('htmltest1').innerHTML);
+
+        div.html(function(old){return old + "laia"});
+        t.assertEqual('jumbalaia', document.getElementById('htmltest1').innerHTML);
+        
         div.html('');
         t.assertEqual('', document.getElementById('htmltest2').innerHTML);
         
