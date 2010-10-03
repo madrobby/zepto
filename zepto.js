@@ -11,7 +11,7 @@ var Zepto = (function() {
     fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
         (_ instanceof Element ? [_] : 
-          slice.call(d[QSA](fn.selector = _))))).filter(function(el){
+          elSelect(d, fn.selector = _)))).filter(function(el){
             return el !== void 0 && el !== null;
           });
     for(k in $.fn) fn[k] = $.fn[k];
