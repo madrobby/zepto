@@ -1,7 +1,7 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
-    T="target", IH="innerHTML", SA="setAttribute",
+    T="target", IH="innerHTML", SA="setAttribute",isF="isFunction",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
     touch={}, touchTimeout,
     e, k;
@@ -10,6 +10,10 @@ var Zepto = (function() {
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   function dispatch(event, target) {
     target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
+  }
+  
+  $[isF] = function (f) {
+    return toString.call(f) === "[object Function]";
   }
 
   function $(_, context){
@@ -45,13 +49,13 @@ var Zepto = (function() {
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el){ el[IH] = html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el){ el[IH] = $[isF](html) ? html.call(el,el[IH]) : html });
     },
     attr: function(name,value){
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this(function(el){
           if (typeof name == 'object') for(k in name) el[SA](k, name[k])
-          else el[SA](name,value);
+          else el[SA](name,$[isF](value) ? value.call(el,el.getAttribute(name)) : value);
         });
     },
     offset: function(){
