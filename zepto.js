@@ -153,4 +153,4 @@ var Zepto = (function() {
   return $;
 })();
 
-if(!('$' in window)) window.$ = Zepto;
+'$' in window||(window.$=Zepto);
