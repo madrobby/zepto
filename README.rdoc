@@ -99,6 +99,22 @@ Swiping (e.g. "delete" button when swiping over a list entry):
 
 Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
 
+= Building
+
+zepto.js can be used as-is. However, for best efficiency, run the included build step that uses the Google Closure Compiler to minify zepto.js and will give you an estimate on the compression that is achievable when zepto.js is served Gzipped.
+
+For this to work, you need Ruby and Rake installed.
+
+  $ rake
+  
+You'll see an output like:
+
+  Original version: 5.7k
+  Minified: 3.7k
+  Minified and gzipped: 1.6k, compression factor 3.6
+  
+The minified file is saved in dist/zepto.min.js.
+
 = Contributing!
 
 I'd love some help on this, so please feel free to mess around!
