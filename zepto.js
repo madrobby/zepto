@@ -35,10 +35,11 @@ var Zepto = (function() {
       while(el && nodes.indexOf(el)<0) el = el[PN];
       return $(el && !(el===d) ? el : []);
     },
+    pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
     show: function(){ return this.css('display:block') },
     hide: function(){ return this.css('display:none') },
-    prev: function(){ return $(this.dom.map(function(el){ return el.previousElementSibling })) },
-    next: function(){ return $(this.dom.map(function(el){ return el.nextElementSibling })) },
+    prev: function(){ return $(this.pluck('previousElementSibling')) },
+    next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
       return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
     },
