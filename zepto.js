@@ -50,7 +50,7 @@ var $ = (function(d) {
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this(function(el){
           if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
-          else el.setAttribute(name,value);
+          else el.setAttribute(name,$.isFunction(value) ? value.call(el,el.getAttribute(name)) : value);
         });
     },
     offset: function(){

@@ -294,6 +294,12 @@
         t.assertEqual('id', els.attr("data-id"));
         t.assertEqual('name', els.attr("data-name"));
         t.assertEqual('id', $('#attr_2').attr('data-id'));
+        
+        els.attr("data-id",function(){return "returnedValue"});
+        t.assertEqual('returnedValue', els.attr("data-id"));
+        
+        els.attr("data-id",function(old){return old + "Squared"});
+        t.assertEqual('returnedValueSquared', els.attr("data-id"));
       },
       
       testChaining: function(t){
