@@ -5,6 +5,12 @@ var Zepto = (function() {
     touch = {}, touchTimeout,
     e, k;
 
+  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
+  function elSelect(el, selector){ return slice.call(el[QSA](selector)) }
+  function dispatch(event, target) {
+    target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
+  }
+
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
@@ -17,9 +23,6 @@ var Zepto = (function() {
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
-
-  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function elSelect(el, selector){ return slice.call(el[QSA](selector)) }
 
   $.fn = {
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
@@ -102,10 +105,6 @@ var Zepto = (function() {
   ['swipe', 'doubleTap', 'tap'].forEach(function(m){
     $.fn[m] = function(callback){ return this.bind(m, callback) }
   });
-
-  function dispatch(event, target) {
-    target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
-  }
 
   d.ontouchstart = function(e) {
     var now = Date.now(), delta = now-(touch.last || now);
