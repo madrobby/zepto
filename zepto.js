@@ -1,12 +1,12 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
-    CN="className", AEL="addEventListener", PN="parentNode", QSA="querySelectorAll", IO="indexOf",
+    CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
     T="target", IH="innerHTML", SA="setAttribute",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
     touch={}, touchTimeout,
     e, k;
 
-  function $$(el, selector){ return slice.call(el[QSA](selector)) }
+  function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   function dispatch(event, target) {
     target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
