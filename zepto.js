@@ -1,7 +1,16 @@
-var $ = (function(d) {
-  var slice = [].slice, k,
-    CN = "className", AEL = "addEventListener", PN = "parentNode", QSA = "querySelectorAll",
-    ADJ_OPS = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
+var Zepto = (function() {
+  var slice=[].slice, d=document,
+    CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
+    T="target", IH="innerHTML", SA="setAttribute",
+    ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
+    touch={}, touchTimeout,
+    e, k;
+
+  function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
+  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
+  function dispatch(event, target) {
+    target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
+  }
 
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
@@ -9,18 +18,11 @@ var $ = (function(d) {
     fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
         (_ instanceof Element ? [_] : 
-          slice.call(d[QSA](fn.selector = _))))).filter(function(el){
+          $$(d, fn.selector = _)))).filter(function(el){
             return el !== void 0 && el !== null;
           });
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
-  }
-
-  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function elSelect(el, selector){ return slice.call(el[QSA](selector)) }
-  
-  $.isFunction = function (f) {
-    return toString.call(f) === "[object Function]";
   }
 
   $.fn = {
@@ -28,29 +30,28 @@ var $ = (function(d) {
     remove: function(){
       return this(function(el){ el[PN].removeChild(el) });
     },
-    each: function(callback){
-      return this(function(e){ callback(e) });
-    },
+    each: function(callback){ return this(callback) },
     find: function(selector){
-      return $(this.dom.map(function(el){ return elSelect(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
+      return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
     closest: function(selector){
-      var el = this.dom[0][PN], nodes = elSelect(d, selector);
-      while(el && nodes.indexOf(el)<0) el = el[PN];
+      var el = this.dom[0][PN], nodes = $$(d, selector);
+      while(el && nodes[IO](el)<0) el = el[PN];
       return $(el && !(el===d) ? el : []);
     },
+    pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
     show: function(){ return this.css('display:block') },
     hide: function(){ return this.css('display:none') },
-    prev: function(){ return $(this.dom.map(function(el){ return el.previousElementSibling })) },
-    next: function(){ return $(this.dom.map(function(el){ return el.nextElementSibling })) },
+    prev: function(){ return $(this.pluck('previousElementSibling')) },
+    next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = $.isFunction(html) ? html.call(el,el.innerHTML) : html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el){ el[IH] = html });
     },
     attr: function(name,value){
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this(function(el){
-          if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
-          else el.setAttribute(name,$.isFunction(value) ? value.call(el,el.getAttribute(name)) : value);
+          if (typeof name == 'object') for(k in name) el[SA](k, name[k])
+          else el[SA](name,value);
         });
     },
     offset: function(){
@@ -60,8 +61,8 @@ var $ = (function(d) {
     css: function(style){
       return this(function(el){ el.style.cssText += ';'+style });
     },
-    index: function(target){
-      return this.dom.indexOf($(target).get(0));
+    index: function(el){
+      return this.dom[IO]($(el).get(0));
     },
     anim: function(transform, opacity, dur){
       return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
@@ -75,8 +76,8 @@ var $ = (function(d) {
     delegate: function(selector, event, callback){
       return this(function(el){
         el[AEL](event, function(event){
-          var target = event.target, nodes = elSelect(el, selector);
-          while(target && nodes.indexOf(target)<0) target = target[PN];
+          var target = event[T], nodes = $$(el, selector);
+          while(target && nodes[IO](target)<0) target = target[PN];
           if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);
       });
@@ -106,33 +107,30 @@ var $ = (function(d) {
     $.fn[m] = function(callback){ return this.bind(m, callback) }
   });
 
-  function dispatch(event, target) {
-    var e = d.createEvent('Events');
-    e.initEvent(event, true, false);
-    target.dispatchEvent(e);
-  }
-
   d.ontouchstart = function(e) {
-    var now = Date.now(), t = e.touches[0].target, delta = now - (t.last || now);
-    t.x1 = e.touches[0].pageX;
-    if (delta > 0 && delta <= 800) {
-      dispatch('doubleTap', t);
-      t.last = 0;
-    } else t.last = now;
+    var now = Date.now(), delta = now-(touch.last || now);
+    touch[T] = e.touches[0][T];
+    touchTimeout && clearTimeout(touchTimeout);
+    touch.x1 = e.touches[0].pageX;
+    if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
+    touch.last = now;
   }
 
-  d.ontouchmove = function(e) {
-    e.touches[0].target.x2 = e.touches[0].pageX;
-  }
+  d.ontouchmove = function(e) { touch.x2 = e.touches[0].pageX }
 
   d.ontouchend = function(e) {
-    var t = e.target;
-    if (t.x2 > 0) {
-      t.x1 - t.x2 > 30 && dispatch('swipe', t);
-      t.x1 - t.x2 < -30 && dispatch('swipe', t);
-      t.x1 = t.x2 = t.last = 0;
-    } else if (t.last != 0) {
-      dispatch('tap', t);
+    if (touch.isDoubleTap) {
+      dispatch('doubleTap', touch[T]);
+      touch = {};
+    } else if (touch.x2 > 0) {
+      Math.abs(touch.x1-touch.x2)>30 && dispatch('swipe', touch[T]);
+      touch.x1 = touch.x2 = touch.last = 0;
+    } else if ('last' in touch) {
+      touchTimeout = setTimeout(function(){
+        touchTimeout = null;
+        dispatch('tap', touch[T]);
+        touch = {};
+      }, 250);
     }
   }
 
@@ -154,4 +152,6 @@ var $ = (function(d) {
   };
 
   return $;
-})(document);
+})();
+
+'$' in window||(window.$=Zepto);

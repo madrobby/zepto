@@ -63,6 +63,13 @@ Context and .find calls are equivalent:
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
   css('css properties'): set styles of the element(s)
+  
+== Non-jQuery functions
+
+  pluck(property):
+    return property for each element
+    e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
+  
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
   
@@ -99,6 +106,22 @@ Swiping (e.g. "delete" button when swiping over a list entry):
 
 Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
 
+= Building
+
+zepto.js can be used as-is. However, for best efficiency, run the included build step that uses the Google Closure Compiler to minify zepto.js and will give you an estimate on the compression that is achievable when zepto.js is served Gzipped.
+
+For this to work, you need Ruby and Rake installed.
+
+  $ rake
+  
+You'll see an output like:
+
+  Original version: 5.7k
+  Minified: 3.7k
+  Minified and gzipped: 1.6k, compression factor 3.6
+  
+The minified file is saved in dist/zepto.min.js.
+
 = Contributing!
 
 I'd love some help on this, so please feel free to mess around!
@@ -108,6 +131,8 @@ Note that emulation of all features of jQuery is not a project goal, rather we w
 to the ~2k minified goal.
 
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
+
+Join #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs.
 
 Have fun!
 
