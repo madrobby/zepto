@@ -26,9 +26,7 @@ var Zepto = (function() {
     remove: function(){
       return this(function(el){ el[PN].removeChild(el) });
     },
-    each: function(callback){
-      return this(function(e){ callback(e) });
-    },
+    each: function(callback){ return this(callback) },
     find: function(selector){
       return $(this.dom.map(function(el){ return elSelect(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
