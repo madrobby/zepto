@@ -61,9 +61,14 @@ var Zepto = (function() {
     index: function(el){
       return this.dom[IO]($(el).get(0));
     },
-    anim: function(transform, opacity, dur){
-      return this.css('-webkit-transition:all '+(dur||0.5)+'s;'+
-        '-webkit-transform:'+transform+';opacity:'+(opacity===0?0:opacity||1));
+    anim: function(properties, dur, ease){
+      var transform = [], opacity, key, prop;
+      for (key in properties) {
+        prop = properties[key];
+        (key === 'opacity') ? (opacity = prop) : transform.push([key, '(', prop, ')'].join(''));
+      }
+      return this.css('-webkit-transition:all '+(dur||0.5)+'s '+(ease||'')+';'+
+        '-webkit-transform:'+transform.join(' ')+';opacity:'+(opacity===0?0:opacity||1));
     },
     bind: function(event, callback){
       return this(function(el){
