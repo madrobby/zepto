@@ -67,10 +67,6 @@ var Zepto = (function() {
     index: function(el){
       return this.dom[IO]($(el).get(0));
     },
-    anim: function(transform, opacity, dur){
-      return this.css({'-webkit-transition':'all '+(dur||0.5)+'s',
-        '-webkit-transform':transform,'opacity':(opacity===0?0:opacity||1)});
-    },
     bind: function(event, callback){
       return this(function(el){
         event.split(/\s/).forEach(function(event){ el[AEL](event, callback, false); });

@@ -6,6 +6,7 @@ ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
 
 ZEPTO_FILES    = [
   File.join(ZEPTO_SRC_DIR,'zepto.js'),
+  File.join(ZEPTO_SRC_DIR,'fx.js'),
   File.join(ZEPTO_SRC_DIR,'touch.js'),
   File.join(ZEPTO_SRC_DIR,'ajax.js')
 ]
