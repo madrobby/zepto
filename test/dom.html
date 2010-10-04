@@ -130,6 +130,14 @@
         t.assertEqual('H1PPPP', tagnames.join(''));
       },
       
+      testCompact: function(t){
+        var nodes = $('p');
+        nodes.dom = [$('p').get(0), null, undefined, $('p').get(0)];
+        nodes = nodes.compact();
+        t.assertEqual(2, nodes.get().length);
+        t.assertEqual('PP', nodes.pluck('tagName').join(''));
+      },
+      
       testPluck: function(t){
         t.assertEqual('H1PPPP', $('h1,p').pluck('tagName').join(''));
       },

@@ -18,14 +18,15 @@ var Zepto = (function() {
     fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
         (_ instanceof Element ? [_] : 
-          $$(d, fn.selector = _)))).filter(function(el){
-            return el !== void 0 && el !== null;
+          $$(d, fn.selector = _)))).filter(function(el){ 
+            return el !== void 0 && el !== null 
           });
     for(k in $.fn) fn[k] = $.fn[k];
     return fn;
   }
 
   $.fn = {
+    compact: function(){ return $(this.dom) },
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
     remove: function(){
       return this(function(el){ el[PN].removeChild(el) });
