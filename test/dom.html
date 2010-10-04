@@ -234,8 +234,12 @@
         div.html(function(){return "jumba"});
         t.assertEqual('jumba', document.getElementById('htmltest1').innerHTML);
 
-        div.html(function(old){return old + "laia"});
+        div.html(function(i,old){return old + "laia"});
         t.assertEqual('jumbalaia', document.getElementById('htmltest1').innerHTML);
+        
+        div.html(function(i,old){return i + "-" +old});
+        t.assertEqual('0-jumbalaia', document.getElementById('htmltest1').innerHTML);
+        t.assertEqual('1-jumbalaia', document.getElementById('htmltest2').innerHTML);
         
         div.html('');
         t.assertEqual('', document.getElementById('htmltest2').innerHTML);
@@ -308,8 +312,12 @@
         els.attr("data-id",function(){return "returnedValue"});
         t.assertEqual('returnedValue', els.attr("data-id"));
         
-        els.attr("data-id",function(old){return old + "Squared"});
+        els.attr("data-id",function(i,old){return old + "Squared"});
         t.assertEqual('returnedValueSquared', els.attr("data-id"));
+        
+        els.attr("data-id",function(i,old){return i + "-" + old});
+        t.assertEqual('0-returnedValueSquared', $('#attr_1').attr('data-id'));
+        t.assertEqual('1-returnedValueSquared', $('#attr_2').attr('data-id'));
       },
       
       testChaining: function(t){

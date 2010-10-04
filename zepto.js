@@ -49,13 +49,13 @@ var Zepto = (function() {
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el){ el[IH] = $[isF](html) ? html.call(el,el[IH]) : html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el,i){ el[IH] = $[isF](html) ? html.call(el,i,el[IH]) : html });
     },
     attr: function(name,value){
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
-        this(function(el){
+        this(function(el,i){
           if (typeof name == 'object') for(k in name) el[SA](k, name[k])
-          else el[SA](name,$[isF](value) ? value.call(el,el.getAttribute(name)) : value);
+          else el[SA](name,$[isF](value) ? value.call(el,i,el.getAttribute(name)) : value);
         });
     },
     offset: function(){
