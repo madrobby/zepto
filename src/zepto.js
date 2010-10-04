@@ -1,16 +1,12 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
-    T="target", IH="innerHTML", SA="setAttribute",
+    IH="innerHTML", SA="setAttribute",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    touch={}, touchTimeout,
     e, k;
 
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function dispatch(event, target) {
-    target.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false));
-  }
 
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
@@ -77,7 +73,7 @@ var Zepto = (function() {
     delegate: function(selector, event, callback){
       return this(function(el){
         el[AEL](event, function(event){
-          var target = event[T], nodes = $$(el, selector);
+          var target = event.target, nodes = $$(el, selector);
           while(target && nodes[IO](target)<0) target = target[PN];
           if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);
@@ -92,6 +88,9 @@ var Zepto = (function() {
       return this(function(el){
         el[CN] = el[CN].replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
       });
+    },
+    trigger: function(event){
+      return this(function(el){ var e; el.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false)) });
     }
   };
   
@@ -103,54 +102,6 @@ var Zepto = (function() {
         el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op,html)
       })};
     })(ADJ_OPS[k]);
-
-  ['swipe', 'doubleTap', 'tap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.bind(m, callback) }
-  });
-
-  d.ontouchstart = function(e) {
-    var now = Date.now(), delta = now-(touch.last || now);
-    touch[T] = e.touches[0][T];
-    touchTimeout && clearTimeout(touchTimeout);
-    touch.x1 = e.touches[0].pageX;
-    if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
-    touch.last = now;
-  }
-
-  d.ontouchmove = function(e) { touch.x2 = e.touches[0].pageX }
-
-  d.ontouchend = function(e) {
-    if (touch.isDoubleTap) {
-      dispatch('doubleTap', touch[T]);
-      touch = {};
-    } else if (touch.x2 > 0) {
-      Math.abs(touch.x1-touch.x2)>30 && dispatch('swipe', touch[T]);
-      touch.x1 = touch.x2 = touch.last = 0;
-    } else if ('last' in touch) {
-      touchTimeout = setTimeout(function(){
-        touchTimeout = null;
-        dispatch('tap', touch[T]);
-        touch = {};
-      }, 250);
-    }
-  }
-
-  function ajax(method, url, success){
-    var r = new XMLHttpRequest();
-    r.onreadystatechange = function(){
-      if(r.readyState==4 && (r.status==200 || r.status==0))
-        success(r.responseText);
-    };
-    r.open(method,url,true);
-    r.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    r.send(null);
-  }
-
-  $.get = function(url, success){ ajax('GET', url, success); };
-  $.post = function(url, success){ ajax('POST', url, success); };
-  $.getJSON = function(url, success){
-    $.get(url, function(json){ success(JSON.parse(json)) });
-  };
 
   return $;
 })();

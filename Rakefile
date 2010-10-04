@@ -1,14 +1,28 @@
 require 'rake'
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
+ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
 ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
 
-task :default => [:clean, :dist]
+ZEPTO_FILES    = [
+  File.join(ZEPTO_SRC_DIR,'zepto.js'),
+  File.join(ZEPTO_SRC_DIR,'touch.js'),
+  File.join(ZEPTO_SRC_DIR,'ajax.js')
+]
+
+task :default => [:clean, :concat, :dist]
 
 desc "Clean the distribution directory."
 task :clean do 
   rm_rf ZEPTO_DIST_DIR
   mkdir ZEPTO_DIST_DIR
+end
+
+desc "Concatenate Zepto core and plugins to build a distributable zepto.js file"
+task :concat do
+  File.open(File.join(ZEPTO_DIST_DIR,'zepto.js'),"w") do |f|
+    f.puts ZEPTO_FILES.map{ |s| IO.read(s) } 
+  end
 end
 
 def minify(src, target)
@@ -29,5 +43,5 @@ end
 
 desc "Generates a minified version for distribution."
 task :dist do
-  minify File.join(ZEPTO_ROOT,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
+  minify File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
 end
