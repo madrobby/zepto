@@ -19,7 +19,7 @@ var Zepto = (function() {
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
-    fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
+    fn.dom = (($[isF](_) && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
         (_ instanceof Element ? [_] : 
           $$(d, fn.selector = _)))).filter(function(el){
