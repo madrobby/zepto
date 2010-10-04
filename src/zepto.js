@@ -85,15 +85,14 @@ var Zepto = (function() {
         }, false);
       });
     },
+    hasClass: function(name){
+      return classRE(name).test(this.dom[0][CN]);
+    },
     addClass: function(name){
-      return this(function(el){
-        !classRE(name).test(el[CN]) && (el[CN] += (el[CN] ? ' ' : '') + name);
-      });
+      return this(function(el){ !$(el).hasClass(name) && (el[CN] += (el[CN] ? ' ' : '') + name) });
     },
     removeClass: function(name){
-      return this(function(el){
-        el[CN] = el[CN].replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
-      });
+      return this(function(el){ el[CN] = el[CN].replace(classRE(name), ' ').trim() });
     },
     trigger: function(event){
       return this(function(el){ var e; el.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false)) });
