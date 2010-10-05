@@ -216,11 +216,16 @@
       
       testCSS: function(t){
         var el = $('#some_element').get(0);
+        $('#some_element').css('color', '#f00');
+        $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
+        var style1 = $('#some_element').css('color');
+        var style2 = $('#some_element').css('border');
         
-        $('#some_element').css('color:#f00;border:1px solid rgba(255,0,0,1)');
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
+        t.assertEqual('rgb(255, 0, 0)', style1);
+        t.assertEqual('1px solid rgb(255, 0, 0)', style2);
       },
       
       testHtml: function(t){
@@ -303,7 +308,7 @@
       
       testChaining: function(t){
         t.assert(document.getElementById('nay').innerHTML == "nay");
-        $('span.nay').css('color:red').html('test');
+        $('span.nay').css('color', 'red').html('test');
         t.assert(document.getElementById('nay').innerHTML == "test");
       },
       

@@ -37,8 +37,8 @@ var Zepto = (function() {
       return $(el && !(el===d) ? el : []);
     },
     pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
-    show: function(){ return this.css('display:block') },
-    hide: function(){ return this.css('display:none') },
+    show: function(){ return this.css('display', 'block') },
+    hide: function(){ return this.css('display', 'none') },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
@@ -55,8 +55,8 @@ var Zepto = (function() {
       var obj = this.dom[0].getBoundingClientRect();
       return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
     },
-    css: function(style){
-      return this(function(el){ el.style.cssText += ';'+style });
+    css: function(prop, value){
+      return (arguments.length == 1) ? this.dom[0].style[prop] : this(function(el) { el.style[prop] = value; });
     },
     index: function(el){
       return this.dom[IO]($(el).get(0));
