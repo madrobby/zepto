@@ -28,6 +28,11 @@
     }
   };
   
+  d.ontouchcancel = function(e) {
+    touchTimeout = null;
+    touch = {};
+  };
+  
   ['swipe', 'doubleTap', 'tap'].forEach(function(m){
     $.fn[m] = function(callback){ return this.bind(m, callback) }
   });
