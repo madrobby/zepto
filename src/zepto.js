@@ -3,11 +3,11 @@ var Zepto = (function() {
     CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
     IH="innerHTML", SA="setAttribute",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    e, k;
+    e, k, css;
 
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-
+  
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
@@ -17,9 +17,12 @@ var Zepto = (function() {
           $$(d, fn.selector = _)))).filter(function(el){ 
             return el !== void 0 && el !== null 
           });
-    for(k in $.fn) fn[k] = $.fn[k];
+    $.extend(fn, $.fn);
     return fn;
   }
+  
+  $.extend = function(target, src){ for(k in src) target[k] = src[k] }
+  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
     compact: function(){ return $(this.dom) },
@@ -37,8 +40,8 @@ var Zepto = (function() {
       return $(el && !(el===d) ? el : []);
     },
     pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
-    show: function(){ return this.css('display:block') },
-    hide: function(){ return this.css('display:none') },
+    show: function(){ return this.css('display', 'block') },
+    hide: function(){ return this.css('display', 'none') },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
@@ -55,20 +58,23 @@ var Zepto = (function() {
       var obj = this.dom[0].getBoundingClientRect();
       return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
     },
-    css: function(style){
-      return this(function(el){ el.style.cssText += ';'+style });
+    css: function(prop, value){
+      if(value === void 0 && typeof prop == 'string') return this.dom[0].style[camelize(prop)];
+      css=""; for(k in prop) css += k+':'+prop[k]+';';
+      if(typeof prop == 'string') css = prop+":"+value;
+      return this(function(el) { el.style.cssText += ';' + css });
     },
     index: function(el){
       return this.dom[IO]($(el).get(0));
     },
-    anim: function(properties, dur, ease){
-      var transform = [], opacity, key, prop;
-      for (key in properties) {
-        prop = properties[key];
-        (key === 'opacity') ? (opacity = prop) : transform.push([key, '(', prop, ')'].join(''));
+    anim: function(props, dur, ease){
+      var transform = [], alpha = 1, prop;
+      for (k in props) {
+        prop = props[k];
+        (k === 'opacity') ? (alpha = prop) : transform.push([k, '(', prop, ')'].join(''));
       }
-      return this.css('-webkit-transition:all '+(dur||0.5)+'s '+(ease||'')+';'+
-        '-webkit-transform:'+transform.join(' ')+';opacity:'+(opacity===0?0:opacity||1));
+      dur = (dur === void 0) ? '0.5s' : (typeof dur == 'string' ? dur : (dur + 's'));
+      return this.css({ '-webkit-transition':'all '+dur+' '+(ease||''), '-webkit-transform':transform.join(' '), 'opacity':alpha });
     },
     bind: function(event, callback){
       return this(function(el){
@@ -84,15 +90,14 @@ var Zepto = (function() {
         }, false);
       });
     },
+    hasClass: function(name){
+      return classRE(name).test(this.dom[0][CN]);
+    },
     addClass: function(name){
-      return this(function(el){
-        !classRE(name).test(el[CN]) && (el[CN] += (el[CN] ? ' ' : '') + name);
-      });
+      return this(function(el){ !$(el).hasClass(name) && (el[CN] += (el[CN] ? ' ' : '') + name) });
     },
     removeClass: function(name){
-      return this(function(el){
-        el[CN] = el[CN].replace(classRE(name), ' ').replace(/^\s+|\s+$/g, '');
-      });
+      return this(function(el){ el[CN] = el[CN].replace(classRE(name), ' ').trim() });
     },
     trigger: function(event){
       return this(function(el){ var e; el.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false)) });

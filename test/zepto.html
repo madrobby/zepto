@@ -219,10 +219,34 @@
       testCSS: function(t){
         var el = $('#some_element').get(0);
         
-        $('#some_element').css('color:#f00;border:1px solid rgba(255,0,0,1)');
+        $('#some_element').css('color', '#f00');
+        $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
+        
+        var style1 = $('#some_element').css('color');
+        var style2 = $('#some_element').css('border');
+        t.assertEqual('rgb(255, 0, 0)', style1);
+        t.assertEqual('1px solid rgb(255, 0, 0)', style2);
+        
+        $('#some_element').css({
+          'border': '2px solid #000',
+          'color': 'rgb(0,255,0)',
+          'padding-left': '2px'
+        });
+        
+        t.assertEqual('2px', $('#some_element').css('borderLeftWidth'));
+        t.assertEqual('solid', $('#some_element').css('borderLeftStyle'));
+        t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('borderLeftColor'));
+        t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
+        t.assertEqual('2px', $('#some_element').css('paddingLeft'));
+        
+        t.assertEqual('2px', $('#some_element').css('border-left-width'));
+        t.assertEqual('solid', $('#some_element').css('border-left-style'));
+        t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('border-left-color'));
+        t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
+        t.assertEqual('2px', $('#some_element').css('padding-left'));
       },
       
       testAnim: function(t){
@@ -235,6 +259,7 @@
         }, 2, 'ease-out');
         t.assertEqual('translate3d(100px, 100px, 100px) rotateZ(90deg)', el.style.webkitTransform);
         t.assertEqual('ease-out', el.style.webkitTransitionTimingFunction);
+        t.assertEqual('2s', el.style.webkitTransitionDuration);
         t.assertEqual('0.5', el.style.opacity);
       },
       
@@ -318,7 +343,7 @@
       
       testChaining: function(t){
         t.assert(document.getElementById('nay').innerHTML == "nay");
-        $('span.nay').css('color:red').html('test');
+        $('span.nay').css('color', 'red').html('test');
         t.assert(document.getElementById('nay').innerHTML == "test");
       },
       
@@ -383,6 +408,18 @@
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
+      },
+      
+      testHasClass: function(t){
+        var el = $('#some_element').get(0);
+        $('#some_element').addClass('green');
+        
+        t.assert($('#some_element').hasClass('green'));
+        t.assert(!$('#some_element').hasClass('orange'));
+        
+        $('#some_element').addClass('orange');
+        t.assert($('#some_element').hasClass('green'));
+        t.assert($('#some_element').hasClass('orange'));
       },
       
       testIndex: function(t){
