@@ -62,7 +62,10 @@ Context and .find calls are equivalent:
   
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
-  css('css properties'): set styles of the element(s)
+
+  css('css property', 'value'): set a CSS property
+  css({ property1: value1, property2: value2 }): set multiple CSS properties
+  css('css property'): get this CSS property of the first element
   
 == Non-jQuery functions
 

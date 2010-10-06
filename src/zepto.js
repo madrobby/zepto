@@ -3,11 +3,11 @@ var Zepto = (function() {
     CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
     IH="innerHTML", SA="setAttribute",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    e, k;
+    e, k, css;
 
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-
+  
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
@@ -17,9 +17,12 @@ var Zepto = (function() {
           $$(d, fn.selector = _)))).filter(function(el){ 
             return el !== void 0 && el !== null 
           });
-    for(k in $.fn) fn[k] = $.fn[k];
+    $.extend(fn, $.fn);
     return fn;
   }
+  
+  $.extend = function(target, src){ for(k in src) target[k] = src[k] }
+  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
     compact: function(){ return $(this.dom) },
@@ -56,7 +59,10 @@ var Zepto = (function() {
       return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
     },
     css: function(prop, value){
-      return (arguments.length == 1) ? this.dom[0].style[prop] : this(function(el) { el.style[prop] = value; });
+      if(value === void 0 && typeof prop == 'string') return this.dom[0].style[camelize(prop)];
+      css=""; for(k in prop) css += k+':'+prop[k]+';';
+      if(typeof prop == 'string') css = prop+":"+value;
+      return this(function(el) { el.style.cssText += ';' + css });
     },
     index: function(el){
       return this.dom[IO]($(el).get(0));
