@@ -5,6 +5,10 @@ var Zepto = (function() {
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
     e, k, css;
 
+  // fix for iOS 3.2
+  if(String.prototype.trim === void 0)
+    String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
+
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   
