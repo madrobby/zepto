@@ -81,9 +81,12 @@ var Zepto = (function() {
         el[AEL](event, function(event){
           var target = event.target, nodes = $$(el, selector);
           while(target && nodes[IO](target)<0) target = target[PN];
-          if(target && !(target===el) && !(target===d)) callback.call(target, event);
+          if(target && !(target===el) && !(target===d)) callback(target, event);
         }, false);
       });
+    },
+    live: function(event, callback){
+      return this, $(d.body).delegate(this.selector, event, callback);
     },
     hasClass: function(name){
       return classRE(name).test(this.dom[0][CN]);

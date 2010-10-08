@@ -143,7 +143,7 @@
       },
       
       testPluck: function(t){
-        t.assertEqual('H1PPPP', $('h1,p').pluck('tagName').join(''));
+        t.assertEqual('H1DIVDIV', $('h1,div.htmltest').pluck('tagName').join(''));
       },
       
       // for now, we brute-force "display:block" for show/hide
@@ -298,6 +298,19 @@
         
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+      },
+      
+      testLive: function(t){
+        var counter = 0;
+        $('p.live').live('click', function(){ counter++ });
+        
+        $(document.body).append('<p class="live" id="live_1"></p>');
+        $(document.body).append('<p class="live" id="live_2"></p>');
+        
+        click($('#live_1').get(0));
+        click($('#live_2').get(0));
+        
+        t.assertEqual(2, counter);
       },
       
       testAttr: function(t){

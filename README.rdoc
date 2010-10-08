@@ -73,6 +73,7 @@ Context and .find calls are equivalent:
   
   bind(type, function): add an event listener (see below)
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
+  live(type, function): add an event listener that listens to the selector for current and future elements
   trigger(type): triggers an event
   
 == Non-jQuery functions
@@ -97,6 +98,10 @@ Adding an event listener on multiple events:
 Adding one event listener that uses event delegation to be only active on a range of children/grandchildren (as given with the subselector):
   
   $('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") });
+  
+Adding a "live" event listener, that fires on all elements that match the selector now and in the future:
+
+  $('p.yay').live('click', function(){ alert("Clicked a p.yay element!") });
   
 = Touch events
 
