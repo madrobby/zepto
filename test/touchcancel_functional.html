@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <title>Zepto touch functional test</title>
+  <meta name="viewport" content="maximum-scale=1,initial-scale=1,user-scalable=0" />
+  <script src="../src/zepto.js"></script>
+  <script src="../src/touch.js"></script>
+</head>
+<body>
+  <h1>Zepto touch functional test</h1>
+  <p>Double Tab and hold until the JavaScript alert occures. After closing the 
+    Dialog tab again. Without touchcancel you will see a double tab instead of a tab.</p>
+  <div id="touch_test" style="width: 200px; height: 200px; background: #ddd">
+    touch events test
+  </div>
+  
+  <script>
+    setTimeout(function () {alert("Test");}, 3000);
+    $('#touch_test')
+      .tap(function(){
+        $(this).append(' | tap!');
+      })
+      .doubleTap(function(){
+        $(this).append(' | double tap!');
+      })
+      .swipe(function(){
+        $(this).append(' | swipe!');
+      });
+  </script>
+</body>
+</html>
