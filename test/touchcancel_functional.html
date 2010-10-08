@@ -8,14 +8,14 @@
 </head>
 <body>
   <h1>Zepto touch functional test</h1>
-  <p>Double Tab and hold until the JavaScript alert occures. After closing the 
-    Dialog tab again. Without touchcancel you will see a double tab instead of a tab.</p>
+  <p>Double-tap and hold until the JavaScript alert occures. After closing the 
+    alert, tap again. Without touchcancel you will see a double tap instead of a tap.</p>
   <div id="touch_test" style="width: 200px; height: 200px; background: #ddd">
     touch events test
   </div>
   
   <script>
-    setTimeout(function () {alert("Test");}, 3000);
+    setTimeout(function () {alert("Alert! Now tap again, you should see a tap!, not a double tap!");}, 3000);
     $('#touch_test')
       .tap(function(){
         $(this).append(' | tap!');
