@@ -51,7 +51,7 @@ Context and .find calls are equivalent:
   remove(): remove element
   
   html('new html'): set the contents of the element(s)
-  append, prepend, before, after: like html, but add html to element contents (or before and after)
+  append, prepend, before, after: like html, but add html to element contents (or before/after)
   html(): get first elements .innerHTML
   show(): forces elements to be displayed (only works correctly for block elements right now)
   hide(): removes a elements from layout
@@ -66,6 +66,14 @@ Context and .find calls are equivalent:
   css('css property', 'value'): set a CSS property
   css({ property1: value1, property2: value2 }): set multiple CSS properties
   css('css property'): get this CSS property of the first element
+  
+  addClass('classname'): adds a CSS class name
+  removeClass('classname'): removes a CSS class name
+  hasClass('classname'): returns true of first element has a classname set
+  
+  bind(type, function): add an event listener (see below)
+  delegate(selector, type, function): add an event listener w/ event delegation (see below)
+  trigger(type): triggers an event
   
 == Non-jQuery functions
 
