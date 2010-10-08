@@ -11,16 +11,15 @@ var Zepto = (function() {
 
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
+  function compact(array){ return array.filter(function(el){ return el !== void 0 && el !== null }) }
   
   function $(_, context){
     if(context !== void 0) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
-    fn.dom = ((typeof _ == 'function' && 'dom' in _) ? 
+    fn.dom = compact((typeof _ == 'function' && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
         (_ instanceof Element ? [_] : 
-          $$(d, fn.selector = _)))).filter(function(el){ 
-            return el !== void 0 && el !== null 
-          });
+          $$(d, fn.selector = _))));
     $.extend(fn, $.fn);
     return fn;
   }
@@ -29,12 +28,13 @@ var Zepto = (function() {
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
-    compact: function(){ return $(this.dom) },
+    compact: function(){ this.dom=compact(this.dom); return this },
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
     remove: function(){
       return this(function(el){ el[PN].removeChild(el) });
     },
     each: function(callback){ return this(callback) },
+    first: function(callback){ this.dom=compact([this.dom[0]]); return this },
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
@@ -86,7 +86,7 @@ var Zepto = (function() {
       });
     },
     live: function(event, callback){
-      return this, $(d.body).delegate(this.selector, event, callback);
+      $(d.body).delegate(this.selector, event, callback); return this;
     },
     hasClass: function(name){
       return classRE(name).test(this.dom[0][CN]);
