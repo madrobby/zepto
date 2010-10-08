@@ -42,6 +42,7 @@ Context and .find calls are equivalent:
   get(0): return first element found
   each(callback): iterate over array of all elements found
   index('selector'): return an integer indicating the position of 'selector' in array of all elements found
+  first(): remove all but the first element from the list of found elements
   
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): traverses the DOM upwards to find the first matching element
@@ -81,6 +82,9 @@ Context and .find calls are equivalent:
   pluck(property):
     return property for each element
     e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
+    
+  compact():
+    remove all null or undefined elements from list of elements found
   
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
