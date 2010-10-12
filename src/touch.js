@@ -1,9 +1,13 @@
 (function($){
   var d = document, touch={}, touchTimeout;
   
+  function parentIfText(node){
+    return 'tagName' in node ? node : node.parentNode;
+  }
+  
   d.ontouchstart = function(e) {
     var now = Date.now(), delta = now-(touch.last || now);
-    touch.target = e.touches[0].target;
+    touch.target = parentIfText(e.touches[0].target);
     touchTimeout && clearTimeout(touchTimeout);
     touch.x1 = e.touches[0].pageX;
     if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
