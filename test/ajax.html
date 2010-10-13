@@ -13,6 +13,8 @@
     See the browser console for results.
   </p>
   
+  <div id='testAjaxLoad' style="display:none"></div>
+  
   <script>
     Evidence.TestCase.extend('ZeptoAjaxTest', {
       
@@ -39,6 +41,16 @@
         $.getJSON('zepto.json', function(data){
           t.resume(function(){
             this.assertEqual(data.zepto, 'awesomeness');
+          });
+        });
+      },
+      
+      testAjaxLoad: function(t) {
+        var testElem = $('#testAjaxLoad');
+        t.pause();
+        testElem.load('testAjaxLoad.html', '#testDiv', function() {
+          t.resume(function() {
+            this.assertEqual(testElem.html(), 'Test123');
           });
         });
       },
