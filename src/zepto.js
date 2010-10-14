@@ -34,6 +34,9 @@ var Zepto = (function() {
       return this(function(el){ el[PN].removeChild(el) });
     },
     each: function(callback){ return this(callback) },
+    filter: function(selector){
+      return $(this.dom.filter(function(el){ return $$(el.parentNode, selector).indexOf(el)>=0; }));
+    },
     first: function(callback){ this.dom=compact([this.dom[0]]); return this },
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
