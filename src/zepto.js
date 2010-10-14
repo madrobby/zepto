@@ -1,7 +1,5 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
-    CN="className", AEL="addEventListener", PN="parentNode", IO="indexOf",
-    IH="innerHTML", SA="setAttribute",
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
     e, k, css;
 
@@ -31,7 +29,7 @@ var Zepto = (function() {
     compact: function(){ this.dom=compact(this.dom); return this },
     get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
     remove: function(){
-      return this(function(el){ el[PN].removeChild(el) });
+      return this(function(el){ el.parentNode.removeChild(el) });
     },
     each: function(callback){ return this(callback) },
     filter: function(selector){
@@ -42,8 +40,8 @@ var Zepto = (function() {
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
     closest: function(selector){
-      var el = this.dom[0][PN], nodes = $$(d, selector);
-      while(el && nodes[IO](el)<0) el = el[PN];
+      var el = this.dom[0].parentNode, nodes = $$(d, selector);
+      while(el && nodes.indexOf(el)<0) el = el.parentNode;
       return $(el && !(el===d) ? el : []);
     },
     pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
@@ -52,13 +50,13 @@ var Zepto = (function() {
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0][IH] : null) : this(function(el){ el[IH] = html });
+      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
     },
     attr: function(name,value){
       return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this(function(el){
-          if (typeof name == 'object') for(k in name) el[SA](k, name[k])
-          else el[SA](name,value);
+          if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
+          else el.setAttribute(name,value);
         });
     },
     offset: function(){
@@ -72,18 +70,18 @@ var Zepto = (function() {
       return this(function(el) { el.style.cssText += ';' + css });
     },
     index: function(el){
-      return this.dom[IO]($(el).get(0));
+      return this.dom.indexOf($(el).get(0));
     },
     bind: function(event, callback){
       return this(function(el){
-        event.split(/\s/).forEach(function(event){ el[AEL](event, callback, false); });
+        event.split(/\s/).forEach(function(event){ el.addEventListener(event, callback, false); });
       });
     },
     delegate: function(selector, event, callback){
       return this(function(el){
-        el[AEL](event, function(event){
+        el.addEventListener(event, function(event){
           var target = event.target, nodes = $$(el, selector);
-          while(target && nodes[IO](target)<0) target = target[PN];
+          while(target && nodes.indexOf(target)<0) target = target.parentNode;
           if(target && !(target===el) && !(target===d)) callback(target, event);
         }, false);
       });
@@ -92,13 +90,13 @@ var Zepto = (function() {
       $(d.body).delegate(this.selector, event, callback); return this;
     },
     hasClass: function(name){
-      return classRE(name).test(this.dom[0][CN]);
+      return classRE(name).test(this.dom[0].className);
     },
     addClass: function(name){
-      return this(function(el){ !$(el).hasClass(name) && (el[CN] += (el[CN] ? ' ' : '') + name) });
+      return this(function(el){ !$(el).hasClass(name) && (el.className += (el.className ? ' ' : '') + name) });
     },
     removeClass: function(name){
-      return this(function(el){ el[CN] = el[CN].replace(classRE(name), ' ').trim() });
+      return this(function(el){ el.className = el.className.replace(classRE(name), ' ').trim() });
     },
     trigger: function(event){
       return this(function(el){ var e; el.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false)) });
