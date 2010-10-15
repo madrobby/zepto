@@ -26,9 +26,17 @@ task :concat do
   end
 end
 
-def minify(src, target)
-  puts "Minifying #{src}..."
+def google_compiler(src, target)
+  puts "Minifying #{src} with Google Closure Compiler..."
   `java -jar vendor/google-compiler/compiler.jar --js #{src} --summary_detail_level 3 --js_output_file #{target}`
+end
+
+def yui_compressor(src, target)
+  puts "Minifying #{src} with YUI Compressor..."
+  `java -jar vendor/yuicompressor/yuicompressor-2.4.2.jar #{src} -o #{target}`
+end
+
+def process_minified(src, target)
   cp target, File.join(ZEPTO_DIST_DIR,'temp.js')
   msize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js'))
   `gzip -9 #{File.join(ZEPTO_DIST_DIR,'temp.js')}`
@@ -37,12 +45,21 @@ def minify(src, target)
   dsize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js.gz'))
   rm_rf File.join(ZEPTO_DIST_DIR,'temp.js.gz')
   
-  puts "Original version: %.1fk" % (osize/1024.0)
-  puts "Minified: %.1fk" % (msize/1024.0)
-  puts "Minified and gzipped: %.1fk, compression factor %.1f" % [dsize/1024.0, osize/dsize.to_f]  
+  puts "Original version: %.3fk" % (osize/1024.0)
+  puts "Minified: %.3fk" % (msize/1024.0)
+  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]  
 end
 
 desc "Generates a minified version for distribution."
 task :dist do
-  minify File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
+  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
+  google_compiler src, target
+  process_minified src, target
+end
+
+desc "Generates a minified version for distribution using the YUI compressor."
+task :yuidist do
+  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
+  yui_compressor src, target
+  process_minified src, target
 end
