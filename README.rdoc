@@ -117,7 +117,13 @@ Double-tapping:
 
 Swiping (e.g. "delete" button when swiping over a list entry):
   $('some selector').swipe(function(){ ... });
-    
+
+Swiping left:
+  $('some selector').swipeLeft(function(){ ... });
+
+Swiping right:
+  $('some selector').swipeRight(function(){ ... });
+
 = Ajax:
 
   $.get(url, callback)
