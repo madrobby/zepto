@@ -1,14 +1,19 @@
 require 'rake'
+require 'rake/packagetask'
+
+ZEPTO_VERSION  = "0.1"
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
 ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
 ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
+ZEPTO_PKG_DIR  = File.join(ZEPTO_ROOT, 'pkg')
 
 ZEPTO_FILES    = [
   File.join(ZEPTO_SRC_DIR,'zepto.js'),
   File.join(ZEPTO_SRC_DIR,'fx.js'),
   File.join(ZEPTO_SRC_DIR,'touch.js'),
-  File.join(ZEPTO_SRC_DIR,'ajax.js')
+  File.join(ZEPTO_SRC_DIR,'ajax.js'),
+  File.join(ZEPTO_SRC_DIR,'assets.js')
 ]
 
 task :default => [:clean, :concat, :dist]
@@ -62,4 +67,18 @@ task :yuidist do
   src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
   yui_compressor src, target
   process_minified src, target
+end
+
+Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
+  package.need_tar_gz = true
+  package.need_zip = true
+  package.package_dir = ZEPTO_PKG_DIR
+  package.package_files.include(
+    'README.rdoc',
+    'MIT-LICENSE',
+    'dist/**/*',
+    'src/**/*',
+    'test/**/*',
+    'examples/**/*'
+  )
 end
