@@ -2,3 +2,4 @@
 dist/zepto.min.js
 dist/zepto.js
 pkg
+*.swp
