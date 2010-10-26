@@ -13,7 +13,7 @@
     See the browser console for results.
   </p>
   
-  <div id='testAjaxLoad' style="display:none"></div>
+  <div id="ajax_load" style="display:none"></div>
   
   <script>
     Evidence.TestCase.extend('ZeptoAjaxTest', {
@@ -40,17 +40,27 @@
         t.pause();
         $.getJSON('zepto.json', function(data){
           t.resume(function(){
-            this.assertEqual(data.zepto, 'awesomeness');
+            this.assertEqual('awesomeness', data.zepto);
           });
         });
       },
       
       testAjaxLoad: function(t) {
-        var testElem = $('#testAjaxLoad');
+        var testEl = $('#ajax_load');
         t.pause();
-        testElem.load('testAjaxLoad.html', '#testDiv', function() {
+        testEl.load('fixtures/ajax_load_simple.html', function(){
           t.resume(function() {
-            this.assertEqual(testElem.html(), 'Test123');
+            this.assertEqual('simple ajax load', testEl.html());
+          });
+        });
+      },  
+      
+      testAjaxLoadWithSelector: function(t) {
+        var testEl = $('#ajax_load');
+        t.pause();
+        testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
+          t.resume(function() {
+            this.assertEqual('ajax load with selector', testEl.html());
           });
         });
       },

@@ -16,22 +16,16 @@
     $.get(url, function(json){ success(JSON.parse(json)) });
   };
   
-  $.fn.load = function(url, selector, success) {   // some functionality and methods inspired from jQuery source (MIT Licensed)
-    var that = this;
-    if (!this.length) return this;
-    if (Object.prototype.toString.call(selector) === "[object Function]") { // if 2nd arg exists and is function
-      success = selector;
-      selector = null;
-    };
-    $.get(url, function(data) {
-      var resp = data.replace(/<script(.|\s)*?\/script>/gi, '');
-      that.html(
-        selector ?
-          $(document.createElement('div')).html(resp).find(selector).html()
-          : resp );
-      if (success) success();
+  $.fn.load = function(url, success){
+    var self = this, parts = url.split(/\s/), selector;
+    if(!this.length) return this;
+    if(parts.length>1) url = parts[0], selector = parts[1];
+    $.get(url, function(response){
+      self.html(selector ?
+        $(document.createElement('div')).html(response).find(selector).html()
+        : response);
+      success && success();
     });
     return this;
   };
-  
 })(Zepto);
