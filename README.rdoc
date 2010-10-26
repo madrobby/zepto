@@ -48,6 +48,7 @@ Context and .find calls are equivalent:
   closest('selector'): traverses the DOM upwards to find the first matching element
   next(): next siblings
   prev(): previous siblings
+  is('selector'): returns true/false if first element matches the selector
   
   remove(): remove element
   

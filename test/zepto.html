@@ -239,6 +239,16 @@
         t.assertEqual(0, found.filter('.doesntexist').get().length);
         t.assertEqual(1, found.filter('.filtertest').filter(':nth-child(2n)').get().length);
       },
+      
+      testIs: function(t){
+        t.assert($('#find1').is('p'));
+        t.assert($('#li2').is(':first-child'));
+        t.assert(!$('#find1').is('doesnotexist'));
+        t.assert(!$('#find1').is());
+        
+        t.assert($('div').is('#some_element'));
+        t.assert(!$('#does_not_exist').is('p'));
+      },
  
       testCSS: function(t){
         var el = $('#some_element').get(0);
