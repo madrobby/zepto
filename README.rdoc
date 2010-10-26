@@ -124,8 +124,9 @@ Swiping (e.g. "delete" button when swiping over a list entry):
   $.get(url, callback)
   $.post(url, callback)
   $.getJSON(url, callback)
-
-Best used if you stick in the contents of zepto.min.js into a <script> tag in your HTML (no need to load it form an external file).
+  
+  $('selector').load('url'[, callback]);
+  $('selector').load('url #fragment-selector'[, callback]);
 
 = Building
 
@@ -142,6 +143,16 @@ You'll see an output like:
   Minified and gzipped: 1.6k, compression factor 3.6
   
 The minified file is saved in dist/zepto.min.js.
+
+= Loading Zepto
+
+You load Zepto by using
+
+  <script src="/path/to/zepto.min.js"></script>
+  
+Or alternatively, you can just stick in the contents of zepto.min.js into 
+a <script> tag in your HTML for the best loading performance. 
+No need to load it form an external file!
 
 = Contributing!
 
