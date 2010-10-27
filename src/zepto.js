@@ -1,18 +1,18 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    e, k, css;
+    e, k, css, undefined;
 
   // fix for iOS 3.2
-  if(String.prototype.trim === void 0)
+  if(String.prototype.trim === undefined)
     String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
 
   function $$(el, selector){ return slice.call(el.querySelectorAll(selector)) }
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function compact(array){ return array.filter(function(el){ return el !== void 0 && el !== null }) }
+  function compact(array){ return array.filter(function(el){ return el !== undefined && el !== null }) }
   
   function $(_, context){
-    if(context !== void 0) return $(context).find(_);
+    if(context !== undefined) return $(context).find(_);
     function fn(_){ return fn.dom.forEach(_), fn }
     fn.dom = compact((typeof _ == 'function' && 'dom' in _) ? 
       _.dom : (_ instanceof Array ? _ : 
@@ -27,7 +27,7 @@ var Zepto = (function() {
 
   $.fn = {
     compact: function(){ this.dom=compact(this.dom); return this },
-    get: function(idx){ return idx === void 0 ? this.dom : this.dom[idx] },
+    get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
     remove: function(){
       return this(function(el){ el.parentNode.removeChild(el) });
     },
@@ -53,10 +53,10 @@ var Zepto = (function() {
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
+      return html === undefined ? (this.dom.length>0 ? this.dom[0].innerHTML : null) : this(function(el){ el.innerHTML = html });
     },
     attr: function(name,value){
-      return (typeof name == 'string' && value === void 0) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
+      return (typeof name == 'string' && value === undefined) ? (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this(function(el){
           if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
           else el.setAttribute(name,value);
@@ -67,7 +67,7 @@ var Zepto = (function() {
       return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
     },
     css: function(prop, value){
-      if(value === void 0 && typeof prop == 'string') return this.dom[0].style[camelize(prop)];
+      if(value === undefined && typeof prop == 'string') return this.dom[0].style[camelize(prop)];
       css=""; for(k in prop) css += k+':'+prop[k]+';';
       if(typeof prop == 'string') css = prop+":"+value;
       return this(function(el) { el.style.cssText += ';' + css });
