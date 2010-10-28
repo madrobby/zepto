@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Zepto assets functional test</title>
-  <meta name="viewport" content="maximum-scale=1,initial-scale=1,user-scalable=0" />
+  <meta name="viewport" content="maximum-scale=1,initial-scale=1,user-scalable=0">
   <script src="../src/zepto.js"></script>
   <style>
     #container div {
@@ -33,22 +34,21 @@
   <div id="container"></div>
   
   <script>
-  <!--
-    var prefix = 'http://stuff.vandervossen.net/temporary/zepto_assets_test/sintel-';
-    var mode = window.location.search.slice(1);
-    var timeout;
+    var prefix = 'http://stuff.vandervossen.net/temporary/zepto_assets_test/sintel-',
+        mode = window.location.search.slice(1),
+        timeout,
+        i;
     if (mode === 'with') {
       document.write('<script src="../src/assets.js"></script>');
     }
     if (mode !== '') {
-      var i = 1;
+      i = 1;
       (function frame() {
         $('#image' + (i - 4)).remove();
         $('#container').prepend('<div>' + i + ': <img id="image' + i + '" src="' + prefix + i + '.jpg"></div>');
         if (i++ < 51) timeout = setTimeout(frame, 6000);
       })();
     }
-  -->
   </script>
 </body>
 </html>
