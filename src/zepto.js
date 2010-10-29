@@ -1,7 +1,7 @@
 var Zepto = (function() {
   var slice=[].slice, d=document,
     ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    e, k, css, dom, un;
+    e, k, css, un;
 
   // fix for iOS 3.2
   if(String.prototype.trim === un)
@@ -15,9 +15,7 @@ var Zepto = (function() {
   Z.prototype = $.fn;
 
   function $(_, context){
-    if(context !== un) return $(context).find(_);
-    dom = compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _))));
-    return new Z(dom, _);
+    return (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom: (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _)))), _);
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
