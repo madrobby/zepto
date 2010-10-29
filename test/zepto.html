@@ -96,6 +96,15 @@
         var el = document.getElementById('some_element');
         t.assertEqual($(el).get(0), el);
       },
+
+      testDollarWithMultipleInstances: function(t){
+        var instance1 = $('#some_element'),
+            instance2 = $('p');
+
+        t.assert(instance1.get().length == 1);
+        t.assert(instance2.get().length == 4);
+        t.assert(instance1.get(0) !== instance2.get(0));
+      },
       
       testDollarWithArrays: function(t){
         var z1 = $([document.getElementById('some_element')]);
@@ -391,7 +400,7 @@
         var el = $('#some_element').get(0);
         
         $.fn.plugin = function(){
-          return this(function(el){ el.innerHTML = 'plugin!' });
+          return this.each(function(el){ el.innerHTML = 'plugin!' });
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
