@@ -404,6 +404,14 @@
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
+
+        // test if existing Zepto objects receive new plugins
+        $.fn.anotherplugin = function(){
+          return this.each(function(el){ el.innerHTML = 'anotherplugin!' });
+        }
+        t.assert(typeof $('#some_element').anotherplugin == 'function');
+        $('#some_element').anotherplugin();
+        t.assertEqual('anotherplugin!', el.innerHTML);
       },
       
       testAppendPrependBeforeAfter: function(t){
