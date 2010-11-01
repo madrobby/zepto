@@ -1,22 +1,18 @@
 (function($){
-  var d = document, touch={}, touchTimeout;
+  var d = document, touch={}, touchTimeout, TOUCH = 'touch';
   
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
   }
   
-  d.ontouchstart = function(e) {
+  $(d).bind(TOUCH+'start', function(e) {
     var now = Date.now(), delta = now-(touch.last || now);
     touch.target = parentIfText(e.touches[0].target);
     touchTimeout && clearTimeout(touchTimeout);
     touch.x1 = e.touches[0].pageX;
     if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
     touch.last = now;
-  }
-
-  d.ontouchmove = function(e) { touch.x2 = e.touches[0].pageX }
-  
-  d.ontouchend = function(e) {
+  }).bind(TOUCH+'move',function(e) { touch.x2 = e.touches[0].pageX }).bind(TOUCH+'end',function(e) {
     if (touch.isDoubleTap) {
       $(touch.target).trigger('doubleTap');
       touch = {};
@@ -30,9 +26,7 @@
         touch = {};
       }, 250);
     }
-  }
-  
-  d.ontouchcancel = function(){ touch={} };
+  }).bind(TOUCH+'cancel',function(){ touch={} }};
   
   ['swipe', 'doubleTap', 'tap'].forEach(function(m){
     $.fn[m] = function(callback){ return this.bind(m, callback) }
