@@ -92,13 +92,16 @@ var Zepto = (function() {
       $(d.body).delegate(this.selector, event, callback); return this;
     },
     hasClass: function(name){
-      return classRE(name).test(this.dom[0].className);
+      return this.dom[0].classList.contains(name);
     },
     addClass: function(name){
-      return this.each(function(el){ !$(el).hasClass(name) && (el.className += (el.className ? ' ' : '') + name) });
+      return this.each(function(el){ el.classList.add(name); el.className = el.className.trim(); });
     },
     removeClass: function(name){
       return this.each(function(el){ el.className = el.className.replace(classRE(name), ' ').trim() });
+    },
+    toggleClass: function(name){
+      return this.each(function(el){ el.classList.toggle(name); el.className = el.className.trim(); });
     },
     trigger: function(event){
       return this.each(function(el){ var e; el.dispatchEvent(e = d.createEvent('Events'), e.initEvent(event, true, false)) });

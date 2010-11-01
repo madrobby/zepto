@@ -444,6 +444,7 @@
       
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0);
+        el.className = '';
         
         $('#some_element').addClass('green');
         t.assertEqual('green', el.className);
@@ -462,6 +463,8 @@
       
       testHasClass: function(t){
         var el = $('#some_element').get(0);
+        el.className = '';
+        
         $('#some_element').addClass('green');
         
         t.assert($('#some_element').hasClass('green'));
@@ -470,6 +473,19 @@
         $('#some_element').addClass('orange');
         t.assert($('#some_element').hasClass('green'));
         t.assert($('#some_element').hasClass('orange'));
+      },
+      
+      testToggleClass: function(t){
+        var el = $('#some_element').get(0);
+        el.className = '';
+        
+        $('#some_element').toggleClass('green');
+        
+        t.assertEqual('green', el.className);
+        
+        $('#some_element').toggleClass('green');
+        
+        t.assertEqual('', el.className);
       },
       
       testIndex: function(t){
