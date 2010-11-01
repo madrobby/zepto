@@ -11,17 +11,20 @@ var Zepto = (function() {
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   function compact(array){ return array.filter(function(el){ return el !== un && el !== null }) }
 
-  function Z(dom, _){ this.dom = dom; this.selector = _ }
+  function Z(dom, _){ this.dom = dom || []; this.selector = _ || '' }
   Z.prototype = $.fn;
 
   function $(_, context){
-    return (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom: (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _)))), _);
+    return _ == document ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _)))), _);
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
+    ready: function(callback){ 
+      document.addEventListener('DOMContentLoaded', callback, false); return this;
+    },
     compact: function(){ this.dom=compact(this.dom); return this },
     get: function(idx){ return idx === un ? this.dom : this.dom[idx] },
     remove: function(){

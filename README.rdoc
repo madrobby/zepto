@@ -77,7 +77,7 @@ Context and .find calls are equivalent:
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
   live(type, function): add an event listener that listens to the selector for current and future elements
   trigger(type): triggers an event
-  
+    
 == Non-jQuery functions
 
   pluck(property):
@@ -89,7 +89,11 @@ Context and .find calls are equivalent:
   
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
-  
+
+= Utility functions:
+
+  $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
+
 = Event handlers
 
 Adding an event listener:
