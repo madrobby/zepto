@@ -87,7 +87,7 @@ var Zepto = (function() {
         el.addEventListener(event, function(event){
           var target = event.target, nodes = $$(el, selector);
           while(target && nodes.indexOf(target)<0) target = target.parentNode;
-          if(target && !(target===el) && !(target===d)) callback(target, event);
+          if(target && !(target===el) && !(target===d)) callback.call(target, event);
         }, false);
       });
     },
