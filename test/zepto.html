@@ -79,6 +79,9 @@
       el.dispatchEvent(event);
     }
 
+    var globalVarSetFromReady = "";
+    $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
+
     Evidence.TestCase.extend('ZeptoTest', {
       
       // test to see if we augment iOS 3.2 with String#trim()
@@ -128,6 +131,16 @@
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
+      },
+
+      testDollarWithDocument: function(t){
+        var z = $(document);
+        t.assertEqual(0, z.get().length);
+        t.assertEqual('', z.selector);
+      },
+
+      testReady: function(t){
+        t.assertEqual('hi!', globalVarSetFromReady);
       },
       
       testNext: function(t){
