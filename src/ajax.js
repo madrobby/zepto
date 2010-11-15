@@ -1,5 +1,7 @@
 (function($){
-  function ajax(method, url, success){
+  function ajax(method, url, success, data){
+    data = data || null;
+    if (data instanceof Object) data = JSON.stringify(data);
     var r = new XMLHttpRequest();
     r.onreadystatechange = function(){
       if(r.readyState==4 && (r.status==200 || r.status==0))
@@ -7,11 +9,11 @@
     };
     r.open(method,url,true);
     r.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    r.send(null);
+    r.send(data);
   }
 
   $.get = function(url, success){ ajax('GET', url, success); };
-  $.post = function(url, success){ ajax('POST', url, success); };
+  $.post = function(url, success, data){ ajax('POST', url, success, data); };
   $.getJSON = function(url, success){
     $.get(url, function(json){ success(JSON.parse(json)) });
   };
