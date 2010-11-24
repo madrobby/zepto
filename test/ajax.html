@@ -35,6 +35,24 @@
           });
         });
       },
+      
+      testAjaxPostWithData: function(t) {
+        t.pause();
+        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
+          t.resume(function() {
+            this.assert(response);
+          });
+        });
+      },
+      
+      testAjaxPostWithAcceptType: function(t) {
+        t.pause();
+        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
+          t.resume(function() {
+            this.assert(response);
+          });
+        }, 'text/plain');
+      },
 
       testAjaxGetJSON: function(t){
         t.pause();
