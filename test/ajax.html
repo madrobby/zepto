@@ -20,7 +20,7 @@
       
       testAjaxGet: function(t){
         t.pause();
-        $.get('http://example.com/', function(response){
+        $.get('fixtures/ajax_load_simple.html', function(response){
           t.resume(function(){
             this.assert(response);
           });
@@ -29,7 +29,7 @@
 
       testAjaxPost: function(t){
         t.pause();
-        $.post('http://example.com/', function(response){
+        $.post('fixtures/ajax_load_simple.html', function(response){
           t.resume(function(){
             this.assert(response);
           });
