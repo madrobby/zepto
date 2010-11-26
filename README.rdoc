@@ -126,7 +126,7 @@ Swiping (e.g. "delete" button when swiping over a list entry):
 = Ajax:
 
   $.get(url, callback)
-  $.post(url, callback)
+  $.post(url, [data], [callback], [mime-type])
   $.getJSON(url, callback)
   
   $('selector').load('url'[, callback]);
