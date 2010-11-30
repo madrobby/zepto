@@ -13,4 +13,8 @@
   }
   $.os = detect(navigator.userAgent);
   $.__detect = detect;
+  $.browser = {
+    webkit: true,
+    version: navigator.userAgent.match(/WebKit\/([\d.]+)/)[1]
+  }
 })(Zepto);

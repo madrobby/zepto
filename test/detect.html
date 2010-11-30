@@ -53,6 +53,13 @@
         
         t.assert($.__detect(UA.iOS_3_2_iPad).ipad);
         t.assert($.__detect(UA.iOS_4_0_iPhone).iphone);
+      },
+
+      testBrowser: function(t){
+        navigator.userAgent = UA.iOS_4_0_iPhone;
+        t.assert($.browser);
+        t.assert($.browser.webkit);
+        t.assertEqual("533.19.4", $.browser.version);
       }
 
     });
