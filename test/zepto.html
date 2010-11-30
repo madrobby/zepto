@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Zepto DOM unit tests</title>
   <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
   <script src="evidence.js"></script>
 </head>
 <body>
@@ -71,6 +72,8 @@
 
   <div id="delegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
   
+  <div id="another_element"></div>
+
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -353,6 +356,35 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
       
+      testUnbind: function(t){
+        var counter = 0, el = $('#another_element').get(0);
+        var handler = function(){ counter++ };
+        $('#another_element').bind('click mousedown', handler);
+        click(el);
+        mousedown(el);
+        t.assertEqual(2, counter);
+
+        $('#another_element').unbind('click', handler);
+        click(el);
+        t.assertEqual(2, counter);
+        mousedown(el);
+        t.assertEqual(3, counter);
+
+        $('#another_element').unbind('mousedown');
+        mousedown(el);
+        t.assertEqual(3, counter);
+
+        $('#another_element').bind('click mousedown', handler);
+        click(el);
+        mousedown(el);
+        t.assertEqual(5, counter);
+
+        $('#another_element').unbind();
+        click(el);
+        mousedown(el);
+        t.assertEqual(5, counter);
+      },
+
       testDelegate: function(t){
         var counter = 0, pcounter = 0, content = '';
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });
