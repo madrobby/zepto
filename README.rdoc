@@ -53,8 +53,10 @@ Context and .find calls are equivalent:
   remove(): remove element
   
   html('new html'): set the contents of the element(s)
+  text('new text'): set the text contents of the element(s)
   append, prepend, before, after: like html, but add html to element contents (or before/after)
-  html(): get first elements .innerHTML
+  html(): get first element's .innerHTML
+  text(): get first element's .innerText
   show(): forces elements to be displayed (only works correctly for block elements right now)
   hide(): removes a elements from layout
 
@@ -112,6 +114,15 @@ Adding a "live" event listener, that fires on all elements that match the select
 
   $('p.yay').live('click', function(){ alert("Clicked a p.yay element!") });
   
+Removing an event listener:
+  $('some selector').unbind('click', listener);
+
+Removing all event listeners for a particular event:
+  $('some selector').unbind('click');
+
+Removing all event listeners:
+  $('some selector').unbind();
+
 = Touch events
 
 Tapping:
