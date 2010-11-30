@@ -25,6 +25,9 @@
   <div class="htmltest" id="htmltest2"></div>
   <div id="htmltest3"></div>
   
+  <div id="texttest1" class="texttest"><span>Here <strong>is</strong> some text</span></div>
+  <div id="texttest2" class="texttest">And <em>some more</em></div>
+
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
   
   <p id="find1">
@@ -324,6 +327,19 @@
         t.assertNull($('doesnotexist').html());
       },
       
+      testText: function(t){
+        t.assertEqual('Here is some text', $('div.texttest').text());
+        t.assertEqual('And some more', $('#texttest2').text());
+
+        $('div.texttest').text("Let's set it");
+        t.assertEqual("Let's set it", $('#texttest1').text());
+        t.assertEqual("Let's set it", $('#texttest2').text());
+
+        $('#texttest2').text('');
+        t.assertEqual("Let's set it", $('div.texttest').text());
+        t.assertEqual('', $('#texttest2').text());
+      },
+
       testBind: function(t){
         var counter = 0;
         $(document.body).bind('click', function(){ counter++ });

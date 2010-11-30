@@ -56,6 +56,11 @@ var Zepto = (function() {
         (this.dom.length>0 ? this.dom[0].innerHTML : null) : 
         this.each(function(el){ el.innerHTML = html });
     },
+    text: function(text){
+      return text === un ?
+        (this.dom.length>0 ? this.dom[0].innerText : null) :
+        this.each(function(el){ el.innerText = text });
+    },
     attr: function(name,value){
       return (typeof name == 'string' && value === un) ? 
         (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
