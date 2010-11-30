@@ -15,7 +15,7 @@ var Zepto = (function() {
   Z.prototype = $.fn;
 
   function $(_, context){
-    return _ == d ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element ? [_] : $$(d, _)))), _);
+    return _ == d ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element || _ === window ? [_] : $$(d, _)))), _);
   }
   
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
