@@ -18,6 +18,7 @@
     r.send(data);
   }
 
+  $.ajax = ajax;
   $.get = function(url, success){ ajax({ url: url, success: success }); };
   $.post = function(url, data, success, dataType){
     if (data instanceof Function) dataType = dataType || success, success = data, data = null;
