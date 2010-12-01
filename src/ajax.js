@@ -1,6 +1,6 @@
 (function($){
   function ajax(o){ // { type, url, data, success, dataType, contentType }
-    var data = o.data || null, cb = o.success || null, mime = o.dataType || null, content = o.contentType || null;
+    var data = o.data || null, cb = o.success || null, mime = mimeTypes[o.dataType || null], content = o.contentType || null;
     var r = new XMLHttpRequest();
     if (cb instanceof Function) {
       r.onreadystatechange = function(){
@@ -11,12 +11,19 @@
       };
     }
     r.open(o.type || 'GET', o.url || window.location, true);
-    if (mime) r.setRequestHeader("Accept", mime );
+    if (mime) r.setRequestHeader("Accept", mime);
     if (data instanceof Object) data = JSON.stringify(data), r.setRequestHeader('Content-Type','application/json');
     if (content) r.setRequestHeader('Content-Type',content);
     r.setRequestHeader('X-Requested-With','XMLHttpRequest');
     r.send(data);
   }
+
+  var mimeTypes = ajax.mimeTypes = {
+    json: 'application/json',
+    xml:  'application/xml',
+    html: 'text/html',
+    text: 'text/plain'
+  };
 
   $.ajax = ajax;
   $.get = function(url, success){ ajax({ url: url, success: success }); };
