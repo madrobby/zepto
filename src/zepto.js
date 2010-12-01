@@ -22,7 +22,7 @@ var Zepto = (function() {
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
-    ready: function(callback){ 
+    ready: function(callback){
       d.addEventListener('DOMContentLoaded', callback, false); return this;
     },
     compact: function(){ this.dom=compact(this.dom); return this },
@@ -34,7 +34,7 @@ var Zepto = (function() {
     filter: function(selector){
       return $(this.dom.filter(function(el){ return $$(el.parentNode, selector).indexOf(el)>=0; }));
     },
-    is: function(selector){ 
+    is: function(selector){
       return this.dom.length>0 && $(this.dom[0]).filter(selector).dom.length>0;
     },
     first: function(callback){ this.dom=compact([this.dom[0]]); return this },
@@ -52,8 +52,8 @@ var Zepto = (function() {
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === un ? 
-        (this.dom.length>0 ? this.dom[0].innerHTML : null) : 
+      return html === un ?
+        (this.dom.length>0 ? this.dom[0].innerHTML : null) :
         this.each(function(el){ el.innerHTML = html });
     },
     text: function(text){
@@ -62,7 +62,7 @@ var Zepto = (function() {
         this.each(function(el){ el.innerText = text });
     },
     attr: function(name,value){
-      return (typeof name == 'string' && value === un) ? 
+      return (typeof name == 'string' && value === un) ?
         (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this.each(function(el){
           if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
@@ -92,7 +92,7 @@ var Zepto = (function() {
       return this.each(function(el){ el.className = el.className.replace(classRE(name), ' ').trim() });
     }
   };
-  
+
   ['width','height'].forEach(function(m){ $.fn[m] = function(){ return this.offset()[m] }});
 
   for(k in ADJ_OPS)

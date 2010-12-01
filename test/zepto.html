@@ -18,35 +18,35 @@
     <span></span>
     <span class="nay" id="nay">nay</span>
   </p>
-  
+
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
-  
+
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
   <div id="htmltest3"></div>
-  
+
   <div id="texttest1" class="texttest"><span>Here <strong>is</strong> some text</span></div>
   <div id="texttest2" class="texttest">And <em>some more</em></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
-  
+
   <p id="find1">
     <span class="findme">1</span>
     <span class="findme">2</span>
     <b>3<span class="findme">4</span></b>
     <span class="findme">5<span>6</span></span>
   </p>
-  
+
   <p id="find2">
     <span>1</span>
     <span>2</span>
     <span>3<span>4</span></span>
     <span>5<span>6</span></span>
   </p>
-  
+
   <div style="position:absolute;width:100px;height:50px" id="offset">test</div>
-  
+
   <ul>
     <li id="li1">
       <ul>
@@ -54,15 +54,15 @@
       </ul>
     </li>
   </ul>
-  
+
   <style>
     .hidden { display: none; }
   </style>
-  
+
   <div id="show_hide_div1" style="display:none"></div>
   <div id="show_hide_div2" class="hidden"></div>
   <div id="show_hide_div3"></div>
-  
+
   <div id="show_hide_span1" style="display:none"></div>
   <div id="show_hide_span2" class="hidden"></div>
   <div id="show_hide_span3"></div>
@@ -71,7 +71,7 @@
   <div class="filtertest" id="filtertest2"></div>
 
   <div id="delegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
-  
+
   <div id="another_element"></div>
 
   <script>
@@ -80,7 +80,7 @@
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
       el.dispatchEvent(event);
     }
-    
+
     function mousedown(el){
       var event = document.createEvent('MouseEvents');
       event.initMouseEvent('mousedown', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -91,19 +91,19 @@
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
 
     Evidence.TestCase.extend('ZeptoTest', {
-      
+
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim());
       },
-      
+
       testDollar: function(t){
         t.assert($('#some_element').get().length == 1);
         t.assert($('#some_element').get(0) == document.getElementById('some_element'));
-        
+
         t.assert($('p').get().length == 4);
         t.assert($('p>span.yay').get().length == 1);
-        
+
         var el = document.getElementById('some_element');
         t.assertEqual($(el).get(0), el);
       },
@@ -116,26 +116,26 @@
         t.assert(instance2.get().length == 4);
         t.assert(instance1.get(0) !== instance2.get(0));
       },
-      
+
       testDollarWithArrays: function(t){
         var z1 = $([document.getElementById('some_element')]);
         t.assert(1, z1.get().length);
         t.assert(z1.get(0) == document.getElementById('some_element'))
-        
+
         var z2 = $([document.getElementById('some_element'), null, undefined]);
         t.assert(1, z2.get().length);
         t.assert(z2.get(0) == document.getElementById('some_element'))
-        
+
         var z3 = $([null, document.getElementById('some_element'), null]);
         t.assert(1, z3.get().length);
         t.assert(z3.get(0) == document.getElementById('some_element'))
       },
-      
+
       testDollarWithContext: function(t){
         // Zepto object
         var zepto = $('p#find1, #find2');
         t.assertEqual(11, $('span', zepto).get().length);
-        
+
         // DOM Element
         var el = document.getElementById('find1');
         t.assertEqual(4, $('span.findme', el).get().length);
@@ -150,35 +150,35 @@
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
       },
-      
+
       testNext: function(t){
         t.assertEqual('P', $('#some_element').next().get(0).tagName);
         t.assertEqual('DIV', $('p').next().get(0).tagName);
       },
-      
+
       testPrev: function(t){
         t.assertEqual('H1', $('p').prev().get(0).tagName);
         t.assertEqual('DIV', $('ul').prev().get(0).tagName);
       },
-      
+
       testEach: function(t){
         var tagnames = [];
         $('h1,p').each(function(e){ tagnames.push(e.tagName) });
         t.assertEqual('H1PPPP', tagnames.join(''));
       },
-      
+
       testFirst: function(t){
         var zepto = $('h1,p');
         t.assertEqual(5, zepto.get().length);
-        
+
         zepto.first();
         t.assertEqual(1, zepto.get().length);
         t.assertEqual('H1', zepto.get(0).tagName);
-        
+
         t.assertEqual(0, $('blah').get().length);
         t.assertEqual(0, $('blah').first().get().length);
       },
-      
+
       testCompact: function(t){
         var nodes = $('p');
         nodes.dom = [$('p').get(0), null, undefined, $('p').get(0)];
@@ -186,71 +186,71 @@
         t.assertEqual(2, nodes.get().length);
         t.assertEqual('PP', nodes.pluck('tagName').join(''));
       },
-      
+
       testPluck: function(t){
         t.assertEqual('H1DIVDIV', $('h1,div.htmltest').pluck('tagName').join(''));
       },
-      
+
       // for now, we brute-force "display:block" for show/hide
       // need to change that to work better with inline elements in the future
-      
+
       testShow: function(t){
         $('#show_hide_div1').show();
         t.assertEqual('block', $('#show_hide_div1').get(0).style.display);
-        
+
         $('#show_hide_div2').show();
         t.assertEqual('block', $('#show_hide_div2').get(0).style.display);
-        
+
         $('#show_hide_div3').show();
         t.assertEqual('block', $('#show_hide_div3').get(0).style.display);
-        
+
         $('#show_hide_span1').show();
         t.assertEqual('block', $('#show_hide_span1').get(0).style.display);
-        
+
         $('#show_hide_span2').show();
         t.assertEqual('block', $('#show_hide_span2').get(0).style.display);
-        
+
         $('#show_hide_span3').show();
         t.assertEqual('block', $('#show_hide_span3').get(0).style.display);
       },
-      
+
       testHide: function(t){
         $('#show_hide_div1').hide();
         t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
-        
+
         $('#show_hide_div2').hide();
         t.assertEqual('none', $('#show_hide_div2').get(0).style.display);
-        
+
         $('#show_hide_div3').hide();
         t.assertEqual('none', $('#show_hide_div3').get(0).style.display);
-        
+
         $('#show_hide_span1').hide();
         t.assertEqual('none', $('#show_hide_span1').get(0).style.display);
-        
+
         $('#show_hide_span2').hide();
         t.assertEqual('none', $('#show_hide_span2').get(0).style.display);
-        
+
         $('#show_hide_span3').hide();
         t.assertEqual('none', $('#show_hide_span3').get(0).style.display);
       },
-      
+
       testOffset: function(t){
         // TODO
       },
-      
+
       testWidth: function(t){
         t.assertEqual(100, $('#offset').width());
       },
-      
+
       testHeight: function(t){
         t.assertEqual(50, $('#offset').height());
       },
-      
+
       testClosest: function(t){
         t.assert($('#li1').get(0) === $('#li2').closest('li').get(0));
         t.assertEqual(0, $('#li2').closest('div').get().length);
       },
-      
+
       testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertEqual(4, found.get().length);
@@ -258,78 +258,78 @@
         t.assertEqual('2', found.get(1).innerHTML);
         t.assertEqual('4', found.get(2).innerHTML);
         t.assertEqual('5<span>6</span>', found.get(3).innerHTML);
-        
+
         var found = $('p#find1, #find2').find('span');
         t.assertEqual(11, found.get().length);
       },
-     
+
       testFilter: function(t){
         var found = $('div');
         t.assertEqual(2, found.filter('.filtertest').get().length);
         t.assertEqual(0, found.filter('.doesntexist').get().length);
         t.assertEqual(1, found.filter('.filtertest').filter(':nth-child(2n)').get().length);
       },
-      
+
       testIs: function(t){
         t.assert($('#find1').is('p'));
         t.assert($('#li2').is(':first-child'));
         t.assert(!$('#find1').is('doesnotexist'));
         t.assert(!$('#find1').is());
-        
+
         t.assert($('div').is('#some_element'));
         t.assert(!$('#does_not_exist').is('p'));
       },
- 
+
       testCSS: function(t){
         var el = $('#some_element').get(0);
-        
+
         $('#some_element').css('color', '#f00');
         $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
-        
+
         var style1 = $('#some_element').css('color');
         var style2 = $('#some_element').css('border');
         t.assertEqual('rgb(255, 0, 0)', style1);
         t.assertEqual('1px solid rgb(255, 0, 0)', style2);
-        
+
         $('#some_element').css({
           'border': '2px solid #000',
           'color': 'rgb(0,255,0)',
           'padding-left': '2px'
         });
-        
+
         t.assertEqual('2px', $('#some_element').css('borderLeftWidth'));
         t.assertEqual('solid', $('#some_element').css('borderLeftStyle'));
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('borderLeftColor'));
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
         t.assertEqual('2px', $('#some_element').css('paddingLeft'));
-        
+
         t.assertEqual('2px', $('#some_element').css('border-left-width'));
         t.assertEqual('solid', $('#some_element').css('border-left-style'));
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('border-left-color'));
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
         t.assertEqual('2px', $('#some_element').css('padding-left'));
       },
-      
+
       testHtml: function(t){
         var div = $('div.htmltest');
         div.html('yowza');
-        
+
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML);
         t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML);
-        
+
         t.assertEqual('yowza', $('div.htmltest').html());
-        
+
         div.html('');
         t.assertEqual('', document.getElementById('htmltest2').innerHTML);
-        
+
         t.assertEqual("", $('#htmltest3').html());
-        
+
         t.assertNull($('doesnotexist').html());
       },
-      
+
       testText: function(t){
         t.assertEqual('Here is some text', $('div.texttest').text());
         t.assertEqual('And some more', $('#texttest2').text());
@@ -348,14 +348,14 @@
         $(document.body).bind('click', function(){ counter++ });
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
-        
+
         counter = 0;
         $('#some_element').bind('click mousedown', function(){ counter++ });
         click($('#some_element').get(0));
         mousedown($('#some_element').get(0));
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
-      
+
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
@@ -390,16 +390,16 @@
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });
         $('p').delegate('span.yay', 'click', function(){ counter++ });
         $(document.body).delegate('p', 'click', function(){ pcounter++ });
-        
+
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
-        
+
         click($('span.yay').get(0));
         t.assertEqual(2, counter);
-        
+
         click($('span.nay').get(0));
         t.assertEqual(2, counter);
-        
+
         click($('p').get(0));
         t.assertEqual(3, pcounter);
 
@@ -410,73 +410,73 @@
         click($('span.second-level').get(0));
         t.assertEqual('hi', content);
       },
-      
+
       testLive: function(t){
         var counter = 0;
         $('p.live').live('click', function(){ counter++ });
-        
+
         $(document.body).append('<p class="live" id="live_1"></p>');
         $(document.body).append('<p class="live" id="live_2"></p>');
-        
+
         click($('#live_1').get(0));
         click($('#live_2').get(0));
 
         $('p.live').remove();
         $(document.body).append('<p class="live" id="live_this_test"></p>');
-        
-        $('p.live').live('click', function(){ 
+
+        $('p.live').live('click', function(){
           t.assertEqual(document.getElementById('#live_this_test'), this);
         });
         click($('#live_this_test').get(0));
-        
+
         t.assertEqual(3, counter);
       },
-      
+
       testAttr: function(t){
         var els = $('#attr_1, #attr_2');
-        
+
         t.assertEqual('someId1', els.attr("data-id"));
         t.assertEqual('someName1', els.attr("data-name"));
-        
+
         els.attr("data-id","someOtherId");
         els.attr("data-name","someOtherName");
-        
+
         t.assertEqual('someOtherId', els.attr("data-id"));
         t.assertEqual('someOtherName', els.attr("data-name"));
         t.assertEqual('someOtherId', $('#attr_2').attr('data-id'));
 
         t.assertUndefined(els.attr("nonExistentAttribute"));
-        
+
         els.attr("data-id", false);
         t.assertEqual("false", els.attr("data-id"));
-        
+
         els.attr("data-id", 0);
         t.assertEqual("0", els.attr("data-id"));
-        
+
         t.assertNull($('doesnotexist').attr('yo'));
-        
+
         els.attr({ 'data-id': 'id', 'data-name': 'name' });
         t.assertEqual('id', els.attr("data-id"));
         t.assertEqual('name', els.attr("data-name"));
         t.assertEqual('id', $('#attr_2').attr('data-id'));
       },
-      
+
       testChaining: function(t){
         t.assert(document.getElementById('nay').innerHTML == "nay");
         $('span.nay').css('color', 'red').html('test');
         t.assert(document.getElementById('nay').innerHTML == "test");
       },
-      
+
       testCachingForLater: function(t){
         var one = $('div');
         var two = $('span');
-        
+
         t.assert(one.get(0) !== two.get(0));
       },
-      
+
       testPlugins: function(t){
         var el = $('#some_element').get(0);
-        
+
         $.fn.plugin = function(){
           return this.each(function(el){ el.innerHTML = 'plugin!' });
         };
@@ -491,38 +491,38 @@
         $('#some_element').anotherplugin();
         t.assertEqual('anotherplugin!', el.innerHTML);
       },
-      
+
       testAppendPrependBeforeAfter: function(t){
         $('#beforeafter').append('append');
         $('#beforeafter').prepend('prepend');
         $('#beforeafter').before('before');
         $('#beforeafter').after('after');
-        
+
         t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
-        
+
         $('#beforeafter_container').html('<div id="beforeafter"></div>');
-        
-        function div(contents){ 
+
+        function div(contents){
           var el = document.createElement('div');
           el.innerHTML = contents;
           return el;
         }
-        
+
         $('#beforeafter').append(div('append'));
         $('#beforeafter').prepend(div('prepend'));
         $('#beforeafter').before(div('before'));
         $('#beforeafter').after(div('after'));
-        
+
         t.assertEqual(
           '<div>before</div><div id="beforeafter"><div>prepend</div>'+
-          '<div>append</div></div><div>after</div>', 
+          '<div>append</div></div><div>after</div>',
           $('#beforeafter_container').html()
         );
       },
-      
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0);
-        
+
         $('#some_element').addClass('green');
         t.assertEqual('green', el.className);
         $('#some_element').addClass('green');
@@ -531,25 +531,25 @@
         t.assertEqual('green red', el.className);
         $('#some_element').removeClass('green');
         t.assertEqual('red', el.className);
-        
+
         $('#some_element').attr('class', ' red green blue ');
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
       },
-      
+
       testHasClass: function(t){
         var el = $('#some_element').get(0);
         $('#some_element').addClass('green');
-        
+
         t.assert($('#some_element').hasClass('green'));
         t.assert(!$('#some_element').hasClass('orange'));
-        
+
         $('#some_element').addClass('orange');
         t.assert($('#some_element').hasClass('green'));
         t.assert($('#some_element').hasClass('orange'));
       },
-      
+
       testIndex: function(t){
         t.assertEqual($("p > span").index("#nay"), 2);
         t.assertEqual($("p > span").index(".yay"), 0);

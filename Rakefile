@@ -21,7 +21,7 @@ ZEPTO_FILES    = [
 task :default => [:clean, :concat, :dist]
 
 desc "Clean the distribution directory."
-task :clean do 
+task :clean do
   rm_rf ZEPTO_DIST_DIR
   mkdir ZEPTO_DIST_DIR
 end
@@ -44,7 +44,7 @@ end
 desc "Concatenate Zepto core and plugins to build a distributable zepto.js file"
 task :concat => :whitespace do
   File.open(File.join(ZEPTO_DIST_DIR,'zepto.js'),"w") do |f|
-    f.puts ZEPTO_FILES.map{ |s| IO.read(s) } 
+    f.puts ZEPTO_FILES.map{ |s| IO.read(s) }
   end
 end
 
@@ -62,14 +62,14 @@ def process_minified(src, target)
   cp target, File.join(ZEPTO_DIST_DIR,'temp.js')
   msize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js'))
   `gzip -9 #{File.join(ZEPTO_DIST_DIR,'temp.js')}`
-  
+
   osize = File.size(src)
   dsize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js.gz'))
   rm_rf File.join(ZEPTO_DIST_DIR,'temp.js.gz')
-  
+
   puts "Original version: %.3fk" % (osize/1024.0)
   puts "Minified: %.3fk" % (msize/1024.0)
-  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]  
+  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]
 end
 
 desc "Generates a minified version for distribution."

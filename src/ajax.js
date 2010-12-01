@@ -23,7 +23,7 @@
   $.getJSON = function(url, success){
     $.get(url, function(json){ success(JSON.parse(json)) });
   };
-  
+
   $.fn.load = function(url, success){
     var self = this, parts = url.split(/\s/), selector;
     if(!this.dom.length) return this;

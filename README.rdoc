@@ -2,7 +2,7 @@
 
 Zepto.js is a minimalist inlinable framework for mobile WebKit browsers, with a jQuery-like chaining syntax
 
-The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done. 
+The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done.
 
 Primary target platforms are:
 
@@ -18,19 +18,19 @@ Secondary platforms are:
 = Syntax & features:
 
 Basic call with CSS selector:
-   
+
   $('p>span').html('yoho').css('color:red');
-  
+
 Instead of a selector, a DOM Element, or a list of nodes can be passed in.
 
 The $ function takes an optional context argument, which can be a DOM Element or a Zepto object:
 
   $('span', $('p'))  // -> find all <span> elements in <p> elements
-  
+
   $('p').bind('click', function(){
     $('span', this).css('color:red'); // affects "span" children/grandchildren
   });
-  
+
 Context and .find calls are equivalent:
 
   $('span', $('p'))    // same
@@ -43,15 +43,15 @@ Context and .find calls are equivalent:
   each(callback): iterate over array of all elements found
   index('selector'): return an integer indicating the position of 'selector' in array of all elements found
   first(): remove all but the first element from the list of found elements
-  
+
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): traverses the DOM upwards to find the first matching element
   next(): next siblings
   prev(): previous siblings
   is('selector'): returns true/false if first element matches the selector
-  
+
   remove(): remove element
-  
+
   html('new html'): set the contents of the element(s)
   text('new text'): set the text contents of the element(s)
   append, prepend, before, after: like html, but add html to element contents (or before/after)
@@ -63,32 +63,32 @@ Context and .find calls are equivalent:
   offset(): get object with top: left: width: height: properties (in px)
   height(): get first elements height in px
   width(): get first elements width in px
-  
+
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
 
   css('css property', 'value'): set a CSS property
   css({ property1: value1, property2: value2 }): set multiple CSS properties
   css('css property'): get this CSS property of the first element
-  
+
   addClass('classname'): adds a CSS class name
   removeClass('classname'): removes a CSS class name
   hasClass('classname'): returns true of first element has a classname set
-  
+
   bind(type, function): add an event listener (see below)
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
   live(type, function): add an event listener that listens to the selector for current and future elements
   trigger(type): triggers an event
-    
+
 == Non-jQuery functions
 
   pluck(property):
     return property for each element
     e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
-    
+
   compact():
     remove all null or undefined elements from list of elements found
-  
+
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
 
@@ -101,19 +101,19 @@ Context and .find calls are equivalent:
 Adding an event listener:
 
   $('some selector').bind('click', function(event){ ... });
-  
+
 Adding an event listener on multiple events:
-  
+
   $('some selector').bind('touchstart touchmove touchend', function(event){ ... });
-  
+
 Adding one event listener that uses event delegation to be only active on a range of children/grandchildren (as given with the subselector):
-  
+
   $('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") });
-  
+
 Adding a "live" event listener, that fires on all elements that match the selector now and in the future:
 
   $('p.yay').live('click', function(){ alert("Clicked a p.yay element!") });
-  
+
 Removing an event listener:
   $('some selector').unbind('click', listener);
 
@@ -133,16 +133,16 @@ Double-tapping:
 
 Swiping (e.g. "delete" button when swiping over a list entry):
   $('some selector').swipe(function(){ ... });
-    
+
 = Ajax:
 
   $.get(url, callback)
   $.post(url, callback)
   $.getJSON(url, callback)
-  
+
   $('selector').load('url'[, callback]);
   $('selector').load('url #fragment-selector'[, callback]);
-  
+
 = Environmental information
 
 Zepto includes information about the environment it is running in the $.os object:
@@ -161,13 +161,13 @@ zepto.js can be used as-is. However, for best efficiency, run the included build
 For this to work, you need Ruby and Rake installed.
 
   $ rake
-  
+
 You'll see an output like:
 
   Original version: 5.7k
   Minified: 3.7k
   Minified and gzipped: 1.6k, compression factor 3.6
-  
+
 The minified file is saved in dist/zepto.min.js.
 
 = Loading Zepto
@@ -175,9 +175,9 @@ The minified file is saved in dist/zepto.min.js.
 You load Zepto by using
 
   <script src="/path/to/zepto.min.js"></script>
-  
-Or alternatively, you can just stick in the contents of zepto.min.js into 
-a <script> tag in your HTML for the best loading performance. 
+
+Or alternatively, you can just stick in the contents of zepto.min.js into
+a <script> tag in your HTML for the best loading performance.
 No need to load it form an external file!
 
 = Contributing!

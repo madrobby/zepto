@@ -1,6 +1,6 @@
 (function($){
   var cache = [], timeout;
-  
+
   $.fn.remove = function(){
     return this.each(function(el){
       if(el.tagName=='IMG'){
@@ -11,5 +11,5 @@
       }
       el.parentNode.removeChild(el);
     });
-  }  
+  }
 })(Zepto);

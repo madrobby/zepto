@@ -12,12 +12,12 @@
   <p>
     See the browser console for results.
   </p>
-  
+
   <div id="ajax_load" style="display:none"></div>
-  
+
   <script>
     Evidence.TestCase.extend('ZeptoAjaxTest', {
-      
+
       testAjaxGet: function(t){
         t.pause();
         $.get('fixtures/ajax_load_simple.html', function(response){
@@ -35,7 +35,7 @@
           });
         });
       },
-      
+
       testAjaxPostWithData: function(t) {
         t.pause();
         $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
@@ -44,7 +44,7 @@
           });
         });
       },
-      
+
       testAjaxPostWithAcceptType: function(t) {
         t.pause();
         $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
@@ -62,23 +62,23 @@
           });
         });
       },
-      
+
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
         testEl.load('fixtures/ajax_load_simple.html', function(){
           t.resume(function() {
-            this.assertEqual('simple ajax load', testEl.html());
+            this.assertEqual('simple ajax load', testEl.html().trim());
           });
         });
-      },  
-      
+      },
+
       testAjaxLoadWithSelector: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
         testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
           t.resume(function() {
-            this.assertEqual('ajax load with selector', testEl.html());
+            this.assertEqual('ajax load with selector', testEl.html().trim());
           });
         });
       },
