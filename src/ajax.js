@@ -1,27 +1,30 @@
 (function($){
-  function ajax(method, url, success, data, type){
-    data = data || null;
+  function ajax(o){ // { type, url, data, success, dataType, contentType }
+    var data = o.data || null, cb = o.success || null, mime = o.dataType || null, content = o.contentType || null;
     var r = new XMLHttpRequest();
-    if (success instanceof Function) {
+    if (cb instanceof Function) {
       r.onreadystatechange = function(){
-        if(r.readyState==4 && (r.status==200 || r.status==0))
-          success(r.responseText);
+        if(r.readyState==4 && (r.status==200 || r.status==0)) {
+          if (mime == 'application/json') cb(JSON.parse(r.responseText));
+          else cb(r.responseText);
+        }
       };
     }
-    r.open(method,url,true);
-    if (type) r.setRequestHeader("Accept", type );
+    r.open(o.type || 'GET', o.url || window.location, true);
+    if (mime) r.setRequestHeader("Accept", mime );
     if (data instanceof Object) data = JSON.stringify(data), r.setRequestHeader('Content-Type','application/json');
+    if (content) r.setRequestHeader('Content-Type',content);
     r.setRequestHeader('X-Requested-With','XMLHttpRequest');
     r.send(data);
   }
 
-  $.get = function(url, success){ ajax('GET', url, success); };
-  $.post = function(url, data, success, type){
-    if (data instanceof Function) type = type || success, success = data, data = null;
-    ajax('POST', url, success, data, type);
+  $.get = function(url, success){ ajax({ url: url, success: success }); };
+  $.post = function(url, data, success, dataType){
+    if (data instanceof Function) dataType = dataType || success, success = data, data = null;
+    ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
   $.getJSON = function(url, success){
-    $.get(url, function(json){ success(JSON.parse(json)) });
+    ajax({ url: url, success: success, dataType: 'application/json' });
   };
 
   $.fn.load = function(url, success){
