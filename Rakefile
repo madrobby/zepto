@@ -26,8 +26,23 @@ task :clean do
   mkdir ZEPTO_DIST_DIR
 end
 
+def normalize_whitespace(filename)
+  contents = File.readlines(filename)
+  contents.each { |line| line.sub!(/\s+$/, "") }
+  File.open(filename, "w") do |file|
+    file.write contents.join("\n").sub(/(\n+)?\Z/m, "\n")
+  end
+end
+
+desc "Strip trailing whitespace and ensure each file ends with a newline"
+task :whitespace do
+  Dir["*", "src/**/*", "test/**/*", "examples/**/*"].each do |filename|
+    normalize_whitespace(filename) if File.file?(filename)
+  end
+end
+
 desc "Concatenate Zepto core and plugins to build a distributable zepto.js file"
-task :concat do
+task :concat => :whitespace do
   File.open(File.join(ZEPTO_DIST_DIR,'zepto.js'),"w") do |f|
     f.puts ZEPTO_FILES.map{ |s| IO.read(s) } 
   end
