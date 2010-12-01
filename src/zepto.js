@@ -11,8 +11,7 @@ var Zepto = (function() {
   function compact(array){ return array.filter(function(el){ return el !== un && el !== null }) }
 
   function Z(dom, _){ this.dom = dom || []; this.selector = _ || '' }
-  Z.prototype = $.fn;
-
+  
   function $(_, context){
     return _ == d ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element || _ === window ? [_] : $$(d, _)))), _);
   }
