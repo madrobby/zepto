@@ -2,10 +2,10 @@
   $.ajax = function(options){
     // { type, url, data, success, dataType, contentType }
     options = options || {};
-    var data = options.data || null,
-        cb = options.success || null,
-        mime = mimeTypes[options.dataType || null],
-        content = options.contentType || null,
+    var data = options.data,
+        cb = options.success,
+        mime = mimeTypes[options.dataType],
+        content = options.contentType,
         xhr = new XMLHttpRequest();
 
     if (cb instanceof Function) {
