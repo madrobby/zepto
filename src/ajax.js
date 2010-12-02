@@ -1,39 +1,42 @@
 (function($){
-  function ajax(o){ // { type, url, data, success, dataType, contentType }
-    var data = o.data || null, cb = o.success || null, mime = mimeTypes[o.dataType || null], content = o.contentType || null;
-    var r = new XMLHttpRequest();
+  $.ajax = function(options){
+    // { type, url, data, success, dataType, contentType }
+    options = options || {};
+    var data = options.data || null,
+        cb = options.success || null,
+        mime = mimeTypes[options.dataType || null],
+        content = options.contentType || null,
+        xhr = new XMLHttpRequest();
+
     if (cb instanceof Function) {
-      r.onreadystatechange = function(){
-        if(r.readyState==4 && (r.status==200 || r.status==0)) {
-          if (mime == 'application/json') cb(JSON.parse(r.responseText));
-          else cb(r.responseText);
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState==4 && (xhr.status==200 || xhr.status==0)) {
+          if (mime == 'application/json') cb(JSON.parse(xhr.responseText));
+          else cb(xhr.responseText);
         }
       };
     }
-    r.open(o.type || 'GET', o.url || window.location, true);
-    if (mime) r.setRequestHeader("Accept", mime);
-    if (data instanceof Object) data = JSON.stringify(data), r.setRequestHeader('Content-Type','application/json');
-    if (content) r.setRequestHeader('Content-Type',content);
-    r.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    r.send(data);
-  }
 
-  var mimeTypes = ajax.mimeTypes = {
+    xhr.open(options.type || 'GET', options.url || window.location, true);
+    if (mime) xhr.setRequestHeader('Accept', mime);
+    if (data instanceof Object) data = JSON.stringify(data), content = content || 'application/json';
+    if (content) xhr.setRequestHeader('Content-Type', content);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.send(data);
+  };
+  var mimeTypes = $.ajax.mimeTypes = {
     json: 'application/json',
     xml:  'application/xml',
     html: 'text/html',
     text: 'text/plain'
   };
 
-  $.ajax = ajax;
-  $.get = function(url, success){ ajax({ url: url, success: success }); };
+  $.get = function(url, success){ $.ajax({ url: url, success: success }) };
   $.post = function(url, data, success, dataType){
     if (data instanceof Function) dataType = dataType || success, success = data, data = null;
-    ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
+    $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
-  $.getJSON = function(url, success){
-    ajax({ url: url, success: success, dataType: 'application/json' });
-  };
+  $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
   $.fn.load = function(url, success){
     var self = this, parts = url.split(/\s/), selector;

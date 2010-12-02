@@ -90,5 +90,87 @@
 
     });
   </script>
+
+  <script>
+    var OriginalXHR = XMLHttpRequest;
+
+    function MockXHR() {
+      this.headers = [];
+      MockXHR.last = this;
+    }
+    MockXHR.prototype = {
+      open: function(method, url) {
+        this.method = method;
+        this.url = url;
+      },
+      setRequestHeader: function(name, value) {
+        this.headers.push({ name: name, value: value });
+      },
+      send: function(data) {
+        this.data = data;
+      },
+      ready: function(readyState, status, responseText) {
+        this.readyState = readyState;
+        this.status = status;
+        this.responseText = responseText;
+        this.onreadystatechange();
+      },
+      onreadystatechange: function() {}
+    };
+
+    function matchHeader(name, value) {
+      return function(header) {
+        return header.name == name && (!value || header.value == value);
+      }
+    }
+
+    Evidence.TestCase.extend('ZeptoAjaxTest2', {
+      setUp: function() {
+        window.XMLHttpRequest = MockXHR;
+      },
+
+      tearDown: function() {
+        window.XMLHttpRequest = OriginalXHR;
+      },
+
+      testTypeDefaultsToGET: function(t) {
+        $.ajax({ url: '/foo' });
+        t.assertEqual('GET', MockXHR.last.method);
+      },
+
+      testURLDefaultsToWindowLocation: function(t) {
+        $.ajax();
+        t.assertEqual(window.location, MockXHR.last.url);
+      },
+
+      testDataTypeOptionSetsAcceptHeader: function(t) {
+        $.ajax();
+        t.assert(!MockXHR.last.headers.some(matchHeader('Accept')));
+
+        $.ajax({ dataType: 'json' });
+        t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')));
+      },
+
+      testContentTypeOptionSetsContentTypeHeader: function(t) {
+        $.ajax();
+        t.assert(!MockXHR.last.headers.some(matchHeader('Content-Type')));
+
+        $.ajax({ contentType: 'text/html' });
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'text/html')));
+      },
+
+      testJSONResponseBodiesAreParsedWhenDataTypeOptionIsJSON: function(t) {
+        var result = {};
+        $.ajax({ dataType: 'json', success: function(json) {result = json } });
+        MockXHR.last.ready(4, 200, '{"hello":"world"}');
+        t.assertEqual("world", result.hello);
+      },
+
+      testDataOptionIsConvertedToJSONString: function(t) {
+        $.ajax({ data: {hello: 'world'} });
+        t.assertEqual('{"hello":"world"}', MockXHR.last.data);
+      }
+    });
+  </script>
 </body>
 </html>
