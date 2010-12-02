@@ -143,10 +143,10 @@ Simple GET and POST:
 
 If you need more control (all keys are optional):
   $.ajax({
-    type: 'POST',
-    url: '/foo',
+    type: 'POST', // defaults to 'GET'
+    url: '/foo', // defaults to window.location
     data: {name: 'Zepto'}, // can be a string or object (objects are automatically serialized to JSON)
-    dataType: 'json', // what you expect back from the server ('json', 'xml', 'html', or 'text')
+    dataType: 'json', // what response type you accept from the server ('json', 'xml', 'html', or 'text')
     success: function(body) { ... } // body is a string (or if dataType is 'json', a parsed JSON object)
   })
 
