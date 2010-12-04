@@ -1,5 +1,5 @@
 (function($){
-  var touch={}, touchTimeout;
+  var touch = {}, touchTimeout;
 
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
@@ -7,7 +7,7 @@
 
   $(document).ready(function(){
     $(document.body).bind('touchstart', function(e){
-      var now = Date.now(), delta = now-(touch.last || now);
+      var now = Date.now(), delta = now - (touch.last || now);
       touch.target = parentIfText(e.touches[0].target);
       touchTimeout && clearTimeout(touchTimeout);
       touch.x1 = e.touches[0].pageX;
@@ -20,7 +20,7 @@
         $(touch.target).trigger('doubleTap');
         touch = {};
       } else if (touch.x2 > 0) {
-        Math.abs(touch.x1-touch.x2)>30 && $(touch.target).trigger('swipe');
+        Math.abs(touch.x1 - touch.x2) > 30 && $(touch.target).trigger('swipe');
         touch.x1 = touch.x2 = touch.last = 0;
       } else if ('last' in touch) {
         touchTimeout = setTimeout(function(){
@@ -29,10 +29,10 @@
           touch = {};
         }, 250);
       }
-    }).bind('touchcancel', function(){ touch={} });
+    }).bind('touchcancel', function(){ touch = {} });
   });
 
-  ['swipe', 'doubleTap', 'tap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.bind(m, callback) }
+  ['swipe', 'doubleTap', 'tap'].forEach(function(gesture){
+    $.fn[gesture] = function(callback){ return this.bind(gesture, callback) }
   });
 })(Zepto);

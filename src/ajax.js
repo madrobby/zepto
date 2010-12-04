@@ -3,16 +3,16 @@
     // { type, url, data, success, dataType, contentType }
     options = options || {};
     var data = options.data,
-        cb = options.success,
+        callback = options.success,
         mime = mimeTypes[options.dataType],
         content = options.contentType,
         xhr = new XMLHttpRequest();
 
-    if (cb instanceof Function) {
+    if (callback instanceof Function) {
       xhr.onreadystatechange = function(){
         if(xhr.readyState==4 && (xhr.status==200 || xhr.status==0)) {
-          if (mime == 'application/json') cb(JSON.parse(xhr.responseText));
-          else cb(xhr.responseText);
+          if (mime == 'application/json') callback(JSON.parse(xhr.responseText));
+          else callback(xhr.responseText);
         }
       };
     }
@@ -24,6 +24,7 @@
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.send(data);
   };
+
   var mimeTypes = $.ajax.mimeTypes = {
     json: 'application/json',
     xml:  'application/xml',
@@ -39,9 +40,9 @@
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
   $.fn.load = function(url, success){
+    if (!this.dom.length) return this;
     var self = this, parts = url.split(/\s/), selector;
-    if(!this.dom.length) return this;
-    if(parts.length>1) url = parts[0], selector = parts[1];
+    if (parts.length > 1) url = parts[0], selector = parts[1];
     $.get(url, function(response){
       self.html(selector ?
         $(document.createElement('div')).html(response).find(selector).html()

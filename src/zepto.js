@@ -1,109 +1,136 @@
 var Zepto = (function() {
-  var slice=[].slice, d=document,
-    ADJ_OPS={append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'},
-    k, css, un, $$;
+  var slice = [].slice, key, css, $$;
 
   // fix for iOS 3.2
-  if(String.prototype.trim === un)
+  if (String.prototype.trim === undefined)
     String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
 
-  function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
-  function compact(array){ return array.filter(function(el){ return el !== un && el !== null }) }
+  function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
+  function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
-  function Z(dom, _){ this.dom = dom || []; this.selector = _ || '' }
+  function Z(dom, selector){ this.dom = dom || []; this.selector = selector || '' }
 
-  function $(_, context){
-    return _ == d ? new Z : (context !== un) ? $(context).find(_) : new Z(compact(_ instanceof Z ? _.dom : (_ instanceof Array ? _ : (_ instanceof Element || _ === window ? [_] : $$(d, _)))), _);
+  function $(selector, context){
+    if (selector == document) return new Z;
+    else if (context !== undefined) return $(context).find(selector);
+    else {
+      var dom;
+      if (selector instanceof Z) dom = selector.dom;
+      else if (selector instanceof Array) dom = selector;
+      else if (selector instanceof Element || selector === window) dom = [selector];
+      else dom = $$(document, selector);
+      
+      return new Z(compact(dom), selector);
+    }
   }
 
-  $.extend = function(target, src){ for(k in src) target[k] = src[k] }
-  $.qsa = $$ = function(el, selector){ return slice.call(el.querySelectorAll(selector)) }
+  $.extend = function(target, source){ for (key in source) target[key] = source[key] }
+  $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
   $.fn = {
     ready: function(callback){
-      d.addEventListener('DOMContentLoaded', callback, false); return this;
+      document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
-    compact: function(){ this.dom=compact(this.dom); return this },
-    get: function(idx){ return idx === un ? this.dom : this.dom[idx] },
+    compact: function(){ this.dom = compact(this.dom); return this },
+    get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
     remove: function(){
       return this.each(function(el){ el.parentNode.removeChild(el) });
     },
     each: function(callback){ this.dom.forEach(callback); return this },
     filter: function(selector){
-      return $(this.dom.filter(function(el){ return $$(el.parentNode, selector).indexOf(el)>=0; }));
+      return $(this.dom.filter(function(element){
+        return $$(element.parentNode, selector).indexOf(element) >= 0;
+      }));
     },
     is: function(selector){
-      return this.dom.length>0 && $(this.dom[0]).filter(selector).dom.length>0;
+      return this.dom.length > 0 && $(this.dom[0]).filter(selector).dom.length > 0;
     },
-    first: function(callback){ this.dom=compact([this.dom[0]]); return this },
+    first: function(callback){ this.dom = compact([this.dom[0]]); return this },
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
     closest: function(selector){
-      var el = this.dom[0].parentNode, nodes = $$(d, selector);
-      while(el && nodes.indexOf(el)<0) el = el.parentNode;
-      return $(el && !(el===d) ? el : []);
+      var node = this.dom[0].parentNode, nodes = $$(document, selector);
+      while(node && nodes.indexOf(node) < 0) node = node.parentNode;
+      return $(node && !(node === document) ? node : []);
     },
-    pluck: function(property){ return this.dom.map(function(el){ return el[property] }) },
+    pluck: function(property){ return this.dom.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
     hide: function(){ return this.css('display', 'none') },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === un ?
-        (this.dom.length>0 ? this.dom[0].innerHTML : null) :
-        this.each(function(el){ el.innerHTML = html });
+      return html === undefined ?
+        (this.dom.length > 0 ? this.dom[0].innerHTML : null) :
+        this.each(function(element){ element.innerHTML = html });
     },
     text: function(text){
-      return text === un ?
-        (this.dom.length>0 ? this.dom[0].innerText : null) :
-        this.each(function(el){ el.innerText = text });
+      return text === undefined ?
+        (this.dom.length > 0 ? this.dom[0].innerText : null) :
+        this.each(function(element){ element.innerText = text });
     },
-    attr: function(name,value){
-      return (typeof name == 'string' && value === un) ?
-        (this.dom.length>0 ? this.dom[0].getAttribute(name) || undefined : null) :
-        this.each(function(el){
-          if (typeof name == 'object') for(k in name) el.setAttribute(k, name[k])
-          else el.setAttribute(name,value);
+    attr: function(name, value){
+      return (typeof name == 'string' && value === undefined) ?
+        (this.dom.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
+        this.each(function(element){
+          if (typeof name == 'object') for (key in name) element.setAttribute(key, name[key])
+          else element.setAttribute(name, value);
         });
     },
     offset: function(){
       var obj = this.dom[0].getBoundingClientRect();
-      return { left: obj.left+d.body.scrollLeft, top: obj.top+d.body.scrollTop, width: obj.width, height: obj.height };
+      return {
+        left: obj.left + document.body.scrollLeft,
+        top: obj.top + document.body.scrollTop,
+        width: obj.width,
+        height: obj.height
+      };
     },
-    css: function(prop, value){
-      if(value === un && typeof prop == 'string') return this.dom[0].style[camelize(prop)];
-      css=""; for(k in prop) css += k+':'+prop[k]+';';
-      if(typeof prop == 'string') css = prop+":"+value;
-      return this.each(function(el) { el.style.cssText += ';' + css });
+    css: function(property, value){
+      if (value === undefined && typeof property == 'string') return this.dom[0].style[camelize(property)];
+      css = "";
+      for (key in property) css += key + ':' + property[key] + ';';
+      if (typeof property == 'string') css = property + ":" + value;
+      return this.each(function(element) { element.style.cssText += ';' + css });
     },
-    index: function(el){
-      return this.dom.indexOf($(el).get(0));
+    index: function(element){
+      return this.dom.indexOf($(element).get(0));
     },
     hasClass: function(name){
       return classRE(name).test(this.dom[0].className);
     },
     addClass: function(name){
-      return this.each(function(el){ !$(el).hasClass(name) && (el.className += (el.className ? ' ' : '') + name) });
+      return this.each(function(element){
+        !$(element).hasClass(name) && (element.className += (element.className ? ' ' : '') + name)
+      });
     },
     removeClass: function(name){
-      return this.each(function(el){ el.className = el.className.replace(classRE(name), ' ').trim() });
+      return this.each(function(element){
+        element.className = element.className.replace(classRE(name), ' ').trim()
+      });
     }
   };
 
-  ['width','height'].forEach(function(m){ $.fn[m] = function(){ return this.offset()[m] }});
+  ['width', 'height'].forEach(function(property){
+    $.fn[property] = function(){ return this.offset()[property] }
+  });
+  
 
-  for(k in ADJ_OPS)
-    $.fn[k] = (function(op){
-      return function(html){ return this.each(function(el){
-        el['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](op,html)
-      })};
-    })(ADJ_OPS[k]);
+  var adjacencyOperators = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
+
+  for (key in adjacencyOperators)
+    $.fn[key] = (function(operator) {
+      return function(html){
+        return this.each(function(element){
+          element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+        });
+      };
+    })(adjacencyOperators[key]);
 
   Z.prototype = $.fn;
 
   return $;
 })();
 
-'$' in window||(window.$=Zepto);
+'$' in window || (window.$ = Zepto);
