@@ -9,6 +9,7 @@ var Zepto = (function() {
 
   function classRE(name){ return new RegExp("(^|\\s)"+name+"(\\s|$)") }
   function compact(array){ return array.filter(function(el){ return el !== un && el !== null }) }
+  function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   function Z(dom, _){ this.dom = dom || []; this.selector = _ || '' }
 
@@ -18,7 +19,6 @@ var Zepto = (function() {
 
   $.extend = function(target, src){ for(k in src) target[k] = src[k] }
   $.qsa = $$ = function(el, selector){ return slice.call(el.querySelectorAll(selector)) }
-  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   $.fn = {
     ready: function(callback){
