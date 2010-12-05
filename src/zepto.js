@@ -1,5 +1,5 @@
 var Zepto = (function() {
-  var slice = [].slice, key, css, $$;
+  var slice = [].slice, key, css, $$, document = window.document, undefined;
 
   // fix for iOS 3.2
   if (String.prototype.trim === undefined)
