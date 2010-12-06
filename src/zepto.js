@@ -20,7 +20,7 @@ var Zepto = (function() {
       else if (selector instanceof Array) dom = selector;
       else if (selector instanceof Element || selector === window) dom = [selector];
       else dom = $$(document, selector);
-      
+
       return new Z(compact(dom), selector);
     }
   }
@@ -115,7 +115,7 @@ var Zepto = (function() {
   ['width', 'height'].forEach(function(property){
     $.fn[property] = function(){ return this.offset()[property] }
   });
-  
+
 
   var adjacencyOperators = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
 
