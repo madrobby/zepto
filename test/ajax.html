@@ -169,6 +169,34 @@
       testDataOptionIsConvertedToJSONString: function(t) {
         $.ajax({ data: {hello: 'world'} });
         t.assertEqual('{"hello":"world"}', MockXHR.last.data);
+      },
+
+      testErrorCallback: function(t) {
+        var successFired = false, xhr, status;
+        $.ajax({
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        });
+
+        MockXHR.last.ready(4, 500, '500 Internal Server Error');
+        t.assert(!successFired);
+        t.assertEqual(MockXHR.last, xhr);
+        t.assertEqual('error', status);
+      },
+
+      testErrorCallbackWithInvalidJSON: function(t) {
+        var successFired = false, xhr, status, exception;
+        $.ajax({
+          dataType: 'json',
+          succes: function() { successFired = true },
+          error: function(x, s, e) { xhr = x, status = s, exception = e }
+        });
+
+        MockXHR.last.ready(4, 200, '{invalid');
+        t.assert(!successFired);
+        t.assertEqual(MockXHR.last, xhr);
+        t.assertEqual('parsererror', status);
+        t.assert(exception.toString().match(/JSON/));
       }
     });
   </script>
