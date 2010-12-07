@@ -90,11 +90,37 @@
     var globalVarSetFromReady = "";
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
 
+    Evidence.Assertions.assertSame = function(expected, actual, message) {
+      var expectedKeyCount = 0, actualKeyCount = 0, key, passed = true;
+      for (key in expected) expectedKeyCount++;
+      for (key in actual) actualKeyCount++;
+
+      if (expectedKeyCount == actualKeyCount)
+        for (key in expected)
+          passed &= expected[key] == actual[key];
+      else
+        passed = false;
+
+      this._assertExpression(passed, message || 'Failed assertion.',
+        'Expected %o to be the same as %o.', actual, expected);
+    }
+
     Evidence.TestCase.extend('ZeptoTest', {
 
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim());
+      },
+
+      testExtend: function(t){
+        t.assertSame({}, $.extend({}));
+        t.assertSame(
+          {a: "b", c: "d", e: "f"},
+          $.extend({a: "1", e: "f"}, {a: "b", c: "d"})
+        );
+        var obj = {};
+        t.assertIdentical(obj, $.extend(obj, {a: 1}));
+        t.assertEqual(1, obj.a);
       },
 
       testDollar: function(t){

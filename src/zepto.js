@@ -25,7 +25,7 @@ var Zepto = (function() {
     }
   }
 
-  $.extend = function(target, source){ for (key in source) target[key] = source[key] }
+  $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
   $.fn = {
