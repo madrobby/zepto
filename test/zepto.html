@@ -429,8 +429,11 @@
         click($('p').get(0));
         t.assertEqual(3, pcounter);
 
-        $('div#delegate_test').delegate('span.second-level', 'click', function(){
+        $('div#delegate_test').delegate('span.second-level', 'click', function(e){
           t.assertEqual($('span.second-level').get(0), this);
+          t.assertEqual($('span.second-level').get(0), e.currentTarget);
+          t.refuteEqual($('span.second-level').get(0), e.originalEvent.currentTarget);
+          t.assertEqual($('div#delegate_test').get(0), e.liveFired);
           content = $(this).html();
         });
         click($('span.second-level').get(0));

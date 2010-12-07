@@ -39,8 +39,10 @@
     return this.each(function(element){
       $.event.add(element, event, function(e){
         var target = e.target, nodes = $$(element, selector);
+        var proxy = {originalEvent: e, liveFired: element};
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) callback.call(target, e);
+        $.extend(proxy, e).currentTarget = target;
+        if (target && !(target === element) && !(target === document)) callback.call(target, proxy);
       });
     });
   };
