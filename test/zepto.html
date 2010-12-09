@@ -71,6 +71,7 @@
   <div class="filtertest" id="filtertest2"></div>
 
   <div id="delegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
+  <div id="undelegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
 
   <div id="another_element"></div>
 
@@ -440,6 +441,34 @@
         t.assertEqual('hi', content);
       },
 
+      testUndelegate: function(t){
+        var count = 0, handler = function() { count++ };
+        $("#undelegate_test").bind("click mousedown", handler);
+        $("#undelegate_test").delegate("span.first-level", "click mousedown", handler);
+        $("#undelegate_test").delegate("span.second-level", "click mousedown", handler);
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(3, count);
+
+        $("#undelegate_test").undelegate("span.second-level", "click", handler);
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(5, count);
+
+        $("#undelegate_test").undelegate("span.first-level");
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(6, count);
+
+        $("#undelegate_test").unbind("click");
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(6, count);
+
+        $("#undelegate_test span.second-level").trigger("mousedown");
+        t.assertEqual(8, count);
+
+        $("#undelegate_test").undelegate();
+        $("#undelegate_test span.second-level").trigger("mousedown");
+        t.assertEqual(8, count);
+      },
+
       testLive: function(t){
         var counter = 0;
         $('p.live').live('click', function(){ counter++ });
@@ -459,6 +488,24 @@
         click($('#live_this_test').get(0));
 
         t.assertEqual(3, counter);
+      },
+
+      testDie: function(t){
+        var count = 0, handler = function() { count++ };
+        $("#another_element").live("click mousedown", handler);
+        $("#another_element").trigger("click");
+        t.assertEqual(1, count);
+
+        $("#another_element").die("click", handler);
+        $("#another_element").trigger("click");
+        t.assertEqual(1, count);
+
+        $("#another_element").trigger("mousedown");
+        t.assertEqual(2, count);
+
+        $("#another_element").die();
+        $("#another_element").trigger("mousedown");
+        t.assertEqual(2, count);
       },
 
       testAttr: function(t){
