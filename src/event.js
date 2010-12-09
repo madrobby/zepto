@@ -1,27 +1,30 @@
 (function($){
-  var $$ = $.qsa, handlers = [], zid = 1;
-  function id(element) {
-    return element._zid || (element._zid = zid++);
+  var $$ = $.qsa, handlers = {}, _zid = 1;
+  function zid(element) {
+    return element._zid || (element._zid = _zid++);
   }
   function find(element, event, fn) {
-    return handlers.filter(function(handler){
-      return handler && handler.id === id(element) &&
-        (!event || handler.event === event) && (!fn || handler.fn === fn);
+    return handlers[zid(element)].filter(function(handler) {
+      return handler && (!event || handler.event === event)
+        && (!fn || handler.fn === fn);
     });
   }
 
   $.event = {
     add: function(element, events, fn){
+      var id = zid(element);
+      handlers[id] || (handlers[id] = []);
       events.split(/\s/).forEach(function(event){
-        var handler = {event: event, id: id(element), fn: fn, i: handlers.length};
-        handlers.push(handler);
+        var handler = {event: event, fn: fn, i: handlers[id].length};
+        handlers[id].push(handler);
         element.addEventListener(event, fn, false);
       });
     },
     remove: function(element, events, fn){
+      var id = zid(element);
       (events || '').split(/\s/).forEach(function(event){
         find(element, event, fn).forEach(function(handler){
-          handlers[handler.i] = null;
+          delete handlers[id][handler.i];
           element.removeEventListener(handler.event, handler.fn, false);
         });
       });
