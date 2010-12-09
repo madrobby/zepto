@@ -1,9 +1,11 @@
 (function($){
-  var $$ = $.qsa, handlers = [];
-
+  var $$ = $.qsa, handlers = [], zid = 1;
+  function id(element) {
+    return element._zid || (element._zid = zid++);
+  }
   function find(element, event, fn) {
     return handlers.filter(function(handler){
-      return handler && handler.element === element &&
+      return handler && handler.id === id(element) &&
         (!event || handler.event === event) && (!fn || handler.fn === fn);
     });
   }
@@ -11,7 +13,7 @@
   $.event = {
     add: function(element, events, fn){
       events.split(/\s/).forEach(function(event){
-        var handler = {event: event, element: element, fn: fn, i: handlers.length};
+        var handler = {event: event, id: id(element), fn: fn, i: handlers.length};
         handlers.push(handler);
         element.addEventListener(event, fn, false);
       });
