@@ -4,21 +4,30 @@
     return element._zid || (element._zid = _zid++);
   }
   function findHandlers(element, event, fn, selector) {
+    event = parse(event);
+    if (event.ns) var matcher = matcherFor(event.ns);
     return (handlers[zid(element)] || []).filter(function(handler) {
       return handler
-        && (!event || handler.ev == event)
-        && (!fn || handler.fn == fn)
+        && (!event.e  || handler.e == event.e)
+        && (!event.ns || matcher.test(handler.ns))
+        && (!fn       || handler.fn == fn)
         && (!selector || handler.sel == selector);
     });
   }
+  function parse(event) {
+    var parts = ('' + event).split('.');
+    return {e: parts[0], ns: parts.slice(1).sort().join(' ')};
+  }
+  function matcherFor(ns) {
+    return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
+  }
 
   function add(element, events, fn, selector, delegate){
-    var id = zid(element);
-    handlers[id] || (handlers[id] = []);
+    var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     events.split(/\s/).forEach(function(event){
-      var handler = {ev: event, fn: fn, sel: selector, del: delegate, i: handlers[id].length};
-      handlers[id].push(handler);
-      element.addEventListener(event, delegate || fn, false);
+      var handler = $.extend(parse(event), {fn: fn, sel: selector, del: delegate, i: set.length});
+      set.push(handler);
+      element.addEventListener(handler.e, delegate || fn, false);
     });
   }
   function remove(element, events, fn, selector){
@@ -26,7 +35,7 @@
     (events || '').split(/\s/).forEach(function(event){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i];
-        element.removeEventListener(handler.ev, handler.del || handler.fn, false);
+        element.removeEventListener(handler.e, handler.del || handler.fn, false);
       });
     });
   }

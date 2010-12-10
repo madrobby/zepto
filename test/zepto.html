@@ -75,6 +75,8 @@
 
   <div id="another_element"></div>
 
+  <div id="namespace_test"></div>
+
   <script>
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -410,6 +412,31 @@
         click(el);
         mousedown(el);
         t.assertEqual(5, counter);
+      },
+
+      testUnbindWithNamespace: function(t){
+        var count = 0;
+        $("#namespace_test").bind("click.bar", function() { count++ });
+        $("#namespace_test").bind("click.foo", function() { count++ });
+        $("#namespace_test").bind("mousedown.foo.bar", function() { count++ });
+
+        $("#namespace_test").trigger("click");
+        t.assertEqual(2, count);
+
+        $("#namespace_test").unbind("click.baz");
+        $("#namespace_test").trigger("click");
+        t.assertEqual(4, count);
+
+        $("#namespace_test").unbind("click.foo");
+        $("#namespace_test").trigger("click");
+        t.assertEqual(5, count);
+
+        $("#namespace_test").trigger("mousedown");
+        t.assertEqual(6, count);
+
+        $("#namespace_test").unbind(".bar");
+        $("#namespace_test").trigger("click").trigger("mousedown");
+        t.assertEqual(6, count);
       },
 
       testDelegate: function(t){
