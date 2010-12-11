@@ -60,17 +60,24 @@
     });
   };
 
+  var eventMethods = ['preventDefault', 'stopImmediatePropagation', 'stopPropagation'];
+  function createProxy(event) {
+    var proxy = $.extend({originalEvent: event}, event);
+    eventMethods.forEach(function(key) {
+      proxy[key] = function() {return event[key].apply(event, arguments)};
+    });
+    return proxy;
+  }
+
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(element){
-      var delegate = function(e){
-        var target = e.target, nodes = $$(element, selector);
-        var proxy = {originalEvent: e, liveFired: element};
+      add(element, event, callback, selector, function(e){
+        var target = e.target, nodes = $$(element, selector), proxy = createProxy(e);
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        $.extend(proxy, e).currentTarget = target;
+        $.extend(proxy, {currentTarget: target, liveFired: element});
         if (target && !(target === element) && !(target === document))
           callback.call(target, proxy);
-      };
-      add(element, event, callback, selector, delegate);
+      });
     });
   };
   $.fn.undelegate = function(selector, event, callback){

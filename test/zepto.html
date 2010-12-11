@@ -456,7 +456,9 @@
 
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+      },
 
+      testDelegateEventProxy: function(t){
         $('div#delegate_test').delegate('span.second-level', 'click', function(e){
           t.assertEqual($('span.second-level').get(0), this);
           t.assertEqual($('span.second-level').get(0), e.currentTarget);
@@ -466,6 +468,17 @@
         });
         click($('span.second-level').get(0));
         t.assertEqual('hi', content);
+
+        var fired = false;
+        if (window.location.hash.length) window.location.hash = '';
+        $('div#delegate_test').html('<a href="#foo"></a>');
+        $('div#delegate_test').delegate('a', 'click', function(e){
+          e.preventDefault();
+          fired = true;
+        });
+        click($('div#delegate_test a').get(0));
+        t.assert(fired);
+        t.refuteEqual('#foo', window.location.hash);
       },
 
       testUndelegate: function(t){
