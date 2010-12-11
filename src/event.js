@@ -72,11 +72,13 @@
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(element){
       add(element, event, callback, selector, function(e){
-        var target = e.target, nodes = $$(element, selector), proxy = createProxy(e);
+        var target = e.target, nodes = $$(element, selector);
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        $.extend(proxy, {currentTarget: target, liveFired: element});
-        if (target && !(target === element) && !(target === document))
-          callback.call(target, proxy);
+        if (target && !(target === element) && !(target === document)) {
+          callback.call(target, $.extend(createProxy(e), {
+            currentTarget: target, liveFired: element
+          }));
+        }
       });
     });
   };
