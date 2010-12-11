@@ -1,5 +1,5 @@
 var Zepto = (function() {
-  var slice = [].slice, key, css, $$, document = window.document, undefined;
+  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined;
 
   // fix for iOS 3.2
   if (String.prototype.trim === undefined)
@@ -8,6 +8,15 @@ var Zepto = (function() {
   function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+
+  fragmentRE = /^\s*<.+>/;
+  container = document.createElement("div");
+  function fragment(html) {
+    container.innerHTML = ('' + html).trim();
+    var result = slice.call(container.childNodes);
+    container.innerHTML = '';
+    return result;
+  }
 
   function Z(dom, selector){ this.dom = dom || []; this.selector = selector || '' }
 
@@ -19,6 +28,7 @@ var Zepto = (function() {
       if (selector instanceof Z) dom = selector.dom;
       else if (selector instanceof Array) dom = selector;
       else if (selector instanceof Element || selector === window) dom = [selector];
+      else if (fragmentRE.test(selector)) dom = fragment(selector);
       else dom = $$(document, selector);
 
       return new Z(compact(dom), selector);

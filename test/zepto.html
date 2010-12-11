@@ -176,6 +176,23 @@
         t.assertEqual('', z.selector);
       },
 
+      testDollarWithFragment: function(t){
+        var fragment;
+        fragment = $("<div>");
+        t.assertEqual(1, fragment.get().length);
+        t.assertEqual("<div></div>", fragment.get(0).outerHTML);
+
+        fragment = $("<div>hello world</div>");
+        t.assertEqual(1, fragment.get().length);
+        t.assertEqual("<div>hello world</div>", fragment.get(0).outerHTML);
+
+        fragment = $("<div>hello</div> <span>world</span>");
+        t.assertEqual(3, fragment.get().length);
+        t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
+        t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
+        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
       },
