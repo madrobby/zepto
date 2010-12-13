@@ -19,6 +19,8 @@
     <span class="nay" id="nay">nay</span>
   </p>
 
+  <div id="toggle_element"></div>
+
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
 
@@ -681,6 +683,27 @@
         $('#some_element').addClass('orange');
         t.assert($('#some_element').hasClass('green'));
         t.assert($('#some_element').hasClass('orange'));
+      },
+
+      testToggleClass: function(t){
+        var el = $('#toggle_element').get(0);
+        $('#toggle_element').toggleClass('green');
+
+        t.assert($('#toggle_element').hasClass('green'));
+        t.assert(!$('#toggle_element').hasClass('orange'));
+
+        $('#toggle_element').toggleClass('orange');
+        t.assert($('#toggle_element').hasClass('green'));
+        t.assert($('#toggle_element').hasClass('orange'));
+
+        $('#toggle_element').toggleClass('green');
+
+        t.assert(!$('#toggle_element').hasClass('green'));
+        t.assert($('#toggle_element').hasClass('orange'));
+
+        $('#toggle_element').toggleClass('orange');
+        t.assert(!$('#toggle_element').hasClass('green'));
+        t.assert(!$('#toggle_element').hasClass('orange'));
       },
 
       testIndex: function(t){

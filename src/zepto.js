@@ -119,6 +119,11 @@ var Zepto = (function() {
       return this.each(function(element){
         element.className = element.className.replace(classRE(name), ' ').trim()
       });
+    },
+    toggleClass: function(name){
+      return this.each(function(element){
+        $(element).hasClass(name) ? $(element).removeClass(name) : $(element).addClass(name)
+      });
     }
   };
 
