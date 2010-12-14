@@ -23,6 +23,7 @@ var Zepto = (function() {
   function $(selector, context){
     if (selector == document) return new Z;
     else if (context !== undefined) return $(context).find(selector);
+    else if (typeof selector === 'function') return $(document).ready(selector);
     else {
       var dom;
       if (selector instanceof Z) dom = selector.dom;
