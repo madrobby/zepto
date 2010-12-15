@@ -599,9 +599,11 @@
       testAttrOnInputFieldWithTypeOfText: function(t) {
         var els = $('#attr_with_text_input');
         
+        t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('Hello World', els.attr('value'));
         
         els.attr('value', '');
+        t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('', els.attr('value'));
         
       },
