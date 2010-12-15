@@ -21,8 +21,8 @@
               error = e;
             }
             if (error) errback(xhr, 'parsererror', error);
-            else callback(result);
-          } else callback(xhr.responseText);
+            else callback(result, 'success', xhr);
+          } else callback(xhr.responseText, 'success', xhr);
         } else {
           errback(xhr, 'error');
         }

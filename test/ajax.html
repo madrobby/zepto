@@ -209,6 +209,29 @@
         MockXHR.last.ready(4, 201, 'Created');
         t.assert(successFired);
         t.refute(errorFired);
+      },
+
+      testXHRParameterInSuccessCallback: function(t) {
+        var body, status, xhr;
+        $.ajax({
+          success: function(b, s, x) { body = b, status = s, xhr = x }
+        });
+
+        MockXHR.last.ready(4, 200, 'Hello');
+        t.assertEqual('Hello', body);
+        t.assertEqual('success', status);
+        t.assertEqual(MockXHR.last, xhr);
+
+        body = status = xhr = null;
+        $.ajax({
+          dataType: 'json',
+          success: function(b, s, x) { body = b, status = s, xhr = x }
+        });
+
+        MockXHR.last.ready(4, 200, '{"message":"Hello"}');
+        t.assertEqual('Hello', body.message);
+        t.assertEqual('success', status);
+        t.assertEqual(MockXHR.last, xhr);
       }
     });
   </script>
