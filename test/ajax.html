@@ -197,6 +197,18 @@
         t.assertEqual(MockXHR.last, xhr);
         t.assertEqual('parsererror', status);
         t.assert(exception.toString().match(/JSON/));
+      },
+
+      test201ResponseIsSuccess: function(t) {
+        var successFired, errorFired;
+        $.ajax({
+          success: function() { successFired = true },
+          error: function() { errorFired = true }
+        });
+
+        MockXHR.last.ready(4, 201, 'Created');
+        t.assert(successFired);
+        t.refute(errorFired);
       }
     });
   </script>

@@ -12,7 +12,7 @@
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
-        if (xhr.status == 200 || xhr.status == 0) {
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json') {
             var result, error = false;
             try {
