@@ -96,7 +96,7 @@
 
     var globalVarSetFromReady = "";
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
-    
+
     var gloablVarSetFromReady2 = "";
     $(function(){ globalVarSetFromReady2 = 'hi!' });
 
@@ -232,13 +232,13 @@
         t.assertEqual(0, $('blah').get().length);
         t.assertEqual(0, $('blah').first().get().length);
       },
-      
+
       testLast: function(t){
         var zepto = $('h1,p');
         t.assertEqual(5, zepto.get().length);
 
         zepto.last();
-        
+
         t.assertEqual(1, zepto.get().length);
         t.assertEqual('P', zepto.get(0).tagName);
 
@@ -615,17 +615,17 @@
         t.assertEqual('name', els.attr("data-name"));
         t.assertEqual('id', $('#attr_2').attr('data-id'));
       },
-      
+
       testAttrOnInputFieldWithTypeOfText: function(t) {
         var els = $('#attr_with_text_input');
-        
+
         t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('Hello World', els.attr('value'));
-        
+
         els.attr('value', '');
         t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('', els.attr('value'));
-        
+
       },
 
       testChaining: function(t){
@@ -739,7 +739,7 @@
 
         $('#toggle_element').toggleClass('orange', false);
         t.assert(!$('#toggle_element').hasClass('orange'));
-  
+
         $('#toggle_element').toggleClass('orange', true);
         t.assert($('#toggle_element').hasClass('orange'));
       },

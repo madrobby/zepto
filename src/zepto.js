@@ -125,7 +125,7 @@ var Zepto = (function() {
     },
     toggleClass: function(name, when){
       return this.each(function(element){
-       ((when !== undefined && !when) || $(element).hasClass(name)) ? 
+       ((when !== undefined && !when) || $(element).hasClass(name)) ?
          $(element).removeClass(name) : $(element).addClass(name)
       });
     }
