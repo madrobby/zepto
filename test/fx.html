@@ -14,7 +14,9 @@
   </p>
 
   <div id="animtest" style="width:40px;height:40px;background:red"></div>
-
+  <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
+  <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
+  
   <script>
     Evidence.TestCase.extend('ZeptoFXTest', {
 
@@ -29,6 +31,22 @@
         t.assertEqual('translate3d(100px, 100px, 100px) rotateZ(90deg)', el.style.webkitTransform);
         t.assertEqual('ease-out', el.style.webkitTransitionTimingFunction);
         t.assertEqual('0.5', el.style.opacity);
+      },
+      
+      testDuration: function(t){
+        $('#durationtest_1').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        });
+        t.assertEqual('0.5s', $('#durationtest_1').get(0).style.webkitTransitionDuration);
+        
+        $('#durationtest_2').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, 0);
+        t.assertEqual('0s', $('#durationtest_2').get(0).style.webkitTransitionDuration);
       }
 
     });
