@@ -123,9 +123,10 @@ var Zepto = (function() {
         element.className = element.className.replace(classRE(name), ' ').trim()
       });
     },
-    toggleClass: function(name){
+    toggleClass: function(name, when){
       return this.each(function(element){
-        $(element).hasClass(name) ? $(element).removeClass(name) : $(element).addClass(name)
+       ((when !== undefined && !when) || $(element).hasClass(name)) ? 
+         $(element).removeClass(name) : $(element).addClass(name)
       });
     }
   };

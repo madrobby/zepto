@@ -736,6 +736,12 @@
         $('#toggle_element').toggleClass('orange');
         t.assert(!$('#toggle_element').hasClass('green'));
         t.assert(!$('#toggle_element').hasClass('orange'));
+
+        $('#toggle_element').toggleClass('orange', false);
+        t.assert(!$('#toggle_element').hasClass('orange'));
+  
+        $('#toggle_element').toggleClass('orange', true);
+        t.assert($('#toggle_element').hasClass('orange'));
       },
 
       testIndex: function(t){

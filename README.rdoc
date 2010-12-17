@@ -74,6 +74,7 @@ Context and .find calls are equivalent:
   addClass('classname'): adds a CSS class name
   removeClass('classname'): removes a CSS class name
   hasClass('classname'): returns true of first element has a classname set
+  toggleClass('classname'[, switch]): adds/removes class, or adds/removes it when switch == true/false
 
   bind(type, function): add an event listener (see below)
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
