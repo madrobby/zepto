@@ -685,6 +685,20 @@
           '<div>append</div></div><div>after</div>',
           $('#beforeafter_container').html()
         );
+        
+        $('#beforeafter_container').html('<div id="beforeafter"></div>');
+        
+        //testing with Zepto object as parameter
+        $('#beforeafter').append($(div('append')));
+        $('#beforeafter').prepend($(div('prepend')));
+        $('#beforeafter').before($(div('before')));
+        $('#beforeafter').after($(div('after')));
+
+        t.assertEqual(
+          '<div>before</div><div id="beforeafter"><div>prepend</div>'+
+          '<div>append</div></div><div>after</div>',
+          $('#beforeafter_container').html()
+        );
       },
 
       testAddRemoveClass: function(t){
