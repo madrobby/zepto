@@ -54,7 +54,7 @@ Context and .find calls are equivalent:
 
   html('new html'): set the contents of the element(s)
   text('new text'): set the text contents of the element(s)
-  append, prepend, before, after: like html, but add html to element contents (or before/after)
+  append, prepend, before, after: like html(), but add html (or a DOM Element or a Zepto object) to element contents (or before/after)
   html(): get first element's .innerHTML
   text(): get first element's .innerText
   show(): forces elements to be displayed (only works correctly for block elements right now)
@@ -134,17 +134,12 @@ Double-tapping:
 
 Swiping (e.g. "delete" button when swiping over a list entry):
   $('some selector').swipe(function(){ ... });
-<<<<<<< HEAD
-=======
 
 Swiping left:
   $('some selector').swipeLeft(function(){ ... });
 
 Swiping right:
   $('some selector').swipeRight(function(){ ... });
-
-= Ajax:
->>>>>>> 1182eedd3d59aec75b173b8723428439382b1cfe
 
 = Ajax
 
