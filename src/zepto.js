@@ -142,10 +142,17 @@ var Zepto = (function() {
     $.fn[key] = (function(operator) {
       return function(html){
         return this.each(function(element){
-          if (html instanceof Z && html.dom[0]) {
-            html = html.dom[0]
+          if (html instanceof Z) {
+            dom = html.dom;
+            if (operator == "afterBegin" || operator == "afterEnd") {
+              dom.reverse();
+            }
+            for (i = 0; i < dom.length; i++) {
+              element['insertAdjacentElement'](operator, dom[i]);
+            }
+          } else {
+            element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
           }
-          element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
         });
       };
     })(adjacencyOperators[key]);
