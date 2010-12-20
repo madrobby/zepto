@@ -236,27 +236,29 @@
         var zepto = $('h1,p');
         t.assertLength(5, zepto);
 
-        zepto.first();
-        t.assertLength(1, zepto);
-        t.assertEqual('H1', zepto.get(0).tagName);
+        var zepto2 = zepto.first();
+        t.refuteIdentical(zepto, zepto2);
+        t.assertLength(5, zepto);
 
-        t.assertLength(0, $('blah'));
-        t.assertLength(0, $('blah').first());
+        t.assertLength(1, zepto2);
+        t.assertEqual('H1', zepto2.get(0).tagName);
+
+        t.assertLength(0, $('nonexistent').first());
       },
 
       testLast: function(t){
         var zepto = $('h1,p');
         t.assertLength(5, zepto);
 
-        zepto.last();
+        var zepto2 = zepto.last();
+        t.refuteIdentical(zepto, zepto2);
+        t.assertLength(5, zepto);
 
-        t.assertLength(1, zepto);
-        t.assertEqual('P', zepto.get(0).tagName);
+        t.assertLength(1, zepto2);
+        t.assertEqual('P', zepto2.get(0).tagName);
 
-        t.assertLength(0, $('blah'));
-        t.assertLength(0, $('blah').first());
+        t.assertLength(0, $('nonexistent').last());
       },
-
 
       testCompact: function(t){
         var nodes = $('p');

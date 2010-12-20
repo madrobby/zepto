@@ -62,8 +62,8 @@ var Zepto = (function() {
     is: function(selector){
       return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
     },
-    first: function(callback){ this.dom = compact([this.dom[0]]); return this },
-    last: function() { this.dom = compact([this.dom[this.length - 1]]); return this },
+    first: function(){ return $(this.get(0)) },
+    last: function(){ return $(this.get(this.length - 1)) },
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },

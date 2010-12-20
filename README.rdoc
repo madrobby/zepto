@@ -40,10 +40,11 @@ Context and .find calls are equivalent:
 
   get(): return array of all elements found
   get(0): return first element found
-  size(): the number of elements found
-  each(callback): iterate over array of all elements found
-  index('selector'): return an integer indicating the position of 'selector' in array of all elements found
-  first(): remove all but the first element from the list of found elements
+  size(): the number of elements in collection
+  each(callback): iterate over collection, calling callback for every element
+  index('selector'): the position of element matching 'selector' in the current collection
+  first(): new collection containing only the first matched element
+  last(): new collection containing only the last matched element
 
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): traverses the DOM upwards to find the first matching element
