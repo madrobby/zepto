@@ -51,10 +51,12 @@
 
   <div style="position:absolute;width:100px;height:50px" id="offset">test</div>
 
-  <ul>
+  <ul id="parents">
     <li id="li1">
-      <ul>
-        <li id="li2">
+      <ul id="nested">
+        <li id="li2">one</li>
+        <li>two</li>
+        <li>three</li>
       </ul>
     </li>
   </ul>
@@ -119,6 +121,16 @@
       var actual = object.length;
       this._assertExpression(expected === actual, message || 'Failed assertion.',
         'Expected length %d, got %d.', expected, actual);
+    }
+
+    Evidence.Assertions.assertEqualCollection = function(expectedCollection, actualCollection, message) {
+      var expected = expectedCollection.get(), actual = actualCollection.get(),
+          passed = expected.length == actual.length;
+
+      if (passed) for (var i=0; i<expected.length; i++) passed = expected[i] == actual[i];
+
+      this._assertExpression(passed, message || 'Failed assertion.',
+        'Expected %o, got %o.', expected, actual);
     }
 
     Evidence.TestCase.extend('ZeptoTest', {
@@ -320,8 +332,14 @@
       },
 
       testClosest: function(t){
-        t.assertIdentical($('#li1').get(0), $('#li2').closest('li').get(0));
-        t.assertLength(0, $('#li2').closest('div'));
+        var el = $('#li2');
+        t.assertEqualCollection(el, el.closest('li'));
+        t.assertEqualCollection($('#nested'), el.closest('ul'));
+        // with context
+        t.assertEqualCollection($('#nested'), el.closest('ul', $('#li1').get(0)));
+        t.assertLength(0, el.closest('#parents', $('#li1').get(0)));
+        // no ancestor matched
+        t.assertLength(0, el.closest('div'));
       },
 
       testFind: function(t){

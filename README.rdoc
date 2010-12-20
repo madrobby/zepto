@@ -47,7 +47,7 @@ Context and .find calls are equivalent:
   last(): new collection containing only the last matched element
 
   find('selector'): find all children/grandchildren that match the given selector
-  closest('selector'): traverses the DOM upwards to find the first matching element
+  closest('selector'): find the first matching element by going upwards starting from the current element
   next(): next siblings
   prev(): previous siblings
   is('selector'): returns true/false if first element matches the selector

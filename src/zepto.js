@@ -66,10 +66,11 @@ var Zepto = (function() {
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
-    closest: function(selector){
-      var node = this.dom[0].parentNode, nodes = $$(document, selector);
-      while(node && nodes.indexOf(node) < 0) node = node.parentNode;
-      return $(node && !(node === document) ? node : []);
+    closest: function(selector, context){
+      var node = this.dom[0], nodes = $$(context !== undefined ? context : document, selector);
+      if (nodes.length === 0) node = null;
+      while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
+      return $(node);
     },
     pluck: function(property){ return this.dom.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
