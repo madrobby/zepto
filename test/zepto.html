@@ -345,6 +345,20 @@
         t.assertLength(0, el.closest('div'));
       },
 
+      testParents: function(t){
+        var body = document.body, html = body.parentNode, container = $('#parents');
+        t.assertEqualCollection($([body, html]), container.parents());
+
+        var expected = $('#li1 > ul').get();
+        expected.push($('#li1').get(0));
+        expected.push(container.get(0));
+        expected = expected.concat([body, html]);
+        t.assertEqualCollection($(expected), $('#li1').find('li').parents());
+
+        expected = [$('#nested').get(0), $('#parents').get(0)];
+        t.assertEqualCollection($(expected), $('#li2').parents('ul'));
+      },
+
       testParent: function(t){
         var el = $('#li1');
         t.assertEqualCollection($('#parents'), el.parent());

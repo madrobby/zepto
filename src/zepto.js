@@ -76,6 +76,18 @@ var Zepto = (function() {
       while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
       return $(node);
     },
+    parents: function(selector){
+      var ancestors = [], nodes = this.get();
+      while (nodes.length > 0)
+        nodes = compact(nodes.map(function(node){
+          if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
+            ancestors.push(node);
+            return node;
+          }
+        }));
+      ancestors = $(ancestors);
+      return selector === undefined ? ancestors : ancestors.filter(selector);
+    },
     parent: function(selector){
       var node, nodes = [];
       this.each(function(el){
