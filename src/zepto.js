@@ -31,12 +31,12 @@ var Zepto = (function() {
     else {
       var dom;
       if (selector instanceof Z) dom = selector.dom;
-      else if (selector instanceof Array) dom = selector;
+      else if (selector instanceof Array) dom = compact(selector);
       else if (selector instanceof Element || selector === window) dom = [selector];
       else if (fragmentRE.test(selector)) dom = fragment(selector);
       else dom = $$(document, selector);
 
-      return new Z(compact(dom), selector);
+      return new Z(dom, selector);
     }
   }
 
@@ -47,7 +47,6 @@ var Zepto = (function() {
     ready: function(callback){
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
-    compact: function(){ this.dom = compact(this.dom); return this },
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
     size: function(){ return this.length },
     remove: function(){

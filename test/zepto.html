@@ -260,14 +260,6 @@
         t.assertLength(0, $('nonexistent').last());
       },
 
-      testCompact: function(t){
-        var nodes = $('p');
-        nodes.dom = [nodes.get(0), null, undefined, nodes.get(0)];
-        nodes.compact();
-        t.assertLength(2, nodes);
-        t.assertEqual('PP', nodes.pluck('tagName').join(''));
-      },
-
       testPluck: function(t){
         t.assertEqual('H1DIVDIV', $('h1,div.htmltest').pluck('tagName').join(''));
       },
