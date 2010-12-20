@@ -7,6 +7,7 @@ var Zepto = (function() {
 
   function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
+  function flatten(array){ return array.reduce(function(a,b){ return a.concat(b) }, []) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   fragmentRE = /^\s*<.+>/;
@@ -64,7 +65,10 @@ var Zepto = (function() {
     first: function(){ return $(this.get(0)) },
     last: function(){ return $(this.get(this.length - 1)) },
     find: function(selector){
-      return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
+      var result;
+      if (this.length == 1) result = $$(this.get(0), selector);
+      else result = flatten(this.dom.map(function(el){ return $$(el, selector) }));
+      return $(result);
     },
     closest: function(selector, context){
       var node = this.dom[0], nodes = $$(context !== undefined ? context : document, selector);
