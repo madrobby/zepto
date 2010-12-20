@@ -62,6 +62,15 @@
           });
         });
       },
+      
+      testAjaxGetJSONP: function(t){
+        t.pause();
+        $.getJSON('http://api.flickr.com/services/feeds/photos_public.gne?tags=cat&tagmode=any&format=json&jsoncallback=?', function(data){
+          t.resume(function(){
+            this.assertEqual(data.items.length, 20);
+          });
+        });
+      },
 
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
