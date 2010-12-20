@@ -242,9 +242,13 @@
       },
 
       testEach: function(t){
-        var tagnames = [];
-        $('h1,p').each(function(e){ tagnames.push(e.tagName) });
-        t.assertEqual('H1PPPP', tagnames.join(''));
+        var index, tagnames = [];
+        $('h1,p').each(function(idx, el){
+          index = idx;
+          if (this == el) tagnames.push(el.tagName);
+        });
+        t.assertEqual('H1, P, P, P, P', tagnames.join(', '));
+        t.assertEqual(4, index);
       },
 
       testFirst: function(t){
@@ -692,14 +696,14 @@
         var el = $('#some_element').get(0);
 
         $.fn.plugin = function(){
-          return this.each(function(el){ el.innerHTML = 'plugin!' });
+          return this.each(function(){ this.innerHTML = 'plugin!' });
         };
         $('#some_element').plugin();
         t.assertEqual('plugin!', el.innerHTML);
 
         // test if existing Zepto objects receive new plugins
         $.fn.anotherplugin = function(){
-          return this.each(function(el){ el.innerHTML = 'anotherplugin!' });
+          return this.each(function(){ this.innerHTML = 'anotherplugin!' });
         }
         t.assert(typeof $('#some_element').anotherplugin == 'function');
         $('#some_element').anotherplugin();
