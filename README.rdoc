@@ -48,6 +48,7 @@ Context and .find calls are equivalent:
 
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): find the first matching element by going upwards starting from the current element
+  parent(): immediate parent node of each element in collection
   next(): next siblings
   prev(): previous siblings
   is('selector'): returns true/false if first element matches the selector

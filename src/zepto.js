@@ -76,6 +76,14 @@ var Zepto = (function() {
       while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
       return $(node);
     },
+    parent: function(selector){
+      var node, nodes = [];
+      this.each(function(el){
+        if ((node = el.parentNode) && nodes.indexOf(node) < 0) nodes.push(node);
+      });
+      nodes = $(nodes);
+      return selector === undefined ? nodes : nodes.filter(selector);
+    },
     pluck: function(property){ return this.dom.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
     hide: function(){ return this.css('display', 'none') },

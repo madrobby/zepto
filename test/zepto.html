@@ -58,6 +58,9 @@
         <li>two</li>
         <li>three</li>
       </ul>
+      <ul>
+        <li></li>
+      </ul>
     </li>
   </ul>
 
@@ -340,6 +343,13 @@
         t.assertLength(0, el.closest('#parents', $('#li1').get(0)));
         // no ancestor matched
         t.assertLength(0, el.closest('div'));
+      },
+
+      testParent: function(t){
+        var el = $('#li1');
+        t.assertEqualCollection($('#parents'), el.parent());
+        t.assertEqualCollection($('#li1 > ul'), el.find('li').parent());
+        t.assertLength(0, $(document.createElement('div')).parent());
       },
 
       testFind: function(t){
