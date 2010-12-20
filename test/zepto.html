@@ -115,6 +115,12 @@
         'Expected %o to be the same as %o.', actual, expected);
     }
 
+    Evidence.Assertions.assertLength = function(expected, object, message) {
+      var actual = object.length;
+      this._assertExpression(expected === actual, message || 'Failed assertion.',
+        'Expected length %d, got %d.', expected, actual);
+    }
+
     Evidence.TestCase.extend('ZeptoTest', {
 
       // test to see if we augment iOS 3.2 with String#trim()
@@ -134,67 +140,72 @@
       },
 
       testDollar: function(t){
-        t.assert($('#some_element').get().length == 1);
-        t.assert($('#some_element').get(0) == document.getElementById('some_element'));
+        var expectedElement = document.getElementById('some_element');
 
-        t.assert($('p').get().length == 4);
-        t.assert($('p>span.yay').get().length == 1);
+        t.assertLength(1, $('#some_element'));
+        t.assertEqual(expectedElement, $('#some_element').get(0));
+        t.assertEqual(expectedElement, $(expectedElement).get(0));
 
-        var el = document.getElementById('some_element');
-        t.assertEqual($(el).get(0), el);
+        t.assertLength(4, $('p'));
+        t.assertLength(1, $('p > span.yay'));
+      },
+
+      testSize: function(t){
+        t.assertEqual(4, $('#find1 .findme').size());
       },
 
       testDollarWithMultipleInstances: function(t){
         var instance1 = $('#some_element'),
             instance2 = $('p');
 
-        t.assert(instance1.get().length == 1);
-        t.assert(instance2.get().length == 4);
-        t.assert(instance1.get(0) !== instance2.get(0));
+        t.assertLength(1, instance1);
+        t.assertLength(4, instance2);
+        t.refuteIdentical(instance1.get(0), instance2.get(0));
       },
 
       testDollarWithArrays: function(t){
-        var z1 = $([document.getElementById('some_element')]);
-        t.assert(1, z1.get().length);
-        t.assert(z1.get(0) == document.getElementById('some_element'))
+        var element = document.getElementById('some_element');
 
-        var z2 = $([document.getElementById('some_element'), null, undefined]);
-        t.assert(1, z2.get().length);
-        t.assert(z2.get(0) == document.getElementById('some_element'))
+        var z1 = $([element]);
+        t.assertLength(1, z1);
+        t.assertEqual(element, z1.get(0));
 
-        var z3 = $([null, document.getElementById('some_element'), null]);
-        t.assert(1, z3.get().length);
-        t.assert(z3.get(0) == document.getElementById('some_element'))
+        var z2 = $([element, null, undefined]);
+        t.assertLength(1, z2);
+        t.assertEqual(element, z2.get(0));
+
+        var z3 = $([null, element, null]);
+        t.assertLength(1, z3);
+        t.assertEqual(element, z3.get(0));
       },
 
       testDollarWithContext: function(t){
         // Zepto object
         var zepto = $('p#find1, #find2');
-        t.assertEqual(11, $('span', zepto).get().length);
+        t.assertLength(11, $('span', zepto));
 
         // DOM Element
-        var el = document.getElementById('find1');
-        t.assertEqual(4, $('span.findme', el).get().length);
+        var domElement = document.getElementById('find1');
+        t.assertLength(4, $('span.findme', domElement));
       },
 
       testDollarWithDocument: function(t){
         var z = $(document);
-        t.assertEqual(0, z.get().length);
+        t.assertLength(0, z);
         t.assertEqual('', z.selector);
       },
 
       testDollarWithFragment: function(t){
-        var fragment;
-        fragment = $("<div>");
-        t.assertEqual(1, fragment.get().length);
+        var fragment = $("<div>");
+        t.assertLength(1, fragment);
         t.assertEqual("<div></div>", fragment.get(0).outerHTML);
 
         fragment = $("<div>hello world</div>");
-        t.assertEqual(1, fragment.get().length);
+        t.assertLength(1, fragment);
         t.assertEqual("<div>hello world</div>", fragment.get(0).outerHTML);
 
         fragment = $("<div>hello</div> <span>world</span>");
-        t.assertEqual(3, fragment.get().length);
+        t.assertLength(3, fragment);
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
@@ -223,35 +234,35 @@
 
       testFirst: function(t){
         var zepto = $('h1,p');
-        t.assertEqual(5, zepto.get().length);
+        t.assertLength(5, zepto);
 
         zepto.first();
-        t.assertEqual(1, zepto.get().length);
+        t.assertLength(1, zepto);
         t.assertEqual('H1', zepto.get(0).tagName);
 
-        t.assertEqual(0, $('blah').get().length);
-        t.assertEqual(0, $('blah').first().get().length);
+        t.assertLength(0, $('blah'));
+        t.assertLength(0, $('blah').first());
       },
 
       testLast: function(t){
         var zepto = $('h1,p');
-        t.assertEqual(5, zepto.get().length);
+        t.assertLength(5, zepto);
 
         zepto.last();
 
-        t.assertEqual(1, zepto.get().length);
+        t.assertLength(1, zepto);
         t.assertEqual('P', zepto.get(0).tagName);
 
-        t.assertEqual(0, $('blah').get().length);
-        t.assertEqual(0, $('blah').first().get().length);
+        t.assertLength(0, $('blah'));
+        t.assertLength(0, $('blah').first());
       },
 
 
       testCompact: function(t){
         var nodes = $('p');
-        nodes.dom = [$('p').get(0), null, undefined, $('p').get(0)];
+        nodes.dom = [nodes.get(0), null, undefined, nodes.get(0)];
         nodes.compact();
-        t.assertEqual(2, nodes.get().length);
+        t.assertLength(2, nodes);
         t.assertEqual('PP', nodes.pluck('tagName').join(''));
       },
 
@@ -315,27 +326,27 @@
       },
 
       testClosest: function(t){
-        t.assert($('#li1').get(0) === $('#li2').closest('li').get(0));
-        t.assertEqual(0, $('#li2').closest('div').get().length);
+        t.assertIdentical($('#li1').get(0), $('#li2').closest('li').get(0));
+        t.assertLength(0, $('#li2').closest('div'));
       },
 
       testFind: function(t){
         var found = $('p#find1').find('span.findme');
-        t.assertEqual(4, found.get().length);
+        t.assertLength(4, found);
         t.assertEqual('1', found.get(0).innerHTML);
         t.assertEqual('2', found.get(1).innerHTML);
         t.assertEqual('4', found.get(2).innerHTML);
         t.assertEqual('5<span>6</span>', found.get(3).innerHTML);
 
         var found = $('p#find1, #find2').find('span');
-        t.assertEqual(11, found.get().length);
+        t.assertLength(11, found);
       },
 
       testFilter: function(t){
         var found = $('div');
-        t.assertEqual(2, found.filter('.filtertest').get().length);
-        t.assertEqual(0, found.filter('.doesntexist').get().length);
-        t.assertEqual(1, found.filter('.filtertest').filter(':nth-child(2n)').get().length);
+        t.assertLength(2, found.filter('.filtertest'));
+        t.assertLength(0, found.filter('.doesntexist'));
+        t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'));
       },
 
       testIs: function(t){

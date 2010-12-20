@@ -18,7 +18,11 @@ var Zepto = (function() {
     return result;
   }
 
-  function Z(dom, selector){ this.dom = dom || []; this.selector = selector || '' }
+  function Z(dom, selector){
+    this.dom = dom || [];
+    this.length = this.dom.length;
+    this.selector = selector || '';
+  }
 
   function $(selector, context){
     if (selector == document) return new Z;
@@ -45,6 +49,7 @@ var Zepto = (function() {
     },
     compact: function(){ this.dom = compact(this.dom); return this },
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
+    size: function(){ return this.length },
     remove: function(){
       return this.each(function(el){ el.parentNode.removeChild(el) });
     },
@@ -55,10 +60,10 @@ var Zepto = (function() {
       }));
     },
     is: function(selector){
-      return this.dom.length > 0 && $(this.dom[0]).filter(selector).dom.length > 0;
+      return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
     },
     first: function(callback){ this.dom = compact([this.dom[0]]); return this },
-    last: function() { this.dom = compact([this.dom[this.dom.length - 1]]); return this },
+    last: function() { this.dom = compact([this.dom[this.length - 1]]); return this },
     find: function(selector){
       return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
     },
@@ -74,18 +79,18 @@ var Zepto = (function() {
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
       return html === undefined ?
-        (this.dom.length > 0 ? this.dom[0].innerHTML : null) :
+        (this.length > 0 ? this.dom[0].innerHTML : null) :
         this.each(function(element){ element.innerHTML = html });
     },
     text: function(text){
       return text === undefined ?
-        (this.dom.length > 0 ? this.dom[0].innerText : null) :
+        (this.length > 0 ? this.dom[0].innerText : null) :
         this.each(function(element){ element.innerText = text });
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
-        (this.dom.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.dom[0].value) :
-        (this.dom.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
+        (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.dom[0].value) :
+        (this.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this.each(function(element){
           if (typeof name == 'object') for (key in name) element.setAttribute(key, name[key])
           else element.setAttribute(name, value);

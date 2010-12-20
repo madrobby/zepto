@@ -40,6 +40,7 @@ Context and .find calls are equivalent:
 
   get(): return array of all elements found
   get(0): return first element found
+  size(): the number of elements found
   each(callback): iterate over array of all elements found
   index('selector'): return an integer indicating the position of 'selector' in array of all elements found
   first(): remove all but the first element from the list of found elements
