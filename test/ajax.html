@@ -65,9 +65,9 @@
       
       testAjaxGetJSONP: function(t){
         t.pause();
-        $.getJSON('http://api.flickr.com/services/feeds/photos_public.gne?tags=cat&tagmode=any&format=json&jsoncallback=?', function(data){
+        $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
           t.resume(function(){
-            this.assertEqual(data.items.length, 20);
+            this.assertEqual(data.items.length, 0);
           });
         });
       },

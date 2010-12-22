@@ -7,9 +7,9 @@
   $.ajaxJSONP = function(options){
     var jsonpString;
     jsonpString = 'jsonp' + ++jsonpID;
-    window[jsonpString] = function(j){ options.success(j) }
+    window[jsonpString] = options.success;
     var script = document.createElement('script');
-    $(script).attr({ src: options.url.replace(/callback=\?/, 'callback=' + jsonpString), type: 'text/javascript' });
+    $(script).attr({ src: options.url.replace(/callback=\?/, 'callback=' + jsonpString) });
     $('head').append(script);
   };
   
@@ -17,9 +17,8 @@
     // { type, url, data, success, dataType, contentType }
     options = options || {};
     
-    if (options.url && /callback=\?/.test(options.url)) {
-      return $.ajaxJSONP(options)
-    }
+    if (options.url && /callback=\?/.test(options.url))
+      return $.ajaxJSONP(options);
 
     var data = options.data,
         callback = options.success || empty,
