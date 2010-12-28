@@ -174,7 +174,7 @@ var Zepto = (function() {
       return this.each(function(element) {
         classList = [];
         name.split(/\s+/g).forEach(function(klass) {
-          if (!$(el).hasClass(klass)) {
+          if (!$(element).hasClass(klass)) {
             classList.push(klass)
           }
         });
