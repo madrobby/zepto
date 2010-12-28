@@ -1,14 +1,27 @@
 var Zepto = (function() {
-  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined;
+  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, classList, elemDisplay = {}, undefined;
 
   // fix for iOS 3.2
   if (String.prototype.trim === undefined)
     String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
 
-  function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
+  function classRE(name){ return new RegExp("\\s?" + name + "\\s?") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return array.reduce(function(a,b){ return a.concat(b) }, []) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function defaultDisplay(nodeName) {
+    if (!elemdisplay[nodeName]) {
+      var elem = document.createElement(nodeName);
+      $(document.body).append(elem);
+      var display = getComputedStyle(elem).display;
+      $(elem).remove();
+      if (display === "none" || display === "") {
+        display = "block"
+      }
+      elemdisplay[nodeName] = display
+    }
+    return elemdisplay[nodeName]
+  }
 
   fragmentRE = /^\s*<.+>/;
   container = document.createElement("div");
@@ -98,8 +111,22 @@ var Zepto = (function() {
       return selector === undefined ? nodes : nodes.filter(selector);
     },
     pluck: function(property){ return this.dom.map(function(element){ return element[property] }) },
-    show: function(){ return this.css('display', 'block') },
-    hide: function(){ return this.css('display', 'none') },
+    show: function(){
+      return this.each(function(element) {
+        element.style.display = element.getAttribute("data-display") || (element.style.display != "none" ? element.style.display : defaultDisplay(element.nodeName));
+        element.setAttribute("data-display", element.style.display)
+      })
+    },
+    hide: function(){
+      this.each(function(element){
+        (element.style.display != "none" && element.style.display) && element.setAttribute("data-display", element.style.display)
+      });
+      return this.css("display", "none")
+    },
+    toggle: function(){
+      this.css("display") == "none" && this.show() || this.hide();
+      return this
+    },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
@@ -143,15 +170,25 @@ var Zepto = (function() {
     hasClass: function(name){
       return classRE(name).test(this.dom[0].className);
     },
-    addClass: function(name){
-      return this.each(function(){
-        !$(this).hasClass(name) && (this.className += (this.className ? ' ' : '') + name)
-      });
+    addClass: function(name) {
+      return this.each(function(element) {
+        classList = [];
+        name.split(/\s+/g).forEach(function(klass) {
+          if (!$(el).hasClass(klass)) {
+            classList.push(klass)
+          }
+        });
+        classList.length && (element.className += (element.className ? " " : "") + classList.join(" "))
+      })
     },
-    removeClass: function(name){
-      return this.each(function(){
-        this.className = this.className.replace(classRE(name), ' ').trim()
-      });
+    removeClass: function(name) {
+      return this.each(function(element) {
+        classList = element.className;
+        name.split(/\s+/g).forEach(function(klass) {
+          classList = classList.replace(classRE(klass), " ")
+        });
+        element.className = classList.trim()
+      })
     },
     toggleClass: function(name, when){
       return this.each(function(){
