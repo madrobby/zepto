@@ -676,7 +676,19 @@
         els.attr('value', '');
         t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('', els.attr('value'));
+      },
 
+      testRemoveAttr: function(t) {
+        var els = $('#attr_with_text_input');
+
+        els.get(0).removeAttribute('disabled');
+        t.assertEqual(els.attr('disabled'), undefined);
+
+        els.attr('disabled', 'definitely');
+        t.assertEqual(els.attr('disabled'), 'definitely');
+        
+        els.removeAttr('disabled');
+        t.assertEqual(els.attr('disabled'), undefined);
       },
 
       testVal: function(t) {
