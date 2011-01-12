@@ -26,7 +26,9 @@
 
 
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
-      Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025"
+      Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
+
+      BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+"
     };
 
     function detect(t, os, version, ua){
@@ -57,6 +59,10 @@
         t.assert($.__detect(UA.iOS_3_2_iPad).ipad);
         t.assert($.__detect(UA.iOS_4_2_iPad).ipad);
         t.assert($.__detect(UA.iOS_4_0_iPhone).iphone);
+      },
+
+      testBlackBerry: function(t) {
+        detect(t, "blackberry", "6.0.0.141", UA.BlackBerry_6_0_0_141);
       },
 
       testBrowser: function(t){
