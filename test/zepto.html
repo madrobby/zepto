@@ -251,6 +251,19 @@
         t.assertEqual(4, index);
       },
 
+      testEq: function(t){
+        var zepto = $('h1,p'),
+            zepto2 = zepto.eq(0);
+
+        t.assertLength(5, zepto);
+        t.assertLength(1, zepto2);
+
+        t.refuteIdentical(zepto, zepto2);
+        t.assertUndefined(zepto2.tagName);
+
+        t.assertLength(0, $('nonexistent').eq(0));
+      },
+
       testFirst: function(t){
         var zepto = $('h1,p');
         t.assertLength(5, zepto);
