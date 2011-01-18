@@ -115,11 +115,21 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
-        (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.dom[0].value) :
+        (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.val()) :
         (this.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
         this.each(function(){
           if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, value);
+        });
+    },
+    removeAttr: function(name) {
+      return this.each(function() { this.removeAttribute(name); });
+    },
+    val: function(value){
+      return (value === undefined) ?
+        (this.length > 0 ? this.dom[0].value : null) :
+        this.each(function(){
+          this.value = value;
         });
     },
     offset: function(){
