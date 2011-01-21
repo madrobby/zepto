@@ -106,7 +106,7 @@ var Zepto = (function() {
     html: function(html){
       return html === undefined ?
         (this.length > 0 ? this.dom[0].innerHTML : null) :
-        this.each(function(){ this.innerHTML = html });
+        this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html });
     },
     text: function(text){
       return text === undefined ?

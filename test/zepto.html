@@ -460,6 +460,19 @@
         t.assertEqual("", $('#htmltest3').html());
 
         t.assertNull($('doesnotexist').html());
+        
+        div.html('yowza');
+        div.html(function(idx, html){
+          return html.toUpperCase();
+        });
+        t.assertEqual('YOWZA', div.html());
+        
+        div.html('<u>a</u><u>b</u><u>c</u>');
+        
+        $('u').html(function(idx,html){
+          return idx+html;
+        });
+        t.assertEqual('<u>0a</u><u>1b</u><u>2c</u>', div.html());
       },
 
       testText: function(t){
