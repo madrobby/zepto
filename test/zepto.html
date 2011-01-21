@@ -460,15 +460,15 @@
         t.assertEqual("", $('#htmltest3').html());
 
         t.assertNull($('doesnotexist').html());
-        
+
         div.html('yowza');
         div.html(function(idx, html){
           return html.toUpperCase();
         });
         t.assertEqual('YOWZA', div.html());
-        
+
         div.html('<u>a</u><u>b</u><u>c</u>');
-        
+
         $('u').html(function(idx,html){
           return idx+html;
         });
@@ -691,7 +691,7 @@
         t.assertEqual('id', els.attr("data-id"));
         t.assertEqual('name', els.attr("data-name"));
         t.assertEqual('id', $('#attr_2').attr('data-id'));
-        
+
         els.attr('data-id', function(idx,oldvalue){
           return idx+oldvalue;
         });
