@@ -775,6 +775,39 @@
           '<div>append</div></div><div>after</div>',
           $('#beforeafter_container').html()
         );
+
+        //testing with Zepto object as parameter
+        $('#beforeafter_container').html('<div id="beforeafter"></div>');
+
+        $('#beforeafter').append($(div('append')));
+        $('#beforeafter').prepend($(div('prepend')));
+        $('#beforeafter').before($(div('before')));
+        $('#beforeafter').after($(div('after')));
+
+        t.assertEqual(
+          '<div>before</div><div id="beforeafter"><div>prepend</div>'+
+          '<div>append</div></div><div>after</div>',
+          $('#beforeafter_container').html()
+        );
+
+        //testing with a zepto object of more than one element as parameter
+        $(document.body).append('<div class="append">append1</div><div class="append">append2</div>');
+        $(document.body).append('<div class="prepend">prepend1</div><div class="prepend">prepend2</div>');
+        $(document.body).append('<div class="before">before1</div><div class="before">before2</div>');
+        $(document.body).append('<div class="after">after1</div><div class="after">after2</div>');
+
+        $('#beforeafter_container').html('<div id="beforeafter"></div>');
+
+        $('#beforeafter').append($('.append'));
+        $('#beforeafter').prepend($('.prepend'));
+        $('#beforeafter').before($('.before'));
+        $('#beforeafter').after($('.after'));
+
+        t.assertEqual(
+          '<div class="before">before1</div><div class="before">before2</div><div id="beforeafter"><div class="prepend">prepend1</div><div class="prepend">prepend2</div>'+
+          '<div class="append">append1</div><div class="append">append2</div></div><div class="after">after1</div><div class="after">after2</div>',
+          $('#beforeafter_container').html()
+        );
       },
 
       testAddRemoveClass: function(t){

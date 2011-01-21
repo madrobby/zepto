@@ -182,8 +182,16 @@ var Zepto = (function() {
   for (key in adjacencyOperators)
     $.fn[key] = (function(operator) {
       return function(html){
-        return this.each(function(){
-          this['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+        return this.each(function(index, element){
+          if (html instanceof Z) {
+            dom = html.dom;
+            if (operator == "afterBegin" || operator == "afterEnd")
+              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
+            else
+              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
+          } else {
+            element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+          }
         });
       };
     })(adjacencyOperators[key]);
