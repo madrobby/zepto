@@ -117,9 +117,9 @@ var Zepto = (function() {
       return (typeof name == 'string' && value === undefined) ?
         (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.val()) :
         (this.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
-        this.each(function(){
+        this.each(function(idx){
           if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
-          else this.setAttribute(name, value);
+          else this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
         });
     },
     removeAttr: function(name) {

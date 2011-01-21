@@ -691,6 +691,12 @@
         t.assertEqual('id', els.attr("data-id"));
         t.assertEqual('name', els.attr("data-name"));
         t.assertEqual('id', $('#attr_2').attr('data-id'));
+        
+        els.attr('data-id', function(idx,oldvalue){
+          return idx+oldvalue;
+        });
+        t.assertEqual('0id', els.attr('data-id'));
+        t.assertEqual('1id', $('#attr_2').attr('data-id'));
       },
 
       testAttrOnInputFieldWithTypeOfText: function(t) {
