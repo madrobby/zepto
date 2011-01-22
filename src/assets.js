@@ -5,7 +5,7 @@
     return this.each(function(element){
       if(element.tagName == 'IMG'){
         cache.push(element);
-        element.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        element.src = 'data:image/gif;base64,R0lGODlhAQABAAAAADs=';
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(function(){ cache = [] }, 60000);
       }
