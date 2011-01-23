@@ -59,6 +59,11 @@ def yui_compressor(src, target)
   `java -jar vendor/yuicompressor/yuicompressor-2.4.2.jar #{src} -o #{target}`
 end
 
+def uglifyjs(src, target)
+  puts "Minifying #{src} with UglifyJS web service..."
+  `curl -s --data-urlencode js_code@#{src} http://marijnhaverbeke.nl/uglifyjs > #{target}`
+end
+
 def process_minified(src, target)
   cp target, File.join(ZEPTO_DIST_DIR,'temp.js')
   msize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js'))
@@ -73,8 +78,15 @@ def process_minified(src, target)
   puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]
 end
 
-desc "Generates a minified version for distribution."
+desc "Generates a minified version for distribution, using the UglifyJS web service."
 task :dist do
+  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
+  uglifyjs src, target
+  process_minified src, target
+end
+
+desc "Generates a minified version for distribution using the Google Closure compiler."
+task :googledist do
   src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
   google_compiler src, target
   process_minified src, target
