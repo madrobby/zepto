@@ -1,5 +1,5 @@
 (function($){
-  var touch = {}, touchTimeout;
+  var touch = {}, touchTimeout, longTapTimeout;
 
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
@@ -14,10 +14,16 @@
       touch.y1 = e.touches[0].pageY;
       if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
       touch.last = now;
+      longTapTimeout = setTimeout(function(){
+    	  longTapTimeout = null;
+          $(touch.target).trigger('longTap')
+          touch = {};
+      }, 1000); 
     }).bind('touchmove', function(e){
       touch.x2 = e.touches[0].pageX
       touch.y2 = e.touches[0].pageY
     }).bind('touchend', function(e){
+      clearTimeout(longTapTimeout);
       if (touch.isDoubleTap) {
         $(touch.target).trigger('doubleTap');
         touch = {};
@@ -37,7 +43,7 @@
     }).bind('touchcancel', function(){ touch = {} });
   });
 
-  ['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap'].forEach(function(m){
+  ['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'longTap'].forEach(function(m){
     $.fn[m] = function(callback){ return this.bind(m, callback) }
   });
 })(Zepto);
