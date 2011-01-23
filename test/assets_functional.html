@@ -29,7 +29,7 @@
     <li><a href="?">Stop</a></li>
   </ul>
 
-  <p>When you run this test withour the assets plugin, Mobile Safari will stop loading after on average 8 images (that's on the iPad with 1 MB images). It might also crash.</p>
+  <p>When you run this test without the assets plugin, Mobile Safari will stop loading after on average 8 images (that's on the iPad with 1 MB images). It might also crash.</p>
   <p><strong>PLEASE NOTE:</strong> You <strong>must restart Safari</strong> between runs (click the home button to return to the home screen, double-click the home button, tap-and-hold the Safari icon, then tap the minus badge).</p>
 
   <div id="container"></div>
@@ -41,6 +41,7 @@
         i;
     if (mode === 'with') {
       document.write('<script src="../src/assets.js"></s'+'cript>');
+      document.write('RUNNING WITH ASSETS PLUGIN');
     }
     if (mode !== '') {
       i = 1;
