@@ -9,6 +9,7 @@ ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
 ZEPTO_PKG_DIR  = File.join(ZEPTO_ROOT, 'pkg')
 
 ZEPTO_FILES    = [
+  File.join(ZEPTO_SRC_DIR,'compat.js'),
   File.join(ZEPTO_SRC_DIR,'zepto.js'),
   File.join(ZEPTO_SRC_DIR,'event.js'),
   File.join(ZEPTO_SRC_DIR,'detect.js'),

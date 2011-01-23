@@ -1,10 +1,6 @@
 var Zepto = (function() {
   var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined;
 
-  // fix for iOS 3.2
-  if (String.prototype.trim === undefined)
-    String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
-
   function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return array.reduce(function(a,b){ return a.concat(b) }, []) }
