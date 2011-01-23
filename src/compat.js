@@ -1,7 +1,7 @@
 // fix for iOS 3.2
 if (String.prototype.trim === undefined)
   String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
-  
+
 // For iOS 3.x
 // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
 if (Array.prototype.reduce === undefined)
@@ -10,7 +10,7 @@ if (Array.prototype.reduce === undefined)
     var t = Object(this), len = t.length >>> 0, k = 0, accumulator;
     if(typeof fun !== "function") throw new TypeError();
     if(len == 0 && arguments.length == 1) throw new TypeError();
-    
+
     if(arguments.length >= 2)
      accumulator = arguments[1];
     else
@@ -21,11 +21,10 @@ if (Array.prototype.reduce === undefined)
         }
         if(++k >= len) throw new TypeError();
       } while (true);
-  
+
     while (k < len){
       if(k in t) accumulator = fun.call(undefined, accumulator, t[k], k, t);
       k++;
     }
     return accumulator;
   };
-  
