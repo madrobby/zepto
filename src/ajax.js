@@ -1,5 +1,4 @@
 (function($){
-
   var jsonpID = 0;
 
   function empty() {}
@@ -7,9 +6,9 @@
   $.ajaxJSONP = function(options){
     var jsonpString;
     jsonpString = 'jsonp' + ++jsonpID;
-    window[jsonpString] = function() {
-        options.success();
-        delete window.jsonpString;
+    window[jsonpString] = function(data){
+      options.success(data);
+      delete window.jsonpString;
     };
     var script = document.createElement('script');
     $(script).attr({ src: options.url.replace(/=\?/, '=' + jsonpString) });
@@ -72,7 +71,7 @@
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
   $.fn.load = function(url, success){
-    if (!this.dom.length) return this;
+    if (!this.length) return this;
     var self = this, parts = url.split(/\s/), selector;
     if (parts.length > 1) url = parts[0], selector = parts[1];
     $.get(url, function(response){
