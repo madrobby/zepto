@@ -95,7 +95,9 @@ Context and .find calls are equivalent:
 
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
-
+  
+  getStyle('property'): gets the computed style value of a CSS property
+  
 = Utility functions:
 
   $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
