@@ -75,7 +75,7 @@ Context and .find calls are equivalent:
 
   css('css property', 'value'): set a CSS property
   css({ property1: value1, property2: value2 }): set multiple CSS properties
-  css('css property'): get this CSS property of the first element
+  css('css property'): get this CSS property of the first element, looks at both .style object properties and the computed style
 
   addClass('classname'): adds a CSS class name
   removeClass('classname'): removes a CSS class name
@@ -95,8 +95,6 @@ Context and .find calls are equivalent:
 
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
-  
-  getStyle('property'): gets the computed style value of a CSS property
   
 = Utility functions:
 
