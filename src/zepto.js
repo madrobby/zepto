@@ -1,5 +1,6 @@
 var Zepto = (function() {
-  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined;
+  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined,
+    getComputedStyle = document.defaultView.getComputedStyle;
 
   function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
@@ -138,14 +139,12 @@ var Zepto = (function() {
       };
     },
     css: function(property, value){
-      if (value === undefined && typeof property == 'string') return this.dom[0].style[camelize(property)];
+      if (value === undefined && typeof property == 'string') 
+        return this.dom[0].style[camelize(property)] || getComputedStyle(this.dom[0], '').getPropertyValue(property);
       css = "";
       for (key in property) css += key + ':' + property[key] + ';';
       if (typeof property == 'string') css = property + ":" + value;
       return this.each(function() { this.style.cssText += ';' + css });
-    },
-    getStyle: function(property){
-      return document.defaultView.getComputedStyle(this.dom[0], '').getPropertyValue(property);
     },
     index: function(element){
       return this.dom.indexOf($(element).get(0));
