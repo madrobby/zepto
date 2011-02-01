@@ -1,12 +1,12 @@
 == Zepto.js: a minimalist framework for mobile WebKit browsers
 
-Zepto.js is a minimalist framework for mobile WebKit browsers, 
+Zepto.js is a minimalist framework for mobile WebKit browsers,
 with a jQuery-compatible chaining syntax.
 
 100% jQuery coverage is not a design goal, however all APIs provided
 match their jQuery counterparts.
 
-The ultimate goal is to have a ~5k library that handles most basic dredge work 
+The ultimate goal is to have a ~5k library that handles most basic dredge work
 for you in a nice API so you can concentrate on getting stuff done.
 
 Primary target platforms are:
@@ -101,7 +101,7 @@ Context and .find calls are equivalent:
 
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
-  
+
 = Utility functions:
 
   $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
@@ -158,8 +158,8 @@ Simple GET and POST:
   $.get(url, callback)
   $.post(url, [data], [callback], [mime-type])
   $.getJSON(url, callback)
-  
-If the url contains a =? parameter, a JSONP request is assumed. 
+
+If the url contains a =? parameter, a JSONP request is assumed.
 
 If you need more control (all keys are optional):
   $.ajax({
@@ -209,8 +209,8 @@ You load Zepto by using
 
   <script src="/path/to/zepto.min.js"></script>
 
-Or alternatively, you can just stick in the contents of zepto.min.js into a <script> tag 
-in your HTML for the best loading performance, especially for single-page applications; 
+Or alternatively, you can just stick in the contents of zepto.min.js into a <script> tag
+in your HTML for the best loading performance, especially for single-page applications;
 no need to load it form an external file!
 
 = Bugs
@@ -219,10 +219,10 @@ If you encounter bugs, please follow these steps:
 
 1. First, try if the bug is fixed in the latest Zepto.js master branch:
    Get it from http://github.com/madrobby/zepto.
-   
+
 2. Submit the bug on our issue tracker:
    http://github.com/madrobby/zepto/issues
-   
+
 Let us know in detail what is going on, including the exact browser version you're on
 and preferably a test case that can be reached online so we can quickly reproduce the
 error.
