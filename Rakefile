@@ -60,8 +60,19 @@ def yui_compressor(src, target)
 end
 
 def uglifyjs(src, target)
-  puts "Minifying #{src} with UglifyJS web service..."
-  `curl -s --data-urlencode js_code@#{src} http://marijnhaverbeke.nl/uglifyjs > #{target}`
+  begin
+    require 'uglifier'
+  rescue LoadError => e
+    if verbose
+      puts "\nYou'll need the 'uglifier' gem for minification. Just run:\n\n"
+      puts "  $ gem install uglifier"
+      puts "\nand you should be all set.\n\n"
+      exit
+    end
+    return false
+  end
+  puts "Minifying #{src} with UglifyJS..."
+  File.open(target, "w"){|f| f.puts Uglifier.new.compile(File.read(src))}
 end
 
 def process_minified(src, target)
@@ -78,7 +89,7 @@ def process_minified(src, target)
   puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]
 end
 
-desc "Generates a minified version for distribution, using the UglifyJS web service."
+desc "Generates a minified version for distribution, using UglifyJS."
 task :dist do
   src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
   uglifyjs src, target
