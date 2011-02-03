@@ -679,6 +679,15 @@
         $("#another_element").trigger("mousedown");
         t.assertEqual(2, count);
       },
+      
+      testOne: function(t){
+        var counter = 0;
+        $(document.body).one('click', function(){ counter++ });
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+      },
 
       testAttr: function(t){
         var els = $('#attr_1, #attr_2');

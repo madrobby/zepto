@@ -89,8 +89,12 @@ Context and .find calls are equivalent:
   toggleClass('classname'[, switch]): adds/removes class, or adds/removes it when switch == true/false
 
   bind(type, function): add an event listener (see below)
+  one(type, function): add an event listener that only fires once
+  unbind([type [, function]]): remove event listeners
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
+  undelegate(selector [, type[, function]]): remove event listeners w/ event delegation
   live(type, function): add an event listener that listens to the selector for current and future elements
+  die([, type[, function]]): remove live listener
   trigger(type): triggers an event
 
 == Non-jQuery functions
