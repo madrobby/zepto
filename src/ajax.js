@@ -26,7 +26,7 @@
         callback = options.success || empty,
         errback = options.error || empty,
         mime = mimeTypes[options.dataType],
-        content = options.contentType,
+        content = options.contentType || "application/x-www-form-urlencoded",
         xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function(){
