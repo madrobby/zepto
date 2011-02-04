@@ -51,7 +51,7 @@
 
     xhr.open(type, options.url || window.location, true);
     if (mime) xhr.setRequestHeader('Accept', mime);
-    if (data instanceof Object) data = JSON.stringify(data), content = content || 'application/json';
+    if (data instanceof Object) data = $.param(data);
     if (content) xhr.setRequestHeader('Content-Type', content);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xhr.send(data);
@@ -82,5 +82,16 @@
       success && success();
     });
     return this;
+  };
+  
+  $.param = function(obj){
+    var s = [], 
+        add = function(key, value){
+          s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        };
+    for(var i in obj){
+      add(i, obj[i])
+    };
+    return s.join("&").replace(/%20/g, "+");
   };
 })(Zepto);
