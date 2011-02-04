@@ -84,14 +84,19 @@
     return this;
   };
   
-  $.param = function(obj){
-    var s = [], 
+  $.param = function(obj, v){
+    var s = [],
+        rec = '',
         add = function(key, value){
-          s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+          if(v) s[s.length] = encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value);
+          else s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
         };
     for(var i in obj){
-      add(i, obj[i])
+      if(obj[i] instanceof Array || obj[i] instanceof Object)
+        rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + "[" + i + "]" : i));
+      else
+        add(i, obj[i])
     };
-    return s.join("&").replace(/%20/g, "+");
+    return s.join("&").replace(/%20/g, "+") + rec;
   };
 })(Zepto);
