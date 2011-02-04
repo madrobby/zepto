@@ -26,7 +26,8 @@
         callback = options.success || empty,
         errback = options.error || empty,
         mime = mimeTypes[options.dataType],
-        content = options.contentType || "application/x-www-form-urlencoded",
+        type = options.type || "GET",
+        content = options.contentType || (type === "POST" ? "application/x-www-form-urlencoded" : ""),
         xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function(){
@@ -48,7 +49,7 @@
       }
     };
 
-    xhr.open(options.type || 'GET', options.url || window.location, true);
+    xhr.open(type, options.url || window.location, true);
     if (mime) xhr.setRequestHeader('Accept', mime);
     if (data instanceof Object) data = JSON.stringify(data), content = content || 'application/json';
     if (content) xhr.setRequestHeader('Content-Type', content);
