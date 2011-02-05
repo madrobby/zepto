@@ -30,9 +30,12 @@
       } else if (touch.x2 > 0 || touch.y2 > 0) {
         Math.abs(touch.x1 - touch.x2) > 30 && $(touch.target).trigger('swipe') &&
         $(touch.target).trigger('swipe' + (touch.x1 - touch.x2 > 0 ? 'Left' : 'Right'));
-        Math.abs(touch.y1 - touch.y2) > 30 && $(touch.target).trigger('swipe') &&
-        $(touch.target).trigger('swipe' + (touch.y1 - touch.y2 > 0 ? 'Up' : 'Down'));
-        touch.y1 = touch.y2 = touch.x1 = touch.x2 = touch.last = 0;
+        touch.x1 = touch.x2 = touch.last = 0
+        if (Zepto.enableUpDownSwipe) {
+	        Math.abs(touch.y1 - touch.y2) > 30 && $(touch.target).trigger('swipe') &&
+	        $(touch.target).trigger('swipe' + (touch.y1 - touch.y2 > 0 ? 'Up' : 'Down'));
+	        touch.y1 = touch.y2 = 0; 
+        }        
       } else if ('last' in touch) {
         touchTimeout = setTimeout(function(){
           touchTimeout = null;
