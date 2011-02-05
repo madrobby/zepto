@@ -8,6 +8,12 @@
   <script src="../src/event.js"></script>
   <script src="../vendor/evidence.js"></script>
   <!--<script src="../dist/zepto.min.js"></script>-->
+  <style>
+    #get_style_element {
+      font-size: 48px;
+      color: black;
+    }
+  </style>
 </head>
 <body>
   <h1>Zepto DOM unit tests</h1>
@@ -22,6 +28,10 @@
   </p>
 
   <div id="toggle_element"></div>
+
+  <div id="get_style_wrapper" style="font-size: 16px;">
+    <div id="get_style_element">Derp</div>
+  </div>
 
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
@@ -445,6 +455,10 @@
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('border-left-color'));
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
         t.assertEqual('2px', $('#some_element').css('padding-left'));
+
+        var div = $('#get_style_element');
+        t.assertEqual('48px', div.css('font-size'));
+        t.assertEqual('rgb(0, 0, 0)', div.css('color'));
       },
 
       testHtml: function(t){
@@ -664,6 +678,15 @@
         $("#another_element").die();
         $("#another_element").trigger("mousedown");
         t.assertEqual(2, count);
+      },
+      
+      testOne: function(t){
+        var counter = 0;
+        $(document.body).one('click', function(){ counter++ });
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
       },
 
       testAttr: function(t){

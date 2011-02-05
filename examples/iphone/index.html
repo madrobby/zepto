@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>iPhone.Zepto</title>
+      <link href="iphone.css" media="screen" rel="stylesheet" type="text/css" />
+      <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="format-detection" content="telephone=no" />
+    </head>
+    <body>
+      <section id="menu">
+        <div class="toolbar">
+          <h1>Title</h1>
+        </div>
+        <ul id="menu" class="menu">
+          <li class="arrow"><a href="#menu_1">Menu 1</a></li>
+          <li>Menu 1</li>
+          <li>Menu 1</li>
+          <li>Menu 1</li>
+          <li>Menu 1</li>
+        </ul>
+      </section>
+      <section id="menu_1">
+        <div class="toolbar">
+          <h1>Menu 1</h1>
+        </div>
+        <ul class="menu">
+          <li>SubMenu 1</li>
+          <li>SubMenu 2</li>
+        </ul>
+      </section>
+      <script src="zepto.min.js"></script>
+      <script>
+        $(document).ready(function(){
+          $("body > section").first().addClass("current")
+
+          $("a.back").live('touchstart', function(event) {
+           var current = $(event.currentTarget).attr("href");
+            $(".current").removeClass("current").addClass("reverse");
+            $(current).addClass("current");
+          });
+
+          $(".menu a[href]").live('touchstart', function(event) {
+            var section = $(event.currentTarget).closest('section'),
+              link = $(event.currentTarget),
+              prev_element = "#"+(section.removeClass("current").addClass("reverse").attr("id"));
+            $(link.attr("href")).addClass("current");
+            $(".current .back").remove();
+            $(".current .toolbar").prepend("<a href=\""+prev_element+"\" class=\"back\">Back</a>");
+          });
+        });
+      </script>
+    </body>
+</html>

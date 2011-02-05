@@ -59,6 +59,15 @@
       remove(this, event, callback);
     });
   };
+  $.fn.one = function(event, callback){
+    return this.each(function(){
+      var self = this;
+      add(this, event, function wrapper(){
+        callback();
+        remove(self, event, arguments.callee);
+      });
+    });
+  };
 
   var eventMethods = ['preventDefault', 'stopImmediatePropagation', 'stopPropagation'];
   function createProxy(event) {
