@@ -39,9 +39,9 @@
 
       testAjaxPostWithData: function(t) {
         t.pause();
-        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
+        $.post('fixtures/ajax_post_json_echo.php', { sample: 'data', letters: ['a', 'b', 'c'] }, function(response) {
           t.resume(function() {
-            this.assert(response);
+            this.assertEqual(response, '{"sample":"data","letters":["a","b","c"]}');
           });
         });
       },
