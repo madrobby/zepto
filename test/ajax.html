@@ -207,7 +207,7 @@
         t.assert(!successFired);
         t.assertEqual(MockXHR.last, xhr);
         t.assertEqual('parsererror', status);
-        t.assert(exception.toString().match(/JSON/));
+        t.assert(exception.toString().match(/SyntaxError/));
       },
 
       test201ResponseIsSuccess: function(t) {
