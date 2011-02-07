@@ -176,9 +176,10 @@
         t.assertEqual("world", result.hello);
       },
 
-      testDataOptionIsConvertedToJSONString: function(t) {
-        $.ajax({ data: {hello: 'world'} });
-        t.assertEqual('{"hello":"world"}', MockXHR.last.data);
+      testDataOptionIsConvertedToSerializedForm: function(t) {
+        $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
+		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
+        t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
       },
 
       testErrorCallback: function(t) {
