@@ -93,7 +93,7 @@
         };
     for(var i in obj){
       if(obj[i] instanceof Array || obj[i] instanceof Object)
-        rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + "[" + (obj[i] instanceof Object ? i : '') + "]" : i));
+        rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + "[" + i + "]" : i));
       else
         add(obj instanceof Array ? '' : i, obj[i]);
     };
