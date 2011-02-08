@@ -250,19 +250,15 @@
   <script>
     Evidence.TestCase.extend('ZeptoAjaxHelperMethodsTest',{
       
-      testParamMethodWithArrayValue: function(t) {
+      testParamMethod: function(t) {
         result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
         result = decodeURIComponent(result);
         t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo");
-      },
-      
-      testParamMethodWithKeyValuePairs: function(t) {
+        
         result = $.param({ jquery: 'Javascript', rails: 'Ruby', django: 'Python' });
         result = decodeURIComponent(result);
         t.assertEqual(result, "jquery=Javascript&rails=Ruby&django=Python");
-      },
-      
-      testParamMethodWithComplexObject: function(t) {
+        
         result = $.param({
           title: "Some Countries", 
           list: ['Ecuador', 'Austria', 'England'], 
