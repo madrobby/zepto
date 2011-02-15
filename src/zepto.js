@@ -145,7 +145,7 @@ var Zepto = (function() {
       };
     },
     css: function(property, value){
-      if (value === undefined && typeof property == 'string') 
+      if (value === undefined && typeof property == 'string')
         return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
       css = "";
       for (key in property) css += key + ':' + property[key] + ';';

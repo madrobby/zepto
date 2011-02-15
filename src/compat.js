@@ -1,5 +1,4 @@
-// fix for iOS 3.2
-if (String.prototype.trim === undefined)
+if (String.prototype.trim === undefined) // fix for iOS 3.2
   String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
 
 // For iOS 3.x

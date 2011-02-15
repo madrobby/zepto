@@ -36,12 +36,12 @@
 
           $("a.back").live('touchstart', function(event) {
            var current = $(event.currentTarget).attr("href");
-            $(".current").removeClass("current").addClass("reverse");           
+            $(".current").removeClass("current").addClass("reverse");
             $(current).addClass("current");
           });
 
           $(".menu a[href]").live('touchstart', function(event) {
-            var section = $(event.currentTarget).closest('section'), 
+            var section = $(event.currentTarget).closest('section'),
               link = $(event.currentTarget),
               prev_element = "#"+(section.removeClass("current").addClass("reverse").attr("id"));
             $(link.attr("href")).addClass("current");

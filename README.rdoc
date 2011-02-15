@@ -1,8 +1,13 @@
 == Zepto.js: a minimalist framework for mobile WebKit browsers
 
-Zepto.js is a minimalist inlinable framework for mobile WebKit browsers, with a jQuery-like chaining syntax
+Zepto.js is a minimalist framework for mobile WebKit browsers,
+with a jQuery-compatible chaining syntax.
 
-The ultimate goal is to have a ~2k library that handles most basic dredge work for you in a nice API so you can concentrate on getting stuff done.
+100% jQuery coverage is not a design goal, however all APIs provided
+match their jQuery counterparts.
+
+The ultimate goal is to have a ~5k library that handles most basic dredge work
+for you in a nice API so you can concentrate on getting stuff done.
 
 Primary target platforms are:
 
@@ -10,10 +15,11 @@ Primary target platforms are:
 * Android 2.2+
 * webOS 1.4.5+
 
-Secondary platforms are:
+Secondary platforms (for plugin/extension development) are:
 
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
+* Other WebKit-based browsers/runtimes
 
 = Syntax & features:
 
@@ -83,8 +89,12 @@ Context and .find calls are equivalent:
   toggleClass('classname'[, switch]): adds/removes class, or adds/removes it when switch == true/false
 
   bind(type, function): add an event listener (see below)
+  one(type, function): add an event listener that only fires once
+  unbind([type [, function]]): remove event listeners
   delegate(selector, type, function): add an event listener w/ event delegation (see below)
+  undelegate(selector [, type[, function]]): remove event listeners w/ event delegation
   live(type, function): add an event listener that listens to the selector for current and future elements
+  die([, type[, function]]): remove live listener
   trigger(type): triggers an event
 
 == Non-jQuery functions
@@ -95,7 +105,7 @@ Context and .find calls are equivalent:
 
   anim(transform, opacity, duration):
     use -webkit-transform/opacity and do an animation
-  
+
 = Utility functions:
 
   $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
@@ -129,6 +139,8 @@ Removing all event listeners:
 
 = Touch events
 
+Zepto has several extensions over the jQuery API to make it easy to react to touch events.
+
 Tapping:
   $('some selector').tap(function(){ ... });
 
@@ -150,6 +162,8 @@ Simple GET and POST:
   $.get(url, callback)
   $.post(url, [data], [callback], [mime-type])
   $.getJSON(url, callback)
+
+If the url contains a =? parameter, a JSONP request is assumed.
 
 If you need more control (all keys are optional):
   $.ajax({
@@ -173,12 +187,13 @@ Zepto includes information about the environment it is running in the $.os objec
   $.os.android // => true if running on Android
   $.os.webos   // => true if running on HP/Palm WebOS
   $.os.version // => string with version number, "4.0", "3.1.1", "2.1", etc.
-  $.os.iphone  // => true if running on iphone
-  $.os.ipad    // => true if running on ipad
+  $.os.iphone  // => true if running on iPhone
+  $.os.ipad    // => true if running on iPad
+  $.os.blackberry // => true if running on BlackBerry
 
 = Building
 
-zepto.js can be used as-is. However, for best efficiency, run the included build step that uses the Google Closure Compiler to minify zepto.js and will give you an estimate on the compression that is achievable when zepto.js is served Gzipped.
+Zepto.js can be used as-is. However, for best efficiency, run the included build step that uses UglifyJS to minify Zepto.js and will give you an estimate on the compression that is achievable when Zepto.js is served Gzipped.
 
 For this to work, you need Ruby and Rake installed.
 
@@ -198,9 +213,25 @@ You load Zepto by using
 
   <script src="/path/to/zepto.min.js"></script>
 
-Or alternatively, you can just stick in the contents of zepto.min.js into
-a <script> tag in your HTML for the best loading performance.
-No need to load it form an external file!
+Or alternatively, you can just stick in the contents of zepto.min.js into a <script> tag
+in your HTML for the best loading performance, especially for single-page applications;
+no need to load it form an external file!
+
+= Bugs
+
+If you encounter bugs, please follow these steps:
+
+1. First, try if the bug is fixed in the latest Zepto.js master branch:
+   Get it from http://github.com/madrobby/zepto.
+
+2. Submit the bug on our issue tracker:
+   http://github.com/madrobby/zepto/issues
+
+Let us know in detail what is going on, including the exact browser version you're on
+and preferably a test case that can be reached online so we can quickly reproduce the
+error.
+
+Better, yet, fix the bug and bask in the glory of being a contributor (see below!).
 
 = Contributing!
 
@@ -208,7 +239,7 @@ I'd love some help on this, so please feel free to mess around!
 
 If you don't know how a method should behave, please use jQuery as a reference. Zepto.js should closely emulate it.
 Note that emulation of all features of jQuery is not a project goal, rather we want the most useful parts while keeping
-to the ~2k minified goal.
+to the ~5k minified goal.
 
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
