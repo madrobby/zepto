@@ -119,7 +119,7 @@ var Zepto = (function() {
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
         (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') ? (this.val()) :
-        (this.length > 0 ? this[0].getAttribute(name) || undefined : null) :
+        (this.length > 0 ? this[0].getAttribute(name) || (name in this[0]) : null) :
         this.each(function(idx){
           if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
