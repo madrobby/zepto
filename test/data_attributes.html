@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Zepto Compatibility unit tests</title>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../vendor/evidence.js"></script>
+</head>
+<body>
+  <h1>Zepto data-* attributes support</h1>
+  <p>
+    See the browser console for results.
+  </p>
+  <script>
+    Evidence.TestCase.extend('ZeptoTest', {
+      testGetter : function(t) {
+        t.assertEqual('hi there!', $('#examples p').data('something'));
+      },
+
+      testSetter : function(t) {
+        $('#examples p').data('something', 'something new');
+        t.assertEqual('something new', $('#examples p').data('something'));
+      },
+
+      testGetterInEventHandler : function(t) {
+        $('#link').bind('click', function(event){
+          t.assertEqual('visit', $(event.target).data('action'));
+        });
+        $('#link').trigger('click');
+      },
+
+      testSetterInEventHandler : function(t) {
+
+        $('#link').bind('click', function(event){
+          $(event.target).data('something', 'something new');
+          t.assertEqual('something new', $(event.target).data('something'));
+        });
+        $('#link').trigger('click');
+      }
+    });
+  </script>
+
+  <div id="examples">
+    <p data-something="hi there!">ohai</p>
+    <a id="link" data-action="visit" href="#">see the example</a>
+  </div>
+</body>
+</html>

@@ -125,6 +125,17 @@ var Zepto = (function() {
           else this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
         });
     },
+    data : function(name, new_value) {
+      var value;
+      if(this.dataset == undefined) {
+        if(new_value !== undefined) this.attr('data-'+name, new_value);
+        this.attr('data-'+name, new_value);
+        return this.attr('data-'+name);
+      } else {
+        if(new_value !== undefined) this.dataset[name] = new_value;
+        return this.dataset[name];
+      }
+    },
     removeAttr: function(name) {
       return this.each(function() { this.removeAttribute(name); });
     },
