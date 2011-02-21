@@ -36,8 +36,8 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
 
-  <div id="data_attr"></div>
-  
+  <div id="data_attr" data-blah="whatever"></div>
+
   <input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" />
 
   <div class="htmltest" id="htmltest1"></div>
@@ -744,22 +744,24 @@
         var els = $('#attr_with_text_input');
 
         els.get(0).removeAttribute('disabled');
-        t.assertEqual(els.attr('disabled'), undefined);
+        console.log(els[0].disabled);
+        console.log(els.attr('disabled'))
+        t.assertFalse(els.attr('disabled'));
 
         els.attr('disabled', 'definitely');
         t.assertEqual(els.attr('disabled'), 'definitely');
 
         els.removeAttr('disabled');
-        t.assertEqual(els.attr('disabled'), undefined);
+        t.assertFalse(els.attr('disabled'));
       },
-      
+
       testData: function(t) {
         var els = $('#data_attr');
         els.data('fun', 'hello');
         t.assertEqual(els.attr('data-fun'), 'hello');
-        
-        var result = els.data('fun');
-        t.assertEqual(result, 'hello');
+
+        t.assertEqual(els.data('fun'), 'hello');
+        t.assertEqual(els.data('blah'), 'whatever');
       },
 
       testVal: function(t) {
@@ -934,7 +936,7 @@
 
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
-        t.assertEqual($('#BooleanInput').attr('non_existant_attr'), false);
+        t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
       }
 
     });
