@@ -128,6 +128,9 @@ var Zepto = (function() {
     removeAttr: function(name) {
       return this.each(function() { this.removeAttribute(name); });
     },
+    data: function(name, value){
+      return this.attr('data-' + name, value);
+    },
     val: function(value){
       return (value === undefined) ?
         (this.length > 0 ? this[0].value : null) :

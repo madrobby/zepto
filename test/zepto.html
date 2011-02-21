@@ -36,6 +36,8 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
 
+  <div id="data_attr"></div>
+  
   <input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" />
 
   <div class="htmltest" id="htmltest1"></div>
@@ -749,6 +751,15 @@
 
         els.removeAttr('disabled');
         t.assertEqual(els.attr('disabled'), undefined);
+      },
+      
+      testData: function(t) {
+        var els = $('#data_attr');
+        els.data('fun', 'hello');
+        t.assertEqual(els.attr('data-fun'), 'hello');
+        
+        var result = els.data('fun');
+        t.assertEqual(result, 'hello');
       },
 
       testVal: function(t) {
