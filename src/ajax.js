@@ -6,8 +6,11 @@
   $.ajaxJSONP = function(options){
     var jsonpString = 'jsonp' + ++jsonpID,
         script = document.createElement('script');
-    window[jsonpString] = options.success;
-    script.src = options.url.replace(/callback=\?/, 'callback=' + jsonpString);
+    window[jsonpString] = function(data){
+      options.success(data);
+      delete window.jsonpString;
+    };
+    script.src = options.url.replace(/=\?/, '=' + jsonpString);
     $('head').append(script);
   };
 
