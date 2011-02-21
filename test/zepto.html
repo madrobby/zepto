@@ -98,7 +98,10 @@
 
   <div id="namespace_test"></div>
 
+  <input type="text" id="BooleanInput" required />
+
   <script>
+
     function click(el){
       var event = document.createEvent('MouseEvents');
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -916,6 +919,11 @@
         t.assertEqual($("p > span").index(".yay"), 0);
         t.assertEqual($("span").index("span"), 0);
         t.assertEqual($("span").index("boo"), -1);
+      },
+
+      testBoolAttr: function (t) {
+        t.assertEqual($('#BooleanInput').attr('required'), true);
+        t.assertEqual($('#BooleanInput').attr('non_existant_attr'), false);
       }
 
     });
