@@ -36,6 +36,8 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
 
+  <div id="data_attr" data-blah="whatever"></div>
+
   <input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" />
 
   <div class="htmltest" id="htmltest1"></div>
@@ -98,7 +100,10 @@
 
   <div id="namespace_test"></div>
 
+  <input type="text" id="BooleanInput" required />
+
   <script>
+
     function click(el){
       var event = document.createEvent('MouseEvents');
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -739,13 +744,24 @@
         var els = $('#attr_with_text_input');
 
         els.get(0).removeAttribute('disabled');
-        t.assertEqual(els.attr('disabled'), undefined);
+        console.log(els[0].disabled);
+        console.log(els.attr('disabled'))
+        t.assertFalse(els.attr('disabled'));
 
         els.attr('disabled', 'definitely');
         t.assertEqual(els.attr('disabled'), 'definitely');
 
         els.removeAttr('disabled');
-        t.assertEqual(els.attr('disabled'), undefined);
+        t.assertFalse(els.attr('disabled'));
+      },
+
+      testData: function(t) {
+        var els = $('#data_attr');
+        els.data('fun', 'hello');
+        t.assertEqual(els.attr('data-fun'), 'hello');
+
+        t.assertEqual(els.data('fun'), 'hello');
+        t.assertEqual(els.data('blah'), 'whatever');
       },
 
       testVal: function(t) {
@@ -916,6 +932,11 @@
         t.assertEqual($("p > span").index(".yay"), 0);
         t.assertEqual($("span").index("span"), 0);
         t.assertEqual($("span").index("boo"), -1);
+      },
+
+      testBoolAttr: function (t) {
+        t.assertEqual($('#BooleanInput').attr('required'), true);
+        t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
       }
 
     });

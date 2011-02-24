@@ -4,14 +4,13 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
-    var jsonpString;
-    jsonpString = 'jsonp' + ++jsonpID;
+    var jsonpString = 'jsonp' + ++jsonpID,
+        script = document.createElement('script');
     window[jsonpString] = function(data){
       options.success(data);
       delete window.jsonpString;
     };
-    var script = document.createElement('script');
-    $(script).attr({ src: options.url.replace(/=\?/, '=' + jsonpString) });
+    script.src = options.url.replace(/=\?/, '=' + jsonpString);
     $('head').append(script);
   };
 
