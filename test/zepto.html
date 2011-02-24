@@ -86,6 +86,8 @@
   <div id="show_hide_div2" class="hidden"></div>
   <div id="show_hide_div3"></div>
 
+  <a id="display_inline_show" href="#" style="">Test123</a>
+
   <div id="show_hide_span1" style="display:none"></div>
   <div id="show_hide_span2" class="hidden"></div>
   <div id="show_hide_span3"></div>
@@ -317,23 +319,24 @@
       // need to change that to work better with inline elements in the future
 
       testShow: function(t){
+        var getComputedStyle = document.defaultView.getComputedStyle;
         $('#show_hide_div1').show();
-        t.assertEqual('block', $('#show_hide_div1').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_div2').show();
-        t.assertEqual('block', $('#show_hide_div2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_div3').show();
-        t.assertEqual('block', $('#show_hide_div3').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_span1').show();
-        t.assertEqual('block', $('#show_hide_span1').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_span2').show();
-        t.assertEqual('block', $('#show_hide_span2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_span3').show();
-        t.assertEqual('block', $('#show_hide_span3').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div1').get(0)).display);
       },
 
       testHide: function(t){
@@ -354,6 +357,14 @@
 
         $('#show_hide_span3').hide();
         t.assertEqual('none', $('#show_hide_span3').get(0).style.display);
+      },
+      
+      testHideAndShowDisplayOtherThanBlock: function(t) {
+        var getComputedStyle = document.defaultView.getComputedStyle;
+        $('#display_inline_show').hide();
+        $('#display_inline_show').show();
+        
+        t.assertEqual('inline', getComputedStyle($('#display_inline_show').get(0)).display);
       },
 
       testOffset: function(t){
@@ -436,6 +447,7 @@
         $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
+
         t.assertEqual('1px', el.style.borderLeftWidth);
 
         var style1 = $('#some_element').css('color');

@@ -102,7 +102,7 @@ var Zepto = (function() {
       return selector === undefined ? nodes : nodes.filter(selector);
     },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
-    show: function(){ return this.css('display', 'block') },
+    show: function(){ return this.css('display', '') },
     hide: function(){ return this.css('display', 'none') },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
@@ -148,12 +148,15 @@ var Zepto = (function() {
       };
     },
     css: function(property, value){
-      if (value === undefined && typeof property == 'string')
-        return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
-      css = "";
-      for (key in property) css += key + ':' + property[key] + ';';
-      if (typeof property == 'string') css = property + ":" + value;
-      return this.each(function() { this.style.cssText += ';' + css });
+      if (value === undefined && typeof property == 'string') {
+        var st;
+        (property != 'display') ? st = this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property) : st = 'asdf';
+        return st;
+      }
+      return this.each(function() {
+        for (key in property) this.style[camelize(key)] = property[key];
+        if (typeof property == 'string') this.style[camelize(property)] = value;
+      });
     },
     index: function(element){
       return this.indexOf($(element)[0]);
