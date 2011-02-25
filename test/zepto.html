@@ -78,6 +78,13 @@
     </li>
   </ul>
 
+  <ul id="childrenTest">
+    <li class="child one"><a class="childOfOne" href="#">gchild1</a></li>
+    <li class="child two"><a class="childOfTwo" href="#">gchild2</a></li>
+    <li class="child three"><a class="childOfThree" href="#">gchild3</a></li>
+    <li class="child four"><a class="childOfFour" href="#">gchild4</a></li>
+  </ul>
+
   <style>
     .hidden { display: none; }
   </style>
@@ -398,6 +405,21 @@
         t.assertEqualCollection($('#parents'), el.parent());
         t.assertEqualCollection($('#li1 > ul'), el.find('li').parent());
         t.assertLength(0, $(document.createElement('div')).parent());
+      },
+
+      testChildren: function(t){
+        var el=$("#childrenTest"), lis=$("li.child",el);
+
+        //basic form
+        t.assertEqualCollection(lis, el.children());
+        //filtered by selector
+        t.assertEqualCollection(lis.filter(".two"), el.children(".two"));
+        //across multiple parents
+        t.assertEqualCollection(el.find("li a"), lis.children("a"));
+        //chainabilty
+        t.assertEqual(el.find("li a.childOfTwo").text(), lis.children(".childOfTwo").text());
+        //non-existent children
+        t.assertLength(0,lis.children(".childOfTwo").children());
       },
 
       testFind: function(t){

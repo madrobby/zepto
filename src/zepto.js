@@ -101,6 +101,15 @@ var Zepto = (function() {
       nodes = $(nodes);
       return selector === undefined ? nodes : nodes.filter(selector);
     },
+    children: function(selector){
+      var nodes=[];
+      this.each(function(){
+        slice.call(this.children).forEach(function(el){
+          nodes.push(el);
+        })
+      });
+      return selector === undefined ? $(nodes) : $(nodes).filter(selector);
+    },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
     hide: function(){ return this.css('display', 'none') },
