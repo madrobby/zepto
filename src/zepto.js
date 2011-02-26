@@ -37,7 +37,9 @@ var Zepto = (function() {
       return Z(dom, selector);
     }
   }
-
+  
+  function $new(tag) { return $(document.createElement(tag)); }
+  
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
