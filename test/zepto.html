@@ -659,6 +659,13 @@
         click($('div#delegate_test a').get(0));
         t.assert(fired);
         t.refuteEqual('#foo', window.location.hash);
+        
+        fired = false;
+        if (window.location.hash.length) window.location.hash = '';
+        $('div#delegate_test').html('<a href="#bar"></a>');
+        $('div#delegate_test a').trigger('click');
+        t.assert(fired);
+        t.refuteEqual('#bar', window.location.hash);
       },
 
       testUndelegate: function(t){
