@@ -82,7 +82,7 @@
     });
     return this;
   };
-  
+
   $.param = function(obj, v){
     var s = [],
         rec = '',
