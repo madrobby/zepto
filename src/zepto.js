@@ -110,6 +110,15 @@ var Zepto = (function() {
       });
       return selector === undefined ? $(nodes) : $(nodes).filter(selector);
     },
+    siblings: function(selector){
+      var node, nodes=[];
+      this.each(function(){
+        slice.call((node = this).parentNode.children).forEach(function(el){
+          if (node !== el) nodes.push(el);
+        })
+      });
+      return selector === undefined ? $(nodes) : $(nodes).filter(selector);
+    },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
     hide: function(){ return this.css('display', 'none') },
