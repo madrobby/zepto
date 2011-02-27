@@ -127,7 +127,7 @@ var Zepto = (function() {
     html: function(html){
       return html === undefined ?
         (this.length > 0 ? this[0].innerHTML : null) :
-        this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html });
+        this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html.call(this, idx, this.innerHTML) : html });
     },
     text: function(text){
       return text === undefined ?
@@ -140,7 +140,7 @@ var Zepto = (function() {
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
           if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
-          else this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
+          else this.setAttribute(name, typeof value == 'function' ? value.call(this, idx, this.getAttribute(name)) : value);
         });
     },
     removeAttr: function(name) {
