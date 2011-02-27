@@ -49,7 +49,7 @@
         }, 0);
         t.assertEqual('0s', $('#durationtest_2').get(0).style.webkitTransitionDuration);
       },
-      
+
       testCallback: function(t){
         t.pause();
         var duration = 250; //Milliseconds
@@ -58,12 +58,12 @@
           translate3d: '100px, 100px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
-        }, duration / 1000, 'linear', 
+        }, duration / 1000, 'linear',
         function(){
           t.resume(
-          function(){ 
+          function(){
             this.assert((new Date().getTime() - start) >= duration);
-          }); 
+          });
         });
       }
     });
