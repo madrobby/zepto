@@ -68,7 +68,7 @@ var Zepto = (function() {
     },
     not: function(selector){
       var nodes=[];
-      if (typeof selector == 'function'){
+      if (typeof selector == 'function' && selector.call !== undefined){
       	this.each(function(idx){
       	  if (!selector.call(this,idx)) nodes.push(this);
       	});
