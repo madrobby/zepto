@@ -4,9 +4,9 @@
     for (key in properties)
       if (key === 'opacity') opacity = properties[key];
       else transforms.push(key + '(' + properties[key] + ')');
-    
+
     typeof callback == 'function' && this.one('webkitTransitionEnd', callback);
-    
+
     return this.css({
       '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
       '-webkit-transform': transforms.join(' '),
