@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Zepto DOM unit tests</title>
-  <script src="../src/compat.js"></script>
+  <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
   <script src="../vendor/evidence.js"></script>
@@ -820,8 +820,6 @@
         var els = $('#attr_with_text_input');
 
         els.get(0).removeAttribute('disabled');
-        console.log(els[0].disabled);
-        console.log(els.attr('disabled'))
         t.assertFalse(els.attr('disabled'));
 
         els.attr('disabled', 'definitely');
