@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Zepto FX unit tests</title>
   <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
   <script src="../src/fx.js"></script>
   <script src="../vendor/evidence.js"></script>
 </head>
@@ -16,13 +17,13 @@
   <div id="animtest" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
+  <div id="callbacktest" style="width:40px;height:40px;background:red"></div>
 
   <script>
     Evidence.TestCase.extend('ZeptoFXTest', {
 
       testAnim: function(t){
         var el = $('#animtest').get(0);
-
         $('#animtest').anim({
           translate3d: '100px, 100px, 100px',
           rotateZ: '90deg',
@@ -47,8 +48,24 @@
           opacity: 0.5
         }, 0);
         t.assertEqual('0s', $('#durationtest_2').get(0).style.webkitTransitionDuration);
+      },
+      
+      testCallback: function(t){
+        t.pause();
+        var duration = 250; //Milliseconds
+        var start = new Date().getTime();
+        $('#callbacktest').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, duration / 1000, 'linear', 
+        function(){
+          t.resume(
+          function(){ 
+            this.assert((new Date().getTime() - start) >= duration);
+          }); 
+        });
       }
-
     });
   </script>
 </body>

@@ -78,6 +78,27 @@
     </li>
   </ul>
 
+  <ul id="childrenTest">
+    <li class="child one"><a class="childOfOne" href="#">gchild1</a></li>
+    <li class="child two"><a class="childOfTwo" href="#">gchild2</a></li>
+    <li class="child three"><a class="childOfThree" href="#">gchild3</a></li>
+    <li class="child four"><a class="childOfFour" href="#">gchild4</a></li>
+  </ul>
+
+   <ul id="siblingsTest">
+    <li class="child one"><span class="b"></span><em></em><b></b></li>
+    <li class="child two"><span class="c"></span><em></em><b></b></li>
+    <li class="child three"><span class="d"></span><em></em><b></b></li>
+    <li class="child four"><span class="e"></span></li>
+  </ul>
+
+  <ul id="notTest">
+    <li class="child one"><span class="b"></span></li>
+    <li class="child two"><span class="c"></span></li>
+    <li class="child three"><span class="d" id="notTestExclude"></span></li>
+    <li class="child four"><span class="e"></span></li>
+  </ul>
+
   <style>
     .hidden { display: none; }
   </style>
@@ -400,6 +421,54 @@
         t.assertLength(0, $(document.createElement('div')).parent());
       },
 
+      testChildren: function(t){
+        var el=$("#childrenTest"), lis=$("li.child",el);
+
+        //basic form
+        t.assertEqualCollection(lis, el.children());
+        //filtered by selector
+        t.assertEqualCollection(lis.filter(".two"), el.children(".two"));
+        //across multiple parents
+        t.assertEqualCollection(el.find("li a"), lis.children("a"));
+        //chainabilty
+        t.assertEqual(el.find("li a.childOfTwo").text(), lis.children(".childOfTwo").text());
+        //non-existent children
+        t.assertLength(0,lis.children(".childOfTwo").children());
+      },
+
+      testSiblings: function(t){
+        var el=$("#siblingsTest");
+
+        //basic form
+        t.assertEqualCollection($("li.one,li.three,li.four",el), $("li.two",el).siblings());
+        //filtered by selector
+        t.assertEqualCollection($("li.three",el), $("li.two",el).siblings(".three"));
+        //across multiple parents
+        t.assertEqualCollection(el.find("li b"), $("li em",el).siblings("b"));
+        t.assertLength(6,$("li span",el).siblings());
+        //non-existent siblings
+        t.assertLength(0,$("li span.e",el).siblings());
+      },
+
+      testNot: function(t){
+        var el=$("#notTest");
+
+        //selector form
+        t.assertEqualCollection($("li.one,li.three,li.four",el), $("li",el).not(".two"));
+        //element or NodeList form
+        t.assertEqualCollection($("span.b,span.c,span.e",el), $("span",el).not(document.getElementById("notTestExclude")));
+        t.assertEqualCollection($("li",el), $("li, span",el).not(document.getElementsByTagName("span")));
+        //function form
+        t.assertEqualCollection($("span.b,span.c",el),$("span",el).not(function(i){
+          var $this=$(this);
+          $this.html(i);
+          return ($this.hasClass("d") || $this.hasClass("e")) ? true : false;
+        }));
+        //test the index was passed in properly in previous test
+        t.assertEqual("0",$("span.b",el).text());
+        t.assertEqual("1",$("span.c",el).text());
+      },
+
       testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertLength(4, found);
@@ -616,6 +685,13 @@
         click($('div#delegate_test a').get(0));
         t.assert(fired);
         t.refuteEqual('#foo', window.location.hash);
+
+        fired = false;
+        if (window.location.hash.length) window.location.hash = '';
+        $('div#delegate_test').html('<a href="#bar"></a>');
+        $('div#delegate_test a').trigger('click');
+        t.assert(fired);
+        t.refuteEqual('#bar', window.location.hash);
       },
 
       testUndelegate: function(t){
