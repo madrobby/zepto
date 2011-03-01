@@ -6,6 +6,12 @@ var Zepto = (function() {
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return array.reduce(function(a,b){ return a.concat(b) }, []) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function uniq(array){
+    var r = [];
+    for(var i=0,n=array.length;i<n;i++)
+      if(r.indexOf(array[i])<0) r.push(array[i]);
+    return r;
+  }
 
   fragmentRE = /^\s*<.+>/;
   container = document.createElement("div");
@@ -41,6 +47,10 @@ var Zepto = (function() {
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
+  function filtered(nodes, selector){
+    return selector === undefined ? $(nodes) : $(nodes).filter(selector);
+  }
+
   $.fn = {
     forEach: [].forEach,
     map: [].map,
@@ -68,17 +78,18 @@ var Zepto = (function() {
     },
     not: function(selector){
       var nodes=[];
-      if (typeof selector == 'function' && selector.call !== undefined){
-      	this.each(function(idx){
-      	  if (!selector.call(this,idx)) nodes.push(this);
-      	});
-      }else{
-      	var ignores=slice.call(typeof selector === "string" ?
-      	this.filter(selector) :
-      	selector instanceof NodeList ? selector : $(selector));
-      	slice.call(this).forEach(function(el){
-      	  if (ignores.indexOf(el) < 0) nodes.push(el);
-      	});
+      if (typeof selector == 'function' && selector.call !== undefined)
+        this.each(function(idx){
+          if (!selector.call(this,idx)) nodes.push(this);
+        });
+      else {
+        var ignores = slice.call(
+          typeof selector === "string" ?
+            this.filter(selector) :
+            selector instanceof NodeList ? selector : $(selector));
+        slice.call(this).forEach(function(el){
+          if (ignores.indexOf(el) < 0) nodes.push(el);
+        });
       }
       return $(nodes);
     },
@@ -106,34 +117,18 @@ var Zepto = (function() {
             return node;
           }
         }));
-      ancestors = $(ancestors);
-      return selector === undefined ? ancestors : ancestors.filter(selector);
+      return filtered(ancestors, selector);
     },
     parent: function(selector){
-      var node, nodes = [];
-      this.each(function(){
-        if ((node = this.parentNode) && nodes.indexOf(node) < 0) nodes.push(node);
-      });
-      nodes = $(nodes);
-      return selector === undefined ? nodes : nodes.filter(selector);
+      return filtered(uniq(compact(this.pluck('parentNode'))), selector);
     },
     children: function(selector){
-      var nodes=[];
-      this.each(function(){
-        slice.call(this.children).forEach(function(el){
-          nodes.push(el);
-        })
-      });
-      return selector === undefined ? $(nodes) : $(nodes).filter(selector);
+      return filtered(flatten(this.map(function(el){ return slice.call(el.children) })), selector);
     },
     siblings: function(selector){
-      var node, nodes=[];
-      this.each(function(){
-        slice.call((node = this).parentNode.children).forEach(function(el){
-          if (node !== el) nodes.push(el);
-        })
-      });
-      return selector === undefined ? $(nodes) : $(nodes).filter(selector);
+      return filtered(flatten(this.map(function(el){
+        return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
+      })), selector);
     },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
