@@ -203,6 +203,13 @@
         t.assertLength(1, $('p > span.yay'));
       },
 
+      testDollarWithNil: function(t){
+        t.assertLength(0, $(null));
+        t.assertLength(0, $(undefined));
+        t.assertLength(0, $(false));
+        t.assertLength(0, $(''));
+      },
+
       testSize: function(t){
         t.assertEqual(4, $('#find1 .findme').size());
       },
@@ -244,7 +251,7 @@
 
       testDollarWithDocument: function(t){
         var z = $(document);
-        t.assertLength(0, z);
+        t.assertLength(1, z);
         t.assertEqual('', z.selector);
       },
 

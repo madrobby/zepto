@@ -30,14 +30,15 @@ var Zepto = (function() {
   }
 
   function $(selector, context){
-    if (selector == document) return Z();
-    else if (context !== undefined) return $(context).find(selector);
+    if (!selector) return Z();
+    if (context !== undefined) return $(context).find(selector);
     else if (typeof selector === 'function') return $(document).ready(selector);
     else if (selector instanceof Z) return selector;
     else {
       var dom;
       if (selector instanceof Array) dom = compact(selector);
-      else if (selector instanceof Element || selector === window) dom = [selector];
+      else if (selector instanceof Element || selector === window || selector === document)
+        dom = [selector], selector = null;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
       else dom = $$(document, selector);
       return Z(dom, selector);
@@ -106,7 +107,7 @@ var Zepto = (function() {
       var node = this[0], nodes = $$(context !== undefined ? context : document, selector);
       if (nodes.length === 0) node = null;
       while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
-      return $(node);
+      return $(node !== document && node);
     },
     parents: function(selector){
       var ancestors = [], nodes = this;
