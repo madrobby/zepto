@@ -134,9 +134,12 @@
    <li class="greenli">list item 3</li>
 </ul>
 
+<div id="endTest2">
+  <div><span>Hello</span>, how are you?</div>
+</div>
+
 
   <script>
-$('ul.firstul').find('.redli').css('background-color', 'red').end().find('.greenli').css('background-color', 'green');
 
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -600,7 +603,6 @@ $('ul.firstul').find('.redli').css('background-color', 'red').end().find('.green
 
       testBind: function(t){
         var counter = 0;
-//TODO FIXME
         $(document.body).bind('click', function(){ counter++ });
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
@@ -1032,6 +1034,16 @@ $('ul.firstul').find('.redli').css('background-color', 'red').end().find('.green
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
+      },
+
+      testEndFunc: function (t) {
+        $('ul.firstul').find('.redli').css('background-color', 'red').end().find('.greenli').css('background-color', 'green');
+        t.assertEqual($('ul.firstul .redli').css('background-color'), 'red');
+        t.assertEqual($('ul.firstul .greenli').css('background-color'), 'green');
+        t.assert($('ul.secondul .greenli').css('background-color'), 'rgba (0, 0, 0, 0)');
+
+        $("#endTest2 div").find("span").end().css("border", "2px solid red")
+        t.assertEqual($('#endTest2 div').css('border'), '2px solid red');
       }
 
     });
