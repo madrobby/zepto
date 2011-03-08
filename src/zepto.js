@@ -29,7 +29,14 @@ var Zepto = (function() {
     return dom;
   }
 
+  function $Zepto (selector, context) {
+    $.stack = [];
+    return $(selector, context);
+  }
+
   function $(selector, context){
+    $.stack.push({ selector: selector, context: context });
+
     if (!selector) return Z();
     if (context !== undefined) return $(context).find(selector);
     else if (typeof selector === 'function') return $(document).ready(selector);
@@ -45,8 +52,8 @@ var Zepto = (function() {
     }
   }
 
-  $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
-  $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
+  $Zepto.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
+  $Zepto.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
@@ -141,6 +148,15 @@ var Zepto = (function() {
         (this.length > 0 ? this[0].innerHTML : null) :
         this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html.call(this, idx, this.innerHTML) : html });
     },
+    end: function () {
+      if ($.stack) {
+        if ($.stack.length > 0) $.stack.pop();
+        var previous = $.stack.pop();
+        return $(previous.selector, previous.context);
+      } else {
+        return $(document);
+      }
+    },
     text: function(text){
       return text === undefined ?
         (this.length > 0 ? this[0].innerText : null) :
@@ -234,8 +250,9 @@ var Zepto = (function() {
     })(adjacencyOperators[key]);
 
   Z.prototype = $.fn;
+  $Zepto.fn = $.fn;
 
-  return $;
+  return $Zepto;
 })();
 
 '$' in window || (window.$ = Zepto);

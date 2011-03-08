@@ -123,7 +123,20 @@
 
   <input type="text" id="BooleanInput" required />
 
+<ul class="firstul">
+   <li class="redli">list item 1</li>
+   <li>list item 2</li>
+   <li class="greenli">list item 3</li>
+</ul>
+<ul class="secondul">
+   <li class="redli">list item 1</li>
+   <li>list item 2</li>
+   <li class="greenli">list item 3</li>
+</ul>
+
+
   <script>
+$('ul.firstul').find('.redli').css('background-color', 'red').end().find('.greenli').css('background-color', 'green');
 
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -587,6 +600,7 @@
 
       testBind: function(t){
         var counter = 0;
+//TODO FIXME
         $(document.body).bind('click', function(){ counter++ });
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
