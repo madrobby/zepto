@@ -38,14 +38,7 @@
 
     if (settings.type.match(/get/i) && settings.data) {
       if (typeof settings.data == 'object') {
-        var datastring = '';
-        for (var key in settings.data) {
-          if (settings.data.hasOwnProperty(key)) {
-            datastring += encodeURIComponent(key) + '=' + encodeURIComponent(settings.data[key]) + '&';
-          }
-        }
-        datastring = datastring.substr(0,datastring.length-1).replace(/%20/g, '+');
-        settings.url = settings.url + '?' + datastring;
+        settings.url = settings.url + '?' + $.param(settings.data);
       } else {
         settings.url = settings.url + (settings.data.substr(0,1) == '?' ? '' : '?') + settings.data;
       }
