@@ -13,9 +13,7 @@ var Zepto = (function() {
       $(document.body).append(elem);
       var display = getComputedStyle(elem, '').getPropertyValue("display");
       $(elem).remove();
-      if (display === "none" || display === "") {
-        display = "block"
-      }
+      display == "none" && (display = "block");
       elemDisplay[nodeName] = display
     }
     return elemDisplay[nodeName]
@@ -148,19 +146,13 @@ var Zepto = (function() {
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){
       return this.each(function() {
-        var styleAttr = this.getAttribute("style") || "";
-        if (styleAttr.search(/display:\s*none;?/) != -1) {
-          this.setAttribute("style", styleAttr.replace(/display:\s*none;?/, ""));
-          this.style.display = getComputedStyle(this, '').getPropertyValue("display");
+        this.style.display == "none" && (this.style.display = null);
+        if (getComputedStyle(this, '').getPropertyValue("display") == "none") {
+          this.style.display = defaultDisplay(this.nodeName)
         }
-        this.style.display = this.getAttribute("data-display") || ((this.style.display != "none" && this.style.display) ? this.style.display : defaultDisplay(this.nodeName));
-        this.setAttribute("data-display", this.style.display)
       })
     },
     hide: function(){
-      this.each(function(){
-        (this.style.display != "none" && this.style.display) && this.setAttribute("data-display", this.style.display)
-      });
       return this.css("display", "none")
     },
     toggle: function(){
