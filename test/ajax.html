@@ -201,6 +201,23 @@
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
       },
 
+      testDataIsAppendedToGETURL: function(t) {
+        $.ajax({ url:'test.html', data:'foo=bar' });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html', data:'?foo=bar' });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' });
+        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html', data:{foo:'bar'} });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' });
+        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url);
+      },
+
       testErrorCallback: function(t) {
         var successFired = false, xhr, status;
         $.ajax({
