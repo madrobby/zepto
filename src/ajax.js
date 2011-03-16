@@ -36,6 +36,22 @@
     if (!settings.url) settings.url = window.location.toString();
     if (settings.data && !settings.contentType) settings.contentType = "application/x-www-form-urlencoded";
 
+    if (settings.type.match(/get/i) && settings.data) {
+      var queryString,
+          objectType = Object.prototype.toString.call(settings.data).slice(8, -1);
+      if (objectType == 'Object' || objectType == 'Array') {
+        queryString = $.param(settings.data);
+      } else {
+        queryString = settings.data;
+      }
+      if (settings.url.match(/\?.*=/)) {
+        queryString = '&' + queryString;
+      } else if (queryString.slice(0, 1) !== '?') {
+        queryString = '?' + queryString;
+      }
+      settings.url = settings.url + queryString;
+    }
+    
     var mime = settings.accepts[settings.dataType],
         xhr = new XMLHttpRequest();
 
