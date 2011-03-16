@@ -25,7 +25,7 @@ var Zepto = (function() {
     return r;
   }
 
-  fragmentRE = /^\s*<.+>/;
+  fragmentRE = /^\s*<[^>]+>/;
   container = document.createElement("div");
   function fragment(html) {
     container.innerHTML = ('' + html).trim();

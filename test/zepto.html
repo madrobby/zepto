@@ -276,6 +276,12 @@
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+
+        fragment = $("<div>\nhello</div> \n<span>world</span>");
+        t.assertLength(3, fragment);
+        t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
+        t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
+        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
       },
 
       testReady: function(t){
