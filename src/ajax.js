@@ -51,7 +51,7 @@
       }
       settings.url = settings.url + queryString;
     }
-    
+
     var mime = settings.accepts[settings.dataType],
         xhr = new XMLHttpRequest();
 
