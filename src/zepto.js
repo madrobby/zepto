@@ -32,7 +32,7 @@ var Zepto = (function() {
   function $(selector, context){
     if (!selector) return Z();
     if (context !== undefined) return $(context).find(selector);
-    else if (typeof selector === 'function') return $(document).ready(selector);
+    else if (typeof selector == 'function') return $(document).ready(selector);
     else if (selector instanceof Z) return selector;
     else {
       var dom;
@@ -85,7 +85,7 @@ var Zepto = (function() {
         });
       else {
         var ignores = slice.call(
-          typeof selector === 'string' ?
+          typeof selector == 'string' ?
             this.filter(selector) :
             selector instanceof NodeList ? selector : $(selector));
         slice.call(this).forEach(function(el){
