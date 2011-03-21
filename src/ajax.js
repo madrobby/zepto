@@ -38,7 +38,7 @@
 
     if (settings.type.match(/get/i) && settings.data) {
       var queryString,
-          objectType = Object.prototype.toString.call(settings.data).slice(8, -1);
+          objectType = ({}).toString.call(settings.data).slice(8, -1);
       if (objectType == 'Object' || objectType == 'Array') {
         queryString = $.param(settings.data);
       } else {
@@ -121,6 +121,6 @@
       else
         add(obj instanceof Array ? '' : i, obj[i]);
     };
-    return s.join('&').replace(/%20/g, '+') + rec;
+    return s.join('&').replace('%20', '+') + rec;
   };
 })(Zepto);
