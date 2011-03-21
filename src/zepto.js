@@ -12,6 +12,7 @@ var Zepto = (function() {
       if(r.indexOf(array[i])<0) r.push(array[i]);
     return r;
   }
+  function isF(value) { return ({}).toString.call(obj) == "[object Function]" }
 
   fragmentRE = /^\s*<[^>]+>/;
   container = document.createElement('div');
@@ -32,7 +33,7 @@ var Zepto = (function() {
   function $(selector, context){
     if (!selector) return Z();
     if (context !== undefined) return $(context).find(selector);
-    else if (typeof selector == 'function') return $(document).ready(selector);
+    else if (isF(selector)) return $(document).ready(selector);
     else if (selector instanceof Z) return selector;
     else {
       var dom;
@@ -59,6 +60,9 @@ var Zepto = (function() {
     push: [].push,
     indexOf: [].indexOf,
     concat: [].concat,
+    isFunction: isF,
+    isObject: function (value) { return value instanceof Object },  
+    isArray: function (value) { return value instanceof Array },    
     ready: function(callback){
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
@@ -79,7 +83,7 @@ var Zepto = (function() {
     },
     not: function(selector){
       var nodes=[];
-      if (typeof selector == 'function' && selector.call !== undefined)
+      if (isF(selector) && selector.call !== undefined)
         this.each(function(idx){
           if (!selector.call(this,idx)) nodes.push(this);
         });
@@ -139,7 +143,7 @@ var Zepto = (function() {
     html: function(html){
       return html === undefined ?
         (this.length > 0 ? this[0].innerHTML : null) :
-        this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html.call(this, idx, this.innerHTML) : html });
+        this.each(function(idx){ this.innerHTML = isF(html) ? html.call(this, idx, this.innerHTML) : html });
     },
     text: function(text){
       return text === undefined ?
@@ -148,11 +152,11 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
-        (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') ? (this.val()) :
+        (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
           if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
-          else this.setAttribute(name, typeof value == 'function' ? value.call(this, idx, this.getAttribute(name)) : value);
+          else this.setAttribute(name, isF(value) ? value.call(this, idx, this.getAttribute(name)) : value);
         });
     },
     removeAttr: function(name) {

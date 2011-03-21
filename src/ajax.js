@@ -1,9 +1,9 @@
 (function($){
-  var jsonpID = 0;
+  var jsonpID = 0,
+      isObject = $.isObject,  
+      isArray = $.isArray;
 
   function empty() {}
-  function isObject(value) { return value instanceof Object }  
-  function isArray(value) { return value instanceof Array }
   
   $.ajaxJSONP = function(options){
     var jsonpString = 'jsonp' + ++jsonpID,
@@ -87,7 +87,7 @@
 
   $.get = function(url, success){ $.ajax({ url: url, success: success }) };
   $.post = function(url, data, success, dataType){
-    if (typeof data == 'function') dataType = dataType || success, success = data, data = null;
+    if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
     $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
