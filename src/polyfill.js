@@ -7,7 +7,7 @@ if (Array.prototype.reduce === undefined)
   Array.prototype.reduce = function(fun){
     if(this === void 0 || this === null) throw new TypeError();
     var t = Object(this), len = t.length >>> 0, k = 0, accumulator;
-    if(typeof fun !== "function") throw new TypeError();
+    if(typeof fun !== 'function') throw new TypeError();
     if(len == 0 && arguments.length == 1) throw new TypeError();
 
     if(arguments.length >= 2)

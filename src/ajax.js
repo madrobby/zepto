@@ -34,7 +34,7 @@
     if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
     if (!settings.url) settings.url = window.location.toString();
-    if (settings.data && !settings.contentType) settings.contentType = "application/x-www-form-urlencoded";
+    if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded';
 
     if (settings.type.match(/get/i) && settings.data) {
       var queryString,
@@ -112,15 +112,15 @@
     var s = [],
         rec = '',
         add = function(key, value){
-          if(v) s[s.length] = encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value);
+          if(v) s[s.length] = encodeURIComponent(v + '[' + key +']') + '=' + encodeURIComponent(value);
           else s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
         };
     for(var i in obj){
       if(obj[i] instanceof Array || obj[i] instanceof Object)
-        rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + "[" + i + "]" : i));
+        rec += (s.length + rec.length > 0 ? '&' : '') + $.param(obj[i], (v ? v + '[' + i + ']' : i));
       else
         add(obj instanceof Array ? '' : i, obj[i]);
     };
-    return s.join("&").replace(/%20/g, "+") + rec;
+    return s.join('&').replace(/%20/g, '+') + rec;
   };
 })(Zepto);

@@ -2,7 +2,7 @@ var Zepto = (function() {
   var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined,
     getComputedStyle = document.defaultView.getComputedStyle;
 
-  function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
+  function classRE(name){ return new RegExp('(^|\\s)' + name + '(\\s|$)') }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
@@ -14,7 +14,7 @@ var Zepto = (function() {
   }
 
   fragmentRE = /^\s*<[^>]+>/;
-  container = document.createElement("div");
+  container = document.createElement('div');
   function fragment(html) {
     container.innerHTML = ('' + html).trim();
     var result = slice.call(container.childNodes);
@@ -85,7 +85,7 @@ var Zepto = (function() {
         });
       else {
         var ignores = slice.call(
-          typeof selector === "string" ?
+          typeof selector === 'string' ?
             this.filter(selector) :
             selector instanceof NodeList ? selector : $(selector));
         slice.call(this).forEach(function(el){
@@ -180,9 +180,9 @@ var Zepto = (function() {
     css: function(property, value){
       if (value === undefined && typeof property == 'string')
         return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
-      css = "";
+      css = '';
       for (key in property) css += key + ':' + property[key] + ';';
-      if (typeof property == 'string') css = property + ":" + value;
+      if (typeof property == 'string') css = property + ':' + value;
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
@@ -222,7 +222,7 @@ var Zepto = (function() {
         return this.each(function(index, element){
           if (html instanceof Z) {
             dom = html;
-            if (operator == "afterBegin" || operator == "afterEnd")
+            if (operator == 'afterBegin' || operator == 'afterEnd')
               for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
             else
               for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
