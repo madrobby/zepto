@@ -112,8 +112,8 @@
     var s = [],
         rec = '',
         add = function(key, value){
-          if(v) s[s.length] = encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value);
-          else s[s.length] = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+          if(v) s.push(encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value));
+          else s.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
         };
     for(var i in obj){
       if(obj[i] instanceof Array || obj[i] instanceof Object)
