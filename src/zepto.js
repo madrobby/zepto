@@ -10,9 +10,9 @@ var Zepto = (function() {
   function defaultDisplay(nodeName) {
     if (!elemDisplay[nodeName]) {
       var elem = document.createElement(nodeName);
-      $(document.body).append(elem);
+      document.body.insertAdjacentElement("beforeEnd", elem);
       var display = getComputedStyle(elem, '').getPropertyValue("display");
-      $(elem).remove();
+      elem.parentNode.removeChild(elem);
       display == "none" && (display = "block");
       elemDisplay[nodeName] = display
     }
