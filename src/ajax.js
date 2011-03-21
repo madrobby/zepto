@@ -1,7 +1,6 @@
 (function($){
   var jsonpID = 0,
-      isObject = $.isObject,  
-      isArray = $.isArray;
+      isObject = $.isObject;
 
   function empty() {}
   
@@ -37,7 +36,7 @@
 
     if (!settings.url) settings.url = window.location.toString();
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded';
-    if (isArray(settings.data) || isObject(settings.data)) settings.data = $.param(settings.data);
+    if (isObject(settings.data)) settings.data = $.param(settings.data);
     
     if (settings.type.match(/get/i) && settings.data) {
       var queryString = settings.data;
@@ -111,10 +110,10 @@
           s.push(encodeURIComponent(v ? v + '[' + key +']' : key) 
               + '=' + encodeURIComponent(value));
         },
-        isObjArray = isArray(obj);
+        isObjArray = $.isArray(obj);
     
     for(var i in obj){
-      if(isArray(obj[i]) || isObject(obj[i]))
+      if(isObject(obj[i]))
         s.push($.param(obj[i], (v ? v + '[' + i + ']' : i)));
       else
         add(isObjArray ? '' : i, obj[i]);
