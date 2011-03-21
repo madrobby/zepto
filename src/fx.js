@@ -1,4 +1,4 @@
-(function($){
+(function($, undefined){
   $.fn.anim = function(properties, duration, ease, callback){
     var transforms = [], opacity, key;
     for (key in properties)

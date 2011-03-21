@@ -13,7 +13,9 @@ var Zepto = (function() {
     return r;
   }
   function isF(value) { return ({}).toString.call(obj) == "[object Function]" }
-
+  function isO(value) { return value instanceof Object }  
+  function isA(value) { return value instanceof Array } 
+  
   fragmentRE = /^\s*<[^>]+>/;
   container = document.createElement('div');
   function fragment(html) {
@@ -37,7 +39,7 @@ var Zepto = (function() {
     else if (selector instanceof Z) return selector;
     else {
       var dom;
-      if (selector instanceof Array) dom = compact(selector);
+      if (isA(selector)) dom = compact(selector);
       else if (selector instanceof Element || selector === window || selector === document)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
@@ -61,8 +63,8 @@ var Zepto = (function() {
     indexOf: [].indexOf,
     concat: [].concat,
     isFunction: isF,
-    isObject: function (value) { return value instanceof Object },  
-    isArray: function (value) { return value instanceof Array },    
+    isObject: isO,  
+    isArray: isA,    
     ready: function(callback){
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
@@ -155,7 +157,7 @@ var Zepto = (function() {
         (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
-          if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
+          if (isO(name)) for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, isF(value) ? value.call(this, idx, this.getAttribute(name)) : value);
         });
     },
