@@ -34,7 +34,7 @@
 
     if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
-    if (!settings.url) settings.url = window.location.toString();
+    if (!settings.url) settings.url = '' + window.location;
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded';
     if (isObject(settings.data)) settings.data = $.param(settings.data);
     
