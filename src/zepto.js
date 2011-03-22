@@ -10,8 +10,8 @@ var Zepto = (function() {
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function uniq(array){
-    var r = [];
-    for(var i=0,n=array.length;i<n;i++)
+    var r = [], i = 0, n = array.length;
+    for(;i<n;i++)
       if(r.indexOf(array[i])<0) r.push(array[i]);
     return r;
   }
