@@ -1,6 +1,5 @@
 (function($){
-  var jsonpID = 0,
-      isObject = $.isObject;
+  var jsonpID = 0, isObject = $.isObject, undefined;
 
   function empty() {}
 
@@ -86,7 +85,7 @@
 
   $.get = function(url, success){ $.ajax({ url: url, success: success }) };
   $.post = function(url, data, success, dataType){
-    if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
+    if ($.isFunction(data)) dataType = dataType || success, success = data, data = undefined;
     $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };

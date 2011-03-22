@@ -1,5 +1,5 @@
 (function($){
-  var touch = {}, touchTimeout;
+  var touch = {}, touchTimeout, undefined;
 
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
@@ -25,8 +25,8 @@
         touch.x1 = touch.x2 = touch.last = 0;
       } else if ('last' in touch) {
         touchTimeout = setTimeout(function(){
-          touchTimeout = null;
-          $(touch.target).trigger('tap')
+          touchTimeout = undefined;
+          $(touch.target).trigger('tap');
           touch = {};
         }, 250);
       }

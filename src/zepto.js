@@ -43,7 +43,7 @@ var Zepto = (function() {
       var dom;
       if (isA(selector)) dom = compact(selector);
       else if (selector instanceof Element || selector === window || selector === document)
-        dom = [selector], selector = null;
+        dom = [selector], selector = undefined;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
       else dom = $$(document, selector);
       return Z(dom, selector);
@@ -113,7 +113,7 @@ var Zepto = (function() {
     },
     closest: function(selector, context){
       var node = this[0], nodes = $$(context !== undefined ? context : document, selector);
-      if (nodes.length === 0) node = null;
+      if (nodes.length === 0) node = undefined;
       while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
       return $(node !== document && node);
     },
