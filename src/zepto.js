@@ -15,11 +15,11 @@ var Zepto = (function() {
       if(r.indexOf(array[i])<0) r.push(array[i]);
     return r;
   }
-  function isF(value) { return ({}).toString.call(value) === "[object Function]" }
-  function isO(value) { return value instanceof Object }  
-  function isA(value) { return value instanceof Array } 
+  function isF(value) { return ({}).toString.call(value) === '[object Function]' }
+  function isO(value) { return value instanceof Object }
+  function isA(value) { return value instanceof Array }
   function isS(value) { return value instanceof String }
-  
+
   function fragment(html) {
     container.innerHTML = ('' + html).trim();
     var result = slice.call(container.childNodes);
@@ -53,8 +53,8 @@ var Zepto = (function() {
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
   $.isFunction = isF;
-  $.isObject = isO;  
-  $.isArray = isA; 
+  $.isObject = isO;
+  $.isArray = isA;
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);

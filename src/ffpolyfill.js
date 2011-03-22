@@ -15,7 +15,7 @@ if (HTMLElement && !HTMLElement.prototype.insertAdjacentElement) {
       case 'afterEnd':
           if (this.nextSibling)
             this.parentNode.insertBefore(parsedNode,this.nextSibling);
-          else 
+          else
             this.parentNode.appendChild(parsedNode);
           break;
       }
