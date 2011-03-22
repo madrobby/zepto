@@ -18,6 +18,7 @@ var Zepto = (function() {
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }  
   function isA(value) { return value instanceof Array } 
+  function isS(value) { return value instanceof String }
   
   function fragment(html) {
     container.innerHTML = ('' + html).trim();
@@ -92,7 +93,7 @@ var Zepto = (function() {
         });
       else {
         var ignores = slice.call(
-          typeof selector == 'string' ?
+          isS(selector) ?
             this.filter(selector) :
             selector instanceof NodeList ? selector : $(selector));
         slice.call(this).forEach(function(el){
@@ -154,7 +155,7 @@ var Zepto = (function() {
         this.each(function(){ this.innerText = text });
     },
     attr: function(name, value){
-      return (typeof name == 'string' && value === undefined) ?
+      return (isS(name) && value === undefined) ?
         (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
@@ -185,11 +186,11 @@ var Zepto = (function() {
       };
     },
     css: function(property, value){
-      if (value === undefined && typeof property == 'string')
+      if (value === undefined && isS(property))
         return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
       css = '';
       for (key in property) css += key + ':' + property[key] + ';';
-      if (typeof property == 'string') css = property + ':' + value;
+      if (isS(property)) css = property + ':' + value;
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
