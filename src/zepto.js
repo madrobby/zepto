@@ -12,7 +12,7 @@ var Zepto = (function() {
       if(r.indexOf(array[i])<0) r.push(array[i]);
     return r;
   }
-  function isF(value) { return ({}).toString.call(obj) == "[object Function]" }
+  function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }  
   function isA(value) { return value instanceof Array } 
   
@@ -50,6 +50,9 @@ var Zepto = (function() {
 
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
+  $.isFunction = isF;
+  $.isObject = isO;  
+  $.isArray = isA; 
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
@@ -62,9 +65,6 @@ var Zepto = (function() {
     push: [].push,
     indexOf: [].indexOf,
     concat: [].concat,
-    isFunction: isF,
-    isObject: isO,  
-    isArray: isA,    
     ready: function(callback){
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
