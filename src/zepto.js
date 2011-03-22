@@ -1,6 +1,9 @@
 var Zepto = (function() {
   var slice = [].slice, key, css, $$, fragmentRE = /^\s*<[^>]+>/, document = window.document,
-    container = document.createElement('div'), undefined, getComputedStyle = document.defaultView.getComputedStyle;
+    container = document.createElement('div'), undefined, getComputedStyle = document.defaultView.getComputedStyle,
+    displayStr = 'display', afterBeginStr = 'afterBegin', afterEndStr = 'afterEnd', insertAdjacentStr = 'insertAdjacent',
+    elementStr = 'Element', insertAdjacentElementStr = insertAdjacentStr + elementStr,
+    adjacencyOperators = {append: 'beforeEnd', prepend: afterBeginStr, before: 'beforeBegin', after: afterEndStr};
 
   function classRE(name){ return new RegExp('(^|\\s)' + name + '(\\s|$)') }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
@@ -136,8 +139,8 @@ var Zepto = (function() {
       })), selector);
     },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
-    show: function(){ return this.css('display', 'block') },
-    hide: function(){ return this.css('display', 'none') },
+    show: function(){ return this.css(displayStr, 'block') },
+    hide: function(){ return this.css(displayStr, 'none') },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
@@ -217,21 +220,18 @@ var Zepto = (function() {
     $.fn[property] = function(){ return this.offset()[property] }
   });
 
-
-  var adjacencyOperators = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
-
   for (key in adjacencyOperators)
     $.fn[key] = (function(operator) {
       return function(html){
         return this.each(function(index, element){
           if (html instanceof Z) {
             dom = html;
-            if (operator == 'afterBegin' || operator == 'afterEnd')
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
+            if (operator == afterBeginStr || operator == afterEndStr)
+              for (var i=0; i<dom.length; i++) element[insertAdjacentElementStr](operator, dom[dom.length-i-1]);
             else
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
+              for (var i=0; i<dom.length; i++) element[insertAdjacentElementStr](operator, dom[i]);
           } else {
-            element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+            element[insertAdjacentStr + (html instanceof Element ? elementStr : 'HTML')](operator, html);
           }
         });
       };
