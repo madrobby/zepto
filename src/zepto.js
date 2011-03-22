@@ -1,6 +1,6 @@
 var Zepto = (function() {
-  var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined,
-    getComputedStyle = document.defaultView.getComputedStyle;
+  var slice = [].slice, key, css, $$, fragmentRE = /^\s*<[^>]+>/, document = window.document,
+    container = document.createElement('div'), undefined, getComputedStyle = document.defaultView.getComputedStyle;
 
   function classRE(name){ return new RegExp('(^|\\s)' + name + '(\\s|$)') }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
@@ -16,8 +16,6 @@ var Zepto = (function() {
   function isO(value) { return value instanceof Object }  
   function isA(value) { return value instanceof Array } 
   
-  fragmentRE = /^\s*<[^>]+>/;
-  container = document.createElement('div');
   function fragment(html) {
     container.innerHTML = ('' + html).trim();
     var result = slice.call(container.childNodes);
