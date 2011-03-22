@@ -15,7 +15,7 @@ var Zepto = (function() {
       if(r.indexOf(array[i])<0) r.push(array[i]);
     return r;
   }
-  function isF(value) { return ({}).toString.call(value) == "[object Function]" }
+  function isF(value) { return ({}).toString.call(value) === "[object Function]" }
   function isO(value) { return value instanceof Object }  
   function isA(value) { return value instanceof Array } 
   function isS(value) { return value instanceof String }
@@ -107,7 +107,7 @@ var Zepto = (function() {
     last: function(){ return $(this[this.length - 1]) },
     find: function(selector){
       var result;
-      if (this.length == 1) result = $$(this[0], selector);
+      if (this.length === 1) result = $$(this[0], selector);
       else result = flatten(this.map(function(el){ return $$(el, selector) }));
       return $(result);
     },
@@ -156,7 +156,7 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       return (isS(name) && value === undefined) ?
-        (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
+        (this.length > 0 && this[0].nodeName === 'INPUT' && this[0].type === 'text' && name === 'value') ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
           if (isO(name)) for (key in name) this.setAttribute(key, name[key])
@@ -227,7 +227,7 @@ var Zepto = (function() {
         return this.each(function(index, element){
           if (html instanceof Z) {
             dom = html;
-            if (operator == afterBeginStr || operator == afterEndStr)
+            if (operator === afterBeginStr || operator === afterEndStr)
               for (var i=0; i<dom.length; i++) element[insertAdjacentElementStr](operator, dom[dom.length-i-1]);
             else
               for (var i=0; i<dom.length; i++) element[insertAdjacentElementStr](operator, dom[i]);

@@ -8,10 +8,10 @@
     if (event.ns) var matcher = matcherFor(event.ns);
     return (handlers[zid(element)] || []).filter(function(handler) {
       return handler
-        && (!event.e  || handler.e == event.e)
+        && (!event.e  || handler.e === event.e)
         && (!event.ns || matcher.test(handler.ns))
-        && (!fn       || handler.fn == fn)
-        && (!selector || handler.sel == selector);
+        && (!fn       || handler.fn === fn)
+        && (!selector || handler.sel === selector);
     });
   }
   function parse(event) {

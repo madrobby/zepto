@@ -42,7 +42,7 @@
       var queryString = settings.data;
       if (settings.url.match(/\?.*=/)) {
         queryString = '&' + queryString;
-      } else if (queryString[0] != '?') {
+      } else if (queryString[0] !== '?') {
         queryString = '?' + queryString;
       }
       settings.url += queryString;
@@ -55,10 +55,10 @@
     if (mime) settings.headers['Accept'] = mime;
 
     xhr.onreadystatechange = function(){
-      if (xhr.readyState == 4) {
+      if (xhr.readyState === 4) {
         var result, error = false;
-        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
-          if (mime == 'application/json') {
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
+          if (mime === 'application/json') {
             try { result = JSON.parse(xhr.responseText); }
             catch (e) { error = e; }
           }
