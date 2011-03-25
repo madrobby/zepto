@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Zepto DOM unit tests</title>
-  <script src="../src/compat.js"></script>
+  <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
   <script src="../vendor/evidence.js"></script>
@@ -203,6 +203,13 @@
         t.assertLength(1, $('p > span.yay'));
       },
 
+      testDollarWithNil: function(t){
+        t.assertLength(0, $(null));
+        t.assertLength(0, $(undefined));
+        t.assertLength(0, $(false));
+        t.assertLength(0, $(''));
+      },
+
       testSize: function(t){
         t.assertEqual(4, $('#find1 .findme').size());
       },
@@ -244,7 +251,7 @@
 
       testDollarWithDocument: function(t){
         var z = $(document);
-        t.assertLength(0, z);
+        t.assertLength(1, z);
         t.assertEqual('', z.selector);
       },
 
@@ -260,6 +267,12 @@
         fragment = $("<div>hello</div> <span>world</span>");
         t.assertLength(3, fragment);
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
+        t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
+        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+
+        fragment = $("<div>\nhello</div> \n<span>world</span>");
+        t.assertLength(3, fragment);
+        t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
       },
@@ -820,8 +833,6 @@
         var els = $('#attr_with_text_input');
 
         els.get(0).removeAttribute('disabled');
-        console.log(els[0].disabled);
-        console.log(els.attr('disabled'))
         t.assertFalse(els.attr('disabled'));
 
         els.attr('disabled', 'definitely');

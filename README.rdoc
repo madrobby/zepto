@@ -56,9 +56,13 @@ Context and .find calls are equivalent:
   closest('selector'): find the first matching element by going upwards starting from the current element
   parents('selector'): get all ancestors of elements in collection, optionally filtered by a selector
   parent(): immediate parent node of each element in collection
+  children('selector'): immediate children of each element in collection, optionally filtered by a selector
+  siblings('selector'): elements that share the same immediate parent (siblings) of each element in collection, optionally filtered by a selector
   next(): next siblings
   prev(): previous siblings
   is('selector'): returns true/false if first element matches the selector
+  not('selector'): remove elements matching 'selector' from the current collection
+  not(function(index){return true / false;}): remove elements from current collection if the callback method returns `true`
 
   remove(): remove element
 
@@ -78,6 +82,7 @@ Context and .find calls are equivalent:
 
   attr('attribute'): get element attribute
   attr('attribute', 'value'): set element attribute
+  attr('attribute', function(index, oldAttr){ return ...; }): set the value of 'attribute' from a method, for each element in collection
 
   css('css property', 'value'): set a CSS property
   css({ property1: value1, property2: value2 }): set multiple CSS properties
@@ -103,8 +108,9 @@ Context and .find calls are equivalent:
     return property for each element
     e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
 
-  anim(transform, opacity, duration):
-    use -webkit-transform/opacity and do an animation
+  anim(transform, opacity, duration, callback):
+    use -webkit-transform/opacity and do an animation,
+    optionally supply a callback method to be executed after the animation is complete
 
 = Utility functions:
 

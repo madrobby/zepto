@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Zepto Ajax unit tests</title>
-  <script src="../src/compat.js"></script>
+  <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/ajax.js"></script>
   <script src="../vendor/evidence.js"></script>
@@ -121,6 +121,9 @@
       send: function(data) {
         this.data = data;
       },
+      abort: function() {
+        this.aborted = true;
+      },
       ready: function(readyState, status, responseText) {
         this.readyState = readyState;
         this.status = status;
@@ -171,6 +174,20 @@
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'text/html')));
       },
 
+      testContentTypeDefaultsToUrlEncoded: function(t) {
+        $.ajax({ type: 'POST', data: [] });
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')));
+
+        $.ajax({ type: 'POST', data: [], contentType: 'application/x-foo' });
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-foo')));
+      },
+
+      testCustomHeader: function(t) {
+        $.ajax({ headers: {'X-Awesome': 'true'} });
+        t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')));
+        t.assert(MockXHR.last.headers.some(matchHeader('X-Awesome', 'true')));
+      },
+
       testJSONResponseBodiesAreParsedWhenDataTypeOptionIsJSON: function(t) {
         var result = {};
         $.ajax({ dataType: 'json', success: function(json) {result = json } });
@@ -182,6 +199,23 @@
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
 		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
+      },
+
+      testDataIsAppendedToGETURL: function(t) {
+        $.ajax({ url:'test.html', data:'foo=bar' });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html', data:'?foo=bar' });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' });
+        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html', data:{foo:'bar'} });
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url);
+
+        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' });
+        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url);
       },
 
       testErrorCallback: function(t) {
@@ -245,6 +279,48 @@
         t.assertEqual('Hello', body.message);
         t.assertEqual('success', status);
         t.assertEqual(MockXHR.last, xhr);
+      },
+
+      testBeforeSendCallback: function(t) {
+        var xhr, beforeFired = false, settings = {};
+        $.ajax({
+          data: "1=2",
+          beforeSend: function(x, s) {
+            beforeFired = true, settings = s, xhr = x;
+          }
+        });
+
+        t.assert(beforeFired);
+        t.assertEqual(MockXHR.last, xhr);
+        t.assertEqual("1=2", settings.data);
+      },
+
+      testBeforeSendAbort: function(t) {
+        var xhr;
+        $.ajax({ beforeSend: function(x) { xhr = x; return false } });
+
+        t.assert(xhr.aborted);
+      },
+
+      testCompleteCallback: function(t) {
+        var status, xhr;
+        $.ajax({ complete: function(x, s) { status = s, xhr = x } });
+
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual(MockXHR.last, xhr);
+        t.assertEqual('success', status);
+      },
+
+      testCallbackOrder: function(t) {
+        var order = [];
+        $.ajax({
+          beforeSend: function() { order.push('beforeSend') },
+          success: function() { order.push('success') },
+          complete: function() { order.push('complete') }
+        });
+
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('beforeSend,success,complete', order.join(','));
       }
     });
   </script>

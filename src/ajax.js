@@ -14,53 +14,78 @@
     $('head').append(script);
   };
 
+  $.ajaxSettings = {
+    type: 'GET',
+    beforeSend: empty, success: empty, error: empty, complete: empty,
+    accepts: {
+      script: 'text/javascript, application/javascript',
+      json:   'application/json',
+      xml:    'application/xml, text/xml',
+      html:   'text/html',
+      text:   'text/plain'
+    }
+  };
+
   $.ajax = function(options){
-    // { type, url, data, success, dataType, contentType }
     options = options || {};
+    var settings = $.extend({}, options);
+    for (key in $.ajaxSettings) if (!settings[key]) settings[key] = $.ajaxSettings[key];
 
-    if (options.url && /=\?/.test(options.url))
-      return $.ajaxJSONP(options);
+    if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
-    var data = options.data,
-        callback = options.success || empty,
-        errback = options.error || empty,
-        mime = mimeTypes[options.dataType],
-        type = options.type || "GET",
-        content = options.contentType || (type === "POST" ? "application/x-www-form-urlencoded" : ""),
+    if (!settings.url) settings.url = window.location.toString();
+    if (settings.data && !settings.contentType) settings.contentType = "application/x-www-form-urlencoded";
+
+    if (settings.type.match(/get/i) && settings.data) {
+      var queryString,
+          objectType = Object.prototype.toString.call(settings.data).slice(8, -1);
+      if (objectType == 'Object' || objectType == 'Array') {
+        queryString = $.param(settings.data);
+      } else {
+        queryString = settings.data;
+      }
+      if (settings.url.match(/\?.*=/)) {
+        queryString = '&' + queryString;
+      } else if (queryString.slice(0, 1) !== '?') {
+        queryString = '?' + queryString;
+      }
+      settings.url = settings.url + queryString;
+    }
+
+    var mime = settings.accepts[settings.dataType],
         xhr = new XMLHttpRequest();
+
+    settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
+    if (mime) settings.headers['Accept'] = mime;
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
+        var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json') {
-            var result, error = false;
-            try {
-              result = JSON.parse(xhr.responseText);
-            } catch (e) {
-              error = e;
-            }
-            if (error) errback(xhr, 'parsererror', error);
-            else callback(result, 'success', xhr);
-          } else callback(xhr.responseText, 'success', xhr);
+            try { result = JSON.parse(xhr.responseText); }
+            catch (e) { error = e; }
+          }
+          else result = xhr.responseText;
+          if (error) settings.error(xhr, 'parsererror', error);
+          else settings.success(result, 'success', xhr);
         } else {
-          errback(xhr, 'error');
+          error = true;
+          settings.error(xhr, 'error');
         }
+        settings.complete(xhr, error ? 'error' : 'success');
       }
     };
 
-    xhr.open(type, options.url || window.location, true);
-    if (mime) xhr.setRequestHeader('Accept', mime);
-    if (data instanceof Object) data = $.param(data);
-    if (content) xhr.setRequestHeader('Content-Type', content);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.send(data);
-  };
-
-  var mimeTypes = $.ajax.mimeTypes = {
-    json: 'application/json',
-    xml:  'application/xml',
-    html: 'text/html',
-    text: 'text/plain'
+    xhr.open(settings.type, settings.url, true);
+    if (settings.beforeSend(xhr, settings) === false) {
+      xhr.abort();
+      return false;
+    }
+    if (settings.data instanceof Object) settings.data = $.param(settings.data);
+    if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
+    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
+    xhr.send(settings.data);
   };
 
   $.get = function(url, success){ $.ajax({ url: url, success: success }) };
