@@ -18,7 +18,7 @@ var Zepto = (function() {
   function isF(value) { return ({}).toString.call(value) === '[object Function]' }
   function isO(value) { return value instanceof Object }
   function isA(value) { return value instanceof Array }
-  function isS(value) { return value instanceof String }
+  function isS(value) { return typeof value === 'string' }
 
   function fragment(html) {
     container.innerHTML = ('' + html).trim();
