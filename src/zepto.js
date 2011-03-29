@@ -214,25 +214,23 @@ var Zepto = (function() {
     $.fn[property] = function(){ return this.offset()[property] }
   });
 
-
-  var adjacencyOperators = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
-
-  for (key in adjacencyOperators)
-    $.fn[key] = (function(operator) {
-      return function(html){
+  [
+    ['append', false, function(el) {  this.appendChild(el) }],
+    ['prepend', true, function(el) { this.insertBefore(el, this.firstChild) }],
+    ['before', false, function(el) {this.parentNode.insertBefore(el, this)}],
+    ['after', true, function(el) {this.parentNode.insertBefore(el, this.nextSibling)}]
+  ].forEach(function(operator) {
+    $.fn[operator[0]] = function(html){
         return this.each(function(index, element){
           if (html instanceof Z) {
-            dom = html;
-            if (operator == "afterBegin" || operator == "afterEnd")
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
-            else
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
+            for (var i=0; i<html.length; i++)
+              operator[2].call(element, html[operator[1] ? html.length-i-1 : i]);
           } else {
-            element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+              operator[2].call(element, html instanceof Element ? html : document.createRange().createContextualFragment(html) );
           }
         });
       };
-    })(adjacencyOperators[key]);
+  });
 
   Z.prototype = $.fn;
 
