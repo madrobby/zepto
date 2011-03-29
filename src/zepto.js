@@ -6,7 +6,6 @@ var Zepto = (function() {
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-  function dashify(str){ return str; return str.replace(/([A-Z])/g, "-$1" ).toLowerCase() }
   function uniq(array){
     var r = [];
     for(var i=0,n=array.length;i<n;i++)
@@ -180,7 +179,7 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (value === undefined && typeof property == 'string')
-        return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(dashify(property));
+        return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
       css = "";
       for (key in property) css += key + ':' + property[key] + ';';
       if (typeof property == 'string') css = property + ":" + value;
