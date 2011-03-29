@@ -1,11 +1,23 @@
 var Zepto = (function() {
   var slice = [].slice, key, css, $$, fragmentRE, container, document = window.document, undefined,
+    classList, elemDisplay = {},
     getComputedStyle = document.defaultView.getComputedStyle;
 
   function classRE(name){ return new RegExp('(^|\\s)' + name + '(\\s|$)') }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function defaultDisplay(nodeName) {
+    if (!elemDisplay[nodeName]) {
+      var elem = document.createElement(nodeName);
+      document.body.insertAdjacentElement("beforeEnd", elem);
+      var display = getComputedStyle(elem, '').getPropertyValue("display");
+      elem.parentNode.removeChild(elem);
+      display == "none" && (display = "block");
+      elemDisplay[nodeName] = display
+    }
+    return elemDisplay[nodeName]
+  }
   function uniq(array){
     var r = [];
     for(var i=0,n=array.length;i<n;i++)
@@ -139,8 +151,21 @@ var Zepto = (function() {
       })), selector);
     },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
-    show: function(){ return this.css('display', 'block') },
-    hide: function(){ return this.css('display', 'none') },
+    show: function(){
+      return this.each(function() {
+        this.style.display == "none" && (this.style.display = null);
+        if (getComputedStyle(this, '').getPropertyValue("display") == "none") {
+          this.style.display = defaultDisplay(this.nodeName)
+        }
+      })
+    },
+    hide: function(){
+      return this.css("display", "none")
+    },
+    toggle: function(){
+      this.css("display") == "none" && this.show() || this.hide();
+      return this
+    },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
@@ -199,14 +224,24 @@ var Zepto = (function() {
       return classRE(name).test(this[0].className);
     },
     addClass: function(name){
-      return this.each(function(){
-        !$(this).hasClass(name) && (this.className += (this.className ? ' ' : '') + name)
-      });
+      return this.each(function() {
+        classList = [];
+        name.split(/\s+/g).forEach(function(klass) {
+          if (!$(this).hasClass(klass)) {
+            classList.push(klass)
+          }
+        }, this);
+        classList.length && (this.className += (this.className ? " " : "") + classList.join(" "))
+      })
     },
     removeClass: function(name){
-      return this.each(function(){
-        this.className = this.className.replace(classRE(name), ' ').trim()
-      });
+      return this.each(function() {
+        classList = this.className;
+        name.split(/\s+/g).forEach(function(klass) {
+          classList = classList.replace(classRE(klass), " ")
+        });
+        this.className = classList.trim()
+      })
     },
     toggleClass: function(name, when){
       return this.each(function(){

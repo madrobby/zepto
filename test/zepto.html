@@ -101,15 +101,22 @@
 
   <style>
     .hidden { display: none; }
+    #show_hide_span1,
+    #show_hide_span2 {
+      display:block;
+    }
+    #show_hide_div1 {
+      display:inline-block;
+    }
   </style>
 
   <div id="show_hide_div1" style="display:none"></div>
   <div id="show_hide_div2" class="hidden"></div>
   <div id="show_hide_div3"></div>
 
-  <div id="show_hide_span1" style="display:none"></div>
-  <div id="show_hide_span2" class="hidden"></div>
-  <div id="show_hide_span3"></div>
+  <span id="show_hide_span1" style="display:none"></span>
+  <span id="show_hide_span2" class="hidden"></span>
+  <span id="show_hide_span3"></span>
 
   <div class="filtertest" id="filtertest1"></div>
   <div class="filtertest" id="filtertest2"></div>
@@ -352,22 +359,22 @@
 
       testShow: function(t){
         $('#show_hide_div1').show();
-        t.assertEqual('block', $('#show_hide_div1').get(0).style.display);
+        t.assertEqual('inline-block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_div2').show();
-        t.assertEqual('block', $('#show_hide_div2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div2').get(0)).display);
 
         $('#show_hide_div3').show();
-        t.assertEqual('block', $('#show_hide_div3').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div3').get(0)).display);
 
         $('#show_hide_span1').show();
-        t.assertEqual('block', $('#show_hide_span1').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_span1').get(0)).display);
 
         $('#show_hide_span2').show();
-        t.assertEqual('block', $('#show_hide_span2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_span2').get(0)).display);
 
         $('#show_hide_span3').show();
-        t.assertEqual('block', $('#show_hide_span3').get(0).style.display);
+        t.assertEqual('inline', getComputedStyle($('#show_hide_span3').get(0)).display);
       },
 
       testHide: function(t){
@@ -966,7 +973,9 @@
         t.assertEqual('green', el.className);
         $('#some_element').addClass('red');
         t.assertEqual('green red', el.className);
-        $('#some_element').removeClass('green');
+        $('#some_element').addClass('blue red');
+        t.assertEqual('green red blue', el.className);
+        $('#some_element').removeClass('green blue');
         t.assertEqual('red', el.className);
 
         $('#some_element').attr('class', ' red green blue ');
