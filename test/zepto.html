@@ -543,6 +543,9 @@
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
         t.assertEqual('2px', $('#some_element').css('padding-left'));
 
+        // test for computed style retrieval via dashed-property names (is '' otherwise)
+        t.assertEqual('0px', $('#another_element').css('borderTopWidth'));
+
         var div = $('#get_style_element');
         t.assertEqual('48px', div.css('font-size'));
         t.assertEqual('rgb(0, 0, 0)', div.css('color'));
