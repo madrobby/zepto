@@ -20,7 +20,7 @@
   <p>
     See the browser console for results.
   </p>
-  <div id="some_element"></div>
+  <div id="some_element">initial text</div>
   <p>
     <span class="yay">yay</span>
     <span></span>
@@ -528,7 +528,8 @@
         $('#some_element').css({
           'border': '2px solid #000',
           'color': 'rgb(0,255,0)',
-          'padding-left': '2px'
+          'padding-left': '2px',
+          'background-color': '#FF0000'
         });
 
         t.assertEqual('2px', $('#some_element').css('borderLeftWidth'));
@@ -542,6 +543,8 @@
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('border-left-color'));
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'));
         t.assertEqual('2px', $('#some_element').css('padding-left'));
+
+        t.assertEqual('rgb(255, 0, 0)', $('#some_element').css('backgroundColor'));
 
         var div = $('#get_style_element');
         t.assertEqual('48px', div.css('font-size'));

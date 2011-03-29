@@ -17,8 +17,10 @@
   <div id="ajax_load" style="display:none"></div>
 
   <script>
+    var endsWith = function(str, suffix) {
+	    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+	};
     Evidence.TestCase.extend('ZeptoAjaxTest', {
-
       testAjaxGet: function(t){
         t.pause();
         $.get('fixtures/ajax_load_simple.html', function(response){
@@ -68,11 +70,29 @@
 
       testAjaxGetJSONP: function(t){
         t.pause();
-        $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
+        var timestamp = 'timestamp='+(+new Date) ;
+        $.getJSON('fixtures/jsonp1.js?jsoncallback=?&' + timestamp, function(data){
           t.resume(function(){
             this.assertEqual(data.items.length, 0);
           });
         });
+        this.assert(endsWith($('head')[0].lastChild.src, 'fixtures/jsonp1.js?jsoncallback=jsonp1&' + timestamp));
+      },
+
+      testAjaxGetJSONPByDataType: function(t){
+        t.pause();
+        var timestamp = 'timestamp='+(+new Date) ;
+        var url = 'fixtures/jsonp2.js?' + timestamp  ;
+        $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            success: function(data) {
+	            t.resume(function(){
+	              this.assertEqual(data.items.length, 0);
+	            });
+	        }
+        });
+        this.assert(endsWith($('head')[0].lastChild.src, 'fixtures/jsonp2.js?' + timestamp + '&callback=jsonp2'));	
       },
 
       testAjaxLoad: function(t) {

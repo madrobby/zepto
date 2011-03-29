@@ -6,7 +6,7 @@ var Zepto = (function() {
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-  function dashify(str){ return str.replace(/([A-Z])/g, "-$1" ).toLowerCase() }
+  function dashify(str){ return str; return str.replace(/([A-Z])/g, "-$1" ).toLowerCase() }
   function uniq(array){
     var r = [];
     for(var i=0,n=array.length;i<n;i++)
@@ -226,7 +226,8 @@ var Zepto = (function() {
             for (var i=0; i<html.length; i++)
               operator[2].call(element, html[operator[1] ? html.length-i-1 : i]);
           } else {
-              operator[2].call(element, html instanceof Element ? html : document.createRange().createContextualFragment(html) );
+              (html instanceof Element ? [html] : fragment(html) )
+                .forEach( function(fragment) { operator[2].call(element, fragment) } );
           }
         });
       };
