@@ -3,7 +3,7 @@
       isObject = $.isObject;
 
   function empty() {}
-  
+
   $.ajaxJSONP = function(options){
     var jsonpString = 'jsonp' + ++jsonpID,
         script = document.createElement('script');
@@ -37,7 +37,7 @@
     if (!settings.url) settings.url = window.location.toString();
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded';
     if (isObject(settings.data)) settings.data = $.param(settings.data);
-    
+
     if (settings.type.match(/get/i) && settings.data) {
       var queryString = settings.data;
       if (settings.url.match(/\?.*=/)) {
@@ -107,11 +107,11 @@
   $.param = function(obj, v){
     var s = [],
         add = function(key, value){
-          s.push(encodeURIComponent(v ? v + '[' + key +']' : key) 
+          s.push(encodeURIComponent(v ? v + '[' + key +']' : key)
               + '=' + encodeURIComponent(value));
         },
         isObjArray = $.isArray(obj);
-    
+
     for(var i in obj){
       if(isObject(obj[i]))
         s.push($.param(obj[i], (v ? v + '[' + i + ']' : i)));
