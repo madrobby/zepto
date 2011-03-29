@@ -8,9 +8,11 @@
         script = document.createElement('script');
     window[jsonpString] = function(data){
       options.success(data);
-      delete window.jsonpString;
+      delete window[jsonpString];
     };
-    script.src = options.url.replace(/=\?/, '=' + jsonpString);
+    script.src = ( !/=\?(&|$)/.test( options.url ) ) ?
+        options.url + (/\?/.test( options.url ) ? "&" : "?") + "callback=" + jsonpString :
+        options.url.replace(/=\?/, '=' + jsonpString)
     $('head').append(script);
   };
 
@@ -31,7 +33,7 @@
     var settings = $.extend({}, options);
     for (key in $.ajaxSettings) if (!settings[key]) settings[key] = $.ajaxSettings[key];
 
-    if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
+    if (settings.dataType == 'jsonp' || /=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
     if (!settings.url) settings.url = window.location.toString();
     if (settings.data && !settings.contentType) settings.contentType = "application/x-www-form-urlencoded";
