@@ -251,8 +251,10 @@ var Zepto = (function() {
     },
     serialize: function(){
       var result = {};
-      Array.prototype.slice.call(this.get(0).elements).forEach(function (el) {
-        result[el.name] = el.value;
+      $(Array.prototype.slice.call(this.get(0).elements)).each(function () {
+        if ($(this).attr('type') !== 'radio' || $(this).is(':checked')) {
+          result[$(this).attr('name')] = $(this).val();
+        }
       });
       return result;
     }
