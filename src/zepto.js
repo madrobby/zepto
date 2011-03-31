@@ -248,6 +248,13 @@ var Zepto = (function() {
        ((when !== undefined && !when) || $(this).hasClass(name)) ?
          $(this).removeClass(name) : $(this).addClass(name)
       });
+    },
+    serialize: function(){
+      var result = {};
+      Array.prototype.slice.call(this.get(0).elements).forEach(function (el) {
+        result[el.name] = el.value;
+      });
+      return result;
     }
   };
 
