@@ -130,7 +130,7 @@
 
   <input type="text" id="BooleanInput" required />
 
-  <form id="form-for-serialize">
+  <form id="form-for-get-values">
     <input name="number" value="42" />
     <textarea name="text">Some text</textarea>
     <input type="radio" name="choose" value="1" />
@@ -1047,13 +1047,13 @@
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
       },
 
-      testFormSerialize: function (t) {
-        var serializedForm = $('#form-for-serialize').serialize();
+      testFormGetValues: function (t) {
+        var values = $('#form-for-get-values').getValues();
 
-        t.assertEqual(serializedForm['number'], '42');
-        t.assertEqual(serializedForm['text'], 'Some text');
-        t.assertEqual(serializedForm['choose'], '2');
-        t.assertEqual(serializedForm['menu'], '1');
+        t.assertEqual(values['number'], '42');
+        t.assertEqual(values['text'], 'Some text');
+        t.assertEqual(values['choose'], '2');
+        t.assertEqual(values['menu'], '1');
       }
 
     });
