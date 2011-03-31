@@ -79,6 +79,7 @@ var Zepto = (function() {
     indexOf: [].indexOf,
     concat: [].concat,
     ready: function(callback){
+      if (document.readyState == 'complete') callback();
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
