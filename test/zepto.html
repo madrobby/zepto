@@ -130,6 +130,18 @@
 
   <input type="text" id="BooleanInput" required />
 
+  <form id="form-for-serialize">
+    <input name="number" value="42" />
+    <textarea name="text">Some text</textarea>
+    <input type="radio" name="choose" value="1" />
+    <input type="radio" name="choose" value="2" checked />
+    <input type="radio" name="choose" value="3" />
+    <select name="menu">
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+    </select>
+  </form>
+
   <script>
 
     function click(el){
@@ -1033,6 +1045,15 @@
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
+      },
+
+      testFormSerialize: function (t) {
+        var serializedForm = $('#form-for-serialize').serialize();
+
+        t.assertEqual(serializedForm['number'], '42');
+        t.assertEqual(serializedForm['text'], 'Some text');
+        t.assertEqual(serializedForm['choose'], '2');
+        t.assertEqual(serializedForm['menu'], '1');
       }
 
     });
