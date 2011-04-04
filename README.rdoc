@@ -221,7 +221,7 @@ You load Zepto by using
 
 Or alternatively, you can just stick in the contents of zepto.min.js into a <script> tag
 in your HTML for the best loading performance, especially for single-page applications;
-no need to load it form an external file!
+no need to load it from an external file!
 
 = Bugs
 
