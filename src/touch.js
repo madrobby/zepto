@@ -10,7 +10,7 @@
     if (xDelta >= yDelta) {
       return (x1 - x2 > 0 ? 'Left' : 'Right');
     } else {
-      return (y1 - y2 > 0 ? 'Down' : 'Up');
+      return (y1 - y2 > 0 ? 'Up' : 'Down');
     }
   }
 
