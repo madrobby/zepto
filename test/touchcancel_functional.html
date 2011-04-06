@@ -19,6 +19,7 @@
 
   <script>
     setTimeout(function () {alert("Alert! Now tap again, you should see a tap!, not a double tap!");}, 3000);
+    $('body').bind('touchmove', function (e) {e.preventDefault();} );
     $('#touch_test')
       .tap(function(){
         $(this).append(' | tap!');
@@ -34,7 +35,14 @@
       })
       .swipeRight(function(){
         $(this).append(' | swipe right!');
+      })
+      .swipeUp(function(){
+        $(this).append(' | swipe up!');
+      })
+      .swipeDown(function(){
+        $(this).append(' | swipe down!');
       });
+
   </script>
 </body>
 </html>
