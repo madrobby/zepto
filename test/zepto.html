@@ -284,6 +284,12 @@
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
       },
 
+      testDollarWithTextNode: function(t){
+        var textNode = $(document.createTextNode('hi there'));
+        t.assertLength(1, textNode);
+        t.assertEqual(Node.TEXT_NODE, textNode.get(0).nodeType);
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
         t.assertEqual('hi!', globalVarSetFromReady2);
