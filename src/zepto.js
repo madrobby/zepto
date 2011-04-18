@@ -55,6 +55,7 @@ var Zepto = (function() {
       else if (selector instanceof Element || selector === window || selector === document)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
+      else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
       else dom = $$(document, selector);
       return Z(dom, selector);
     }
