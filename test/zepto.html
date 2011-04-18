@@ -399,14 +399,17 @@
 
       testOffset: function(t){
         // TODO
+        t.assertNull($('#doesnotexist').offset());
       },
 
       testWidth: function(t){
         t.assertEqual(100, $('#offset').width());
+        t.assertNull($('#doesnotexist').width());
       },
 
       testHeight: function(t){
         t.assertEqual(50, $('#offset').height());
+        t.assertNull($('#doesnotexist').height());
       },
 
       testClosest: function(t){

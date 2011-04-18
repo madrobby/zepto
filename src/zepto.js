@@ -201,6 +201,7 @@ var Zepto = (function() {
         });
     },
     offset: function(){
+      if(this.length==0) return null;
       var obj = this[0].getBoundingClientRect();
       return {
         left: obj.left + document.body.scrollLeft,
@@ -252,7 +253,7 @@ var Zepto = (function() {
   };
 
   ['width', 'height'].forEach(function(property){
-    $.fn[property] = function(){ return this.offset()[property] }
+    $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
   });
 
 
