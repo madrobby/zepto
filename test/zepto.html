@@ -620,6 +620,15 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
 
+      testBindWithCustomData: function(t) {
+        var counter = 0;
+        var handler = function(ev,customData) { counter = customData.counter };
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger('custom', { counter: 10 });
+        t.assertEqual(10, counter);
+      },
+
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
@@ -690,6 +699,25 @@
         t.assertEqual(2, counter);
 
         click($('p').get(0));
+        t.assertEqual(3, pcounter);
+      },
+
+      testDelegateWithCustomData: function(t) {
+        var counter = 0, pcounter = 0, content = '';
+        $(document.body).delegate('#some_element', 'custom', function(ev,customData) { counter += customData.counter });
+        $('p').delegate('span.yay', 'custom', function(ev,customData) { counter += customData.counter });
+        $(document.body).delegate('p', 'custom', function(ev,customData) { pcounter += customData.counter });
+
+        $('#some_element').trigger('custom', { counter: 1 });
+        t.assertEqual(1, counter);
+
+        $('span.yay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('span.nay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('p').first().trigger('custom', { counter: 1 });
         t.assertEqual(3, pcounter);
       },
 
