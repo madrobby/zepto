@@ -1033,7 +1033,16 @@
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
+      },
+
+      testDocumentReady: function (t) {
+        // Check that if document is already loaded, ready() immediately executes callback
+        var foo = false;
+        $(document).ready(function () { $(document).ready(function () { foo = true; }) });
+        t.assert(foo);
       }
+
+
 
     });
   </script>
