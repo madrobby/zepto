@@ -820,7 +820,7 @@
         els.attr("data-id", 0);
         t.assertEqual("0", els.attr("data-id"));
 
-        t.assertNull($('doesnotexist').attr('yo'));
+        t.assertUndefined($('doesnotexist').attr('yo'));
 
         els.attr({ 'data-id': 'id', 'data-name': 'name' });
         t.assertEqual('id', els.attr("data-id"));
