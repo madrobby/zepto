@@ -181,7 +181,7 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
-        (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
+        this.length === 0 ? undefined : (this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
         this.each(function(idx){
           if (isO(name)) for (key in name) this.setAttribute(key, name[key])
