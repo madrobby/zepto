@@ -1085,8 +1085,8 @@
         // Test form submit action
         var formSubmitted = false;
         $('#some_form').get(0).submit = function (e) {
-          e.preventDefault();
           formSubmitted = true;
+          e.preventDefault();
         };
         $('#some_form').submit();
         t.assert(formSubmitted);
