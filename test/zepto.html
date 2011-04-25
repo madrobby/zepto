@@ -284,6 +284,12 @@
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
       },
 
+      testDollarWithTextNode: function(t){
+        var textNode = $(document.createTextNode('hi there'));
+        t.assertLength(1, textNode);
+        t.assertEqual(Node.TEXT_NODE, textNode.get(0).nodeType);
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
         t.assertEqual('hi!', globalVarSetFromReady2);
@@ -399,14 +405,17 @@
 
       testOffset: function(t){
         // TODO
+        t.assertNull($('#doesnotexist').offset());
       },
 
       testWidth: function(t){
         t.assertEqual(100, $('#offset').width());
+        t.assertNull($('#doesnotexist').width());
       },
 
       testHeight: function(t){
         t.assertEqual(50, $('#offset').height());
+        t.assertNull($('#doesnotexist').height());
       },
 
       testClosest: function(t){
@@ -611,6 +620,15 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
 
+      testBindWithCustomData: function(t) {
+        var counter = 0;
+        var handler = function(ev,customData) { counter = customData.counter };
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger('custom', { counter: 10 });
+        t.assertEqual(10, counter);
+      },
+
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
@@ -681,6 +699,25 @@
         t.assertEqual(2, counter);
 
         click($('p').get(0));
+        t.assertEqual(3, pcounter);
+      },
+
+      testDelegateWithCustomData: function(t) {
+        var counter = 0, pcounter = 0, content = '';
+        $(document.body).delegate('#some_element', 'custom', function(ev,customData) { counter += customData.counter });
+        $('p').delegate('span.yay', 'custom', function(ev,customData) { counter += customData.counter });
+        $(document.body).delegate('p', 'custom', function(ev,customData) { pcounter += customData.counter });
+
+        $('#some_element').trigger('custom', { counter: 1 });
+        t.assertEqual(1, counter);
+
+        $('span.yay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('span.nay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('p').first().trigger('custom', { counter: 1 });
         t.assertEqual(3, pcounter);
       },
 
@@ -811,7 +848,7 @@
         els.attr("data-id", 0);
         t.assertEqual("0", els.attr("data-id"));
 
-        t.assertNull($('doesnotexist').attr('yo'));
+        t.assertUndefined($('doesnotexist').attr('yo'));
 
         els.attr({ 'data-id': 'id', 'data-name': 'name' });
         t.assertEqual('id', els.attr("data-id"));
@@ -1033,7 +1070,16 @@
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
+      },
+
+      testDocumentReady: function (t) {
+        // Check that if document is already loaded, ready() immediately executes callback
+        var foo = false;
+        $(document).ready(function () { $(document).ready(function () { foo = true; }) });
+        t.assert(foo);
       }
+
+
 
     });
   </script>

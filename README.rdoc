@@ -247,6 +247,17 @@ If you don't know how a method should behave, please use jQuery as a reference. 
 Note that emulation of all features of jQuery is not a project goal, rather we want the most useful parts while keeping
 to the ~5k minified goal.
 
+Checklist for submitting patches:
+
+* If it's an "esoteric" feature, please discuss first!
+* Small bug fixes can go in right away.
+* Always, always, always update the tests. All tests must pass.
+* Write concise code.
+* Don't add more than one feature or bug fix per pull request.
+* Use Github's pull request system to submit patches
+
+If you submit patches, please include tests.
+
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
 Visit http://zeptojs.com/

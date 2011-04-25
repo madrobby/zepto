@@ -55,6 +55,7 @@ var Zepto = (function() {
       else if (selector instanceof Element || selector === window || selector === document)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
+      else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
       else dom = $$(document, selector);
       return Z(dom, selector);
     }
@@ -79,6 +80,7 @@ var Zepto = (function() {
     indexOf: [].indexOf,
     concat: [].concat,
     ready: function(callback){
+      if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
@@ -181,7 +183,7 @@ var Zepto = (function() {
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
         (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
-        (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : null) :
+        (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : undefined) :
         this.each(function(idx){
           if (isO(name)) for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, isF(value) ? value.call(this, idx, this.getAttribute(name)) : value);
@@ -201,6 +203,7 @@ var Zepto = (function() {
         });
     },
     offset: function(){
+      if(this.length==0) return null;
       var obj = this[0].getBoundingClientRect();
       return {
         left: obj.left + document.body.scrollLeft,
@@ -252,7 +255,7 @@ var Zepto = (function() {
   };
 
   ['width', 'height'].forEach(function(property){
-    $.fn[property] = function(){ return this.offset()[property] }
+    $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
   });
 
 
