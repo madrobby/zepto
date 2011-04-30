@@ -7,10 +7,13 @@ var Zepto = (function() {
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array){ return [].concat.apply([], array); }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-  function defaultDisplay(nodeName) {
+
+  function defaultDisplay(nodeName, doc) {
+    if (!doc) doc = document;
+
     if (!elemDisplay[nodeName]) {
-      var elem = document.createElement(nodeName);
-      document.body.insertAdjacentElement("beforeEnd", elem);
+      var elem = doc.createElement(nodeName);
+      doc.body.insertAdjacentElement("beforeEnd", elem);
       var display = getComputedStyle(elem, '').getPropertyValue("display");
       elem.parentNode.removeChild(elem);
       display == "none" && (display = "block");
@@ -29,8 +32,10 @@ var Zepto = (function() {
   function isA(value) { return value instanceof Array }
 
   fragmentRE = /^\s*<[^>]+>/;
-  container = document.createElement('div');
-  function fragment(html) {
+  function fragment(html, doc) {
+    if (!doc) doc = document;
+
+    container = doc.createElement('div');
     container.innerHTML = ('' + html).trim();
     var result = slice.call(container.childNodes);
     container.innerHTML = '';
@@ -44,20 +49,21 @@ var Zepto = (function() {
     return dom;
   }
 
-  function $(selector, context){
+  function $(selector, context, doc){
+    if (!doc) doc = document;
     if (!selector) return Z();
     if (context !== undefined) return $(context).find(selector);
-    else if (isF(selector)) return $(document).ready(selector);
+    else if (isF(selector)) return $(doc).ready(selector);
     else if (selector instanceof Z) return selector;
     else {
       var dom;
       if (isA(selector)) dom = compact(selector);
-      else if (selector instanceof Element || selector === window || selector === document)
+      else if (selector instanceof Element || selector === window || selector === doc)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector)) dom = fragment(selector);
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
-      else dom = $$(document, selector);
-      return Z(dom, selector);
+      else dom = $$(doc, selector);
+      return Z(dom, selector, doc);
     }
   }
 
