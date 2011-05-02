@@ -143,6 +143,8 @@
   <input type="text" id="BooleanInput" required />
 
   <form id="some_form"></form>
+  
+  <div class="replace_test_div">test</div>
 
   <script>
 
@@ -514,9 +516,15 @@
 
       testReplaceWith: function(t) {
         $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
+        
         t.assertUndefined($('div.second').get(0));
         t.assert(document.getElementById("replace_test").nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
+        
+        $('#replace_test').replaceWith($('#replace_test_div'));
+        t.assertUndefined($('#replace_test').get(0));
+        t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
       },
 
       testFind: function(t){
