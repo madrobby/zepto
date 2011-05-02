@@ -252,6 +252,15 @@ var Zepto = (function() {
        ((when !== undefined && !when) || $(this).hasClass(name)) ?
          $(this).removeClass(name) : $(this).addClass(name)
       });
+    },
+    submit: function () {
+      return this.each(function () {
+        try {
+          // Submit first form element
+          this.submit();
+          return;
+        } catch(e) {};
+      });
     }
   };
 

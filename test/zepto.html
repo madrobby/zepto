@@ -137,6 +137,8 @@
 
   <input type="text" id="BooleanInput" required />
 
+  <form id="some_form"></form>
+
   <script>
 
     function click(el){
@@ -1093,10 +1095,18 @@
         var foo = false;
         $(document).ready(function () { $(document).ready(function () { foo = true; }) });
         t.assert(foo);
+      },
+
+      testFormSubmit: function (t) {
+        // Test form submit action
+        var formSubmitted = false;
+        $('#some_form').get(0).submit = function (e) {
+          formSubmitted = true;
+          e.preventDefault();
+        };
+        $('#some_form').submit();
+        t.assert(formSubmitted);
       }
-
-
-
     });
   </script>
 </body>

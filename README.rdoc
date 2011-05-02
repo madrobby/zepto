@@ -102,6 +102,8 @@ Context and .find calls are equivalent:
   die([, type[, function]]): remove live listener
   trigger(type): triggers an event
 
+  submit(): trigger form submit event
+
 == Non-jQuery functions
 
   pluck(property):
