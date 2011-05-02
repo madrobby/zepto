@@ -148,6 +148,7 @@ Removing all event listeners:
 = Touch events
 
 Zepto has several extensions over the jQuery API to make it easy to react to touch events.
+You need to include touch.js and/or gesture.js to use these.
 
 Tapping:
   $('some selector').tap(function(){ ... });
@@ -163,6 +164,21 @@ Swiping left:
 
 Swiping right:
   $('some selector').swipeRight(function(){ ... });
+
+Swiping up:
+  $('some selector').swipeUp(function(){ ... });
+
+Swiping down:
+  $('some selector').swipeDown(function(){ ... });
+
+Pinch (iOS only):
+  $('some selector').pinch(function(){ ... });
+
+Pinch in (iOS only):
+  $('some selector').pinchIn(function(){ ... });
+
+Pinch out (iOS only):
+  $('some selector').pinchOut(function(){ ... });
 
 = Ajax
 
