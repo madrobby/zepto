@@ -162,6 +162,14 @@ var Zepto = (function() {
         }
       })
     },
+    replaceWith: function(newContent) {
+      return this.each(function() {
+        var element = $(this),
+            prev = element.prev();
+        element.remove();
+        prev.after(newContent);
+      });
+    },
     hide: function(){
       return this.css("display", "none")
     },

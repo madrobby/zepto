@@ -35,6 +35,11 @@
 
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
+  <div class="replacewith">
+    <div class="inner first">Hello</div>
+    <div class="inner second">And</div>
+    <div class="inner third">Goodbye</div>
+  </div>
 
   <div id="data_attr" data-blah="whatever"></div>
 
@@ -505,6 +510,13 @@
         //test the index was passed in properly in previous test
         t.assertEqual("0",$("span.b",el).text());
         t.assertEqual("1",$("span.c",el).text());
+      },
+
+      testReplaceWith: function(t) {
+        $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
+        t.assertUndefined($('div.second').get(0));
+        t.assert(document.getElementById("replace_test").nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
       },
 
       testFind: function(t){
