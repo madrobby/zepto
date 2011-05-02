@@ -48,6 +48,13 @@
   <div id="texttest2" class="texttest">And <em>some more</em></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
+  
+  <div id="empty_test">
+    <div id="empty_1"></div>
+    <div id="empty_2"></div>
+    <div id="empty_3"></div>
+    <span id="empty_4">test</span>
+  </div>
 
   <p id="find1">
     <span class="findme">1</span>
@@ -628,7 +635,16 @@
         $('#some_element').trigger('custom', { counter: 10 });
         t.assertEqual(10, counter);
       },
-
+      
+      testEmpty: function(t) {
+        $('#empty_test').empty();
+        
+        t.assertEqual(document.getElementById('empty_1'), null);
+        t.assertEqual(document.getElementById('empty_2'), null);
+        t.assertEqual(document.getElementById('empty_3'), null);
+        t.assertEqual(document.getElementById('empty_4'), null);
+      },
+      
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
