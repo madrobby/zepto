@@ -49,6 +49,13 @@
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
 
+  <div id="empty_test">
+    <div id="empty_1"></div>
+    <div id="empty_2"></div>
+    <div id="empty_3"></div>
+    <span id="empty_4">test</span>
+  </div>
+
   <p id="find1">
     <span class="findme">1</span>
     <span class="findme">2</span>
@@ -129,6 +136,8 @@
   <div id="namespace_test"></div>
 
   <input type="text" id="BooleanInput" required />
+
+  <form id="some_form"></form>
 
   <script>
 
@@ -629,6 +638,15 @@
         t.assertEqual(10, counter);
       },
 
+      testEmpty: function(t) {
+        $('#empty_test').empty();
+
+        t.assertEqual(document.getElementById('empty_1'), null);
+        t.assertEqual(document.getElementById('empty_2'), null);
+        t.assertEqual(document.getElementById('empty_3'), null);
+        t.assertEqual(document.getElementById('empty_4'), null);
+      },
+
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
@@ -1077,10 +1095,18 @@
         var foo = false;
         $(document).ready(function () { $(document).ready(function () { foo = true; }) });
         t.assert(foo);
+      },
+
+      testFormSubmit: function (t) {
+        // Test form submit action
+        var formSubmitted = false;
+        $('#some_form').get(0).submit = function (e) {
+          formSubmitted = true;
+          e.preventDefault();
+        };
+        $('#some_form').submit();
+        t.assert(formSubmitted);
       }
-
-
-
     });
   </script>
 </body>

@@ -152,6 +152,7 @@ var Zepto = (function() {
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
       })), selector);
     },
+    empty: function(){ return this.each(function(){ this.innerHTML = '' }) },
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){
       return this.each(function() {
@@ -250,6 +251,15 @@ var Zepto = (function() {
       return this.each(function(){
        ((when !== undefined && !when) || $(this).hasClass(name)) ?
          $(this).removeClass(name) : $(this).addClass(name)
+      });
+    },
+    submit: function () {
+      return this.each(function () {
+        try {
+          // Submit first form element
+          this.submit();
+          return;
+        } catch(e) {};
       });
     }
   };
