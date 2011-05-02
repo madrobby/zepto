@@ -152,6 +152,7 @@ var Zepto = (function() {
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
       })), selector);
     },
+    empty: function() { return this.each(function() { $(this).children().remove(); })},
     pluck: function(property){ return this.map(function(element){ return element[property] }) },
     show: function(){
       return this.each(function() {
