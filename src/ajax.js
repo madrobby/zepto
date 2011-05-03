@@ -4,9 +4,10 @@
 
   function empty() {}
 
-  $.ajaxJSONP = function(options){
+  $.ajaxJSONP = function(options, doc){
+    if (!doc) doc = document;
     var jsonpString = 'jsonp' + ++jsonpID,
-        script = document.createElement('script');
+        script = doc.createElement('script');
     window[jsonpString] = function(data){
       options.success(data);
       delete window[jsonpString];
@@ -93,13 +94,14 @@
   };
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
-  $.fn.load = function(url, success){
+  $.fn.load = function(url, success, doc){
+    if (!doc) doc = document;
     if (!this.length) return this;
     var self = this, parts = url.split(/\s/), selector;
     if (parts.length > 1) url = parts[0], selector = parts[1];
     $.get(url, function(response){
       self.html(selector ?
-        $(document.createElement('div')).html(response).find(selector).html()
+        $(doc.createElement('div')).html(response).find(selector).html()
         : response);
       success && success();
     });

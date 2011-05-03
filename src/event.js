@@ -80,12 +80,13 @@
     return proxy;
   }
 
-  $.fn.delegate = function(selector, event, callback){
+  $.fn.delegate = function(selector, event, callback, doc){
+    if (!doc) doc = document;
     return this.each(function(i, element){
       add(element, event, callback, selector, function(e, data){
         var target = e.target, nodes = $$(element, selector);
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) {
+        if (target && !(target === element) && !(target === doc)) {
           callback.call(target, $.extend(createProxy(e), {
             currentTarget: target, liveFired: element
           }), data);
@@ -99,18 +100,21 @@
     });
   }
 
-  $.fn.live = function(event, callback){
-    $(document.body).delegate(this.selector, event, callback);
+  $.fn.live = function(event, callback, doc){
+    if (!doc) doc = document;
+    $(doc.body).delegate(this.selector, event, callback);
     return this;
   };
-  $.fn.die = function(event, callback){
-    $(document.body).undelegate(this.selector, event, callback);
+  $.fn.die = function(event, callback, doc){
+    if (!doc) doc = document;
+    $(doc.body).undelegate(this.selector, event, callback);
     return this;
   };
 
-  $.fn.trigger = function(event, data){
+  $.fn.trigger = function(event, data, doc){
+    if (!doc) doc = document;
     return this.each(function(){
-      var e = document.createEvent('Events');
+      var e = doc.createEvent('Events');
       e.initEvent(event, true, true)
       e.data = data;
       this.dispatchEvent(e);
