@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Zepto gesture functional test</title>
+  <meta name="viewport" content="maximum-scale=1,initial-scale=1,user-scalable=0">
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/detect.js"></script>
+  <script src="../src/gesture.js"></script>
+</head>
+<body>
+  <h1>Zepto gestures functional test</h1>
+
+  <div id="gesture_test" style="width: 200px; height: 200px; background: #ddd">
+    gesture events test
+  </div>
+
+  <script>
+    $('#gesture_test')
+      .pinch(function(){
+        $(this).append(' | pinch!');
+      })
+      .pinchIn(function(){
+        $(this).append(' | pinch in!');
+      })
+      .pinchOut(function(){
+        $(this).append(' | pinch out!');
+      });
+  </script>
+</body>
+</html>

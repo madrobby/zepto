@@ -35,6 +35,11 @@
 
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
+  <div class="replacewith">
+    <div class="inner first">Hello</div>
+    <div class="inner second">And</div>
+    <div class="inner third">Goodbye</div>
+  </div>
 
   <div id="data_attr" data-blah="whatever"></div>
 
@@ -48,6 +53,13 @@
   <div id="texttest2" class="texttest">And <em>some more</em></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
+
+  <div id="empty_test">
+    <div id="empty_1"></div>
+    <div id="empty_2"></div>
+    <div id="empty_3"></div>
+    <span id="empty_4">test</span>
+  </div>
 
   <p id="find1">
     <span class="findme">1</span>
@@ -101,15 +113,22 @@
 
   <style>
     .hidden { display: none; }
+    #show_hide_span1,
+    #show_hide_span2 {
+      display:block;
+    }
+    #show_hide_div1 {
+      display:inline-block;
+    }
   </style>
 
   <div id="show_hide_div1" style="display:none"></div>
   <div id="show_hide_div2" class="hidden"></div>
   <div id="show_hide_div3"></div>
 
-  <div id="show_hide_span1" style="display:none"></div>
-  <div id="show_hide_span2" class="hidden"></div>
-  <div id="show_hide_span3"></div>
+  <span id="show_hide_span1" style="display:none"></span>
+  <span id="show_hide_span2" class="hidden"></span>
+  <span id="show_hide_span3"></span>
 
   <div class="filtertest" id="filtertest1"></div>
   <div class="filtertest" id="filtertest2"></div>
@@ -123,21 +142,24 @@
 
   <input type="text" id="BooleanInput" required />
 
-<ul class="firstul">
-   <li class="redli">list item 1</li>
-   <li>list item 2</li>
-   <li class="greenli">list item 3</li>
-</ul>
-<ul class="secondul">
-   <li class="redli">list item 1</li>
-   <li>list item 2</li>
-   <li class="greenli">list item 3</li>
-</ul>
+  <ul class="firstul">
+     <li class="redli">list item 1</li>
+     <li>list item 2</li>
+     <li class="greenli">list item 3</li>
+  </ul>
+  <ul class="secondul">
+     <li class="redli">list item 1</li>
+     <li>list item 2</li>
+     <li class="greenli">list item 3</li>
+  </ul>
 
-<div id="endTest2">
-  <div><span>Hello</span>, how are you?</div>
-</div>
+  <div id="endTest2">
+    <div><span>Hello</span>, how are you?</div>
+  </div>
 
+  <form id="some_form"></form>
+  
+  <div class="replace_test_div">test</div>
 
   <script>
 
@@ -285,6 +307,18 @@
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+
+        fragment = $("<div>\nhello</div> \n<span>world</span>");
+        t.assertLength(3, fragment);
+        t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
+        t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
+        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+      },
+
+      testDollarWithTextNode: function(t){
+        var textNode = $(document.createTextNode('hi there'));
+        t.assertLength(1, textNode);
+        t.assertEqual(Node.TEXT_NODE, textNode.get(0).nodeType);
       },
 
       testReady: function(t){
@@ -362,22 +396,22 @@
 
       testShow: function(t){
         $('#show_hide_div1').show();
-        t.assertEqual('block', $('#show_hide_div1').get(0).style.display);
+        t.assertEqual('inline-block', getComputedStyle($('#show_hide_div1').get(0)).display);
 
         $('#show_hide_div2').show();
-        t.assertEqual('block', $('#show_hide_div2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div2').get(0)).display);
 
         $('#show_hide_div3').show();
-        t.assertEqual('block', $('#show_hide_div3').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_div3').get(0)).display);
 
         $('#show_hide_span1').show();
-        t.assertEqual('block', $('#show_hide_span1').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_span1').get(0)).display);
 
         $('#show_hide_span2').show();
-        t.assertEqual('block', $('#show_hide_span2').get(0).style.display);
+        t.assertEqual('block', getComputedStyle($('#show_hide_span2').get(0)).display);
 
         $('#show_hide_span3').show();
-        t.assertEqual('block', $('#show_hide_span3').get(0).style.display);
+        t.assertEqual('inline', getComputedStyle($('#show_hide_span3').get(0)).display);
       },
 
       testHide: function(t){
@@ -402,14 +436,17 @@
 
       testOffset: function(t){
         // TODO
+        t.assertNull($('#doesnotexist').offset());
       },
 
       testWidth: function(t){
         t.assertEqual(100, $('#offset').width());
+        t.assertNull($('#doesnotexist').width());
       },
 
       testHeight: function(t){
         t.assertEqual(50, $('#offset').height());
+        t.assertNull($('#doesnotexist').height());
       },
 
       testClosest: function(t){
@@ -490,6 +527,19 @@
         //test the index was passed in properly in previous test
         t.assertEqual("0",$("span.b",el).text());
         t.assertEqual("1",$("span.c",el).text());
+      },
+
+      testReplaceWith: function(t) {
+        $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
+        
+        t.assertUndefined($('div.second').get(0));
+        t.assert(document.getElementById("replace_test").nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
+        
+        $('#replace_test').replaceWith($('#replace_test_div'));
+        t.assertUndefined($('#replace_test').get(0));
+        t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
       },
 
       testFind: function(t){
@@ -614,6 +664,24 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
 
+      testBindWithCustomData: function(t) {
+        var counter = 0;
+        var handler = function(ev,customData) { counter = customData.counter };
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger('custom', { counter: 10 });
+        t.assertEqual(10, counter);
+      },
+
+      testEmpty: function(t) {
+        $('#empty_test').empty();
+
+        t.assertEqual(document.getElementById('empty_1'), null);
+        t.assertEqual(document.getElementById('empty_2'), null);
+        t.assertEqual(document.getElementById('empty_3'), null);
+        t.assertEqual(document.getElementById('empty_4'), null);
+      },
+
       testUnbind: function(t){
         var counter = 0, el = $('#another_element').get(0);
         var handler = function(){ counter++ };
@@ -684,6 +752,25 @@
         t.assertEqual(2, counter);
 
         click($('p').get(0));
+        t.assertEqual(3, pcounter);
+      },
+
+      testDelegateWithCustomData: function(t) {
+        var counter = 0, pcounter = 0, content = '';
+        $(document.body).delegate('#some_element', 'custom', function(ev,customData) { counter += customData.counter });
+        $('p').delegate('span.yay', 'custom', function(ev,customData) { counter += customData.counter });
+        $(document.body).delegate('p', 'custom', function(ev,customData) { pcounter += customData.counter });
+
+        $('#some_element').trigger('custom', { counter: 1 });
+        t.assertEqual(1, counter);
+
+        $('span.yay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('span.nay').trigger('custom', { counter: 1 });
+        t.assertEqual(2, counter);
+
+        $('p').first().trigger('custom', { counter: 1 });
         t.assertEqual(3, pcounter);
       },
 
@@ -814,7 +901,7 @@
         els.attr("data-id", 0);
         t.assertEqual("0", els.attr("data-id"));
 
-        t.assertNull($('doesnotexist').attr('yo'));
+        t.assertUndefined($('doesnotexist').attr('yo'));
 
         els.attr({ 'data-id': 'id', 'data-name': 'name' });
         t.assertEqual('id', els.attr("data-id"));
@@ -976,7 +1063,9 @@
         t.assertEqual('green', el.className);
         $('#some_element').addClass('red');
         t.assertEqual('green red', el.className);
-        $('#some_element').removeClass('green');
+        $('#some_element').addClass('blue red');
+        t.assertEqual('green red blue', el.className);
+        $('#some_element').removeClass('green blue');
         t.assertEqual('red', el.className);
 
         $('#some_element').attr('class', ' red green blue ');
@@ -1044,8 +1133,25 @@
 
         $("#endTest2 div").find("span").end().css("border", "2px solid red")
         t.assertEqual($('#endTest2 div').css('border'), '2px solid red');
-      }
+      },
 
+      testDocumentReady: function (t) {
+        // Check that if document is already loaded, ready() immediately executes callback
+        var foo = false;
+        $(document).ready(function () { $(document).ready(function () { foo = true; }) });
+        t.assert(foo);
+      },
+
+      testFormSubmit: function (t) {
+        // Test form submit action
+        var formSubmitted = false;
+        $('#some_form').get(0).submit = function (e) {
+          formSubmitted = true;
+          e.preventDefault();
+        };
+        $('#some_form').submit();
+        t.assert(formSubmitted);
+      }
     });
   </script>
 </body>

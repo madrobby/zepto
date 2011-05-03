@@ -102,6 +102,8 @@ Context and .find calls are equivalent:
   die([, type[, function]]): remove live listener
   trigger(type): triggers an event
 
+  submit(): trigger form submit event
+
 == Non-jQuery functions
 
   pluck(property):
@@ -146,6 +148,7 @@ Removing all event listeners:
 = Touch events
 
 Zepto has several extensions over the jQuery API to make it easy to react to touch events.
+You need to include touch.js and/or gesture.js to use these.
 
 Tapping:
   $('some selector').tap(function(){ ... });
@@ -161,6 +164,21 @@ Swiping left:
 
 Swiping right:
   $('some selector').swipeRight(function(){ ... });
+
+Swiping up:
+  $('some selector').swipeUp(function(){ ... });
+
+Swiping down:
+  $('some selector').swipeDown(function(){ ... });
+
+Pinch (iOS only):
+  $('some selector').pinch(function(){ ... });
+
+Pinch in (iOS only):
+  $('some selector').pinchIn(function(){ ... });
+
+Pinch out (iOS only):
+  $('some selector').pinchOut(function(){ ... });
 
 = Ajax
 
@@ -221,7 +239,7 @@ You load Zepto by using
 
 Or alternatively, you can just stick in the contents of zepto.min.js into a <script> tag
 in your HTML for the best loading performance, especially for single-page applications;
-no need to load it form an external file!
+no need to load it from an external file!
 
 = Bugs
 
@@ -246,6 +264,17 @@ I'd love some help on this, so please feel free to mess around!
 If you don't know how a method should behave, please use jQuery as a reference. Zepto.js should closely emulate it.
 Note that emulation of all features of jQuery is not a project goal, rather we want the most useful parts while keeping
 to the ~5k minified goal.
+
+Checklist for submitting patches:
+
+* If it's an "esoteric" feature, please discuss first!
+* Small bug fixes can go in right away.
+* Always, always, always update the tests. All tests must pass.
+* Write concise code.
+* Don't add more than one feature or bug fix per pull request.
+* Use Github's pull request system to submit patches
+
+If you submit patches, please include tests.
 
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
