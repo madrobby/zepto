@@ -252,9 +252,9 @@ var Zepto = (function() {
       })
     },
     removeClass: function(name){
-      return this.each(function() {
+      return this.each(function(idx) {
         classList = this.className;
-        name.split(/\s+/g).forEach(function(klass) {
+        funcArg(this,name,idx,classList).split(/\s+/g).forEach(function(klass) {
           classList = classList.replace(classRE(klass), " ")
         });
         this.className = classList.trim()
