@@ -240,14 +240,15 @@ var Zepto = (function() {
       return classRE(name).test(this[0].className);
     },
     addClass: function(name){
-      return this.each(function() {
+      return this.each(function(idx) {
         classList = [];
-        name.split(/\s+/g).forEach(function(klass) {
+        var cls = this.className, newName = funcArg(this,name,idx,cls);
+        newName.split(/\s+/g).forEach(function(klass) {
           if (!$(this).hasClass(klass)) {
             classList.push(klass)
           }
         }, this);
-        classList.length && (this.className += (this.className ? " " : "") + classList.join(" "))
+        classList.length && (this.className += (cls ? " " : "") + classList.join(" "))
       })
     },
     removeClass: function(name){
