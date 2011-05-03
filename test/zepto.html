@@ -1057,6 +1057,26 @@
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
+
+        //addClass with function argument
+        $('#some_element').addClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#some_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('red blue', this.className);
+          return "green";
+        });
+        t.assertEqual('red blue green', el.className);
+
+        //removeClass with function argument
+        $('#some_element').removeClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#some_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('red blue green', this.className);
+          return "blue";
+        });
+        t.assertEqual('red green', el.className);
       },
 
       testHasClass: function(t){
@@ -1096,6 +1116,26 @@
 
         $('#toggle_element').toggleClass('orange', true);
         t.assert($('#toggle_element').hasClass('orange'));
+
+        //function argument
+        $('#toggle_element').toggleClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#toggle_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('orange', this.className);
+          return "brown";
+        });
+        t.assert($('#toggle_element').hasClass('brown'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },false);
+        t.assert(!$('#toggle_element').hasClass('yellow'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },true);
+        t.assert($('#toggle_element').hasClass('yellow'));
       },
 
       testIndex: function(t){
