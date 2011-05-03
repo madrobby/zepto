@@ -68,6 +68,10 @@ var Zepto = (function() {
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
   }
 
+  function funcArg(context,arg,idx,payload){
+   return isF(arg) ? arg.call(context, idx, payload) : arg;
+  }
+
   $.isFunction = isF;
   $.isObject = isO;
   $.isArray = isA;
