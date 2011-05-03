@@ -1116,6 +1116,26 @@
 
         $('#toggle_element').toggleClass('orange', true);
         t.assert($('#toggle_element').hasClass('orange'));
+
+        //function argument
+        $('#toggle_element').toggleClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#toggle_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('orange', this.className);
+          return "brown";
+        });
+        t.assert($('#toggle_element').hasClass('brown'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },false);
+        t.assert(!$('#toggle_element').hasClass('yellow'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },true);
+        t.assert($('#toggle_element').hasClass('yellow'));
       },
 
       testIndex: function(t){

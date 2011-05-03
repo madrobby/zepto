@@ -261,9 +261,10 @@ var Zepto = (function() {
       })
     },
     toggleClass: function(name, when){
-      return this.each(function(){
-       ((when !== undefined && !when) || $(this).hasClass(name)) ?
-         $(this).removeClass(name) : $(this).addClass(name)
+      return this.each(function(idx){
+       var cls = this.className, newName = funcArg(this,name,idx,cls);
+       ((when !== undefined && !when) || $(this).hasClass(newName)) ?
+         $(this).removeClass(newName) : $(this).addClass(newName)
       });
     },
     submit: function () {
