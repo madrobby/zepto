@@ -89,9 +89,12 @@ Context and .find calls are equivalent:
   css('css property'): get this CSS property of the first element, looks at both .style object properties and the computed style
 
   addClass('classname'): adds a CSS class name
+  addClass(function(index, existingClasses){ return ...; }): adds a CSS class name from a method
   removeClass('classname'): removes a CSS class name
+  removeClass(function(index, existingClasses){ return ...; }): removes a CSS class name from a method
   hasClass('classname'): returns true of first element has a classname set
   toggleClass('classname'[, switch]): adds/removes class, or adds/removes it when switch == true/false
+  toggleClass(function(index, existingClasses){ return ...; }): adds/removes class from a method
 
   bind(type, function): add an event listener (see below)
   one(type, function): add an event listener that only fires once
