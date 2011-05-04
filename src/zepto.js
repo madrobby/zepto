@@ -10,7 +10,7 @@ var Zepto = (function() {
   function defaultDisplay(nodeName) {
     if (!elemDisplay[nodeName]) {
       var elem = document.createElement(nodeName);
-      document.body.insertAdjacentElement("beforeEnd", elem);
+      document.body.appendChild(elem);
       var display = getComputedStyle(elem, '').getPropertyValue("display");
       elem.parentNode.removeChild(elem);
       display == "none" && (display = "block");
@@ -283,24 +283,34 @@ var Zepto = (function() {
   });
 
 
-  var adjacencyOperators = {append: 'beforeEnd', prepend: 'afterBegin', before: 'beforeBegin', after: 'afterEnd'};
+  var adjacencyOperators = [ 'prepend', 'after', 'before', 'append' ];
+  function insert(operator, element, other) {
+    var parent = (!operator || operator == 3) ? element : element.parentNode;
+    parent.insertBefore(other,
+      !operator ? parent.firstChild :         // prepend
+      operator == 1 ? element.nextSibling :   // after
+      operator == 2 ? element :               // before
+      null);                                  // append
+  }
 
-  for (key in adjacencyOperators)
-    $.fn[key] = (function(operator) {
-      return function(html){
-        return this.each(function(index, element){
-          if (html instanceof Z) {
-            dom = html;
-            if (operator == 'afterBegin' || operator == 'afterEnd')
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
-            else
-              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
-          } else {
-            element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+  adjacencyOperators.forEach(function(key, operator) {
+    $.fn[key] = function(html){
+      if (typeof(html) != 'object')
+        html = fragment(html);
+
+      return this.each(function(index, element){
+        if (html.length || html instanceof Z) {
+          dom = html;
+          for (var i=0; i<dom.length; i++) {
+            var e = dom[operator < 2 ? dom.length-i-1 : i];
+            insert(operator, element, e);
           }
-        });
-      };
-    })(adjacencyOperators[key]);
+        } else {
+          insert(operator, element, html);
+        }
+      });
+    };
+  });
 
   Z.prototype = $.fn;
 
