@@ -142,6 +142,36 @@
 
   <input type="text" id="BooleanInput" required />
 
+  <ul class="firstul">
+     <li class="redli">list item 1</li>
+     <li>list item 2</li>
+     <li class="greenli">list item 3</li>
+  </ul>
+  <ul class="secondul">
+     <li class="redli">list item 1</li>
+     <li>list item 2</li>
+     <li class="greenli">list item 3</li>
+  </ul>
+
+  <div id="endTest2">
+    <div><span>Hello</span>, how are you?</div>
+  </div>
+
+  <br />
+
+  <div class="andSelf">
+    <strong>Some Bold Text</strong>
+  </div>
+
+  <br />
+
+  <div class="andSelf">
+    <p>First Paragraph</p>
+    <p>Second Paragraph</p>
+  </div>
+
+  <br />
+
   <form id="some_form"></form>
 
   <div class="replace_test_div">test</div>
@@ -1148,6 +1178,29 @@
       testBoolAttr: function (t) {
         t.assertEqual($('#BooleanInput').attr('required'), true);
         t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined);
+      },
+
+      testEndFunc: function (t) {
+        $('ul.firstul').find('.redli').css('background-color', 'red').end().find('.greenli').css('background-color', 'green').end();
+
+        t.assertEqual($('ul.firstul .redli').css('background-color'), 'red');
+        t.assertEqual($('ul.firstul .greenli').css('background-color'), 'green');
+        t.assert($('ul.secondul .greenli').css('background-color'), 'rgba (0, 0, 0, 0)');
+
+        $("#endTest2 div").find("span").end().css("border", "2px solid red");
+
+        t.assertEqual($('#endTest2 div').css('border'), '2px solid red');
+      },
+
+      testAndSelf: function (t) {
+        $(".andSelf").find("p").css('background-color', 'yellow');
+        $(".andSelf").find("p").andSelf().css('border', '1px solid red');
+
+        t.assertEqual($(".andSelf").find("p").css('background-color'), 'yellow');
+        t.refuteEqual($(".andSelf").css('background-color'), 'yellow');
+
+        t.assertEqual($(".andSelf").find("p").css('border'), '1px solid red');
+        t.assertEqual($(".andSelf").css('border'), '1px solid red');
       },
 
       testDocumentReady: function (t) {
