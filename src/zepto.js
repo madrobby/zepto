@@ -1,5 +1,5 @@
 var Zepto = (function() {
-  var emptyArray = [], slice = emptyArray.slice, key, css, $$, fragmentRE, container,
+  var emptyArray = [], slice = emptyArray.slice, key, css, $$,
     document = window.document, body = document.body, undefined,
     classList, elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -10,14 +10,10 @@ var Zepto = (function() {
   function isO(value) { return value instanceof Object }
   function isA(value) { return value instanceof Array }
 
-  function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
-  function flatten(array){ return [].concat.apply([], array); }
-  function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-  function uniq(array){
-    var results = [], i = array.length;
-    while(i--) if(results.indexOf(array[i])<0) results.push(array[i]);
-    return results.reverse();
-  }
+  function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
+  function flatten(array) { return [].concat.apply([], array) }
+  function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function uniq(array)    { return array.filter(function(item,index,array){ return array.indexOf(item) == index }) }
 
   function classRE(name){
     return name in classCache ?
