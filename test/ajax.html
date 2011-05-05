@@ -64,7 +64,7 @@
 
       testAjaxGetJSON: function(t){
         t.pause();
-        $.getJSON('zepto.json', function(data){
+        $.getJSON('fixtures/zepto.json', function(data){
           t.resume(function(){
             this.assertEqual('awesomeness', data.zepto);
           });
