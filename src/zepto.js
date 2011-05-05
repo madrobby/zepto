@@ -1,7 +1,8 @@
 var Zepto = (function() {
-  var emptyArray = [], slice = emptyArray.slice, key, css, $$,
-    document = window.document, body = document.body, undefined,
-    classList, elementDisplay = {}, classCache = {},
+  var undefined, key, css, $$, classList,
+    emptyArray = [], slice = emptyArray.slice,
+    document = window.document, body = document.body,
+    elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
     container = document.createElement('div');
@@ -179,8 +180,7 @@ var Zepto = (function() {
       return this.css("display", "none")
     },
     toggle: function(){
-      this.css("display") == "none" && this.show() || this.hide();
-      return this
+      return this.css("display") == "none" ? this.show() : this.hide();
     },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },

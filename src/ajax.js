@@ -1,6 +1,7 @@
 (function($){
   var jsonpID = 0,
-      isObject = $.isObject;
+      isObject = $.isObject,
+      key;
 
   function empty() {}
 
@@ -107,19 +108,18 @@
   };
 
   $.param = function(obj, v){
-    var s = [],
-        add = function(key, value){
-          s.push(encodeURIComponent(v ? v + '[' + key +']' : key)
-              + '=' + encodeURIComponent(value));
-        },
-        isObjArray = $.isArray(obj);
+    var result = [], add = function(key, value){
+      result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
+        + '=' + encodeURIComponent(value));
+      },
+      isObjArray = $.isArray(obj);
 
-    for(var i in obj){
-      if(isObject(obj[i]))
-        s.push($.param(obj[i], (v ? v + '[' + i + ']' : i)));
+    for(key in obj)
+      if(isObject(obj[key]))
+        result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
       else
-        add(isObjArray ? '' : i, obj[i]);
-    };
-    return s.join('&').replace('%20', '+');
+        add(isObjArray ? '' : key, obj[key]);
+
+    return result.join('&').replace('%20', '+');
   };
 })(Zepto);

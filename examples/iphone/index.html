@@ -35,7 +35,7 @@
           $("body > section").first().addClass("current")
 
           $("a.back").live('touchstart', function(event) {
-           var current = $(event.currentTarget).attr("href");
+            var current = $(event.currentTarget).attr("href");
             $(".current").removeClass("current").addClass("reverse");
             $(current).addClass("current");
           });
