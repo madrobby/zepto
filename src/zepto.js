@@ -186,11 +186,11 @@ var Zepto = (function() {
       });
     },
     hide: function(){
-      return this.css("display", "none")
+      return this.css("display", "none");
     },
     toggle: function(){
       this.css("display") == "none" && this.show() || this.hide();
-      return this
+      return this;
     },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
@@ -317,7 +317,7 @@ var Zepto = (function() {
   }
 
   adjacencyOperators.forEach(function(key, operator) {
-    $.fn[key] = function(html){
+    $Zepto.fn[key] = function(html){
       if (typeof(html) != 'object')
         html = fragment(html);
 
