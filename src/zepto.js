@@ -1,7 +1,7 @@
 var Zepto = (function() {
   var undefined, key, css, $$, classList,
     emptyArray = [], slice = emptyArray.slice,
-    document = window.document, body = document.body,
+    document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
@@ -25,7 +25,7 @@ var Zepto = (function() {
     var element, display;
     if (!elementDisplay[nodeName]) {
       element = document.createElement(nodeName);
-      body.insertAdjacentElement("beforeEnd", element);
+      document.body.insertAdjacentElement("beforeEnd", element);
       display = getComputedStyle(element, '').getPropertyValue("display");
       element.parentNode.removeChild(element);
       display == "none" && (display = "block");
@@ -220,8 +220,8 @@ var Zepto = (function() {
       if(this.length==0) return null;
       var obj = this[0].getBoundingClientRect();
       return {
-        left: obj.left + body.scrollLeft,
-        top: obj.top + body.scrollTop,
+        left: obj.left + document.body.scrollLeft,
+        top: obj.top + document.body.scrollTop,
         width: obj.width,
         height: obj.height
       };
@@ -313,8 +313,6 @@ var Zepto = (function() {
   });
 
   Z.prototype = $.fn;
-
-  $(document).ready(function(){ body = document.body });
 
   return $;
 })();
