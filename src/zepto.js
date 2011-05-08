@@ -312,6 +312,18 @@ var Zepto = (function() {
     };
   });
 
+  var reverseAdjacencyOperators = [ 'append', 'prepend' ];
+
+  reverseAdjacencyOperators.forEach(function(key) {
+	$.fn[key+'To'] = function(html){
+		if (typeof(html) != 'object')
+	      html = fragment(html);
+
+	    html[key](this);
+	    return this;
+	  };
+  });
+
   Z.prototype = $.fn;
 
   return $;
