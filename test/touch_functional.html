@@ -17,6 +17,7 @@
   </div>
 
   <script>
+    $('body').bind('touchmove', function (e) {e.preventDefault();} );
     $('#touch_test')
       .tap(function(){
         $(this).append(' | tap!');
@@ -32,6 +33,12 @@
       })
       .swipeRight(function(){
         $(this).append(' | swipe right!');
+      })
+      .swipeUp(function(){
+        $(this).append(' | swipe up!');
+      })
+      .swipeDown(function(){
+        $(this).append(' | swipe down!');
       });
   </script>
 </body>

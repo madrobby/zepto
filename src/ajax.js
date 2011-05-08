@@ -1,6 +1,7 @@
 (function($){
   var jsonpID = 0,
-      isObject = $.isObject;
+      isObject = $.isObject,
+      key;
 
   function empty() {}
 
@@ -82,6 +83,8 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
     xhr.send(settings.data);
+
+    return xhr;
   };
 
   $.get = function(url, success){ $.ajax({ url: url, success: success }) };
@@ -105,25 +108,18 @@
   };
 
   $.param = function(obj, v){
-    var s = [],
-        add = function(key, value){
-<<<<<<< HEAD
-          if(v) s.push(encodeURIComponent(v + "[" + key +"]") + '=' + encodeURIComponent(value));
-          else s.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-        };
-=======
-          s.push(encodeURIComponent(v ? v + '[' + key +']' : key)
-              + '=' + encodeURIComponent(value));
-        },
-        isObjArray = $.isArray(obj);
+    var result = [], add = function(key, value){
+      result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
+        + '=' + encodeURIComponent(value));
+      },
+      isObjArray = $.isArray(obj);
 
->>>>>>> 79dd84c1f08e453d298c066138a9f9c07ae646ca
-    for(var i in obj){
-      if(isObject(obj[i]))
-        s.push($.param(obj[i], (v ? v + '[' + i + ']' : i)));
+    for(key in obj)
+      if(isObject(obj[key]))
+        result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
       else
-        add(isObjArray ? '' : i, obj[i]);
-    };
-    return s.join('&').replace('%20', '+');
+        add(isObjArray ? '' : key, obj[key]);
+
+    return result.join('&').replace('%20', '+');
   };
 })(Zepto);

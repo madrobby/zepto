@@ -42,14 +42,7 @@
     });
   }
 
-  $.event = {
-    add: function(element, events, fn){
-      add(element, events, fn);
-    },
-    remove: function(element, events, fn){
-      remove(element, events, fn);
-    }
-  };
+  $.event = { add: add, remove: remove }
 
   $.fn.bind = function(event, callback){
     return this.each(function(){

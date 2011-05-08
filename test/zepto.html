@@ -35,6 +35,11 @@
 
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
+  <div class="replacewith">
+    <div class="inner first">Hello</div>
+    <div class="inner second">And</div>
+    <div class="inner third">Goodbye</div>
+  </div>
 
   <div id="data_attr" data-blah="whatever"></div>
 
@@ -48,6 +53,7 @@
   <div id="texttest2" class="texttest">And <em>some more</em></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
+  <div id="appendtoprependto_container"><div id="appendtoprependto"></div></div>
 
   <div id="empty_test">
     <div id="empty_1"></div>
@@ -106,6 +112,14 @@
     <li class="child four"><span class="e"></span></li>
   </ul>
 
+  <div id="addTest">
+    <span class="add_span"></span>
+    <span class="add_span"></span>
+    <span class="add_span"></span>
+    <span class="add_span_exclude"></span>
+    <div id="addTestDiv"></div>
+  </div>
+
   <style>
     .hidden { display: none; }
     #show_hide_span1,
@@ -138,6 +152,8 @@
   <input type="text" id="BooleanInput" required />
 
   <form id="some_form"></form>
+
+  <div class="replace_test_div">test</div>
 
   <script>
 
@@ -507,6 +523,19 @@
         t.assertEqual("1",$("span.c",el).text());
       },
 
+      testReplaceWith: function(t) {
+        $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
+
+        t.assertUndefined($('div.second').get(0));
+        t.assert(document.getElementById("replace_test").nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
+
+        $('#replace_test').replaceWith($('#replace_test_div'));
+        t.assertUndefined($('#replace_test').get(0));
+        t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
+        t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
+      },
+
       testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertLength(4, found);
@@ -524,6 +553,32 @@
         t.assertLength(2, found.filter('.filtertest'));
         t.assertLength(0, found.filter('.doesntexist'));
         t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'));
+      },
+
+      testAdd: function(t){
+        var lis=$("li"),spans=$("span"),
+        together=lis.add("span"),
+        duplicates=spans.add("span"),
+        disconnected=$("<div></div>").add("<span></span>"),
+        mainContext=$("#addTest");
+
+        //uniquness of collection
+        t.assertLength(spans.length, duplicates);
+
+        //selector only
+        t.assertLength((lis.length + spans.length), together);
+
+        //selector with context
+        t.assertEqualCollection($("span",mainContext), $(".add_span").add(".add_span_exclude",mainContext));
+
+        //DOM Element + Chaining test
+        t.assertEqualCollection(mainContext.children(), $(".add_span").add(".add_span_exclude").add(document.getElementById("addTestDiv")));
+
+        //Disconnected
+        t.assert(!disconnected.get(0).parentNode);
+
+        $("#addTestDiv").append(disconnected);
+        t.assertEqual('<div></div><span></span>', document.getElementById("addTestDiv").innerHTML);
       },
 
       testIs: function(t){
@@ -1019,6 +1074,45 @@
         );
       },
 
+      testAppendToPrependTo: function(t){
+        //testing with Zepto object
+        function div(contents){
+          var el = document.createElement('div');
+          el.innerHTML = contents;
+          return el;
+        }
+
+        var ap = $(div('appendto'));
+        var pr = $(div('prependto'));
+
+        var ap2 = ap.appendTo($('#appendtoprependto'));
+        var pr2 = pr.prependTo($('#appendtoprependto'));
+
+        // Test the object returned is correct for method chaining
+        t.assertSame(ap, ap2);
+        t.assertSame(pr, pr2);
+
+        t.assertEqual(
+          '<div id="appendtoprependto"><div>prependto</div>'+
+          '<div>appendto</div></div>',
+          $('#appendtoprependto_container').html()
+        );
+
+        //testing with a zepto object of more than one element as parameter
+        $(document.body).append('<div class="appendto">appendto1</div><div class="appendto">appendto2</div>');
+        $(document.body).append('<div class="prependto">prependto1</div><div class="prependto">prependto2</div>');
+
+        $('#appendtoprependto_container').html('<div id="appendtoprependto"></div>');
+
+        $('.appendto').appendTo($('#appendtoprependto'));
+        $('.prependto').prependTo($('#appendtoprependto'));
+
+        t.assertEqual(
+          '<div id="appendtoprependto"><div class="prependto">prependto1</div><div class="prependto">prependto2</div><div class="appendto">appendto1</div><div class="appendto">appendto2</div></div>',
+          $('#appendtoprependto_container').html()
+        );
+      },
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0);
 
@@ -1037,6 +1131,26 @@
         t.assertEqual(' red green blue ', el.className); // sanity check that WebKit doesn't change original input
         $('#some_element').removeClass('green');
         t.assertEqual('red blue', el.className);
+
+        //addClass with function argument
+        $('#some_element').addClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#some_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('red blue', this.className);
+          return "green";
+        });
+        t.assertEqual('red blue green', el.className);
+
+        //removeClass with function argument
+        $('#some_element').removeClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#some_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('red blue green', this.className);
+          return "blue";
+        });
+        t.assertEqual('red green', el.className);
       },
 
       testHasClass: function(t){
@@ -1076,6 +1190,26 @@
 
         $('#toggle_element').toggleClass('orange', true);
         t.assert($('#toggle_element').hasClass('orange'));
+
+        //function argument
+        $('#toggle_element').toggleClass(function(idx,classes){
+          //test the value of "this"
+          t.assertEqualCollection($('#toggle_element'), $(this));
+          //test original classes are being passed
+          t.assertEqual('orange', this.className);
+          return "brown";
+        });
+        t.assert($('#toggle_element').hasClass('brown'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },false);
+        t.assert(!$('#toggle_element').hasClass('yellow'));
+
+        $('#toggle_element').toggleClass(function(idx,classes){
+          return "yellow";
+        },true);
+        t.assert($('#toggle_element').hasClass('yellow'));
       },
 
       testIndex: function(t){

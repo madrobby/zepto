@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/packagetask'
 
-ZEPTO_VERSION  = "0.5"
+ZEPTO_VERSION  = "0.6"
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
 ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
@@ -14,9 +14,10 @@ ZEPTO_FILES    = [
   File.join(ZEPTO_SRC_DIR,'event.js'),
   File.join(ZEPTO_SRC_DIR,'detect.js'),
   File.join(ZEPTO_SRC_DIR,'fx.js'),
-  File.join(ZEPTO_SRC_DIR,'touch.js'),
-  File.join(ZEPTO_SRC_DIR,'ajax.js'),
-  File.join(ZEPTO_SRC_DIR,'assets.js')
+  File.join(ZEPTO_SRC_DIR,'ajax.js')
+  # File.join(ZEPTO_SRC_DIR,'assets.js'),
+  # File.join(ZEPTO_SRC_DIR,'touch.js'),
+  # File.join(ZEPTO_SRC_DIR,'gesture.js'),
 ]
 
 task :default => [:clean, :concat, :dist]

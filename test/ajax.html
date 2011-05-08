@@ -19,6 +19,11 @@
   <script>
     Evidence.TestCase.extend('ZeptoAjaxTest', {
 
+      testAjaxBase: function(t){
+        var xhr = $.ajax({ url: 'fixtures/ajax_load_simple.html' });
+        this.assertEqual('function', typeof xhr['getResponseHeader']);
+      },
+
       testAjaxGet: function(t){
         t.pause();
         $.get('fixtures/ajax_load_simple.html', function(response){
@@ -59,7 +64,7 @@
 
       testAjaxGetJSON: function(t){
         t.pause();
-        $.getJSON('zepto.json', function(data){
+        $.getJSON('fixtures/zepto.json', function(data){
           t.resume(function(){
             this.assertEqual('awesomeness', data.zepto);
           });
