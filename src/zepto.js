@@ -101,6 +101,9 @@ var Zepto = (function() {
         return $$(element.parentNode, selector).indexOf(element) >= 0;
       }));
     },
+    add:function(selector,context){
+      return $(uniq(this.concat($(selector,context))));
+    },
     is: function(selector){
       return this.length > 0 && $(this[0]).filter(selector).length > 0;
     },
