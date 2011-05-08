@@ -1041,22 +1041,22 @@
       },
 
       testAppendToPrependTo: function(t){
-		//testing with Zepto object
+        //testing with Zepto object
         function div(contents){
           var el = document.createElement('div');
           el.innerHTML = contents;
           return el;
         }
-		
-		var ap = $(div('appendto'));
-		var pr = $(div('prependto'));
 
-		var ap2 = ap.appendTo($('#appendtoprependto'));
-		var pr2 = pr.prependTo($('#appendtoprependto'));
+        var ap = $(div('appendto'));
+        var pr = $(div('prependto'));
 
-		// Test the object returned is correct for method chaining
-		t.assertSame(ap, ap2);
-		t.assertSame(pr, pr2);
+        var ap2 = ap.appendTo($('#appendtoprependto'));
+        var pr2 = pr.prependTo($('#appendtoprependto'));
+
+        // Test the object returned is correct for method chaining
+        t.assertSame(ap, ap2);
+        t.assertSame(pr, pr2);
 
         t.assertEqual(
           '<div id="appendtoprependto"><div>prependto</div>'+
