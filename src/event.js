@@ -112,4 +112,12 @@
       this.dispatchEvent(event);
     });
   };
+
+  $.Event = function(src, props) {
+    var event = document.createEvent('Events');
+    if (props) $.extend(event, props);
+    event.initEvent(src, true, true);
+    return event;
+  };
+
 })(Zepto);

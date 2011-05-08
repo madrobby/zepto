@@ -658,6 +658,36 @@
         t.assertEqual(10, counter);
       },
 
+      testCreateEventObject: function(t){
+        var e = $.Event('custom');
+        t.assertEqual('custom', e.type);
+
+        var e2 = new $.Event('custom');
+        t.assertEqual('custom', e2.type);
+
+        var e3 = $.Event('custom', {customKey: 'customValue'});
+        t.assertEqual('custom', e3.type);
+        t.assertEqual('customValue', e3.customKey);
+      },
+
+      testTriggerEventObject: function(t){
+        var counter = 0, 
+            customEventKey = 0;
+
+        var handler = function(ev,customData) { 
+          counter = customData.counter;
+          customEventKey = ev.customKey;  
+        };
+
+        var customEventObject = $.Event('custom', { customKey: 20 });
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger(customEventObject, { counter: 10 });
+
+        t.assertEqual(10, counter);
+        t.assertEqual(20, customEventKey);
+      },
+
       testEmpty: function(t) {
         $('#empty_test').empty();
 
