@@ -86,8 +86,16 @@ var Zepto = (function() {
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
     ready: function(callback){
-      if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
-      document.addEventListener('DOMContentLoaded', callback, false); return this;
+        if (document.readyState === "complete") {
+            callback();
+        } else {
+            document.onreadystatechange = function () {
+                if (document.readyState === "complete") {
+                    callback();
+                    document.onreadystatechange = null;
+                }
+            };
+        }
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
     size: function(){ return this.length },
