@@ -230,9 +230,9 @@ For this to work, you need Ruby and Rake installed.
 
 You'll see an output like:
 
-  Original version: 5.7k
-  Minified: 3.7k
-  Minified and gzipped: 1.6k, compression factor 3.6
+  Original version: 22.034k
+  Minified: 11.826k
+  Minified and gzipped: 4.485k, compression factor 4.912
 
 The minified file is saved in dist/zepto.min.js.
 
