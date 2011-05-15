@@ -287,6 +287,12 @@
         t.assertEqual('', z.selector);
       },
 
+      testDollarWithDocumentFragment: function(t){
+        var documentFragment = $(document.createDocumentFragment());
+        t.assertLength(1, documentFragment);
+        t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType);
+      },
+
       testDollarWithFragment: function(t){
         var fragment = $("<div>");
         t.assertLength(1, fragment);
