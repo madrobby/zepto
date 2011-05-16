@@ -179,6 +179,19 @@ var Zepto = (function() {
         prev.after(newContent);
       });
     },
+	wrap: function(newContent) {
+		return this.each(function() {
+			$(this).wrapAll(newContent);
+		});
+	},
+	wrapAll: function(newContent) {
+		if (this[0]) {
+			var wrap = $(newContent)[0].cloneNode();
+			$(this[0]).before(wrap);
+			$(wrap).append(this);
+		}
+		return this;
+	},
     hide: function(){
       return this.css("display", "none")
     },
