@@ -155,6 +155,8 @@
 
   <div class="replace_test_div">test</div>
 
+  <div id="wrap_test_div"><span>hi</span><span>hi</span></div>
+
   <script>
 
     function click(el){
@@ -536,7 +538,19 @@
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
       },
 
-      testFind: function(t){
+      testWrap: function(t) {
+        t.assert(document.getElementById("wrap_test_div").nodeType);
+
+        $('#wrap_test_div span').wrapAll('<div id="wrap_test" />');
+        t.assert(document.getElementById("wrap_test").nodeType);
+        t.assertEqual($("#wrap_test").children().length, 2);
+
+       	$('#wrap_test_div span').wrap('<div class="wrap_test" />');
+        t.assert(document.getElementsByClassName("wrap_test")[0].nodeType);
+        t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
+      },
+ 
+     testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertLength(4, found);
         t.assertEqual('1', found.get(0).innerHTML);
