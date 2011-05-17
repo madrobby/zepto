@@ -10,6 +10,7 @@ var Zepto = (function() {
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
   function isA(value) { return value instanceof Array }
+  function isS(value) { return /boolean|number|string/.test(typeof value) }
 
   function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array) { return [].concat.apply([], array) }
@@ -62,7 +63,10 @@ var Zepto = (function() {
       return Z(dom, selector);
     }
   }
-
+  
+  $.uuid    = ( new Date() ).getTime()
+  $.expando = 'Zepto' + $.uuid
+  
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
@@ -209,9 +213,43 @@ var Zepto = (function() {
     removeAttr: function(name) {
       return this.each(function() { this.removeAttribute(name); });
     },
-    data: function(name, value){
-      return this.attr('data-' + name, value);
+    dataAttr: function( name, value )
+    {
+        return this.attr( 'data-' + name, value );
     },
+    data: (
+        function()
+        {
+            var data = {};
+            
+            function getData( name )
+            {
+                var id = this[ 0 ][ $.expando ];
+                
+                return ( id && data[ id ] && data[ id ][ name ]
+                    ? data[ id ][ name ]
+                    : this.dataAttr( name )
+                )
+            }
+            
+            function setData( name, value )
+            {
+                if( isS( value ) ) return this.dataAttr( name, value )
+                
+                var id = this[ 0 ][ $.expando ] = ++$.uuid
+                
+                data[ id ]         = data[ id ] || {}
+                data[ id ][ name ] = value
+                
+                return this;
+            }
+            
+            return function( name, value )
+            {
+                return value === undefined ? getData.call( this, name ) : setData.call( this, name, value )
+            }
+        }
+    )(),
     val: function(value){
       return (value === undefined) ?
         (this.length > 0 ? this[0].value : null) :
