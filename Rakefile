@@ -17,6 +17,7 @@ ZEPTO_FILES    = [
   File.join(ZEPTO_SRC_DIR,'ajax.js'),
   File.join(ZEPTO_SRC_DIR,'form.js'),
   # File.join(ZEPTO_SRC_DIR,'assets.js'),
+  # File.join(ZEPTO_SRC_DIR,'data.js'),
   File.join(ZEPTO_SRC_DIR,'touch.js')
   # File.join(ZEPTO_SRC_DIR,'gesture.js')
 ]

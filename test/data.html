@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Zepto extended data unit tests</title>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/data.js"></script>
+  <script src="../vendor/evidence.js"></script>
+</head>
+<body>
+  <h1>Zepto extended data unit tests</h1>
+  <p>
+    See the browser console for results.
+  </p>
+
+  <div id="data_attr"></div>
+
+  <script>
+    Evidence.TestCase.extend('ZeptoExtendedDataTest', {
+      testExtendedData: function(t){
+        var els = $('#data_attr'),
+          els2 = $('#data_attr'),
+          obj  = { a: 'A', b: 'B' };
+
+        els.data('hello', 'world');
+        t.assertEqual('world', els.dataAttr('hello'));
+
+        els.data('obj', obj);
+        t.assertIdentical(obj, els.data('obj'));
+        t.assertIdentical(obj, els2.data('obj'));
+
+        els2.data('els', els);
+        t.assertIdentical(els, els.data('els'));
+      }
+    });
+  </script>
+</body>
+</html>
