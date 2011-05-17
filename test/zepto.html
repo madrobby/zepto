@@ -959,13 +959,30 @@
         t.assertFalse(els.attr('disabled'));
       },
 
-      testData: function(t) {
+      testDataAttr: function(t) {
         var els = $('#data_attr');
-        els.data('fun', 'hello');
+        els.dataAttr('fun', 'hello');
         t.assertEqual(els.attr('data-fun'), 'hello');
 
-        t.assertEqual(els.data('fun'), 'hello');
-        t.assertEqual(els.data('blah'), 'whatever');
+        t.assertEqual(els.dataAttr('fun'), 'hello');
+        t.assertEqual(els.dataAttr('blah'), 'whatever');
+      },
+      
+      testData: function(t) {
+          var els  = $('#data_attr'),
+              els2 = $('#data_attr'),
+              obj  = { a: 'A', b: 'B' };
+          
+          els.data('hello', 'world');
+          t.assertEqual(els.dataAttr('hello'), 'world');
+          
+          els.data('obj', obj);
+          t.assertEqual(els.data('obj'),obj);
+          
+          t.assertEqual(els.data('obj'),els2.data('obj'));
+          
+          els2.data('els',els);
+          t.assertEqual(els.data('els'),els);
       },
 
       testVal: function(t) {
