@@ -62,7 +62,7 @@ var Zepto = (function() {
       return Z(dom, selector);
     }
   }
-
+  
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
@@ -209,8 +209,8 @@ var Zepto = (function() {
     removeAttr: function(name) {
       return this.each(function() { this.removeAttribute(name); });
     },
-    data: function(name, value){
-      return this.attr('data-' + name, value);
+    data: function(name, value) {
+        return this.attr('data-' + name, value);
     },
     val: function(value){
       return (value === undefined) ?
