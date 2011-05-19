@@ -1,4 +1,7 @@
 
+// The following code structure and naming conventions are heavily inspired
+// by jQuery's $.fn.data() method which you can find at http://jquery.com.
+
 ( function( $ )
 {
     var data = {},
