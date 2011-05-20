@@ -526,13 +526,12 @@
       },
 
       testReplaceWith: function(t) {
-        $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
-
-        t.assertUndefined($('div.second').get(0));
+        $('div.first').replaceWith('<h2 id="replace_test">New heading</h2>');
+        t.assertUndefined($('div.first').get(0));
         t.assert(document.getElementById("replace_test").nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
 
-        $('#replace_test').replaceWith($('#replace_test_div'));
+        $('#replace_test').replaceWith($('.replace_test_div'));
         t.assertUndefined($('#replace_test').get(0));
         t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
@@ -549,7 +548,7 @@
         t.assert(document.getElementsByClassName("wrap_test")[0].nodeType);
         t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
       },
- 
+
      testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertLength(4, found);

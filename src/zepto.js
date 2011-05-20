@@ -173,10 +173,7 @@ var Zepto = (function() {
     },
     replaceWith: function(newContent) {
       return this.each(function() {
-        var element = $(this),
-            prev = element.prev();
-        element.remove();
-        prev.after(newContent);
+		this.parentNode.replaceChild($(newContent)[0], this);
       });
     },
 	wrap: function(newContent) {
