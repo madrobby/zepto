@@ -174,7 +174,9 @@ var Zepto = (function() {
     },
     replaceWith: function(newContent) {
       return this.each(function() {
-		    this.parentNode.replaceChild($(newContent)[0], this);
+        var par=this.parentNode,next=this.nextSibling;
+        $(this).remove();
+        next ? $(next).before(newContent) : $(par).append(newContent);
       });
     },
 	  wrap: function(newContent) {

@@ -535,6 +535,12 @@
         t.assertUndefined($('#replace_test').get(0));
         t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
+
+        //Multiple elements
+        $('.replacewith .replace_test_div').replaceWith('<div class="inner first">hi</div><div class="inner fourth">hello</div>');
+        t.assertLength(4,$('.replacewith div'));
+        t.assertEqual("inner first", $('.replacewith div')[0].className);
+        t.assertEqual("inner fourth", $('.replacewith div')[1].className);
       },
 
       testWrap: function(t) {
