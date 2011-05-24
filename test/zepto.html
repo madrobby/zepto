@@ -157,6 +157,11 @@
 
   <div id="wrap_test_div"><span>hi</span><span>hi</span></div>
 
+  <div id="unwrap_test">
+    <div class="unwrap_one"><b><span></span></b></div>
+    <div class="unwrap_two"><b><span>1</span><span>2</span></b></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -555,7 +560,23 @@
         t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
       },
 
-     testFind: function(t){
+      testUnwrap: function(t){
+        var context=$("#unwrap_test");
+
+        //Element With no siblings
+        $(".unwrap_one span",context).unwrap();
+        t.assertLength(1,$("b",context));
+
+        //Element with siblings
+        $(".unwrap_two span",context).unwrap();
+        t.assertLength(0,$("b",context));
+        //make sure siblings are unaffected
+        t.assertLength(3,$("span",context));
+        //make sure parents are what they should be
+        t.assertEqual($("span",context).parent().get(0), document.getElementsByClassName("unwrap_one")[0]);
+      },
+
+      testFind: function(t){
         var found = $('p#find1').find('span.findme');
         t.assertLength(4, found);
         t.assertEqual('1', found.get(0).innerHTML);

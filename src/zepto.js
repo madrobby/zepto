@@ -191,6 +191,12 @@ var Zepto = (function() {
 		  }
 		  return this;
 	  },
+	  unwrap: function(){
+	    this.parent().each(function(){
+	      $(this).replaceWith($(this).children());
+	    });
+	    return this;
+	  },
     hide: function(){
       return this.css("display", "none")
     },
