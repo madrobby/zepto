@@ -1244,7 +1244,7 @@
         t.assert(foo);
       },
 
-      testFormSubmit: function (t) {
+      testEventNormalization: function (t) {
         // Test form submit action
         var formSubmitted = false;
         $('#some_form').get(0).submit = function (e) {
@@ -1253,6 +1253,24 @@
         };
         $('#some_form').submit();
         t.assert(formSubmitted);
+
+        // Test blur action
+        var isBlurred = false;
+        $("#BooleanInput").get(0).blur = function(e){
+          isBlurred = true;
+          e.preventDefault();
+        };
+        $("#BooleanInput").blur();
+        t.assert(isBlurred);
+
+        // Test focus action
+        var isFocused = false;
+        $("#BooleanInput").get(0).focus = function(e){
+          isFocused = true;
+          e.preventDefault();
+        };
+        $("#BooleanInput").focus();
+        t.assert(isFocused);
       }
     });
   </script>

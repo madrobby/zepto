@@ -280,17 +280,19 @@ var Zepto = (function() {
        ((when !== undefined && !when) || $(this).hasClass(newName)) ?
          $(this).removeClass(newName) : $(this).addClass(newName)
       });
-    },
-    submit: function () {
-      return this.each(function () {
+    }
+  };
+
+  [ 'submit', 'blur', 'focus' ].forEach(function(property){
+    $.fn[property] = function(){
+      return this.each(function(){
         try {
-          // Submit first form element
-          this.submit();
+          this[property]();
           return;
         } catch(e) {};
       });
     }
-  };
+  });
 
   ['width', 'height'].forEach(function(property){
     $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
