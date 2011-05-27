@@ -697,6 +697,19 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
 
+      testBindContext: function(t){
+        var context, handler = function(){
+          context = $(this);
+        };
+        $('#empty_test').bind("click",handler);
+        $('#empty_test').bind("mousedown",handler);
+        click($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
+        context = null;
+        mousedown($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
+      },
+
       testBindWithCustomData: function(t) {
         var counter = 0;
         var handler = function(ev,customData) { counter = customData.counter };

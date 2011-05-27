@@ -26,7 +26,7 @@
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     events.split(/\s/).forEach(function(event){
       var callback = delegate || fn;
-      var proxyfn = function(event) { return callback(event, event.data) };
+      var proxyfn = function(event) { return callback.call(element, event, event.data) };
       var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
       set.push(handler);
       element.addEventListener(handler.e, proxyfn, false);
