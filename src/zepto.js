@@ -64,7 +64,7 @@ var Zepto = (function() {
   }
 
   $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
-  $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
+  $.qsa = $$ = function(element, selector, temp){ return slice.call(!/\W/.test(selector)?element.getElementsByTagName(selector):/^#([\w-]+)$/.test(selector)?(temp=document.getElementById(selector.slice(1)),temp&&(!element.contains||element.contains(temp))?[temp]:[]):/^\.([\w-]+)$/.test(selector)?element.getElementsByClassName(selector.slice(1)):element.querySelectorAll(selector)) }
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
