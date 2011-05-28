@@ -174,7 +174,9 @@ var Zepto = (function() {
     },
     replaceWith: function(newContent) {
       return this.each(function() {
-		    this.parentNode.replaceChild($(newContent)[0], this);
+        var par=this.parentNode,next=this.nextSibling;
+        $(this).remove();
+        next ? $(next).before(newContent) : $(par).append(newContent);
       });
     },
 	  wrap: function(newContent) {
@@ -188,6 +190,12 @@ var Zepto = (function() {
 			  newContent.append(this);
 		  }
 		  return this;
+	  },
+	  unwrap: function(){
+	    this.parent().each(function(){
+	      $(this).replaceWith($(this).children());
+	    });
+	    return this;
 	  },
     hide: function(){
       return this.css("display", "none")
