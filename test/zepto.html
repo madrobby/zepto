@@ -162,6 +162,12 @@
     <div class="unwrap_two"><b><span>1</span><span>2</span></b></div>
   </div>
 
+  <div id="slice_test">
+    <div class="slice1"></div>
+    <div class="slice2"></div>
+    <div class="slice3"></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -1293,6 +1299,13 @@
         };
         $('#some_form').submit();
         t.assert(formSubmitted);
+      },
+
+      testSlice: function (t) {
+        var $els = $("#slice_test div");
+        t.assertEqual($els.slice().length, 3);
+        t.assertEqual(typeof $els.slice().ready, 'function');
+        t.assertEqual($els.slice(-1)[0].className, 'slice3');
       }
     });
   </script>

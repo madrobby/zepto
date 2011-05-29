@@ -85,6 +85,9 @@ var Zepto = (function() {
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
+    slice: function(){
+      return $(slice.apply(this, arguments)); 
+    },
     ready: function(callback){
       if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
       document.addEventListener('DOMContentLoaded', callback, false);
