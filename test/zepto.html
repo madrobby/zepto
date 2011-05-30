@@ -1293,6 +1293,31 @@
         };
         $('#some_form').submit();
         t.assert(formSubmitted);
+      },
+
+      testCustomEvents: function (t) {
+        var $body = $(document.body);
+
+        $body.bind('custom', function(evt, a, b) {
+          t.assertEqual(a, 1);
+          t.assertEqual(b, 2);
+          $body.unbind();
+        })
+        $body.trigger('custom', [1, 2]);
+
+        $body.bind('custom', function(evt, a) {
+          t.assertEqual(a, 1);
+          $body.unbind();
+        })
+        $body.trigger('custom', 1);
+
+        var eventData = {z: 1};
+        $body.bind('custom', function(evt, a) {
+          t.assertEqual(a, eventData);
+          $body.unbind();
+        })
+        $body.trigger('custom', eventData);
+
       }
     });
   </script>
