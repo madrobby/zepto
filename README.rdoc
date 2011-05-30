@@ -61,6 +61,7 @@ Context and .find calls are equivalent:
   siblings('selector'): elements that share the same immediate parent (siblings) of each element in collection, optionally filtered by a selector
   next(): next siblings
   prev(): previous siblings
+  filter('selector'): reduce the current set of elements to match the given selector
   is('selector'): returns true/false if first element matches the selector
   not('selector'): remove elements matching 'selector' from the current collection
   not(function(index){return true / false;}): remove elements from current collection if the callback method returns `true`
@@ -75,7 +76,7 @@ Context and .find calls are equivalent:
   text('new text'): set the text contents of the element(s)
   append(), prepend(): like html(), but add html (or a DOM Element or a Zepto object) to element contents
   before(), after(): add html (or a DOM Element or a Zepto object) before/after the element
-  appendTo, prependTo: reverse appending/prepending
+  appendTo(), prependTo(): reverse appending/prepending
   show(): forces elements to be displayed (only works correctly for block elements right now)
   hide(): removes a elements from layout
 
