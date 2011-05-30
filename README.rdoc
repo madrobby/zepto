@@ -111,6 +111,8 @@ Context and .find calls are equivalent:
   trigger(type): triggers an event
 
   submit(): trigger form submit event
+  val(): returns the value of the form element
+  val('value'): sets the value of the form element
 
 == Non-jQuery functions
 
