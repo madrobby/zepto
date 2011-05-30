@@ -127,6 +127,7 @@ Context and .find calls are equivalent:
 = Utility functions:
 
   $(document).ready(function(){ ... }): call function after DOM is ready to use (before load event fires)
+  $.isFunction(function), $.isObject(object), $.isArray(array): returns true if given parameter is a function; an object; or an array, respectively. 
 
 = Event handlers
 
