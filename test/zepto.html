@@ -168,6 +168,12 @@
     <div class="slice3"></div>
   </div>
 
+  <div id="eq_test">
+    <div class="eq0"></div>
+    <div class="eq1"></div>
+    <div class="eq2"></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -354,14 +360,11 @@
       },
 
       testEq: function(t){
-        var zepto = $('h1,p'),
-            zepto2 = zepto.eq(0);
-
-        t.assertLength(5, zepto);
-        t.assertLength(1, zepto2);
-
-        t.refuteIdentical(zepto, zepto2);
-        t.assertUndefined(zepto2.tagName);
+        var $els = $('#eq_test div');
+        t.assertLength(1, $els.eq(0));
+        t.assertLength(1, $els.eq(-1));
+        t.assertEqual($els.eq(-1)[0].className, 'eq2');
+        t.assertUndefined($els.eq(-1).tagName);
 
         t.assertLength(0, $('nonexistent').eq(0));
       },
