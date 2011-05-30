@@ -71,7 +71,8 @@ Context and .find calls are equivalent:
   html(function(index, oldhtml){ return ...; }): set the contents of the element(s) from a method
 
   text('new text'): set the text contents of the element(s)
-  append, prepend, before, after: like html(), but add html (or a DOM Element or a Zepto object) to element contents (or before/after)
+  append, prepend: like html(), but add html (or a DOM Element or a Zepto object) to element contents
+  before, after: add html (or a DOM Element or a Zepto object) before/after the element
   appendTo, prependTo: reverse appending/prepending
   html(): get first element's .innerHTML
   text(): get first element's .innerText
