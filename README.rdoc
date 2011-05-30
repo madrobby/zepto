@@ -55,7 +55,7 @@ Context and .find calls are equivalent:
 
   find('selector'): find all children/grandchildren that match the given selector
   closest('selector'): find the first matching element by going upwards starting from the current element
-  parents('selector'): get all ancestors of elements in collection, optionally filtered by a selector
+  parents(['selector']): get all ancestors of elements in collection, optionally filtered by a selector
   parent(): immediate parent node of each element in collection
   children('selector'): immediate children of each element in collection, optionally filtered by a selector
   siblings('selector'): elements that share the same immediate parent (siblings) of each element in collection, optionally filtered by a selector
@@ -70,12 +70,12 @@ Context and .find calls are equivalent:
   html('new html'): set the contents of the element(s)
   html(function(index, oldhtml){ return ...; }): set the contents of the element(s) from a method
 
-  text('new text'): set the text contents of the element(s)
-  append, prepend: like html(), but add html (or a DOM Element or a Zepto object) to element contents
-  before, after: add html (or a DOM Element or a Zepto object) before/after the element
-  appendTo, prependTo: reverse appending/prepending
   html(): get first element's .innerHTML
   text(): get first element's .innerText
+  text('new text'): set the text contents of the element(s)
+  append(), prepend(): like html(), but add html (or a DOM Element or a Zepto object) to element contents
+  before(), after(): add html (or a DOM Element or a Zepto object) before/after the element
+  appendTo, prependTo: reverse appending/prepending
   show(): forces elements to be displayed (only works correctly for block elements right now)
   hide(): removes a elements from layout
 
