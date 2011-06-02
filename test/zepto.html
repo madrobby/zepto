@@ -953,6 +953,13 @@
         t.assertEqual(1, counter);
       },
 
+      testOneCallbackEvent: function(t){
+        var target, someElement = $('#some_element').get(0);
+        $(document.body).one('click', function(evt){ target = evt.target; });
+        click(someElement);
+        t.assertEqual(someElement, target);
+      },
+
       testAttr: function(t){
         var els = $('#attr_1, #attr_2');
 
