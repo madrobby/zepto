@@ -954,10 +954,11 @@
       },
 
       testOneCallbackEvent: function(t){
-        var target, someElement = $('#some_element').get(0);
-        $(document.body).one('click', function(evt){ target = evt.target; });
+        var target, context, someElement = $('#some_element').get(0);
+        $(document.body).one('click', function(evt){ target = evt.target; context = $(this); });
         click(someElement);
         t.assertEqual(someElement, target);
+        t.assertEqualCollection($(document.body), context);
       },
 
       testAttr: function(t){

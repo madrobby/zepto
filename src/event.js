@@ -58,7 +58,7 @@
     return this.each(function(){
       var self = this;
       add(this, event, function wrapper(evt){
-        callback(evt);
+        callback.call(self, evt);
         remove(self, event, arguments.callee);
       });
     });
