@@ -57,8 +57,8 @@
   $.fn.one = function(event, callback){
     return this.each(function(){
       var self = this;
-      add(this, event, function wrapper(){
-        callback();
+      add(this, event, function wrapper(evt){
+        callback(evt);
         remove(self, event, arguments.callee);
       });
     });
