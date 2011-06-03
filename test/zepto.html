@@ -155,6 +155,13 @@
 
   <div class="replace_test_div">test</div>
 
+  <div id="wrap_test_div"><span>hi</span><span>hi</span></div>
+
+  <div id="unwrap_test">
+    <div class="unwrap_one"><b><span></span></b></div>
+    <div class="unwrap_two"><b><span>1</span><span>2</span></b></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -524,16 +531,49 @@
       },
 
       testReplaceWith: function(t) {
-        $('div.second').replaceWith('<h2 id="replace_test">New heading</h2>');
-
-        t.assertUndefined($('div.second').get(0));
+        $('div.first').replaceWith('<h2 id="replace_test">New heading</h2>');
+        t.assertUndefined($('div.first').get(0));
         t.assert(document.getElementById("replace_test").nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementById("replace_test"));
 
-        $('#replace_test').replaceWith($('#replace_test_div'));
+        $('#replace_test').replaceWith($('.replace_test_div'));
         t.assertUndefined($('#replace_test').get(0));
         t.assert(document.getElementsByClassName("replace_test_div")[0].nodeType);
         t.assertEqual($('.replacewith h2#replace_test').get(0), document.getElementsByClassName("replace_test")[0]);
+
+        //Multiple elements
+        $('.replacewith .replace_test_div').replaceWith('<div class="inner first">hi</div><div class="inner fourth">hello</div>');
+        t.assertLength(4,$('.replacewith div'));
+        t.assertEqual("inner first", $('.replacewith div')[0].className);
+        t.assertEqual("inner fourth", $('.replacewith div')[1].className);
+      },
+
+      testWrap: function(t) {
+        t.assert(document.getElementById("wrap_test_div").nodeType);
+
+        $('#wrap_test_div span').wrapAll('<div id="wrap_test" />');
+        t.assert(document.getElementById("wrap_test").nodeType);
+        t.assertEqual($("#wrap_test").children().length, 2);
+
+       	$('#wrap_test_div span').wrap('<div class="wrap_test" />');
+        t.assert(document.getElementsByClassName("wrap_test")[0].nodeType);
+        t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
+      },
+
+      testUnwrap: function(t){
+        var context=$("#unwrap_test");
+
+        //Element With no siblings
+        $(".unwrap_one span",context).unwrap();
+        t.assertLength(1,$("b",context));
+
+        //Element with siblings
+        $(".unwrap_two span",context).unwrap();
+        t.assertLength(0,$("b",context));
+        //make sure siblings are unaffected
+        t.assertLength(3,$("span",context));
+        //make sure parents are what they should be
+        t.assertEqual($("span",context).parent().get(0), document.getElementsByClassName("unwrap_one")[0]);
       },
 
       testFind: function(t){
@@ -682,6 +722,19 @@
         click($('#some_element').get(0));
         mousedown($('#some_element').get(0));
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
+      },
+
+      testBindContext: function(t){
+        var context, handler = function(){
+          context = $(this);
+        };
+        $('#empty_test').bind("click",handler);
+        $('#empty_test').bind("mousedown",handler);
+        click($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
+        context = null;
+        mousedown($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
       },
 
       testBindWithCustomData: function(t) {
@@ -898,6 +951,13 @@
         t.assertEqual(1, counter);
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
+      },
+
+      testOneCallbackEvent: function(t){
+        var target, someElement = $('#some_element').get(0);
+        $(document.body).one('click', function(evt){ target = evt.target; });
+        click(someElement);
+        t.assertEqual(someElement, target);
       },
 
       testAttr: function(t){

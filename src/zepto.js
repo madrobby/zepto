@@ -87,7 +87,8 @@ var Zepto = (function() {
     concat: emptyArray.concat,
     ready: function(callback){
       if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
-      document.addEventListener('DOMContentLoaded', callback, false); return this;
+      document.addEventListener('DOMContentLoaded', callback, false);
+      return this;
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
     size: function(){ return this.length },
@@ -173,12 +174,29 @@ var Zepto = (function() {
     },
     replaceWith: function(newContent) {
       return this.each(function() {
-        var element = $(this),
-            prev = element.prev();
-        element.remove();
-        prev.after(newContent);
+        var par=this.parentNode,next=this.nextSibling;
+        $(this).remove();
+        next ? $(next).before(newContent) : $(par).append(newContent);
       });
     },
+	  wrap: function(newContent) {
+		  return this.each(function() {
+			  $(this).wrapAll($(newContent)[0].cloneNode());
+		  });
+	  },
+	  wrapAll: function(newContent) {
+		  if (this[0]) {
+			  $(this[0]).before(newContent = $(newContent));
+			  newContent.append(this);
+		  }
+		  return this;
+	  },
+	  unwrap: function(){
+	    this.parent().each(function(){
+	      $(this).replaceWith($(this).children());
+	    });
+	    return this;
+	  },
     hide: function(){
       return this.css("display", "none")
     },

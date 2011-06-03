@@ -18,6 +18,7 @@
     var UA = {
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
+      WebOS_1_2_9_Pixi: "Mozilla/5.0 (webOS/Palm webOS 1.2.9; U; en-US) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/1.0 Safari/525.27.1 Pixi/1.0",
 
       iOS_3_0_iPhone: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/1A542a Safari/419.3",
       iOS_4_0_iPhone: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7",
@@ -25,6 +26,8 @@
       iOS_3_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B367 Safari/531.21.10",
       iOS_4_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C134 Safari/6533.18.5",
       iOS_4_3_iPhone_Simulator: "Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5",
+      
+      iOS_3_2_iPad_2: "Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10",
 
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
@@ -43,6 +46,7 @@
       testWebOS: function(t){
         detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pre);
         detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pixi);
+        detect(t, "webos", "1.2.9", UA.WebOS_1_2_9_Pixi);
       },
 
       testAndroid: function(t){
@@ -60,6 +64,8 @@
         detect(t, "ios", "4.3", UA.iOS_4_3_iPhone_Simulator);
 
         t.assert($.__detect(UA.iOS_3_2_iPad).ipad);
+        t.assert($.__detect(UA.iOS_3_2_iPad_2).ipad);
+        t.assert(!$.__detect(UA.iOS_3_2_iPad_2).iphone);
         t.assert($.__detect(UA.iOS_4_2_iPad).ipad);
         t.assert($.__detect(UA.iOS_4_0_iPhone).iphone);
         t.assert($.__detect(UA.iOS_4_3_iPhone_Simulator).iphone);
