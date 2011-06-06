@@ -298,22 +298,26 @@
         var fragment = $("<div>");
         t.assertLength(1, fragment);
         t.assertEqual("<div></div>", fragment.get(0).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello world</div>");
         t.assertLength(1, fragment);
         t.assertEqual("<div>hello world</div>", fragment.get(0).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello</div> <span>world</span>");
         t.assertLength(3, fragment);
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>\nhello</div> \n<span>world</span>");
         t.assertLength(3, fragment);
         t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual('', fragment.selector);
       },
 
       testDollarWithTextNode: function(t){
