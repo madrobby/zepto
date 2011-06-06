@@ -1171,6 +1171,16 @@
           '<div id="appendtoprependto"><div class="prependto">prependto1</div><div class="prependto">prependto2</div><div class="appendto">appendto1</div><div class="appendto">appendto2</div></div>',
           $('#appendtoprependto_container').html()
         );
+
+        //testing with a selector as parameter
+        $('#appendtoprependto_container').html('<div id="appendtoprependto"></div>');
+        ap.appendTo('#appendtoprependto');
+        pr.prependTo('#appendtoprependto');
+        t.assertEqual(
+          '<div id="appendtoprependto"><div>prependto</div>'+
+          '<div>appendto</div></div>',
+          $('#appendtoprependto_container').html()
+        );
       },
 
       testAddRemoveClass: function(t){
