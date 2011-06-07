@@ -241,6 +241,10 @@
         var obj = {};
         t.assertIdentical(obj, $.extend(obj, {a: 1}));
         t.assertEqual(1, obj.a);
+
+        obj = {};
+        t.assertIdentical(obj, $.extend(obj, {a: 1}, {b: 2}))
+        t.assertEqual(2, obj.b);
       },
 
       testDollar: function(t){

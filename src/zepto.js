@@ -64,7 +64,12 @@ var Zepto = (function() {
     }
   }
 
-  $.extend = function(target, source){ for (key in source) target[key] = source[key]; return target }
+  $.extend = function(target){ 
+    slice.call(arguments, 1).forEach(function(source) {
+      for (key in source) target[key] = source[key];
+    })
+    return target;
+  }
   $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
 
   function filtered(nodes, selector){
