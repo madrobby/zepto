@@ -86,6 +86,9 @@ var Zepto = (function() {
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
+    slice: function(){
+      return $(slice.apply(this, arguments)); 
+    },
     ready: function(callback){
       if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
       document.addEventListener('DOMContentLoaded', callback, false);
@@ -126,7 +129,9 @@ var Zepto = (function() {
       }
       return $(nodes);
     },
-    eq: function(idx){ return $(this[idx]) },
+    eq: function(idx){
+      return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1);
+    },
     first: function(){ return $(this[0]) },
     last: function(){ return $(this[this.length - 1]) },
     find: function(selector){
