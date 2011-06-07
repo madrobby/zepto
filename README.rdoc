@@ -235,6 +235,12 @@ Zepto.js can be used as-is. However, for best efficiency, run the included build
 
 For this to work, you need Ruby and Rake installed.
 
+First of all, check you have the uglifier gem installed typing
+
+  $ gem install uglifier
+  
+Then build the minified Zepto.js library with  
+
   $ rake
 
 You'll see an output like:
