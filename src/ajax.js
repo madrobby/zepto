@@ -65,6 +65,7 @@
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
+        if(timer) clearTimeout(timer);
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json') {
