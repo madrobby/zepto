@@ -162,6 +162,18 @@
     <div class="unwrap_two"><b><span>1</span><span>2</span></b></div>
   </div>
 
+  <div id="slice_test">
+    <div class="slice1"></div>
+    <div class="slice2"></div>
+    <div class="slice3"></div>
+  </div>
+
+  <div id="eq_test">
+    <div class="eq0"></div>
+    <div class="eq1"></div>
+    <div class="eq2"></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -298,22 +310,26 @@
         var fragment = $("<div>");
         t.assertLength(1, fragment);
         t.assertEqual("<div></div>", fragment.get(0).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello world</div>");
         t.assertLength(1, fragment);
         t.assertEqual("<div>hello world</div>", fragment.get(0).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello</div> <span>world</span>");
         t.assertLength(3, fragment);
         t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual('', fragment.selector);
 
         fragment = $("<div>\nhello</div> \n<span>world</span>");
         t.assertLength(3, fragment);
         t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual('', fragment.selector);
       },
 
       testDollarWithTextNode: function(t){
@@ -348,14 +364,11 @@
       },
 
       testEq: function(t){
-        var zepto = $('h1,p'),
-            zepto2 = zepto.eq(0);
-
-        t.assertLength(5, zepto);
-        t.assertLength(1, zepto2);
-
-        t.refuteIdentical(zepto, zepto2);
-        t.assertUndefined(zepto2.tagName);
+        var $els = $('#eq_test div');
+        t.assertLength(1, $els.eq(0));
+        t.assertLength(1, $els.eq(-1));
+        t.assertEqual($els.eq(-1)[0].className, 'eq2');
+        t.assertUndefined($els.eq(-1).tagName);
 
         t.assertLength(0, $('nonexistent').eq(0));
       },
@@ -954,10 +967,11 @@
       },
 
       testOneCallbackEvent: function(t){
-        var target, someElement = $('#some_element').get(0);
-        $(document.body).one('click', function(evt){ target = evt.target; });
+        var target, context, someElement = $('#some_element').get(0);
+        $(document.body).one('click', function(evt){ target = evt.target; context = $(this); });
         click(someElement);
         t.assertEqual(someElement, target);
+        t.assertEqualCollection($(document.body), context);
       },
 
       testAttr: function(t){
@@ -1300,6 +1314,13 @@
         };
         $('#some_form').submit();
         t.assert(formSubmitted);
+      },
+
+      testSlice: function (t) {
+        var $els = $("#slice_test div");
+        t.assertEqual($els.slice().length, 3);
+        t.assertEqual(typeof $els.slice().ready, 'function');
+        t.assertEqual($els.slice(-1)[0].className, 'slice3');
       }
     });
   </script>

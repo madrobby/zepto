@@ -25,7 +25,7 @@ var Zepto = (function() {
     var element, display;
     if (!elementDisplay[nodeName]) {
       element = document.createElement(nodeName);
-      document.body.insertAdjacentElement("beforeEnd", element);
+      document.body.appendChild(element);
       display = getComputedStyle(element, '').getPropertyValue("display");
       element.parentNode.removeChild(element);
       display == "none" && (display = "block");
@@ -56,7 +56,8 @@ var Zepto = (function() {
       if (isA(selector)) dom = compact(selector);
       else if (selector instanceof Element || selector === window || selector === document)
         dom = [selector], selector = null;
-      else if (fragmentRE.test(selector)) dom = fragment(selector);
+      else if (fragmentRE.test(selector))
+        dom = fragment(selector), selector = null;
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
       else dom = $$(document, selector);
       return Z(dom, selector);
@@ -85,6 +86,9 @@ var Zepto = (function() {
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
+    slice: function(){
+      return $(slice.apply(this, arguments)); 
+    },
     ready: function(callback){
       if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
       document.addEventListener('DOMContentLoaded', callback, false);
@@ -125,7 +129,9 @@ var Zepto = (function() {
       }
       return $(nodes);
     },
-    eq: function(idx){ return $(this[idx]) },
+    eq: function(idx){
+      return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1);
+    },
     first: function(){ return $(this[0]) },
     last: function(){ return $(this[this.length - 1]) },
     find: function(selector){
