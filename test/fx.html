@@ -19,6 +19,8 @@
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="callbacktest" style="width:40px;height:40px;background:red"></div>
 
+  <div id="anim_zero_duration_callback_test"></div>
+
   <script>
     Evidence.TestCase.extend('ZeptoFXTest', {
 
@@ -65,6 +67,18 @@
             this.assert((new Date().getTime() - start) >= duration);
           });
         });
+
+        // Test for https://github.com/madrobby/zepto/issues/200
+        var el = $('#anim_zero_duration_callback_test'),
+            callbackCalled = false;
+
+        el.anim({ opacity: 0.5 }, 0, 'linear', function () {
+          callbackCalled = true;
+        });
+
+        setTimeout(function () {
+          t.assert(callbackCalled);
+        }, 0);
       }
     });
   </script>
