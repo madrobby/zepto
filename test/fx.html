@@ -22,6 +22,20 @@
   <div id="anim_zero_duration_callback_test"></div>
 
   <script>
+    function colorToHex (color) {
+      if (color.substr(0, 1) === '#') {
+        return color;
+      }
+
+      var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec( color.toLowerCase() ),
+          red    = parseInt(digits[2]),
+          green  = parseInt(digits[3]),
+          blue   = parseInt(digits[4]),
+          rgb = blue | (green << 8) | (red << 16);
+
+      return digits[1] + '#' + rgb.toString(16);
+    };
+
     Evidence.TestCase.extend('ZeptoFXTest', {
 
       testAnim: function(t){
@@ -35,7 +49,7 @@
         t.assertEqual('translate3d(100px, 100px, 100px) rotateZ(90deg)', el.style.webkitTransform);
         t.assertEqual('ease-out', el.style.webkitTransitionTimingFunction);
         t.assertEqual('0.5', el.style.opacity);
-        t.assertEqual('#BADA55', el.style.backgroundColor.toUpperCase());
+        t.assertEqual( '#BADA55', colorToHex(el.style.backgroundColor).toUpperCase() );
       },
 
       testDuration: function(t){
