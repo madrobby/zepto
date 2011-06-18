@@ -338,6 +338,10 @@
         result = decodeURIComponent(result);
         t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo");
 
+        result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] }, null, true);
+        result = decodeURIComponent(result);
+        t.assertEqual(result, "libs=jQuery&libs=script.aculo.us&libs=Prototype&libs=Dojo");
+
         result = $.param({ jquery: 'Javascript', rails: 'Ruby', django: 'Python' });
         result = decodeURIComponent(result);
         t.assertEqual(result, "jquery=Javascript&rails=Ruby&django=Python");

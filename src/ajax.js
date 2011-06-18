@@ -107,19 +107,32 @@
     return this;
   };
 
-  $.param = function(obj, v){
-    var result = [], add = function(key, value){
-      result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
-        + '=' + encodeURIComponent(value));
+  $.param = function(obj, v, traditional){
+    var objLength, result = [], add = function(key, value){
+      var name;
+      if (!traditional) {
+        name = v ? v + '[' + key + ']' : key;
+      } else {
+        name = key;
+      }
+      result.push(encodeURIComponent(name) + '=' + encodeURIComponent(value));
       },
       isObjArray = $.isArray(obj);
 
-    for(key in obj)
-      if(isObject(obj[key]))
-        result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
-      else
-        add(isObjArray ? '' : key, obj[key]);
-
+    if (isObjArray && traditional) {
+      objLength = obj.length;
+      for (var i = 0; i < objLength; i++) {
+        add(key, obj[i]);
+      }
+    } else {
+      for(key in obj) {
+        if(isObject(obj[key])) {
+          result.push($.param(obj[key], (v ? v + '[' + key + ']' : key), traditional));
+        } else {
+          add(isObjArray ? '' : key, obj[key]);
+        }
+      }
+    }
     return result.join('&').replace('%20', '+');
   };
 })(Zepto);
