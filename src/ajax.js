@@ -59,7 +59,7 @@
        timer=setTimeout(function(){
                            xhr.abort();
                            settings.error(xhr,"timeout");
-                           settings.complete(xhr, error ? 'error' : 'success');
+                           settings.complete(xhr, 'error');
                         },settings.timeout)
    }
 
