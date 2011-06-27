@@ -218,8 +218,8 @@ var Zepto = (function() {
     },
     text: function(text){
       return text === undefined ?
-        (this.length > 0 ? this[0].innerText : null) :
-        this.each(function(){ this.innerText = text });
+        (this.length > 0 ? this[0].textContent : null) :
+        this.each(function(){ this.textContent = text });
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
