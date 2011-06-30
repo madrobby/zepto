@@ -1,6 +1,8 @@
 (function($){
   var touch = {}, touchTimeout;
 
+  $.tapTimeoutLength = 250;
+  
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
   }
@@ -21,7 +23,7 @@
       touchTimeout && clearTimeout(touchTimeout);
       touch.x1 = e.touches[0].pageX;
       touch.y1 = e.touches[0].pageY;
-      if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
+      if (delta > 0 && delta <= $.tapTimeoutLength) touch.isDoubleTap = true;
       touch.last = now;
     }).bind('touchmove', function(e){
       touch.x2 = e.touches[0].pageX;
@@ -40,7 +42,7 @@
           touchTimeout = null;
           $(touch.target).trigger('tap')
           touch = {};
-        }, 250);
+        }, $.tapTimeoutLength);
       }
     }).bind('touchcancel', function(){ touch = {} });
   });
