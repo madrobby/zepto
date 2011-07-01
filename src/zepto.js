@@ -265,7 +265,7 @@ var Zepto = (function() {
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
-      return this.indexOf($(element)[0]);
+      return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0]);
     },
     hasClass: function(name){
       return classRE(name).test(this[0].className);
