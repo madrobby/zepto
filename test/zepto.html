@@ -179,6 +179,11 @@
     <div class="end_two"><b><span>1</span><span>2</span></b></div>
   </div>
 
+  <div id="index_test">
+    <div class="index0"></div>
+    <div class="index1"></div>
+  </div>
+
   <script>
 
     function click(el){
@@ -1296,6 +1301,8 @@
         t.assertEqual($("p > span").index(".yay"), 0);
         t.assertEqual($("span").index("span"), 0);
         t.assertEqual($("span").index("boo"), -1);
+
+        t.assertEqual($('#index_test > *').eq(-1).index(), 1);
       },
 
       testBoolAttr: function (t) {
