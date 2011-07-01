@@ -111,6 +111,12 @@ task :yuidist do
   process_minified src, target
 end
 
+desc "Genetated documentation from sources"
+task :docs do
+  puts "Generating docs..."
+  puts `docco src/*`
+end
+
 Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
   package.need_tar_gz = true
   package.need_zip = true
