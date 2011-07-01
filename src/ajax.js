@@ -91,11 +91,55 @@
     return xhr;
   };
 
+  // ### $.get
+  //
+  // Load data from the server using a GET request
+  //
+  // *Arguments:*
+  //
+  //     url     — url to which the request is sent
+  //     success — callback that is executed if the request succeeds
+  //
+  // *Example:*
+  //
+  //     $.get(
+  //        '/projects/42',
+  //        function (data) {
+  //            $('body').append(data);
+  //        }
+  //     );
+  //
   $.get = function(url, success){ $.ajax({ url: url, success: success }) };
+
+  // ### $.post
+  //
+  // Load data from the server using POST request
+  //
+  // *Arguments:*
+  //
+  //     url        — url to which the request is sent
+  //     [data]     — data to send to server, can be string or object
+  //     [success]  — callback that is executed if the request succeeds
+  //     [dataType] — type of expected response
+  //                  'json', 'xml', 'html', or 'text'
+  //
+  // *Example:*
+  //
+  //     $.post(
+  //        '/projects',
+  //        { name: 'Zepto.js' },
+  //        function (data) {
+  //            $('body').append(data);
+  //        },
+  //        'html'
+  //     );
+  //
   $.post = function(url, data, success, dataType){
     if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
     $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
+
+  // Load JSON from the server using GET request
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
   $.fn.load = function(url, success){
