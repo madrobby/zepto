@@ -5,6 +5,7 @@ var Zepto = (function() {
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
+    nodeTypeRE = /^1|9|11$/,
     container = document.createElement('div');
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
@@ -54,7 +55,7 @@ var Zepto = (function() {
     else {
       var dom;
       if (isA(selector)) dom = compact(selector);
-      else if (selector instanceof Element || selector === window || selector === document)
+      else if ((selector.nodeType && nodeTypeRE.test(selector.nodeType)) || selector === window)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector))
         dom = fragment(selector), selector = null;
