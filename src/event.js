@@ -102,11 +102,22 @@
   };
 
   $.fn.trigger = function(event, data){
-    return this.each(function(){
-      var e = document.createEvent('Events');
-      e.initEvent(event, true, true)
-      e.data = data;
-      this.dispatchEvent(e);
+    var type = event.type || event;
+    if(typeof event !== "object"){
+      event = document.createEvent('Events');
+      event.initEvent(type, true, true)
+    }
+    event.data = data;
+    return this.each(function(){  
+      this.dispatchEvent(event);
     });
   };
+
+  $.Event = function(src, props) {
+    var event = document.createEvent('Events');
+    if (props) $.extend(event, props);
+    event.initEvent(src, true, true);
+    return event;
+  };
+
 })(Zepto);
