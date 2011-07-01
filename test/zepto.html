@@ -173,6 +173,11 @@
     <div class="eq1"></div>
     <div class="eq2"></div>
   </div>
+  
+  <div id="end_test">
+    <div class="end_one"><b><span></span></b></div>
+    <div class="end_two"><b><span>1</span><span>2</span></b></div>
+  </div>
 
   <script>
 
@@ -1321,6 +1326,15 @@
         t.assertEqual($els.slice().length, 3);
         t.assertEqual(typeof $els.slice().ready, 'function');
         t.assertEqual($els.slice(-1)[0].className, 'slice3');
+      },
+
+      testEnd: function (t) {
+        t.assert($().end().length, 0);
+
+        var $endTest = $('#end_test');
+        var $endTest2 = $('#end_test').find('div').find('span').end().end();
+        t.assertEqual($endTest.length, $endTest2.length);
+        t.assertEqual($endTest.get(0), $endTest2.get(0));
       }
     });
   </script>

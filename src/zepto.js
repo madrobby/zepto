@@ -106,6 +106,9 @@ var Zepto = (function() {
         return $$(element.parentNode, selector).indexOf(element) >= 0;
       }));
     },
+    end: function(){
+      return this.prevObject || $();
+    },
     add:function(selector,context){
       return $(uniq(this.concat($(selector,context))));
     },
@@ -305,6 +308,15 @@ var Zepto = (function() {
       });
     }
   };
+
+  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings'.split(',').forEach(function(property){
+    var fn = $.fn[property];
+    $.fn[property] = function() {
+      var ret = fn.apply(this, arguments);
+      ret.prevObject = this;
+      return ret;
+    }
+  });
 
   ['width', 'height'].forEach(function(property){
     $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
