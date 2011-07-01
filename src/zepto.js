@@ -356,7 +356,7 @@ var Zepto = (function() {
   reverseAdjacencyOperators.forEach(function(key) {
 	$.fn[key+'To'] = function(html){
 		if (typeof(html) != 'object')
-	      html = fragment(html);
+	      html = $(html);
 
 	    html[key](this);
 	    return this;
