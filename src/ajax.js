@@ -139,9 +139,51 @@
     $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
 
+  // ### $.getJSON
+  //
   // Load JSON from the server using GET request
+  //
+  // *Arguments:*
+  //
+  //     url     — url to which the request is sent
+  //     success — callback that is executed if the request succeeds
+  //
+  // *Example:*
+  //
+  //     $.getJSON(
+  //        '/projects/42',
+  //        function (json) {
+  //            projects.push(json);
+  //        }
+  //     );
+  //
   $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
 
+  // ### $.fn.load
+  //
+  // Load data from the server into an element
+  //
+  // *Arguments:*
+  //
+  //     url     — url to which the request is sent
+  //     success — callback that is executed if the request succeeds
+  //
+  // *Examples:*
+  //
+  //     $('#project_container').get(
+  //        '/projects/42',
+  //        function () {
+  //            alert('Project was successfully loaded');
+  //        }
+  //     );
+  //
+  //     $('#project_comments').get(
+  //        '/projects/42 #comments',
+  //        function () {
+  //            alert('Comments was successfully loaded');
+  //        }
+  //     );
+  //
   $.fn.load = function(url, success){
     if (!this.length) return this;
     var self = this, parts = url.split(/\s/), selector;
@@ -155,6 +197,19 @@
     return this;
   };
 
+  // ### $.param
+  //
+  // Encode object as a string for submission
+  //
+  // *Arguments:*
+  //
+  //     obj — object to serialize
+  //     [v] — root node
+  //
+  // *Example:*
+  //
+  //     $.param( { name: 'Zepto.js', version: '0.6' } );
+  //
   $.param = function(obj, v){
     var result = [], add = function(key, value){
       result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
