@@ -166,7 +166,7 @@
   // *Arguments:*
   //
   //     url     — url to which the request is sent
-  //     success — callback that is executed if the request succeeds
+  //     [success] — callback that is executed if the request succeeds
   //
   // *Examples:*
   //
