@@ -301,7 +301,7 @@ Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobi
 
 Visit http://zeptojs.com/
 
-Join #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs
+Join Zepto.js Convore group https://convore.com/zeptojs/, #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs
 
 Have fun!
 
