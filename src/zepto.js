@@ -4,7 +4,7 @@ var Zepto = (function() {
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
-    cssNumber = { 'zIndex': 1, 'fontWeight': 1, 'opacity': 1, 'zoom': 1, 'lineHeight': 1 },
+    cssNumber = { 'z-index': 1, 'font-weight': 1, 'opacity': 1, 'zoom': 1, 'line-height': 1 },
     fragmentRE = /^\s*<[^>]+>/,
     nodeTypeRE = /^1|9|11$/,
     container = document.createElement('div'),
