@@ -18,6 +18,13 @@ var Zepto = (function() {
   function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array) { return [].concat.apply([], array) }
   function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function dasherize(str){
+    return str.replace(/::/g, '/')
+           .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+           .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+           .replace(/_/g, '-')
+           .toLowerCase();
+  }
   function uniq(array)    { return array.filter(function(item,index,array){ return array.indexOf(item) == index }) }
 
   function classRE(name){
@@ -271,8 +278,8 @@ var Zepto = (function() {
       if (value === undefined && typeof property == 'string')
         return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
       css = '';
-      for (key in property) css += key + ':' + maybeAddPx(key, property[key]) + ';';
-      if (typeof property == 'string') css = property + ":" + maybeAddPx(property, value);
+      for (key in property) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
+      if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){

@@ -669,6 +669,7 @@
 
         $('#some_element').css('color', '#f00');
         $('#some_element').css('margin-top', '10px');
+        $('#some_element').css('marginBottom', '5px');
         $('#some_element').css('left', 42);
         $('#some_element').css('z-index', 10);
         $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
@@ -676,7 +677,9 @@
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
         t.assertEqual('10px', el.style.marginTop);
+        t.assertEqual('5px', el.style.marginBottom);
         t.assertEqual('42px', el.style.left);
+
         t.assertEqual(10, el.style.zIndex);
 
         var style1 = $('#some_element').css('color');
