@@ -197,6 +197,16 @@
       event.initMouseEvent('mousedown', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
       el.dispatchEvent(event);
     }
+    
+    function outerHTML(node) {
+      return node.outerHTML || (function(n) {
+          var div = document.createElement('div'), h;
+          div.appendChild(n.cloneNode(true));
+          h = div.innerHTML;
+          div = null;
+          return h;
+        })(node);
+      }
 
     var globalVarSetFromReady = "";
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
@@ -329,26 +339,26 @@
       testDollarWithFragment: function(t){
         var fragment = $("<div>");
         t.assertLength(1, fragment);
-        t.assertEqual("<div></div>", fragment.get(0).outerHTML);
+        t.assertEqual("<div></div>", outerHTML(fragment.get(0)));
         t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello world</div>");
         t.assertLength(1, fragment);
-        t.assertEqual("<div>hello world</div>", fragment.get(0).outerHTML);
+        t.assertEqual("<div>hello world</div>", outerHTML(fragment.get(0)));
         t.assertEqual('', fragment.selector);
 
         fragment = $("<div>hello</div> <span>world</span>");
         t.assertLength(3, fragment);
-        t.assertEqual("<div>hello</div>", fragment.get(0).outerHTML);
+        t.assertEqual("<div>hello</div>", outerHTML(fragment.get(0)));
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
-        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual("<span>world</span>", outerHTML(fragment.get(2)));
         t.assertEqual('', fragment.selector);
 
         fragment = $("<div>\nhello</div> \n<span>world</span>");
         t.assertLength(3, fragment);
-        t.assertEqual("<div>\nhello</div>", fragment.get(0).outerHTML);
+        t.assertEqual("<div>\nhello</div>", outerHTML(fragment.get(0)));
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
-        t.assertEqual("<span>world</span>", fragment.get(2).outerHTML);
+        t.assertEqual("<span>world</span>", outerHTML(fragment.get(2)));
         t.assertEqual('', fragment.selector);
       },
 
@@ -545,13 +555,15 @@
       },
 
       testNot: function(t){
-        var el=$("#notTest");
+        var el = $("#notTest");
 
         //selector form
         t.assertEqualCollection($("li.one,li.three,li.four",el), $("li",el).not(".two"));
         //element or NodeList form
         t.assertEqualCollection($("span.b,span.c,span.e",el), $("span",el).not(document.getElementById("notTestExclude")));
-        t.assertEqualCollection($("li",el), $("li, span",el).not(document.getElementsByTagName("span")));
+        t.assertEqualCollection($("li", el), 
+          $("li, span", el).not(document.getElementsByTagName("span"))
+        );
         //function form
         t.assertEqualCollection($("span.b,span.c",el),$("span",el).not(function(i){
           var $this=$(this);

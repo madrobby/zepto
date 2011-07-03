@@ -134,16 +134,20 @@ var Zepto = (function() {
       return this.length > 0 && $(this[0]).filter(selector).length > 0;
     },
     not: function(selector){
-      var nodes=[];
-      if (isF(selector) && selector.call !== undefined)
+      var nodes = [];
+      // document.getElementsByTagName() is not instance of NodeList in Firefox.
+      var isNodeList = (selector instanceof NodeList) || (isO(selector) && 'namedItem' in selector);
+      if (isF(selector) && selector.call !== undefined) {
         this.each(function(idx){
-          if (!selector.call(this,idx)) nodes.push(this);
+          if (!selector.call(this,idx)) {
+            nodes.push(this);
+          }
         });
-      else {
+      } else {
         var ignores = slice.call(
           typeof selector == 'string' ?
             this.filter(selector) :
-            selector instanceof NodeList ? selector : $(selector));
+            isNodeList ? selector : $(selector));
         slice.call(this).forEach(function(el){
           if (ignores.indexOf(el) < 0) nodes.push(el);
         });
@@ -208,7 +212,7 @@ var Zepto = (function() {
     },
 	  wrap: function(newContent) {
 		  return this.each(function() {
-			  $(this).wrapAll($(newContent)[0].cloneNode());
+			  $(this).wrapAll($(newContent)[0].cloneNode(false));
 		  });
 	  },
 	  wrapAll: function(newContent) {
@@ -243,12 +247,31 @@ var Zepto = (function() {
         this.each(function(){ this.textContent = text });
     },
     attr: function(name, value){
+      var isTextInput = (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text');
+      var isValueAttr = function(name) {
+        return (isTextInput && name === 'value');
+      };
       return (typeof name == 'string' && value === undefined) ?
-        (this.length > 0 && this[0].nodeName == 'INPUT' && this[0].type == 'text' && name == 'value') ? (this.val()) :
+        isValueAttr(name) ? (this.val()) :
         (this.length > 0 ? this[0].getAttribute(name) || (name in this[0] ? this[0][name] : undefined) : undefined) :
         this.each(function(idx){
-          if (isO(name)) for (key in name) this.setAttribute(key, name[key])
-          else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)));
+          if (isO(name)) {
+            for (key in name) {
+              value = name[key];
+              if (isValueAttr(key)) {
+                this.value = value;
+              } else {
+                this.setAttribute(key, value);
+              }
+            }
+          } else {
+            if (isValueAttr(name)) {
+              this.value = funcArg(this, value, idx, this.value);
+            } else {
+              this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)));
+            }
+            
+          }
         });
     },
     removeAttr: function(name) {
