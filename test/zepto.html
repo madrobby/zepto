@@ -173,7 +173,7 @@
     <div class="eq1"></div>
     <div class="eq2"></div>
   </div>
-  
+
   <div id="end_test">
     <div class="end_one"><b><span></span></b></div>
     <div class="end_two"><b><span>1</span><span>2</span></b></div>
@@ -668,10 +668,14 @@
         var el = $('#some_element').get(0);
 
         $('#some_element').css('color', '#f00');
+        $('#some_element').css('margin-top', 10);
+        $('#some_element').css('left', 42);
         $('#some_element').css('border', '1px solid rgba(255,0,0,1)');
         t.assertEqual('rgb(255, 0, 0)', el.style.color);
         t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor);
         t.assertEqual('1px', el.style.borderLeftWidth);
+        t.assertEqual('10px', el.style.marginTop);
+        t.assertEqual('42px', el.style.left);
 
         var style1 = $('#some_element').css('color');
         var style2 = $('#some_element').css('border');
@@ -792,12 +796,12 @@
       },
 
       testTriggerEventObject: function(t){
-        var counter = 0, 
+        var counter = 0,
             customEventKey = 0;
 
-        var handler = function(ev,customData) { 
+        var handler = function(ev,customData) {
           counter = customData.counter;
-          customEventKey = ev.customKey;  
+          customEventKey = ev.customKey;
         };
 
         var customEventObject = $.Event('custom', { customKey: 20 });
