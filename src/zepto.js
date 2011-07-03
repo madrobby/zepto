@@ -25,7 +25,7 @@ var Zepto = (function() {
       classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'));
   }
 
-  function maybeAddPx(name, value) { return (typeof value === "number" && !cssNumber[name]) ? value + "px" : value; }
+  function maybeAddPx(name, value) { return (typeof value == "number" && !cssNumber[name]) ? value + "px" : value; }
 
   function defaultDisplay(nodeName) {
     var element, display;
@@ -332,7 +332,6 @@ var Zepto = (function() {
   ['width', 'height'].forEach(function(property){
     $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
   });
-
 
   function insert(operator, element, other) {
     var parent = (!operator || operator == 3) ? element : element.parentNode;
