@@ -32,7 +32,7 @@ var Zepto = (function() {
       classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'));
   }
 
-  function maybeAddPx(name, value) { return (typeof value == "number" && !cssNumber[name]) ? value + "px" : value; }
+  function maybeAddPx(name, value) { return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value; }
 
   function defaultDisplay(nodeName) {
     var element, display;
