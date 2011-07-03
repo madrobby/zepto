@@ -48,7 +48,10 @@
         detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pre);
         detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pixi);
         detect(t, "webos", "1.2.9", UA.WebOS_1_2_9_Pixi);
+        t.assert(!$.__detect(UA.WebOS_1_4_0_Pre).touchpad);
+
         detect(t, "webos", "3.0.0", UA.WebOS_3_0_0_TouchPad);
+        t.assert($.__detect(UA.WebOS_3_0_0_TouchPad).touchpad);
       },
 
       testAndroid: function(t){

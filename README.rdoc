@@ -221,12 +221,13 @@ Loading content into an element:
 
 Zepto includes information about the environment it is running in the $.os object:
 
-  $.os.ios     // => true if running on Apple iOS
-  $.os.android // => true if running on Android
-  $.os.webos   // => true if running on HP/Palm WebOS
-  $.os.version // => string with version number, "4.0", "3.1.1", "2.1", etc.
-  $.os.iphone  // => true if running on iPhone
-  $.os.ipad    // => true if running on iPad
+  $.os.ios      // => true if running on Apple iOS
+  $.os.android  // => true if running on Android
+  $.os.webos    // => true if running on HP/Palm WebOS
+  $.os.touchpad // => true if running on a HP TouchPad
+  $.os.version  // => string with version number, "4.0", "3.1.1", "2.1", etc.
+  $.os.iphone   // => true if running on iPhone
+  $.os.ipad     // => true if running on iPad
   $.os.blackberry // => true if running on BlackBerry
 
 = Building
