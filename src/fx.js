@@ -1,7 +1,6 @@
 (function($, undefined){
-
   var supportedTransforms = [
-    'scale',     'scaleX',     'scaleY',
+    'scale scaleX scaleY',
     'translate', 'translateX', 'translateY', 'translate3d',
     'skew',      'skewX',      'skewY',
     'rotate',    'rotateX',    'rotateY',    'rotateZ',
@@ -9,7 +8,7 @@
   ];
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var transforms = [], cssProperties = {}, key, that = this;
+    var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
 
     for (key in properties)
       if (supportedTransforms.indexOf(key)>0)
@@ -17,9 +16,9 @@
       else
         cssProperties[key] = properties[key];
 
-    var wrappedCallback = function(){
-        that.css( { '-webkit-transition': 'none' } );
-        callback && callback();
+    wrappedCallback = function(){
+      that.css({'-webkit-transition':'none'});
+      callback && callback();
     }
 
     if (duration > 0)
