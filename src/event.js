@@ -108,7 +108,7 @@
       event.initEvent(type, true, true)
     }
     event.data = data;
-    return this.each(function(){  
+    return this.each(function(){
       this.dispatchEvent(event);
     });
   };
