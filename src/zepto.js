@@ -4,6 +4,7 @@ var Zepto = (function() {
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
+    cssNumber = { 'zIndex': 1, 'fontWeight': 1, 'opacity': 1, 'zoom': 1, 'lineHeight': 1 },
     fragmentRE = /^\s*<[^>]+>/,
     nodeTypeRE = /^1|9|11$/,
     container = document.createElement('div');
@@ -21,6 +22,8 @@ var Zepto = (function() {
     return name in classCache ?
       classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'));
   }
+
+  function maybeAddPx(name, value) { return (typeof value === "number" && !cssNumber[name]) ? value + "px" : value; }
 
   function defaultDisplay(nodeName) {
     var element, display;
@@ -65,7 +68,7 @@ var Zepto = (function() {
     }
   }
 
-  $.extend = function(target){ 
+  $.extend = function(target){
     slice.call(arguments, 1).forEach(function(source) {
       for (key in source) target[key] = source[key];
     })
@@ -93,7 +96,7 @@ var Zepto = (function() {
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
     slice: function(){
-      return $(slice.apply(this, arguments)); 
+      return $(slice.apply(this, arguments));
     },
     ready: function(callback){
       if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
@@ -266,8 +269,8 @@ var Zepto = (function() {
       if (value === undefined && typeof property == 'string')
         return this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property);
       css = '';
-      for (key in property) css += key + ':' + property[key] + ';';
-      if (typeof property == 'string') css = property + ':' + value;
+      for (key in property) css += key + ':' + maybeAddPx(key, property[key]) + ';';
+      if (typeof property == 'string') css = property + ":" + maybeAddPx(property, value);
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
