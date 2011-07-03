@@ -7,7 +7,9 @@ var Zepto = (function() {
     cssNumber = { 'zIndex': 1, 'fontWeight': 1, 'opacity': 1, 'zoom': 1, 'lineHeight': 1 },
     fragmentRE = /^\s*<[^>]+>/,
     nodeTypeRE = /^1|9|11$/,
-    container = document.createElement('div');
+    container = document.createElement('div'),
+    adjacencyOperators = ['prepend', 'after', 'before', 'append'],
+    reverseAdjacencyOperators = ['append', 'prepend'];
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -331,7 +333,7 @@ var Zepto = (function() {
     $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
   });
 
-  var adjacencyOperators = [ 'prepend', 'after', 'before', 'append' ];
+
   function insert(operator, element, other) {
     var parent = (!operator || operator == 3) ? element : element.parentNode;
     parent.insertBefore(other,
@@ -359,8 +361,6 @@ var Zepto = (function() {
       });
     };
   });
-
-  var reverseAdjacencyOperators = [ 'append', 'prepend' ];
 
   reverseAdjacencyOperators.forEach(function(key) {
 	$.fn[key+'To'] = function(html){
