@@ -32,6 +32,44 @@
     }
   };
 
+  // ### $.ajax
+  //
+  // Perform AJAX request
+  //
+  // *Arguments:*
+  //
+  //     options — object that configure the request,
+  //               see avaliable options below
+  //
+  // *Avaliable options:*
+  //
+  //     type ('GET')          — type of request GET / POST
+  //     url (window.location) — url to which the request is sent
+  //     data                  — data to send to server,
+  //                             can be string or object
+  //     dataType ('json')     — what response type you accept from
+  //                             the server:
+  //                             'json', 'xml', 'html', or 'text'
+  //     success               — callback that is executed if
+  //                             the request succeeds
+  //     error                 — callback that is executed if
+  //                             the server drops error
+  //
+  // *Example:*
+  //
+  //     $.ajax({
+  //        type:     'POST',
+  //        url:      '/projects',
+  //        data:     { name: 'Zepto.js' },
+  //        dataType: 'html',
+  //        success:  function (data) {
+  //            $('body').append(data);
+  //        },
+  //        error:    function (xhr, type) {
+  //            alert('Error!');
+  //        }
+  //     });
+  //
   $.ajax = function(options){
     options = options || {};
     var settings = $.extend({}, options);
