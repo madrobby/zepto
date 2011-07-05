@@ -144,12 +144,10 @@ var Zepto = (function() {
           if (!selector.call(this,idx)) nodes.push(this);
         });
       else {
-        var ignores = slice.call(
-          typeof selector == 'string' ?
-            this.filter(selector) :
-            selector instanceof NodeList ? selector : $(selector));
-        slice.call(this).forEach(function(el){
-          if (ignores.indexOf(el) < 0) nodes.push(el);
+        var excludes = typeof selector == 'string' ? this.filter(selector) :
+          ('length' in selector && isF(selector.item)) ? slice.call(selector) : $(selector);
+        this.forEach(function(el){
+          if (excludes.indexOf(el) < 0) nodes.push(el);
         });
       }
       return $(nodes);
