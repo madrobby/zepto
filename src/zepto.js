@@ -210,24 +210,24 @@ var Zepto = (function() {
         next ? $(next).before(newContent) : $(par).append(newContent);
       });
     },
-	  wrap: function(newContent) {
-		  return this.each(function() {
-			  $(this).wrapAll($(newContent)[0].cloneNode());
-		  });
-	  },
-	  wrapAll: function(newContent) {
-		  if (this[0]) {
-			  $(this[0]).before(newContent = $(newContent));
-			  newContent.append(this);
-		  }
-		  return this;
-	  },
-	  unwrap: function(){
-	    this.parent().each(function(){
-	      $(this).replaceWith($(this).children());
-	    });
-	    return this;
-	  },
+    wrap: function(newContent) {
+      return this.each(function() {
+        $(this).wrapAll($(newContent)[0].cloneNode());
+      });
+    },
+    wrapAll: function(newContent) {
+      if (this[0]) {
+        $(this[0]).before(newContent = $(newContent));
+        newContent.append(this);
+      }
+      return this;
+    },
+    unwrap: function(){
+      this.parent().each(function(){
+        $(this).replaceWith($(this).children());
+      });
+      return this;
+    },
     hide: function(){
       return this.css("display", "none")
     },
@@ -375,13 +375,11 @@ var Zepto = (function() {
   });
 
   reverseAdjacencyOperators.forEach(function(key) {
-	$.fn[key+'To'] = function(html){
-		if (typeof(html) != 'object')
-	      html = $(html);
-
-	    html[key](this);
-	    return this;
-	  };
+    $.fn[key+'To'] = function(html){
+      if (typeof(html) != 'object') html = $(html);
+      html[key](this);
+      return this;
+    };
   });
 
   Z.prototype = $.fn;
