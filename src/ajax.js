@@ -20,9 +20,22 @@
     $('head').append(script);
   };
 
+  // ### $.ajaxSettings
+  //
+  // AJAX settings
+  //
   $.ajaxSettings = {
+    // Default type of request
     type: 'GET',
-    beforeSend: empty, success: empty, error: empty, complete: empty,
+    // Callback that is executed before request
+    beforeSend: empty,
+    // Callback that is executed if the request succeeds
+    success: empty,
+    // Callback that is executed the the server drops error
+    error: empty,
+    // Callback that is executed on request complete (both: error and success)
+    complete: empty,
+    // MIME types mapping
     accepts: {
       script: 'text/javascript, application/javascript',
       json:   'application/json',
