@@ -43,7 +43,7 @@
 
   <div id="data_attr" data-blah="whatever"></div>
 
-  <input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" />
+  <form><input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" /></form>
 
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
@@ -1111,6 +1111,8 @@
         els.attr('value', '');
         t.assertEqual(els.get(0).value, els.attr('value'));
         t.assertEqual('', els.attr('value'));
+
+        els.get(0).value = 'Hello World'
       },
 
       testRemoveAttr: function(t) {
@@ -1138,8 +1140,6 @@
       testVal: function(t) {
         var els = $('#attr_with_text_input');
 
-        els.get(0).value = "Hello World";
-
         t.assertEqual(els.get(0).value, els.val());
         t.assertEqual('Hello World', els.val());
 
@@ -1147,6 +1147,7 @@
         t.assertEqual(els.get(0).value, els.val());
         t.assertEqual('', els.val());
 
+        els.get(0).value = "Hello World";
       },
 
       testChaining: function(t){
