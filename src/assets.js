@@ -5,6 +5,14 @@
 (function($){
   var cache = [], timeout;
 
+  // ### $.fn.remove
+  //
+  // Remove element from DOM
+  //
+  // *Example:*
+  //
+  //     $('#projects, .comments').remove();
+  //
   $.fn.remove = function(){
     return this.each(function(){
       if(this.tagName == 'IMG'){
