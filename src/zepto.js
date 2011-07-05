@@ -231,8 +231,8 @@ var Zepto = (function() {
     hide: function(){
       return this.css("display", "none")
     },
-    toggle: function(){
-      return this.css("display") == "none" ? this.show() : this.hide();
+    toggle: function(setting){
+      return (setting === undefined ? this.css("display") == "none" : setting) ? this.show() : this.hide();
     },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },

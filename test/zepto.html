@@ -468,6 +468,29 @@
         t.assertEqual('none', $('#show_hide_span3').get(0).style.display);
       },
 
+      testToggle: function(t){
+        $('#show_hide_div1').hide();
+        t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle();
+        t.assertEqual('', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle();
+        t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle(true);
+        t.assertEqual('', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle(true);
+        t.assertEqual('', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle(false);
+        t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
+
+        $('#show_hide_div1').toggle(false);
+        t.assertEqual('none', $('#show_hide_div1').get(0).style.display);
+      },
+
       testOffset: function(t){
         // TODO
         t.assertNull($('#doesnotexist').offset());
