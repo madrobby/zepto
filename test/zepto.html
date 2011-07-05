@@ -1295,6 +1295,9 @@
           return "blue";
         });
         t.assertEqual('red green', el.className);
+
+        $('#some_element').removeClass();
+        t.assertEqual('', el.className);
       },
 
       testHasClass: function(t){
