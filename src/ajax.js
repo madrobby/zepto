@@ -21,9 +21,8 @@
   //
   // *Avaliable options:*
   //
-  //     url (window.location) — url to which the request is sent
-  //     success               — callback that is executed if
-  //                             the request succeeds
+  //     url     — url to which the request is sent
+  //     success — callback that is executed if the request succeeds
   //
   // *Example:*
   //
