@@ -19,9 +19,27 @@
     if (blackberry) os.blackberry = true, os.version = blackberry[2];
     return os;
   }
+
+  // ### $.os
+  //
+  // Object contains information about running environmental
+  //
+  // *Example:*
+  //
+  //     $.os.ios      // => true if running on Apple iOS
+  //     $.os.android  // => true if running on Android
+  //     $.os.webos    // => true if running on HP/Palm WebOS
+  //     $.os.touchpad // => true if running on a HP TouchPad
+  //     $.os.version  // => string with version number,
+  //                         "4.0", "3.1.1", "2.1", etc.
+  //     $.os.iphone   // => true if running on iPhone
+  //     $.os.ipad     // => true if running on iPad
+  //     $.os.blackberry // => true if running on BlackBerry
+  //
   $.os = detect(navigator.userAgent);
   $.__detect = detect;
 
   var v = navigator.userAgent.match(/WebKit\/([\d.]+)/);
   $.browser = v ? { webkit: true, version: v[1] } : { webkit: false };
+
 })(Zepto);
