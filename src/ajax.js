@@ -7,8 +7,33 @@
       isObject = $.isObject,
       key;
 
+  // Empty function, used as default callback
   function empty() {}
 
+  // ### $.ajaxJSONP
+  //
+  // Load JSON from a server in a different domain (JSONP)
+  //
+  // *Arguments:*
+  //
+  //     options — object that configure the request,
+  //               see avaliable options below
+  //
+  // *Avaliable options:*
+  //
+  //     url (window.location) — url to which the request is sent
+  //     success               — callback that is executed if
+  //                             the request succeeds
+  //
+  // *Example:*
+  //
+  //     $.ajaxJSONP({
+  //        url:     'http://example.com/projects?callback=?',
+  //        success: function (data) {
+  //            projects.push(json);
+  //        }
+  //     });
+  //
   $.ajaxJSONP = function(options){
     var jsonpString = 'jsonp' + ++jsonpID,
         script = document.createElement('script');
