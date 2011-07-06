@@ -118,7 +118,13 @@ var Zepto = (function() {
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
     size: function(){ return this.length },
-    remove: function(){ return this.each(function(){ this.parentNode.removeChild(this) }) },
+    remove: function () {
+      return this.each(function () {
+        if (this.parentNode != null) {
+          this.parentNode.removeChild(this);
+        }
+      });
+    },
     each: function(callback){
       this.forEach(function(el, idx){ callback.call(el, idx, el) });
       return this;
