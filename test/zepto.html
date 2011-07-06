@@ -1299,6 +1299,23 @@
           .remove();
 
         t.assertEqual( $('#some_new_element_1').length, 0 );
+
+        //
+
+        var newElement2 = $('<div id="some_new_element_2" />'),
+            errorRaised = false;
+
+        newElement2.appendTo('body');
+
+        $('#some_new_element_2').remove();
+
+        try {
+          newElement2.remove();
+        } catch (e) {
+          errorRaised = true;
+        };
+
+        t.assert(!errorRaised);
       },
 
       testAddRemoveClass: function(t){
