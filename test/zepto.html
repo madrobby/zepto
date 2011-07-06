@@ -1291,6 +1291,16 @@
         );
       },
 
+      testRemove: function (t) {
+        var newElement1 = $('<div id="some_new_element_1" />');
+
+        newElement1
+          .appendTo('body')
+          .remove();
+
+        t.assertEqual( $('#some_new_element_1').length, 0 );
+      },
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0);
 
