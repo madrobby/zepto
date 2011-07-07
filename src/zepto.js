@@ -375,7 +375,7 @@ var Zepto = (function() {
 
       return this.each(function(index, element){
         if (html.length || html instanceof Z) {
-          dom = html;
+          var dom = html;
           for (var i=0; i<dom.length; i++) {
             var e = dom[operator < 2 ? dom.length-i-1 : i];
             insert(operator, element, e);
