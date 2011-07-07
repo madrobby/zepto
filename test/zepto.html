@@ -369,11 +369,11 @@
       },
 
       testNodeCreationViaDollar: function (t) {
-        t.assertEqual( $('<div></div>').get(0).outerHTML, '<div></div>' );
-        t.assertEqual( $('<div/>').get(0).outerHTML, '<div></div>' );
-        t.assertEqual( $('<div><div></div></div>').get(0).outerHTML, '<div><div></div></div>' );
-        t.assertEqual( $('<div><div/></div>').get(0).outerHTML, '<div><div></div></div>' );
-        t.assertEqual( $('<div><div></div><div></div></div>').get(0).outerHTML, '<div><div></div><div></div></div>' );
+        t.assertEqual('<div></div>', outerHTML($('<div></div>').get(0)));
+        t.assertEqual('<div></div>', outerHTML($('<div/>').get(0)));
+        t.assertEqual('<div><div></div></div>', outerHTML($('<div><div></div></div>').get(0)));
+        t.assertEqual('<div><div></div></div>', outerHTML($('<div><div/></div>').get(0)));
+        t.assertEqual('<div><div></div><div></div></div>', outerHTML($('<div><div></div><div></div></div>').get(0)));
       },
 
       testReady: function(t){
