@@ -1321,6 +1321,16 @@
         t.assertEqual($els.slice().length, 3);
         t.assertEqual(typeof $els.slice().ready, 'function');
         t.assertEqual($els.slice(-1)[0].className, 'slice3');
+      },
+      
+      testCreateSpecialFragment: function(t) {
+        var el;
+        el = $('<th></th>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
+        el = $('<td></td>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
       }
     });
   </script>
