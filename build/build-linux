@@ -1,0 +1,21 @@
+#!/bin/sh
+
+mkdir -p output
+
+OutDebugFile='output/zepto-latest.debug.js'
+OutMinFile='output/zepto-latest.js'
+
+# Combine the source files
+SourceFiles=`grep js < source-references | # Find JS references 
+             tr '\n' ' '`                     # Combine into single line
+             
+cat $SourceFiles                    > $OutDebugFile.temp
+
+# Now call Google Closure Compiler to produce a minified version
+curl -d output_info=compiled_code -d output_format=text -d compilation_level=SIMPLE_OPTIMIZATIONS --data-urlencode js_code@$OutDebugFile.temp "http://closure-compiler.appspot.com/compile" > $OutMinFile.temp
+
+cat $OutDebugFile.temp > $OutDebugFile
+cat $OutMinFile.temp > $OutMinFile
+
+rm $OutDebugFile.temp
+rm $OutMinFile.temp

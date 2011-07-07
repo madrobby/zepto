@@ -1,0 +1,7 @@
+../src/polyfill.js
+../src/zepto.js
+../src/event.js
+../src/detect.js
+../src/fx.js
+../src/ajax.js
+../src/touch.js
