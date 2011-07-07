@@ -6,6 +6,8 @@ var Zepto = (function() {
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
     containers = {
+	  'tbody': document.createElement('table'),
+	  'tr': document.createElement('tbody'),
 	  'th': document.createElement('tr'),
 	  'td': document.createElement('tr'),
 	  'other': document.createElement('div')
