@@ -5,7 +5,7 @@
 ( function( $ )
 {
     var data = {},
-        uuid = $.uuid = +new Date();
+        uuid = $.uuid = +new Date(),
         exp  = $.expando = 'Zepto' + uuid;
     
     function isScalar( value )
