@@ -10,7 +10,7 @@ var Zepto = (function() {
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
-    nodeTypeRE = /^1|9|11$/,
+    elementTypes = [1, 9, 11],
     adjacencyOperators = ['prepend', 'after', 'before', 'append'],
     reverseAdjacencyOperators = ['append', 'prepend'],
     containers = {
@@ -78,7 +78,7 @@ var Zepto = (function() {
     else {
       var dom;
       if (isA(selector)) dom = compact(selector);
-      else if ((selector.nodeType && nodeTypeRE.test(selector.nodeType)) || selector === window)
+      else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector))
         dom = fragment(selector, RegExp.$1), selector = null;
