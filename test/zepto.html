@@ -368,6 +368,13 @@
         t.assertEqual(Node.TEXT_NODE, textNode.get(0).nodeType);
       },
 
+      testNodeCreationViaDollar: function (t) {
+        t.assertEqual( $('<div></div>').get(0).outerHTML, '<div></div>' );
+        t.assertEqual( $('<div/>').get(0).outerHTML, '<div></div>' );
+        t.assertEqual( $('<div><div></div></div>').get(0).outerHTML, '<div><div></div></div>' );
+        t.assertEqual( $('<div><div/></div>').get(0).outerHTML, '<div><div></div></div>' );
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
         t.assertEqual('hi!', globalVarSetFromReady2);
