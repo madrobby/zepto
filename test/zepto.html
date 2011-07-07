@@ -1240,6 +1240,19 @@
           '<div class="append">append1</div><div class="append">append2</div></div><div class="after">after1</div><div class="after">after2</div>',
           $('#beforeafter_container').html()
         );
+
+        //
+
+        var appendContainer = $('<div> <div>Hello</div> <div>Hello</div> </div>'),
+            helloDivs;
+
+        appendContainer.appendTo('body');
+        helloDivs = appendContainer.find('div');
+
+        helloDivs.append(' world!');
+        helloDivs.each(function () {
+          t.assertEqual( $(this).text(), 'Hello world!' );
+        });
       },
 
       testAppendToPrependTo: function(t){
