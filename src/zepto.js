@@ -9,16 +9,15 @@ var Zepto = (function() {
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
-    fragmentRE = /^\s*<[^>]+>/,
+    fragmentRE = /^\s*<(\w+)[^>]*>/,
     nodeTypeRE = /^1|9|11$/,
-    container = document.createElement('div'),
     adjacencyOperators = ['prepend', 'after', 'before', 'append'],
     reverseAdjacencyOperators = ['append', 'prepend'],
     containers = {
-	  'th': document.createElement('tr'),
-	  'td': document.createElement('tr'),
-	  'other': document.createElement('div')
-	};
+      'th': document.createElement('tr'),
+      'td': document.createElement('tr'),
+      '*': document.createElement('div')
+    };
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -56,12 +55,11 @@ var Zepto = (function() {
     return elementDisplay[nodeName];
   }
 
-  function fragment(html) {
-	var fragmentTypeRE = /<(\w*)/g,
-		match = fragmentTypeRE.exec(html.trim()),
-		type = (match && match[1]) ? match[1] : 'other',
-		container = containers[type] || containers.other;
-    container.innerHTML = ('' + html).trim();
+  function fragment(html, name) {
+    if (name === undefined) fragmentRE.test(html) && RegExp.$1;
+    if (!(name in containers)) name = '*';
+    var container = containers[name];
+    container.innerHTML = '' + html;
     return slice.call(container.childNodes);
   }
 
@@ -83,7 +81,7 @@ var Zepto = (function() {
       else if ((selector.nodeType && nodeTypeRE.test(selector.nodeType)) || selector === window)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector))
-        dom = fragment(selector), selector = null;
+        dom = fragment(selector, RegExp.$1), selector = null;
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
       else dom = $$(document, selector);
       return Z(dom, selector);
@@ -359,29 +357,27 @@ var Zepto = (function() {
     $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
   });
 
-  function insert(operator, element, other) {
-    var parent = (!operator || operator == 3) ? element : element.parentNode;
-    parent.insertBefore(other,
+  function insert(operator, target, node) {
+    var parent = (!operator || operator == 3) ? target : target.parentNode;
+    parent.insertBefore(node,
       !operator ? parent.firstChild :         // prepend
-      operator == 1 ? element.nextSibling :   // after
-      operator == 2 ? element :               // before
+      operator == 1 ? target.nextSibling :    // after
+      operator == 2 ? target :                // before
       null);                                  // append
   }
 
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
-      if (typeof(html) != 'object')
-        html = fragment(html);
+      var nodes = typeof(html) == 'object' ? html : fragment(html);
+      if (!('length' in nodes)) nodes = [nodes];
+      if (nodes.length < 1) return this;
+      var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
 
-      return this.each(function(index, element){
-        if (html.length || html instanceof Z) {
-          var dom = html;
-          for (var i=0; i<dom.length; i++) {
-            var e = dom[operator < 2 ? dom.length-i-1 : i];
-            insert(operator, element, e);
-          }
-        } else {
-          insert(operator, element, html);
+      return this.each(function(index, target){
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[inReverse ? nodes.length-i-1 : i];
+          if (copyByClone && index < size - 1) node = node.cloneNode(true);
+          insert(operator, target, node);
         }
       });
     };

@@ -1251,30 +1251,21 @@
 
         //
 
-        var appendContainer1 = $('<div> <div>Hello</div> <div>Hello</div> </div>'),
-            helloDivs;
-
-        appendContainer1.appendTo('body');
-        helloDivs = appendContainer1.find('div');
+        var helloWorlds = [], appendContainer1 = $('<div> <div>Hello</div> <div>Hello</div> </div>'),
+            helloDivs = appendContainer1.find('div');
 
         helloDivs.append(' world!');
-        helloDivs.each(function () {
-          t.assertEqual( $(this).text(), 'Hello world!' );
-        });
+        helloDivs.each(function() { helloWorlds.push($(this).text()) })
+        t.assertEqual('Hello world!,Hello world!', helloWorlds.join(','));
 
         //
 
-        var appendContainer2 = $('<div> <div></div> <div></div> </div>'),
-            appendDivs;
+        var spans = [], appendContainer2 = $('<div> <div></div> <div></div> </div>'),
+            appendDivs = appendContainer2.find('div');
 
-        appendContainer2.appendTo('body');
-        appendDivs = appendContainer2.find('div');
-
-        appendDivs.append( $('<span>Test</span>') );
-        appendDivs.each(function () {
-          t.assertEqual( $(this).html(), '<span>Test</span>' );
-        });
-
+        appendDivs.append($('<span>Test</span>'));
+        appendDivs.each(function() { spans.push($(this).html()) })
+        t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','));
       },
 
       testAppendToPrependTo: function(t){
@@ -1506,11 +1497,13 @@
       testCreateSpecialFragment: function(t) {
         var el;
         el = $('<th></th>');
-        t.assertEqual(el.size(), 1);
-        t.assertEqual(typeof el.get(0), 'object');
+        t.assertEqual(1, el.size());
+        t.assertEqual('object', typeof el.get(0));
+        t.assertEqual('TH', el.get(0).nodeName.toUpperCase());
         el = $('<td></td>');
-        t.assertEqual(el.size(), 1);
-        t.assertEqual(typeof el.get(0), 'object');
+        t.assertEqual(1, el.size());
+        t.assertEqual('object', typeof el.get(0));
+        t.assertEqual('TD', el.get(0).nodeName.toUpperCase());
       }
     });
   </script>
