@@ -5,7 +5,11 @@ var Zepto = (function() {
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
-    container = document.createElement('div');
+    containers = {
+	  'th': document.createElement('tr'),
+	  'td': document.createElement('tr'),
+	  'other': document.createElement('div')
+	};
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -35,6 +39,10 @@ var Zepto = (function() {
   }
 
   function fragment(html) {
+	var fragmentTypeRE = /<(\w*)/g,
+		match = fragmentTypeRE.exec(html.trim()),
+		type = (match && match[1]) ? match[1] : 'other',
+		container = containers[type] || containers.other;
     container.innerHTML = ('' + html).trim();
     return slice.call(container.childNodes);
   }
