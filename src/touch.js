@@ -1,7 +1,7 @@
 (function($){
   var touch = {}, touchTimeout;
 
-  $.tapTimeoutLength = 250;
+  $.tapTimeoutLength = 1;
   
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
