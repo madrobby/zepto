@@ -13,7 +13,12 @@ var Zepto = (function() {
     nodeTypeRE = /^1|9|11$/,
     container = document.createElement('div'),
     adjacencyOperators = ['prepend', 'after', 'before', 'append'],
-    reverseAdjacencyOperators = ['append', 'prepend'];
+    reverseAdjacencyOperators = ['append', 'prepend'],
+    containers = {
+	  'th': document.createElement('tr'),
+	  'td': document.createElement('tr'),
+	  'other': document.createElement('div')
+	};
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -52,6 +57,10 @@ var Zepto = (function() {
   }
 
   function fragment(html) {
+	var fragmentTypeRE = /<(\w*)/g,
+		match = fragmentTypeRE.exec(html.trim()),
+		type = (match && match[1]) ? match[1] : 'other',
+		container = containers[type] || containers.other;
     container.innerHTML = ('' + html).trim();
     return slice.call(container.childNodes);
   }
