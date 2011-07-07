@@ -301,7 +301,8 @@ var Zepto = (function() {
       return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0]);
     },
     hasClass: function(name){
-      return classRE(name).test(this[0].className);
+      if (this.length < 1) return false;
+      else return classRE(name).test(this[0].className);
     },
     addClass: function(name){
       return this.each(function(idx) {

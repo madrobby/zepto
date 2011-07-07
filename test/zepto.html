@@ -1399,6 +1399,12 @@
         t.assert($('#some_element').hasClass('orange'));
       },
 
+      testHasClassEmpty: function(t){
+        var z = $('#i_dont_exist');
+        t.assertEqual(0, z.size());
+        t.assertFalse(z.hasClass('a'));
+      },
+
       testToggleClass: function(t){
         var el = $('#toggle_element').get(0);
         $('#toggle_element').toggleClass('green');
