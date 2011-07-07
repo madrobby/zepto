@@ -1243,16 +1243,30 @@
 
         //
 
-        var appendContainer = $('<div> <div>Hello</div> <div>Hello</div> </div>'),
+        var appendContainer1 = $('<div> <div>Hello</div> <div>Hello</div> </div>'),
             helloDivs;
 
-        appendContainer.appendTo('body');
-        helloDivs = appendContainer.find('div');
+        appendContainer1.appendTo('body');
+        helloDivs = appendContainer1.find('div');
 
         helloDivs.append(' world!');
         helloDivs.each(function () {
           t.assertEqual( $(this).text(), 'Hello world!' );
         });
+
+        //
+
+        var appendContainer2 = $('<div> <div></div> <div></div> </div>'),
+            appendDivs;
+
+        appendContainer2.appendTo('body');
+        appendDivs = appendContainer2.find('div');
+
+        appendDivs.append( $('<span>Test</span>') );
+        appendDivs.each(function () {
+          t.assertEqual( $(this).html(), '<span>Test</span>' );
+        });
+
       },
 
       testAppendToPrependTo: function(t){
