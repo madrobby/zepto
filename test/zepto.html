@@ -1331,6 +1331,18 @@
         el = $('<td></td>');
         t.assertEqual(el.size(), 1);
         t.assertEqual(typeof el.get(0), 'object');
+        el = $('<tr></tr>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
+        el = $('<thead></thead>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
+        el = $('<tbody></tbody>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
+        el = $('<tfoot></tfoot>');
+        t.assertEqual(el.size(), 1);
+        t.assertEqual(typeof el.get(0), 'object');
       }
     });
   </script>

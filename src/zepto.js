@@ -5,12 +5,20 @@ var Zepto = (function() {
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     fragmentRE = /^\s*<[^>]+>/,
+	containerEls = {
+	  'table': document.createElement('table'),
+	  'tbody': document.createElement('tbody'),
+	  'tr': document.createElement('tr'),
+	  'div': document.createElement('div')
+	},
     containers = {
-	  'tbody': document.createElement('table'),
-	  'tr': document.createElement('tbody'),
-	  'th': document.createElement('tr'),
-	  'td': document.createElement('tr'),
-	  'other': document.createElement('div')
+	  'thead': 'table',
+	  'tbody': 'table',
+	  'tfoot': 'table',
+	  'tr': 'tbody',
+	  'th': 'tr',
+	  'td': 'tr',
+	  'other': 'div'
 	};
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
@@ -44,9 +52,10 @@ var Zepto = (function() {
 	var fragmentTypeRE = /<(\w*)/g,
 		match = fragmentTypeRE.exec(html.trim()),
 		type = (match && match[1]) ? match[1] : 'other',
-		container = containers[type] || containers.other;
-    container.innerHTML = ('' + html).trim();
-    return slice.call(container.childNodes);
+		container = containers[type] || containers.other,
+		el = containerEls[container];
+    el.innerHTML = ('' + html).trim();
+    return slice.call(el.childNodes);
   }
 
   function Z(dom, selector){
