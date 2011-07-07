@@ -373,6 +373,8 @@
         t.assertEqual( $('<div/>').get(0).outerHTML, '<div></div>' );
         t.assertEqual( $('<div><div></div></div>').get(0).outerHTML, '<div><div></div></div>' );
         t.assertEqual( $('<div><div/></div>').get(0).outerHTML, '<div><div></div></div>' );
+        t.assertEqual( $('<div><div></div><div></div></div>').get(0).outerHTML, '<div><div></div><div></div></div>' );
+        t.assertEqual( $('<div><div/><div/></div>').get(0).outerHTML, '<div><div></div><div></div></div>' );
       },
 
       testReady: function(t){
