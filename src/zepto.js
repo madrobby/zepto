@@ -13,9 +13,12 @@ var Zepto = (function() {
     elementTypes = [1, 9, 11],
     adjacencyOperators = ['prepend', 'after', 'before', 'append'],
     reverseAdjacencyOperators = ['append', 'prepend'],
+    table = document.createElement('table'),
+    tableRow = document.createElement('tr'),
     containers = {
-      'th': document.createElement('tr'),
-      'td': document.createElement('tr'),
+      'tr': document.createElement('tbody'),
+      'tbody': table, 'thead': table, 'tfoot': table,
+      'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     };
 

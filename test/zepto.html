@@ -380,6 +380,30 @@
         t.assertEqual('<div><div></div><div></div></div>', outerHTML($('<div><div></div><div></div></div>').get(0)));
       },
 
+      testCreateTableCell: function(t) {
+        t.assertEqual('TD', $('<td></td>').pluck('nodeName').join(','));
+      },
+
+      testCreateTableHeaderCell: function(t) {
+        t.assertEqual('TH', $('<th></th>').pluck('nodeName').join(','));
+      },
+
+      testCreateTableRow: function(t) {
+        t.assertEqual('TR', $('<tr></tr>').pluck('nodeName').join(','));
+      },
+
+      testCreateTableHeader: function(t) {
+        t.assertEqual('THEAD', $('<thead></thead>').pluck('nodeName').join(','));
+      },
+
+      testCreateTableBody: function(t) {
+        t.assertEqual('TBODY', $('<tbody></tbody>').pluck('nodeName').join(','));
+      },
+
+      testCreateTableFooter: function(t) {
+        t.assertEqual('TFOOT', $('<tfoot></tfoot>').pluck('nodeName').join(','));
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady);
         t.assertEqual('hi!', globalVarSetFromReady2);
@@ -1526,18 +1550,6 @@
         var $endTest2 = $('#end_test').find('div').find('span').end().end();
         t.assertEqual($endTest.length, $endTest2.length);
         t.assertEqual($endTest.get(0), $endTest2.get(0));
-      },
-
-      testCreateSpecialFragment: function(t) {
-        var el;
-        el = $('<th></th>');
-        t.assertEqual(1, el.size());
-        t.assertEqual('object', typeof el.get(0));
-        t.assertEqual('TH', el.get(0).nodeName.toUpperCase());
-        el = $('<td></td>');
-        t.assertEqual(1, el.size());
-        t.assertEqual('object', typeof el.get(0));
-        t.assertEqual('TD', el.get(0).nodeName.toUpperCase());
       }
     });
   </script>
