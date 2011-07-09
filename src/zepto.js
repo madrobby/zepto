@@ -22,9 +22,10 @@ var Zepto = (function() {
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
   function isA(value) { return value instanceof Array }
+  function likeArray(obj) { return typeof obj.length == 'number' }
 
   function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
-  function flatten(array) { return [].concat.apply([], array) }
+  function flatten(array) { return array.length > 0 ? [].concat.apply([], array) : array }
   function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function dasherize(str){
     return str.replace(/::/g, '/')
@@ -108,13 +109,30 @@ var Zepto = (function() {
   $.isObject = isO;
   $.isArray = isA;
 
+  $.map = function(elements, callback) {
+    var value, values = [];
+    if (likeArray(elements))
+      for (var i = 0; i < elements.length; i++) {
+        value = callback(elements[i], i);
+        if (value != null) values.push(value);
+      }
+    else
+      for (var key in elements) {
+        value = callback(elements[key], key);
+        if (value != null) values.push(value);
+      }
+    return flatten(values);
+  }
+
   $.fn = {
     forEach: emptyArray.forEach,
-    map: emptyArray.map,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
+    map: function(fn){
+      return $.map(this, function(el, i){ return fn.call(el, i, el) });
+    },
     slice: function(){
       return $(slice.apply(this, arguments));
     },
@@ -158,7 +176,7 @@ var Zepto = (function() {
         });
       else {
         var excludes = typeof selector == 'string' ? this.filter(selector) :
-          ('length' in selector && isF(selector.item)) ? slice.call(selector) : $(selector);
+          (likeArray(selector) && isF(selector.item)) ? slice.call(selector) : $(selector);
         this.forEach(function(el){
           if (excludes.indexOf(el) < 0) nodes.push(el);
         });
@@ -173,7 +191,7 @@ var Zepto = (function() {
     find: function(selector){
       var result;
       if (this.length == 1) result = $$(this[0], selector);
-      else result = flatten(this.map(function(el){ return $$(el, selector) }));
+      else result = this.map(function(){ return $$(this, selector) });
       return $(result);
     },
     closest: function(selector, context){
@@ -185,27 +203,27 @@ var Zepto = (function() {
     parents: function(selector){
       var ancestors = [], nodes = this;
       while (nodes.length > 0)
-        nodes = compact(nodes.map(function(node){
+        nodes = $.map(nodes, function(node){
           if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
             ancestors.push(node);
             return node;
           }
-        }));
+        });
       return filtered(ancestors, selector);
     },
     parent: function(selector){
-      return filtered(uniq(compact(this.pluck('parentNode'))), selector);
+      return filtered(uniq(this.pluck('parentNode')), selector);
     },
     children: function(selector){
-      return filtered(flatten(this.map(function(el){ return slice.call(el.children) })), selector);
+      return filtered(this.map(function(){ return slice.call(this.children) }), selector);
     },
     siblings: function(selector){
-      return filtered(flatten(this.map(function(el){
+      return filtered(this.map(function(i, el){
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
-      })), selector);
+      }), selector);
     },
     empty: function(){ return this.each(function(){ this.innerHTML = '' }) },
-    pluck: function(property){ return this.map(function(element){ return element[property] }) },
+    pluck: function(property){ return this.map(function(){ return this[property] }) },
     show: function(){
       return this.each(function() {
         this.style.display == "none" && (this.style.display = null);

@@ -76,6 +76,10 @@
     <span>5<span>6</span></span>
   </p>
 
+  <div id="eachtest">
+    <span></span><b></b><br>
+  </div>
+
   <div style="position:absolute;width:100px;height:50px" id="offset">test</div>
 
   <ul id="parents">
@@ -393,12 +397,30 @@
 
       testEach: function(t){
         var index, tagnames = [];
-        $('h1,p').each(function(idx, el){
+        $('#eachtest > *').each(function(idx, el){
           index = idx;
-          if (this == el) tagnames.push(el.tagName);
+          t.assertIdentical(el, this);
+          tagnames.push(el.tagName.toUpperCase());
         });
-        t.assertEqual('H1, P, P, P, P', tagnames.join(', '));
-        t.assertEqual(4, index);
+        t.assertEqual('SPAN, B, BR', tagnames.join(', '));
+        t.assertEqual(2, index);
+      },
+
+      testMap: function(t){
+        var results = $('#eachtest > *').map(function(idx, el) {
+          t.assertIdentical(el, this);
+          return idx + ':' + this.nodeName.toUpperCase();
+        });
+        t.assertEqual('0:SPAN, 1:B, 2:BR', results.join(', '));
+      },
+
+      testDollarMap: function(t){
+        var fruits = ['apples', 'oranges', 'pineapple', 'peach', ['grape', 'melon']];
+        var results = $.map(fruits, function(item, i) {
+          if (item instanceof Array) return item;
+          else if (!/apple/.test(item)) return i + ':' + item;
+        })
+        t.assertEqual('1:oranges,3:peach,grape,melon', results.join(','));
       },
 
       testEq: function(t){
