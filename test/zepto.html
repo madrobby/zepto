@@ -665,7 +665,7 @@
       testFilter: function(t){
         var found = $('div');
         t.assertLength(2, found.filter('.filtertest'));
-        t.assertLength(0, found.filter('.doesntexist'));
+        t.assertLength(0, found.filter('.doesnotexist'));
         t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'));
       },
 
@@ -702,7 +702,7 @@
         t.assert(!$('#find1').is());
 
         t.assert($('div').is('#some_element'));
-        t.assert(!$('#does_not_exist').is('p'));
+        t.assert(!$('#doesnotexist').is('p'));
       },
 
       testCSS: function(t){
@@ -1400,7 +1400,7 @@
       },
 
       testHasClassEmpty: function(t){
-        var z = $('#i_dont_exist');
+        var z = $('#doesnotexist');
         t.assertEqual(0, z.size());
         t.assertFalse(z.hasClass('a'));
       },
