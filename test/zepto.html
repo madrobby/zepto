@@ -447,6 +447,14 @@
         t.assertEqual('1:oranges,3:peach,grape,melon', results.join(','));
       },
 
+      testDollarMapObject: function(t){
+        var fruit = { name: 'banana', taste: 'sweet' };
+        var results = $.map(fruit, function(value, key) {
+          return key + '=' + value;
+        })
+        t.assertEqual('name=banana,taste=sweet', results.sort().join(','));
+      },
+
       testEq: function(t){
         var $els = $('#eq_test div');
         t.assertLength(1, $els.eq(0));
