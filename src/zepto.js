@@ -355,7 +355,10 @@ var Zepto = (function() {
   });
 
   ['width', 'height'].forEach(function(property){
-    $.fn[property] = function(){ var offset = this.offset(); return offset ? offset[property] : null }
+    $.fn[property] = function(value) {
+      if (value === undefined) { var offset = this.offset(); return offset && offset[property] }
+      else return this.css(property, value);
+    }
   });
 
   function insert(operator, target, node) {

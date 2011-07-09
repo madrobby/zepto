@@ -515,13 +515,19 @@
       },
 
       testWidth: function(t){
-        t.assertEqual(100, $('#offset').width());
         t.assertNull($('#doesnotexist').width());
+
+        t.assertEqual(100, $('#offset').width());
+        $('#offset').width('90px');
+        t.assertEqual(90, $('#offset').width());
       },
 
       testHeight: function(t){
-        t.assertEqual(50, $('#offset').height());
         t.assertNull($('#doesnotexist').height());
+
+        t.assertEqual(50, $('#offset').height());
+        $('#offset').height('60px');
+        t.assertEqual(60, $('#offset').height());
       },
 
       testClosest: function(t){
