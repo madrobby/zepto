@@ -3,8 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $$, classList,
-    emptyArray = [], slice = emptyArray.slice,
+  var undefined, key, $$, classList, emptyArray = [], slice = emptyArray.slice,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -113,14 +112,14 @@ var Zepto = (function() {
   $.isArray = isA;
 
   $.map = function(elements, callback) {
-    var value, values = [];
+    var value, values = [], i, key;
     if (likeArray(elements))
-      for (var i = 0; i < elements.length; i++) {
+      for (i = 0; i < elements.length; i++) {
         value = callback(elements[i], i);
         if (value != null) values.push(value);
       }
     else
-      for (var key in elements) {
+      for (key in elements) {
         value = callback(elements[key], key);
         if (value != null) values.push(value);
       }
