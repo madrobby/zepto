@@ -64,6 +64,7 @@
     }
 
     Evidence.TestCase.extend('ZeptoTest', {
+
       testSerializeArray: function (t) {
         var loginForm = $('#login_form');
 
@@ -76,7 +77,16 @@
           ],
           loginForm.serializeArray()
         );
+      },
+
+      testSerialize: function (t) {
+        var loginForm = $('#login_form');
+
+        t.assertEqual(Function, loginForm.serialize.constructor);
+        t.assertEqual( "string", typeof loginForm.serialize() );
+        t.assertEqual( "email=koss@nocorp.me&password=123456", loginForm.serialize() );
       }
+
     });
   </script>
 </body>
