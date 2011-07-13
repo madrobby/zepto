@@ -95,6 +95,14 @@
         };
         $('#login_form').submit();
         t.assert(formSubmitted);
+
+        var eventTriggired = false;
+        $('#login_form').submit(function (e) {
+          eventTriggired = true;
+          e.preventDefault();
+        });
+        $('#login_form').submit();
+        t.assert(eventTriggired);
       }
 
     });
