@@ -112,9 +112,10 @@ task :yuidist do
   process_minified src, target
 end
 
-desc "Genetated documentation from sources"
+desc "Generate docco documentation from sources."
 task :docs do
   puts "Generating docs..."
+  puts "Note: to work, install node.js first, then install docco with 'sudo npm install docco -g'."
   puts `docco src/*`
 end
 
