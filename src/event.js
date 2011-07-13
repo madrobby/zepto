@@ -30,7 +30,13 @@
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     events.split(/\s/).forEach(function(event){
       var callback = delegate || fn;
-      var proxyfn = function(event) { return callback.call(element, event, event.data) };
+      var proxyfn = function (event) {
+        var result = callback.call(element, event, event.data);
+        if (result === false) {
+          event.preventDefault();
+        }
+        return result;
+      };
       var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
       set.push(handler);
       element.addEventListener(handler.e, proxyfn, false);
