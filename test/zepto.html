@@ -1402,7 +1402,9 @@
         window.someGlobalVariable = false;
         $('<' + 'script>this.someGlobalVariable = true;</script' + '>').appendTo('body');
         t.assert(window.someGlobalVariable);
+      },
 
+      testHtmlEval: function (t) {
         window.someGlobalVariable = false;
         var div = $('<div></div>');
         div
