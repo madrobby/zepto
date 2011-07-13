@@ -6,12 +6,11 @@
 
   // ### $.fn.serializeArray
   //
-  // Encode a set of form elements as an array of
-  // names and values
+  // Encode a set of form elements as an array of names and values
   //
   // *Example:*
   //
-  //     $('#login_form').serializeArray()
+  //     $('#login_form').serializeArray();
   //
   //  returns
   //
@@ -37,6 +36,27 @@
       }
     });
     return result;
+  };
+
+  // ### $.fn.serialize
+  //
+  //
+  // Encode a set of form elements as a string for submission
+  //
+  // *Example:*
+  //
+  //     $('#login_form').serialize();
+  //
+  //  returns
+  //
+  //     "email=koss%40nocorp.me&password=123456"
+  //
+  $.fn.serialize = function () {
+    var result = [];
+    this.serializeArray().forEach(function (elm) {
+      result.push( encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value) );
+    });
+    return result.join('&');
   };
 
 })(Zepto);
