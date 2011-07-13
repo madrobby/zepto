@@ -353,15 +353,6 @@ var Zepto = (function() {
        ((when !== undefined && !when) || $(this).hasClass(newName)) ?
          $(this).removeClass(newName) : $(this).addClass(newName)
       });
-    },
-    submit: function () {
-      return this.each(function () {
-        try {
-          // Submit first form element
-          this.submit();
-          return;
-        } catch(e) {};
-      });
     }
   };
 

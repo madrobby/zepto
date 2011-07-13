@@ -85,6 +85,16 @@
         t.assertEqual(Function, loginForm.serialize.constructor);
         t.assertEqual( 'string', typeof loginForm.serialize() );
         t.assertEqual( 'email=koss%40nocorp.me&password=123456', loginForm.serialize() );
+      },
+
+      testFormSubmit: function (t) {
+        var formSubmitted = false;
+        $('#login_form').get(0).submit = function (e) {
+          formSubmitted = true;
+          e.preventDefault();
+        };
+        $('#login_form').submit();
+        t.assert(formSubmitted);
       }
 
     });

@@ -59,4 +59,21 @@
     return result.join('&');
   };
 
+  // ### $.fn.submit
+  //
+  // Trigger submit event for form
+  //
+  // *Example:*
+  //
+  //     $('#login_form').submit();
+  //
+  $.fn.submit = function () {
+    return this.each(function () {
+      try {
+        this.submit();
+        return;
+      } catch(e) {};
+    });
+  }
+
 })(Zepto);

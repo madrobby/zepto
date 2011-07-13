@@ -1533,17 +1533,6 @@
         t.assert(foo);
       },
 
-      testFormSubmit: function (t) {
-        // Test form submit action
-        var formSubmitted = false;
-        $('#some_form').get(0).submit = function (e) {
-          formSubmitted = true;
-          e.preventDefault();
-        };
-        $('#some_form').submit();
-        t.assert(formSubmitted);
-      },
-
       testSlice: function (t) {
         var $els = $("#slice_test div");
         t.assertEqual($els.slice().length, 3);
