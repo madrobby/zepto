@@ -61,18 +61,32 @@
 
   // ### $.fn.submit
   //
-  // Trigger submit event for form
+  // Trigger submit event for form or bind submit event
   //
-  // *Example:*
+  // *Examples:*
+  //
+  // To trigger submit event:
   //
   //     $('#login_form').submit();
   //
-  $.fn.submit = function () {
+  // To bind submit event:
+  //
+  //     $('#login_form').submit(function (e) {
+  //         alert('Form was submitted!');
+  //         e.preventDefault();
+  //     });
+  //
+  $.fn.submit = function (fn) {
+    var isBind = typeof fn === 'function';
     return this.each(function () {
-      try {
-        this.submit();
-        return;
-      } catch(e) {};
+      if (isBind) {
+        this.submit = fn;
+      } else {
+        try {
+          this.submit();
+          return;
+        } catch(e) {};
+      }
     });
   }
 
