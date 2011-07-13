@@ -83,8 +83,8 @@
         var loginForm = $('#login_form');
 
         t.assertEqual(Function, loginForm.serialize.constructor);
-        t.assertEqual( "string", typeof loginForm.serialize() );
-        t.assertEqual( "email=koss@nocorp.me&password=123456", loginForm.serialize() );
+        t.assertEqual( 'string', typeof loginForm.serialize() );
+        t.assertEqual( 'email=koss%40nocorp.me&password=123456', loginForm.serialize() );
       }
 
     });
