@@ -1394,6 +1394,23 @@
         );
       },
 
+      testAppendEval: function (t) {
+        window.someGlobalVariable = false;
+        $('<' + 'script>window.someGlobalVariable = true;</script' + '>').appendTo('body');
+        t.assert(window.someGlobalVariable);
+
+        window.someGlobalVariable = false;
+        $('<' + 'script>this.someGlobalVariable = true;</script' + '>').appendTo('body');
+        t.assert(window.someGlobalVariable);
+
+        window.someGlobalVariable = false;
+        var div = $('<div></div>');
+        div
+          .appendTo('body')
+          .html('<' + 'script>window.someGlobalVariable = true;</script' + '>');
+        t.assert(window.someGlobalVariable);
+      },
+
       testRemove: function (t) {
         var newElement1 = $('<div id="some_new_element_1" />');
 
