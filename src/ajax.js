@@ -109,7 +109,7 @@
   //
   $.ajax = function(options){
     options = options || {};
-    var settings = $.extend({}, options);
+    var settings = $.extend({}, options),timer;
     for (key in $.ajaxSettings) if (!settings[key]) settings[key] = $.ajaxSettings[key];
 
     if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
@@ -134,8 +134,17 @@
     settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
     if (mime) settings.headers['Accept'] = mime;
 
+   if(settings.async && settings.timeout){
+       timer=setTimeout(function(){
+                           xhr.abort();
+                           settings.error(xhr,"timeout");
+                           settings.complete(xhr, 'error');
+                        },settings.timeout)
+   }
+
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
+        if(timer) clearTimeout(timer);
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json' && !(xhr.responseText == '')) {
