@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Zepto DOM unit tests</title>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/form.js"></script>
+  <script src="../vendor/evidence.js"></script>
+  </style>
+</head>
+<body>
+  <h1>Zepto DOM unit tests</h1>
+  <p>
+    See the browser console for results.
+  </p>
+
+  <form id="login_form">
+    <input name="email" value="koss@nocorp.me" />
+    <input name="password" value="123456" />
+  </form>
+
+  <script>
+    var isObjectEquals = function (obj1, obj2) {
+      for (key in obj1) {
+        switch( typeof( obj1[key] ) ) {
+          case 'object':
+            if ( !isObjectEquals( obj1[key], obj2[key] ) ) {
+              return false
+            };
+            break;
+
+          case 'function':
+            if (
+                 typeof( obj2[key] ) == 'undefined' ||
+                 ( obj1[key].toString() != obj2[key].toString() )
+               ) {
+              return false;
+            };
+            break;
+
+          default:
+            if ( obj1[key] != obj2[key] ) {
+              return false;
+            }
+        }
+      }
+
+      for (key in obj2) {
+        if (typeof( obj1[key] ) == 'undefined') {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    Evidence.Assertions.assertEqualObject = function(expected, actual, message) {
+      this._assertExpression(
+        isObjectEquals(expected, actual),
+        message || 'Failed assertion.',
+        'Expected %o, got %o.', expected, actual
+      );
+    }
+
+    Evidence.TestCase.extend('ZeptoTest', {
+      testSerializeArray: function (t) {
+        var loginForm = $('#login_form');
+
+        t.assertEqual(Function, loginForm.serializeArray.constructor);
+        t.assertEqual(2, loginForm.serializeArray().length);
+        t.assertEqualObject(
+          [
+              { name: 'email', value: 'koss@nocorp.me' },
+              { name: 'password', value: '123456' }
+          ],
+          loginForm.serializeArray()
+        );
+      }
+    });
+  </script>
+</body>
+</html>
