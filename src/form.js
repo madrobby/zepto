@@ -4,6 +4,39 @@
 
 (function ($) {
 
-  // Awesome code here
+  // ### $.fn.serializeArray
+  //
+  // Encode a set of form elements as an array of
+  // names and values
+  //
+  // *Example:*
+  //
+  //     $('#login_form').serializeArray()
+  //
+  //  returns
+  //
+  //     [
+  //         {
+  //             name: 'email',
+  //             value: 'koss@nocorp.me'
+  //         },
+  //         {
+  //             name: 'password',
+  //             value: '123456'
+  //         }
+  //     ]
+  //
+  $.fn.serializeArray = function () {
+    var result = [];
+    $( Array.prototype.slice.call(this.get(0).elements) ).each(function () {
+      if ( $(this).attr('type') !== 'radio' || $(this).is(':checked') ) {
+        result.push({
+          name: $(this).attr('name'),
+          value: $(this).val()
+        });
+      }
+    });
+    return result;
+  };
 
 })(Zepto);
