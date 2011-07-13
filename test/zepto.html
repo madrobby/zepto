@@ -890,6 +890,23 @@
         t.assertEqual(10, counter);
       },
 
+      testBindPreventDefault: function (t) {
+        var link = $('<a href="#"></a>'),
+            prevented = false;
+
+        link
+          .appendTo('body')
+          .bind('click', function () {
+            return false;
+          })
+          .bind('click', function (e) {
+            prevented = e.defaultPrevented;
+          })
+          .trigger('click');
+
+        t.assert(prevented);
+      },
+
       testCreateEventObject: function(t){
         var e = $.Event('custom');
         t.assertEqual('custom', e.type);
