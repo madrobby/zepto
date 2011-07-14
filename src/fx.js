@@ -30,13 +30,14 @@
     else
       setTimeout(wrappedCallback, 0);
 
+    if (transforms.length > 0) {
+      cssProperties['-webkit-transform'] = transforms.join(' ')
+    }
+
+    cssProperties['-webkit-transition'] = 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || '');
+
     setTimeout(function () {
-      that.css(
-        $.extend({
-          '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
-          '-webkit-transform': transforms.join(' ')
-          }, cssProperties)
-        );
+      that.css(cssProperties);
     }, 0);
 
     return this;
