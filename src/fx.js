@@ -7,7 +7,7 @@
     'scale scaleX scaleY',
     'translate', 'translateX', 'translateY', 'translate3d',
     'skew',      'skewX',      'skewY',
-    'rotate',    'rotateX',    'rotateY',    'rotateZ',
+    'rotate',    'rotateX',    'rotateY',    'rotateZ',    'rotate3d',
     'matrix'
   ];
 
