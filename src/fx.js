@@ -30,11 +30,15 @@
     else
       setTimeout(wrappedCallback, 0);
 
-    return this.css(
-      $.extend({
-        '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
-        '-webkit-transform': transforms.join(' ')
-      }, cssProperties)
-    );
+    setTimeout(function () {
+      that.css(
+        $.extend({
+          '-webkit-transition': 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || ''),
+          '-webkit-transform': transforms.join(' ')
+          }, cssProperties)
+        );
+    }, 0);
+
+    return this;
   }
 })(Zepto);
