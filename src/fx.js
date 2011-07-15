@@ -4,7 +4,7 @@
 
 (function($, undefined){
   var supportedTransforms = [
-    'scale scaleX scaleY',
+    'scale',     'scaleX',     'scaleY',
     'translate', 'translateX', 'translateY', 'translate3d',
     'skew',      'skewX',      'skewY',
     'rotate',    'rotateX',    'rotateY',    'rotateZ',
