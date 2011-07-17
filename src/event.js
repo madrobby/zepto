@@ -122,6 +122,11 @@
       this.dispatchEvent(event);
     });
   };
+  
+  //add support to all events supported with jQuery which are simple wrappers for native events
+  ("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error").split(" ").forEach(function(e) {
+    $.fn[e] = function(callback){ return this.bind(e, callback) }
+  });
 
   $.Event = function(src, props) {
     var event = document.createEvent('Events');
