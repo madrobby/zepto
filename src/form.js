@@ -26,12 +26,13 @@
   //     ]
   //
   $.fn.serializeArray = function () {
-    var result = [];
+    var result = [], el;
     $( Array.prototype.slice.call(this.get(0).elements) ).each(function () {
-      if ( $(this).attr('type') !== 'radio' || $(this).is(':checked') ) {
+      el = $(this);
+      if ( (el.attr('type') !== 'radio' || el.is(':checked')) && !(el.attr('type') === 'checkbox' && !el.is(':checked'))) {
         result.push({
-          name: $(this).attr('name'),
-          value: $(this).val()
+          name: el.attr('name'),
+          value: el.val()
         });
       }
     });

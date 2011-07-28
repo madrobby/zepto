@@ -17,7 +17,21 @@
 
   <form id="login_form">
     <input name="email" value="koss@nocorp.me" />
-    <input name="password" value="123456" />
+    <input name="password" value="123456" /><br>
+    <input name="unchecked_hasValue" value="myValue" type="checkbox">
+    <input name="unchecked_noValue" type="checkbox">
+    <input name="checked_hasValue" checked="checked" value="myValue" type="checkbox">
+    <input name="checked_noValue" checked="checked" type="checkbox">
+
+    <input type="radio" name="radio1" value="r1">
+    <input type="radio" name="radio1" checked="checked" value="r2">
+    <input type="radio" name="radio1" value="r3">
+    
+    <select name="selectbox">
+        <option value="selectopt1">select1</option>
+        <option value="selectopt2">select2</option>
+        <option value="selectopt3">select3</option>
+    </select>
   </form>
 
   <script>
@@ -69,11 +83,16 @@
         var loginForm = $('#login_form');
 
         t.assertEqual(Function, loginForm.serializeArray.constructor);
-        t.assertEqual(2, loginForm.serializeArray().length);
+        t.assertEqual(6, loginForm.serializeArray().length);
         t.assertEqualObject(
           [
               { name: 'email', value: 'koss@nocorp.me' },
-              { name: 'password', value: '123456' }
+              { name: 'password', value: '123456' },
+              { name: 'checked_hasValue', value: 'myValue' },
+              { name: 'checked_noValue', value: 'on' },
+              { name: 'radio1', value: 'r2' },
+              { name: 'selectbox', value: 'selectopt1' }
+
           ],
           loginForm.serializeArray()
         );
@@ -84,7 +103,8 @@
 
         t.assertEqual(Function, loginForm.serialize.constructor);
         t.assertEqual( 'string', typeof loginForm.serialize() );
-        t.assertEqual( 'email=koss%40nocorp.me&password=123456', loginForm.serialize() );
+        
+        t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() );
       },
 
       testFormSubmit: function (t) {
