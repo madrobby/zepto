@@ -1152,6 +1152,23 @@
         t.assertEqualCollection($(document.body), context);
       },
 
+      testDOMEventWrappers: function(t){
+        var events = ('blur focus focusin focusout load resize scroll unload click dblclick '+
+          'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
+          'change select submit keydown keypress keyup error').split(' ');
+
+        var el = $('#another_element'), count = 0;
+
+        events.forEach(function(event){
+          t.assertTrue($.isFunction(el[event]));
+        });
+
+        el.click(function(){ count++ });
+        click(el.get(0));
+
+        t.assertEqual(1, count);
+      },
+
       testAttr: function(t){
         var els = $('#attr_1, #attr_2');
 

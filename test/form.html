@@ -26,7 +26,7 @@
     <input type="radio" name="radio1" value="r1">
     <input type="radio" name="radio1" checked="checked" value="r2">
     <input type="radio" name="radio1" value="r3">
-    
+
     <select name="selectbox">
         <option value="selectopt1">select1</option>
         <option value="selectopt2">select2</option>
@@ -103,7 +103,7 @@
 
         t.assertEqual(Function, loginForm.serialize.constructor);
         t.assertEqual( 'string', typeof loginForm.serialize() );
-        
+
         t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() );
       },
 
