@@ -43,11 +43,12 @@
         $('#animtest').anim({
           translate3d: '100px, 100px, 100px',
           rotateZ: '90deg',
+          scale: '0.8',
           opacity: 0.5,
           'background-color': '#BADA55'
         }, 2, 'ease-out');
         setTimeout(function () {
-          t.assertEqual('translate3d(100px, 100px, 100px) rotateZ(90deg)', el.style.webkitTransform);
+          t.assertEqual('translate3d(100px, 100px, 100px) rotateZ(90deg) scale(0.8)', el.style.webkitTransform);
           t.assertEqual('ease-out', el.style.webkitTransitionTimingFunction);
           t.assertEqual('0.5', el.style.opacity);
           t.assertEqual( '#BADA55', colorToHex(el.style.backgroundColor).toUpperCase() );
