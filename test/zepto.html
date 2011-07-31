@@ -455,6 +455,34 @@
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','));
       },
 
+      testDollarEach: function(t){
+        var array = ['a','b','c'], object = { a: 1, b: 2, c: 3 }, result;
+
+        result = [];
+        $.each(array, function(idx, val){
+          result.push(idx);
+          result.push(val);
+        });
+        t.assertEqual('0a1b2c', result.join(''));
+
+        result = [];
+        $.each(object, function(key, val){
+          result.push(key);
+          result.push(val);
+        });
+        t.assertEqual('a1b2c3', result.join(''));
+
+        result = [];
+        $.each(array, function(idx, val){
+          result.push(idx);
+          result.push(val);
+          return idx<1;
+        });
+        t.assertEqual('0a1b', result.join(''));
+
+        t.assertEqual('abc', $.each(array, function(){}).join(''));
+      },
+
       testEq: function(t){
         var $els = $('#eq_test div');
         t.assertLength(1, $els.eq(0));

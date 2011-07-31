@@ -126,6 +126,19 @@ var Zepto = (function() {
     return flatten(values);
   }
 
+  $.each = function(elements, callback) {
+    var i, key;
+    if (likeArray(elements))
+      for(i = 0; i < elements.length; i++) {
+        if(callback(i, elements[i]) === false) return elements;
+      }
+    else
+      for(key in elements) {
+        if(callback(key, elements[key]) === false) return elements;
+      }
+    return elements;
+  }
+
   $.fn = {
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
