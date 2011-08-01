@@ -1663,6 +1663,30 @@
         var $endTest2 = $('#end_test').find('div').find('span').end().end();
         t.assertEqual($endTest.length, $endTest2.length);
         t.assertEqual($endTest.get(0), $endTest2.get(0));
+      },
+
+      testCustomEvents: function (t) {
+        var $body = $(document.body);
+
+        $body.bind('custom', function(evt, a, b) {
+          t.assertEqual(a, 1);
+          t.assertEqual(b, 2);
+          $body.unbind();
+        })
+        $body.trigger('custom', [1, 2]);
+
+        $body.bind('custom', function(evt, a) {
+          t.assertEqual(a, 1);
+          $body.unbind();
+        })
+        $body.trigger('custom', 1);
+
+        var eventData = {z: 1};
+        $body.bind('custom', function(evt, a) {
+          t.assertEqual(a, eventData);
+          $body.unbind();
+        })
+        $body.trigger('custom', eventData);
       }
     });
   </script>

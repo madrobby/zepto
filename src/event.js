@@ -31,7 +31,7 @@
     events.split(/\s/).forEach(function(event){
       var callback = delegate || fn;
       var proxyfn = function (event) {
-        var result = callback.call(element, event, event.data);
+        var result = callback.apply(element, [event].concat(event.data));
         if (result === false) {
           event.preventDefault();
         }
