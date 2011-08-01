@@ -1185,13 +1185,13 @@
 
       testDOMEventWrappers: function(t){
         var events = ('blur focus focusin focusout load resize scroll unload click dblclick '+
-          'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
+          'mousedown mouseup mousemove mouseover mouseout '+
           'change select submit keydown keypress keyup error').split(' ');
 
         var el = $('#another_element'), count = 0;
 
         events.forEach(function(event){
-          t.assertTrue($.isFunction(el[event]));
+          t.assertTrue($.isFunction(el[event]), 'event type: ' + event);
         });
 
         el.click(function(){ count++ });

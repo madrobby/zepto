@@ -119,7 +119,7 @@
 
   // shortcut methods for `.bind(event, fn)` for each event type
   ('focusin focusout load resize scroll unload click dblclick '+
-  'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
+  'mousedown mouseup mousemove mouseover mouseout '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback){ return this.bind(event, callback) };
   });
