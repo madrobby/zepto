@@ -16,7 +16,7 @@
     See the browser console for results.
   </p>
 
-  <form id="login_form">
+  <form id="login_form" target="formtarget" action="./idontexist.html">
     <input name="email" value="koss@nocorp.me" />
     <input name="password" value="123456" /><br>
     <input name="unchecked_hasValue" value="myValue" type="checkbox">
@@ -34,6 +34,8 @@
         <option value="selectopt3">select3</option>
     </select>
   </form>
+
+  <iframe name="formtarget"></iframe>
 
   <script>
     var isObjectEquals = function (obj1, obj2) {
