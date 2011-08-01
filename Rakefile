@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/packagetask'
 
-ZEPTO_VERSION  = "0.6"
+ZEPTO_VERSION  = "0.7"
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
 ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
