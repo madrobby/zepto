@@ -74,12 +74,22 @@
     });
   };
 
-  var eventMethods = ['preventDefault', 'stopImmediatePropagation', 'stopPropagation'];
+  var returnTrue = function(){return true},
+      returnFalse = function(){return false},
+      eventMethods = {
+        preventDefault: 'isDefaultPrevented',
+        stopImmediatePropagation: 'isImmediatePropagationStopped',
+        stopPropagation: 'isPropagationStopped'
+      };
   function createProxy(event) {
     var proxy = $.extend({originalEvent: event}, event);
-    eventMethods.forEach(function(key) {
-      proxy[key] = function() {return event[key].apply(event, arguments)};
-    });
+    $.each(eventMethods, function(name, predicate) {
+      proxy[name] = function(){
+        this[predicate] = returnTrue;
+        return event[name].apply(event, arguments);
+      };
+      proxy[predicate] = returnFalse;
+    })
     return proxy;
   }
 
@@ -115,6 +125,22 @@
     if (typeof event == 'string') event = $.Event(event);
     event.data = data;
     return this.each(function(){ this.dispatchEvent(event) });
+  };
+
+  // triggers event handlers on current element just as if an event occurred,
+  // doesn't trigger an actual event, doesn't bubble
+  $.fn.triggerHandler = function(event, data){
+    var e, result;
+    this.each(function(i, element){
+      e = createProxy(typeof event == 'string' ? $.Event(event) : event);
+      e.data = data; e.target = element;
+      $.each(findHandlers(element, event.type || event), function(i, handler){
+        if (event == 'submit') console.log(event, element, handler)
+        result = handler.proxy(e);
+        if (e.isImmediatePropagationStopped()) return false;
+      });
+    });
+    return result;
   };
 
   // shortcut methods for `.bind(event, fn)` for each event type

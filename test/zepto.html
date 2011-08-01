@@ -188,6 +188,11 @@
     <div class="index1"></div>
   </div>
 
+  <div id="trigger_handler">
+    <form method="get">
+    </form>
+  </div>
+
   <script>
 
     function click(el){
@@ -966,6 +971,33 @@
 
         t.assertEqual(10, counter);
         t.assertEqual(20, customEventKey);
+      },
+
+      testTriggerHandler: function(t){
+        t.assertUndefined($('doesnotexist').triggerHandler('submit'));
+
+        var form = $('#trigger_handler form').get(0);
+        $('#trigger_handler').bind('submit', function(e) {
+          t.fail("triggerHandler shouldn't bubble");
+        });
+
+        var executed = [];
+        $(form).bind('submit', function(e) {
+          executed.push("1");
+          t.assertEqual(form, e.target);
+          return 1;
+        });
+        $(form).bind('submit', function(e) {
+          executed.push("2");
+          t.assertEqual(form, e.target);
+          e.stopImmediatePropagation();
+          return 2;
+        });
+        $(form).bind('submit', function(e) {
+          t.fail("triggerHandler shouldn't continue after stopImmediatePropagation");
+        });
+        t.assertIdentical(2, $(form).triggerHandler('submit'));
+        t.assertEqual('1 2', executed.join(' '));
       },
 
       testEmpty: function(t) {
