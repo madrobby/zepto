@@ -5,6 +5,7 @@
   <title>Zepto DOM unit tests</title>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
   <script src="../src/form.js"></script>
   <script src="../vendor/evidence.js"></script>
   </style>
@@ -108,21 +109,13 @@
       },
 
       testFormSubmit: function (t) {
-        var formSubmitted = false;
-        $('#login_form').get(0).submit = function (e) {
-          formSubmitted = true;
-          e.preventDefault();
-        };
-        $('#login_form').submit();
-        t.assert(formSubmitted);
-
-        var eventTriggired = false;
+        var eventTriggered = false;
         $('#login_form').submit(function (e) {
-          eventTriggired = true;
+          eventTriggered = true;
           e.preventDefault();
         });
         $('#login_form').submit();
-        t.assert(eventTriggired);
+        t.assert(eventTriggered);
       }
 
     });
