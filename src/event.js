@@ -135,7 +135,6 @@
       e = createProxy(typeof event == 'string' ? $.Event(event) : event);
       e.data = data; e.target = element;
       $.each(findHandlers(element, event.type || event), function(i, handler){
-        if (event == 'submit') console.log(event, element, handler)
         result = handler.proxy(e);
         if (e.isImmediatePropagationStopped()) return false;
       });
