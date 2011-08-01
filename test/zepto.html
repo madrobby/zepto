@@ -945,6 +945,9 @@
         var e3 = $.Event('custom', {customKey: 'customValue'});
         t.assertEqual('custom', e3.type);
         t.assertEqual('customValue', e3.customKey);
+
+        var e4 = $.Event('custom', {bubbles: false});
+        t.assertIdentical(false, e4.bubbles);
       },
 
       testTriggerEventObject: function(t){

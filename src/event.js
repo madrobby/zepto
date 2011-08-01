@@ -112,15 +112,9 @@
   };
 
   $.fn.trigger = function(event, data){
-    var type = event.type || event;
-    if(typeof event !== "object"){
-      event = document.createEvent('Events');
-      event.initEvent(type, true, true)
-    }
+    if (typeof event == 'string') event = $.Event(event);
     event.data = data;
-    return this.each(function(){
-      this.dispatchEvent(event);
-    });
+    return this.each(function(){ this.dispatchEvent(event) });
   };
 
   // shortcut methods for `.bind(event, fn)` for each event type
@@ -138,10 +132,10 @@
     };
   });
 
-  $.Event = function(src, props) {
+  $.Event = function(type, props) {
     var event = document.createEvent('Events');
     if (props) $.extend(event, props);
-    event.initEvent(src, true, true);
+    event.initEvent(type, !(props && props.bubbles === false), true);
     return event;
   };
 
