@@ -123,11 +123,19 @@
     });
   };
 
-  // add support to all events supported with jQuery which are simple wrappers for native events
-  ('blur focus focusin focusout load resize scroll unload click dblclick '+
+  // shortcut methods for `.bind(event, fn)` for each event type
+  ('focusin focusout load resize scroll unload click dblclick '+
   'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select submit keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback){ return this.bind(event, callback) };
+  });
+
+  ['focus', 'blur'].forEach(function(name) {
+    $.fn[name] = function(callback) {
+      if (callback) this.bind(name, callback);
+      else if (this.length) try { this.get(0)[name]() } catch(e){};
+      return this;
+    };
   });
 
   $.Event = function(src, props) {
