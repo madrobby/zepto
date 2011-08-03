@@ -13,6 +13,7 @@
 
   $.fn.anim = function(properties, duration, ease, callback){
     var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
+    if (duration === undefined) duration = 0.5;
 
     for (key in properties)
       if (supportedTransforms.indexOf(key)>=0)
@@ -20,24 +21,23 @@
       else
         cssProperties[key] = properties[key];
 
-    wrappedCallback = function(){
-      that.css({'-webkit-transition':'none'});
-      callback && callback();
-    }
-
-    if (duration > 0)
-      this.one('webkitTransitionEnd', wrappedCallback);
-    else
-      setTimeout(wrappedCallback, 0);
-
     if (transforms.length > 0) {
       cssProperties['-webkit-transform'] = transforms.join(' ')
     }
 
-    cssProperties['-webkit-transition'] = 'all ' + (duration !== undefined ? duration : 0.5) + 's ' + (ease || '');
+    cssProperties['-webkit-transition'] = 'all ' + duration + 's ' + (ease || '');
 
-    setTimeout(function () {
+    wrappedCallback = function(){
+      $(this).css({'-webkit-transition':'none'});
+      callback && callback.call(this);
+    }
+    if (duration > 0) this.one('webkitTransitionEnd', wrappedCallback);
+
+    setTimeout(function() {
       that.css(cssProperties);
+      if (duration <= 0) setTimeout(function() {
+        that.each(function(){ wrappedCallback.call(this) });
+      }, 0);
     }, 0);
 
     return this;

@@ -79,30 +79,31 @@
         t.pause();
         var duration = 250; //Milliseconds
         var start = new Date().getTime();
+
         $('#callbacktest').anim({
           translate3d: '100px, 100px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
         }, duration / 1000, 'linear',
         function(){
-          t.resume(
-          function(){
+          var context = this;
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong");
             this.assert((new Date().getTime() - start) >= duration);
             this.assertEqual('none', $('#callbacktest').get(0).style.webkitTransition);
           });
         });
 
-        // Test for https://github.com/madrobby/zepto/issues/200
         var el = $('#anim_zero_duration_callback_test'),
             callbackCalled = false;
 
         el.anim({ opacity: 0.5 }, 0, 'linear', function () {
+          t.assert($(this).is('#anim_zero_duration_callback_test'), "context for callback is wrong");
+          t.assertEqual('0.5', $(this).css('opacity'));
           callbackCalled = true;
         });
 
-        setTimeout(function () {
-          t.assert(callbackCalled);
-        }, 0);
+        setTimeout(function() { t.assert(callbackCalled) }, 30);
       }
     });
   </script>
