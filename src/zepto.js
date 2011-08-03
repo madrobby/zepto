@@ -171,7 +171,7 @@ var Zepto = (function() {
     },
     filter: function(selector){
       return $([].filter.call(this, function(element){
-        return $$(element.parentNode, selector).indexOf(element) >= 0;
+        return element.parentNode && $$(element.parentNode, selector).indexOf(element) >= 0;
       }));
     },
     end: function(){
