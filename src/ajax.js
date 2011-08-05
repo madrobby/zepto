@@ -90,6 +90,10 @@
   //                             the server:
   //                             'json', 'xml', 'html', or 'text'
   //     timeout (0)           — request timeout
+  //     beforeSend            — callback that is executed before
+  //                             request send
+  //     complete              — callback that is executed on request
+  //                             complete (both: error and success)
   //     success               — callback that is executed if
   //                             the request succeeds
   //     error                 — callback that is executed if
@@ -98,12 +102,12 @@
   // *Example:*
   //
   //     $.ajax({
-  //        type:     'POST',
-  //        url:      '/projects',
-  //        data:     { name: 'Zepto.js' },
-  //        dataType: 'html',
-  //        timeout:  100,
-  //        success:  function (data) {
+  //        type:       'POST',
+  //        url:        '/projects',
+  //        data:       { name: 'Zepto.js' },
+  //        dataType:   'html',
+  //        timeout:    100,
+  //        success:    function (data) {
   //            $('body').append(data);
   //        },
   //        error:    function (xhr, type) {
