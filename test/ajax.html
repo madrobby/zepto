@@ -42,19 +42,34 @@
         });
       },
 
-      testAjaxTimeout: function (t) {
+      testAjaxNotNullTimeout: function (t) {
         var startTime = new Date();
         t.pause();
         $.ajax({
           url:     'fixtures/ajax_load_simple.html',
           timeout: 300,
-          success: function () {
+          beforeSend: function () {
             t.resume(function () {
               this.assert(new Date() - startTime > 300);
             });
           }
         });
       },
+
+      testAjaxNullTimeout: function (t) {
+        var startTime = new Date();
+        t.pause();
+        $.ajax({
+          url:     'fixtures/ajax_load_simple.html',
+          timeout: 0,
+          beforeSend: function () {
+            t.resume(function () {
+              this.assert(new Date() - startTime < 10);
+            });
+          }
+        });
+      },
+
 
       // TODO: It's time to integrate a real webserver (webrick) to test POSTS
       //
