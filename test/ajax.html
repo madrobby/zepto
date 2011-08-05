@@ -42,6 +42,20 @@
         });
       },
 
+      testAjaxTimeout: function (t) {
+        var startTime = new Date();
+        t.pause();
+        $.ajax({
+          url:     'fixtures/ajax_load_simple.html',
+          timeout: 300,
+          success: function () {
+            t.resume(function () {
+              this.assert(new Date() - startTime > 300);
+            });
+          }
+        });
+      },
+
       // TODO: It's time to integrate a real webserver (webrick) to test POSTS
       //
       //testAjaxPostWithData: function(t) {
