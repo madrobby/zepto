@@ -7,6 +7,18 @@
   <script src="../src/event.js"></script>
   <script src="../src/fx.js"></script>
   <script src="../vendor/evidence.js"></script>
+  <style>
+    @-webkit-keyframes animName {
+      0% {
+        -webkit-transform: rotateY(180deg) scale(.8) translate3d(0, 0, 0);
+        opacity: 1;
+      }
+      100% {
+        -webkit-transform: rotateY(0deg) scale(1) translate3d(100px, 100px, 100px);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>Zepto FX unit tests</h1>
@@ -18,6 +30,7 @@
   <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="callbacktest" style="width:40px;height:40px;background:red"></div>
+  <div id="keyframetest" style="width:40px;height:40px;background:red;opacity: 0;"></div>
 
   <div id="anim_zero_duration_callback_test"></div>
 
@@ -104,6 +117,13 @@
         });
 
         setTimeout(function() { t.assert(callbackCalled) }, 30);
+      },
+
+      testKeyFrameAnimation: function (t) {
+        $('#keyframetest').anim('animName', 2);
+        setTimeout(function () {
+          t.assertEqual('animName', $('#keyframetest').get(0).style.webkitAnimationName);
+        }, 0);
       }
     });
   </script>
