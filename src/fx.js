@@ -15,20 +15,35 @@
     var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
     if (duration === undefined) duration = 0.5;
 
-    for (key in properties)
-      if (supportedTransforms.indexOf(key)>=0)
-        transforms.push(key + '(' + properties[key] + ')');
-      else
-        cssProperties[key] = properties[key];
+    if (typeof properties === 'string') {
 
-    if (transforms.length > 0) {
-      cssProperties['-webkit-transform'] = transforms.join(' ')
+      // Keyframe animation
+
+      cssProperties['-webkit-animation-name'] = properties;
+      cssProperties['-webkit-animation-duration'] = duration + 's';
+
+    } else {
+
+      // CSS / transition animation
+
+      for (key in properties)
+        if (supportedTransforms.indexOf(key)>=0)
+          transforms.push(key + '(' + properties[key] + ')');
+        else
+          cssProperties[key] = properties[key];
+
+      if (transforms.length > 0) {
+        cssProperties['-webkit-transform'] = transforms.join(' ')
+      }
+
+      cssProperties['-webkit-transition'] = 'all ' + duration + 's ' + (ease || '');
     }
 
-    cssProperties['-webkit-transition'] = 'all ' + duration + 's ' + (ease || '');
-
     wrappedCallback = function(){
-      $(this).css({'-webkit-transition':'none'});
+      $(this).css({
+        '-webkit-transition': 'none',
+        '-webkit-animation-name': 'none'
+      });
       callback && callback.call(this);
     }
     if (duration > 0) this.one('webkitTransitionEnd', wrappedCallback);
