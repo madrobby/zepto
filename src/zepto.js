@@ -84,7 +84,7 @@ var Zepto = (function() {
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null;
       else if (fragmentRE.test(selector))
-        dom = fragment(selector, RegExp.$1), selector = null;
+        dom = fragment(selector.trim(), RegExp.$1), selector = null;
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
       else dom = $$(document, selector);
       return Z(dom, selector);
