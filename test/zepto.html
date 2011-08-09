@@ -369,6 +369,9 @@
         t.assertEqual(Node.TEXT_NODE, fragment.get(1).nodeType);
         t.assertEqual("<span>world</span>", outerHTML(fragment.get(2)));
         t.assertEqual('', fragment.selector);
+
+        fragment = $("<div>hello</div> ");
+        t.assertLength(1, fragment);
       },
 
       testDollarWithTextNode: function(t){
