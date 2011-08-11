@@ -12,6 +12,7 @@ GEM
       selenium-webdriver (>= 0.1.3)
     json_pure (1.5.3)
     rack (1.3.2)
+    rake (0.8.7)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
       rspec-expectations (~> 2.6.0)
@@ -32,3 +33,4 @@ PLATFORMS
 
 DEPENDENCIES
   jasmine
+  rake
