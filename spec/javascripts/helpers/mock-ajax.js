@@ -166,7 +166,7 @@ jasmine.Ajax = {
 
   installZepto: function() {
     jasmine.Ajax.mode = 'Zepto.js';
-    jasmine.Ajax.real = Zepto.ajaxSettings.xhr();
+    jasmine.Ajax.real = Zepto.ajaxSettings.xhr;
     Zepto.ajaxSettings.xhr = jasmine.Ajax.zeptoMock;
   },
 
