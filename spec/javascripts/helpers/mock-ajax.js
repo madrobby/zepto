@@ -2,7 +2,7 @@
  Jasmine-Ajax : a set of helpers for testing AJAX requests under the Jasmine
  BDD framework for JavaScript.
 
- Supports both Prototype.js and jQuery.
+ Supports both Prototype.js, jQuery and Zepto.js.
 
  http://github.com/pivotal/jasmine-ajax
 
@@ -142,8 +142,10 @@ jasmine.Ajax = {
       jasmine.Ajax.installJquery();
     } else if (typeof Prototype != 'undefined') {
       jasmine.Ajax.installPrototype();
+    } else if (typeof Zepto != 'undefined') {
+      jasmine.Ajax.installZepto();
     } else {
-      throw new Error("jasmine.Ajax currently only supports jQuery and Prototype");
+      throw new Error("jasmine.Ajax currently only supports jQuery, Prototype and Zepto.js");
     }
     jasmine.Ajax.installed = true;
   },
@@ -162,12 +164,20 @@ jasmine.Ajax = {
     Ajax.getTransport = jasmine.Ajax.prototypeMock;
   },
 
+  installZepto: function() {
+    jasmine.Ajax.mode = 'Zepto.js';
+    jasmine.Ajax.real = Zepto.ajaxSettings.xhr();
+    Zepto.ajaxSettings.xhr = jasmine.Ajax.zeptoMock;
+  },
+
   uninstallMock: function() {
     jasmine.Ajax.assertInstalled();
     if (jasmine.Ajax.mode == 'jQuery') {
       jQuery.ajaxSettings.xhr = jasmine.Ajax.real;
     } else if (jasmine.Ajax.mode == 'Prototype') {
       Ajax.getTransport = jasmine.Ajax.real;
+    } else if (jasmine.Ajax.mode == 'Zepto.js') {
+      Zepto.ajaxSettings.xhr = jasmine.Ajax.real;
     }
     jasmine.Ajax.reset();
   },
@@ -185,6 +195,10 @@ jasmine.Ajax = {
   },
 
   prototypeMock: function() {
+    return new FakeXMLHttpRequest();
+  },
+
+  zeptoMock: function() {
     return new FakeXMLHttpRequest();
   },
 
