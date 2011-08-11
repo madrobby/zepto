@@ -199,7 +199,9 @@ jasmine.Ajax = {
   },
 
   zeptoMock: function() {
-    return new FakeXMLHttpRequest();
+    var newXhr = new FakeXMLHttpRequest();
+    ajaxRequests.push(newXhr);
+    return newXhr;
   },
 
   installed: false,
