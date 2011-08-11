@@ -135,3 +135,12 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
     'examples/**/*'
   )
 end
+
+begin
+  require 'jasmine'
+  load 'jasmine/tasks/jasmine.rake'
+rescue LoadError
+  task :jasmine do
+    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
+  end
+end
