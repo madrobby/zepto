@@ -11,7 +11,8 @@
 #   - dist/**/*.js
 #
 src_files:
-    - public/javascripts/**/*.js
+  - zepto.js
+  - *.js
 
 # stylesheets
 #
@@ -59,7 +60,7 @@ spec_files:
 #
 # src_dir: public
 #
-src_dir:
+src_dir: src
 
 # spec_dir
 #
