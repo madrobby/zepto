@@ -59,6 +59,10 @@
     error: empty,
     // Callback that is executed on request complete (both: error and success)
     complete: empty,
+    // Transport
+    xhr: function () {
+      return new window.XMLHttpRequest();
+    },
     // MIME types mapping
     accepts: {
       script: 'text/javascript, application/javascript',
@@ -137,7 +141,7 @@
     }
 
     var mime = settings.accepts[settings.dataType],
-        xhr = new XMLHttpRequest();
+        xhr = $.ajaxSettings.xhr();
 
     settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
     if (mime) settings.headers['Accept'] = mime;
