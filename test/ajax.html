@@ -229,6 +229,24 @@
         t.assertEqual("world", result.hello);
       },
 
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, '');
+        t.assert(success);
+        t.assertEqual('', result);
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, ' ');
+        t.assert(success);
+        t.assertEqual(' ', result);
+      },
+
       testDataOptionIsConvertedToSerializedForm: function(t) {
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
 		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
