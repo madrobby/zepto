@@ -3,7 +3,10 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 (function($){
-  var $$ = $.qsa, handlers = {}, _zid = 1;
+  var $$ = $.qsa, handlers = {}, _zid = 1,special_events={};
+
+special_events.click=special_events.mousedown=special_events.mouseup=special_events.mousemove="MouseEvents";
+
   function zid(element) {
     return element._zid || (element._zid = _zid++);
   }
@@ -158,9 +161,9 @@
   });
 
   $.Event = function(type, props) {
-    var event = document.createEvent('Events');
+    var event = document.createEvent(special_events[type]||'Events');
     if (props) $.extend(event, props);
-    event.initEvent(type, !(props && props.bubbles === false), true);
+    event.initEvent(type, !(props && props.bubbles === false), true, null, null, null, null, null, null, null, null, null, null, null, null);
     return event;
   };
 
