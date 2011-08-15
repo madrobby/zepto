@@ -150,7 +150,7 @@
       if (xhr.readyState == 4) {
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
-          if (mime == 'application/json' && !(xhr.responseText == '' || xhr.responseText == ' ')) {
+          if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
             try { result = JSON.parse(xhr.responseText); }
             catch (e) { error = e; }
           }
