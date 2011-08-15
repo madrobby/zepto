@@ -12,7 +12,7 @@
   ];
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var transforms = [], cssProperties = {}, key, that = this, wrappedCallback;
+    var transforms = [], cssProperties = {}, key, that = this, wrappedCallback, endEventName = 'webkitTransitionEnd';
     if (duration === undefined) duration = 0.5;
 
     if (typeof properties === 'string') {
@@ -21,6 +21,8 @@
 
       cssProperties['-webkit-animation-name'] = properties;
       cssProperties['-webkit-animation-duration'] = duration + 's';
+
+      endEventName = 'webkitAnimationEnd';
 
     } else {
 
@@ -46,7 +48,7 @@
       });
       callback && callback.call(this);
     }
-    if (duration > 0) this.one('webkitTransitionEnd', wrappedCallback);
+    if (duration > 0) this.one(endEventName, wrappedCallback);
 
     setTimeout(function() {
       that.css(cssProperties);
