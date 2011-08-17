@@ -5,7 +5,7 @@
 (function($){
   var $$ = $.qsa, handlers = {}, _zid = 1, specialEvents={};
 
-specialEvents.click=specialEvents.mousedown=specialEvents.mouseup=specialEvents.mousemove="MouseEvents";
+  specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents';
 
   function zid(element) {
     return element._zid || (element._zid = _zid++);
