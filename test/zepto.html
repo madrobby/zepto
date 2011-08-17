@@ -853,6 +853,16 @@
         t.assertEqual('rgb(0, 0, 0)', div.css('color'));
       },
 
+      testCSSOnNonExistElm: function (t) {
+        var errorWasRaised = false;
+        try {
+          var color = $('.some-non-exist-elm').css('color');
+        } catch (e) {
+          errorWasRaised = true;
+        }
+        t.assert(!errorWasRaised);
+      },
+
       testHtml: function(t){
         var div = $('div.htmltest');
         div.html('yowza');
