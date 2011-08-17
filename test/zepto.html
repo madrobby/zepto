@@ -1705,6 +1705,20 @@
           $body.unbind();
         })
         $body.trigger('custom', eventData);
+      },
+
+      testSpecialEvent: function (t) {
+        var clickEvent     = new $.Event('click'),
+            mouseDownEvent = new $.Event('mousedown'),
+            mouseUpEvent   = new $.Event('mouseup'),
+            mouseMoveEvent = new $.Event('mousemove'),
+            submitEvent    = new $.Event('submit');
+
+        t.assertEqual(MouseEvent, clickEvent.constructor);
+        t.assertEqual(MouseEvent, mouseDownEvent.constructor);
+        t.assertEqual(MouseEvent, mouseUpEvent.constructor);
+        t.assertEqual(MouseEvent, mouseMoveEvent.constructor);
+        t.assertEqual(Event, mouseMoveEvent.constructor);
       }
     });
   </script>
