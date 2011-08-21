@@ -44,7 +44,7 @@
         $(touch.target).trigger('doubleTap');
         touch = {};
       } else if ( (touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-                  (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30) ) {           
+                  (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30) ) {          
         $(touch.target).trigger('swipe') &&
         $(touch.target).trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)));
         touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0;
