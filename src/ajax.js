@@ -178,9 +178,18 @@
       xhr.send(settings.data);
     };
 
+    var handleTimeout = function() {
+    	if (xhr) {
+			xhr.onreadystatechange = function() { };
+			xhr.abort();
+		}
+		settings.error(xhr, 'timeout');
+    };
+
     if (settings.timeout > 0) {
-      setTimeout(sendRequest, settings.timeout);
-    } else if (sendRequest() === false) {
+      setTimeout(handleTimeout, settings.timeout);
+    }
+    if (sendRequest() === false) {
       return false;
     }
 
