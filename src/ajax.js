@@ -141,13 +141,14 @@
     }
 
     var mime = settings.accepts[settings.dataType],
-        xhr = $.ajaxSettings.xhr();
+        xhr = $.ajaxSettings.xhr(), timeoutID;
 
     settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
     if (mime) settings.headers['Accept'] = mime;
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
+        clearTimeout(timeoutID);
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
@@ -187,7 +188,7 @@
     };
 
     if (settings.timeout > 0) {
-      setTimeout(handleTimeout, settings.timeout);
+      timeoutID = setTimeout(handleTimeout, settings.timeout);
     }
     if (sendRequest() === false) {
       return false;
