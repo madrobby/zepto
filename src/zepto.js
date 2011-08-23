@@ -177,6 +177,9 @@ var Zepto = (function() {
     end: function(){
       return this.prevObject || $();
     },
+    andSelf:function(){
+      return this.add(this.prevObject || $())
+    },
     add:function(selector,context){
       return $(uniq(this.concat($(selector,context))));
     },
