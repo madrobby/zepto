@@ -307,17 +307,21 @@
   //     $.param( { name: 'Zepto.js', version: '0.6' } );
   //
   $.param = function(obj, v){
-    var result = [], add = function(key, value){
-      result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
-        + '=' + encodeURIComponent(value));
-      },
-      isObjArray = $.isArray(obj);
+    var isArray = $.isArray(obj), result = [],
+      add = function(key, value){
+        result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
+          + '=' + encodeURIComponent(value));
+      };
 
-    for(key in obj)
-      if(isObject(obj[key]))
-        result.push($.param(obj[key], (v ? v + '[' + key + ']' : key)));
-      else
-        add(isObjArray ? '' : key, obj[key]);
+    $.each(obj, function(key, value) {
+      if (isArray) {
+        if (v) add('', value);
+        else add(value.name, value.value);
+      }
+      else if (isObject(value))
+        result.push($.param(value, (v ? v + '[' + key + ']' : key)));
+      else add(key, value);
+    });
 
     return result.join('&').replace('%20', '+');
   };

@@ -381,7 +381,7 @@
     Evidence.TestCase.extend('ZeptoAjaxHelperMethodsTest',{
 
       testParamMethod: function(t) {
-        result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
+        var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
         result = decodeURIComponent(result);
         t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo");
 
@@ -396,6 +396,15 @@
         });
         result = decodeURIComponent(result);
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh");
+      },
+
+      testParamMethodWithArray: function(t) {
+        var data = [
+          {name:'country', value:'Ecuador'},
+          {name:'capital', value:'Quito'}
+        ];
+        var result = $.param(data);
+        t.assertEqual(result, "country=Ecuador&capital=Quito");
       }
 
     });
