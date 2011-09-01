@@ -96,6 +96,18 @@
     return proxy;
   }
 
+  // emulates the 'defaultPrevented' property for browsers that have none
+  function fix(event) {
+    if (!('defaultPrevented' in event)) {
+      event.defaultPrevented = false;
+      var prevent = event.preventDefault;
+      event.preventDefault = function() {
+        this.defaultPrevented = true;
+        prevent.call(this);
+      }
+    }
+  }
+
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
       add(element, event, callback, selector, function(e, data){
@@ -126,6 +138,7 @@
 
   $.fn.trigger = function(event, data){
     if (typeof event == 'string') event = $.Event(event);
+    fix(event);
     event.data = data;
     return this.each(function(){ this.dispatchEvent(event) });
   };

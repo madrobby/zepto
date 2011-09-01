@@ -974,6 +974,9 @@
       },
 
       testTriggerEventObject: function(t){
+        $('#some_element').unbind();
+        $(document.body).undelegate('#some_element');
+
         var counter = 0,
             customEventKey = 0;
 
@@ -989,6 +992,19 @@
 
         t.assertEqual(10, counter);
         t.assertEqual(20, customEventKey);
+      },
+
+      testTriggerEventCancelled: function(t){
+        $('#some_element').unbind();
+        $(document.body).undelegate('#some_element');
+
+        $('#some_element').unbind().bind('custom', function(e){
+          e.preventDefault();
+        });
+        var event = $.Event('custom');
+        t.assert(!event.defaultPrevented);
+        $('#some_element').trigger(event);
+        t.assert(event.defaultPrevented);
       },
 
       testTriggerHandler: function(t){
