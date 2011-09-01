@@ -102,7 +102,7 @@
         var target = e.target, nodes = $$(element, selector);
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
         if (target && !(target === element) && !(target === document)) {
-          callback.call(target, $.extend(createProxy(e), {
+          return callback.call(target, $.extend(createProxy(e), {
             currentTarget: target, liveFired: element
           }), data);
         }
