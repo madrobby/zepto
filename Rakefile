@@ -8,18 +8,18 @@ ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
 ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
 ZEPTO_PKG_DIR  = File.join(ZEPTO_ROOT, 'pkg')
 
-ZEPTO_FILES    = [
-  File.join(ZEPTO_SRC_DIR,'polyfill.js'),
-  File.join(ZEPTO_SRC_DIR,'zepto.js'),
-  File.join(ZEPTO_SRC_DIR,'event.js'),
-  File.join(ZEPTO_SRC_DIR,'detect.js'),
-  File.join(ZEPTO_SRC_DIR,'fx.js'),
-  File.join(ZEPTO_SRC_DIR,'ajax.js'),
-  File.join(ZEPTO_SRC_DIR,'form.js'),
-  # File.join(ZEPTO_SRC_DIR,'assets.js'),
-  # File.join(ZEPTO_SRC_DIR,'data.js'),
-  File.join(ZEPTO_SRC_DIR,'touch.js')
-  # File.join(ZEPTO_SRC_DIR,'gesture.js')
+ZEPTO_COMPONENTS = [
+  'polyfill',
+  'zepto',
+  'event',
+  'detect',
+  'fx',
+  'ajax',
+  'form',
+  # 'assets',
+  # 'data',
+  'touch',
+  # 'gesture'
 ]
 
 task :default => [:clean, :concat, :dist]
@@ -45,10 +45,22 @@ task :whitespace do
   end
 end
 
-desc "Concatenate Zepto core and plugins to build a distributable zepto.js file"
-task :concat => :whitespace do
-  File.open(File.join(ZEPTO_DIST_DIR,'zepto.js'),"w") do |f|
-    f.puts ZEPTO_FILES.map{ |s| IO.read(s) }
+desc "Concatenate source files to build zepto.js"
+task :concat, [:addons] => :whitespace do |task, args|
+  # colon-separated arguments such as `concat[foo:bar:-baz]` specify
+  # which components to add or exclude, depending on if it starts with "-"
+  add, exclude = args[:addons].to_s.split(':').partition {|c| c !~ /^-/ }
+  exclude.each {|c| c.sub!('-', '') }
+  components = (ZEPTO_COMPONENTS | add) - exclude
+
+  unless components == ZEPTO_COMPONENTS
+    puts "Building zepto.js by including: #{components.join(', ')}"
+  end
+
+  File.open(File.join(ZEPTO_DIST_DIR, 'zepto.js'), 'w') do |f|
+    f.puts components.map { |component|
+      File.read File.join(ZEPTO_SRC_DIR, "#{component}.js")
+    }
   end
 end
 
