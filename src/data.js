@@ -10,15 +10,16 @@
     exp  = $.expando = 'Zepto' + uuid;
 
   function getData(node, name) {
-    var id = node[exp];
-    return ( id && data[id] && data[id][name] ) ?
-      data[id][name] : dataAttr.call($(node), name);
+    var id = node[exp], store = id && data[id];
+    return name === undefined ? store || setData(node) :
+      (store && store[name]) || dataAttr.call($(node), name);
   }
 
   function setData(node, name, value) {
-    var id = node[exp] = ++uuid;
-    data[id] || (data[id] = {});
-    data[id][name] = value;
+    var id = node[exp] || (node[exp] = ++uuid),
+      store = data[id] || (data[id] = {});
+    if (name !== undefined) store[name] = value;
+    return store;
   };
 
   $.fn.data = function(name, value) {

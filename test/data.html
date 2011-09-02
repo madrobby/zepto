@@ -13,7 +13,8 @@
     See the browser console for results.
   </p>
 
-  <div id="data_attr" data-one="once" data-two="doce"></div>
+  <div id="data_attr" data-one="uno" data-two="due"></div>
+  <div id="data_full" data-mode="awesome"></div>
   <ol id="data_list">
     <li data-category="arts"></li>
     <li data-category="science"></li>
@@ -28,14 +29,14 @@
 
       testReadingAttribute: function(t){
         var el = $('#data_attr');
-        t.assertEqual('once', el.data('one'));
+        t.assertEqual('uno', el.data('one'));
       },
 
       testNotChangingAttribute: function(t){
         var el = $('#data_attr');
-        t.assertEqual('doce', el.data('two'));
+        t.assertEqual('due', el.data('two'));
         el.data('two', 'changed');
-        t.assertEqual('doce', el.attr('data-two'));
+        t.assertEqual('due', el.attr('data-two'));
       },
 
       testExtendedData: function(t){
@@ -69,6 +70,21 @@
 
         var values = items.map(function(){ return $(this).data('category') });
         t.assertEqual('0_ARTS, 1_SCIENCE', values.join(', '));
+      },
+
+      testAllData: function(t){
+        var el = $('#data_full');
+
+        el.data().samurai = 7;
+        el.data('one', 'ichi').data('two', 'ni');
+        el.data('person', {name: 'Kurosawa'});
+
+        var all = el.data();
+        t.assertEqual(7, all.samurai);
+        t.assertEqual('ichi', all.one);
+        t.assertEqual('ni', all.two);
+        t.assertEqual('Kurosawa', all.person.name);
+        t.assertUndefined(all.mode);
       }
     });
   </script>
