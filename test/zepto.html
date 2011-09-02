@@ -33,17 +33,25 @@
     <div id="get_style_element">Derp</div>
   </div>
 
-  <div id="attr_1" data-id="someId1" data-name="someName1"></div>
-  <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   <div class="replacewith">
     <div class="inner first">Hello</div>
     <div class="inner second">And</div>
     <div class="inner third">Goodbye</div>
   </div>
 
-  <div id="data_attr" data-blah="whatever"></div>
+  <div id="attr_1" data-id="someId1" data-name="someName1"></div>
+  <div id="attr_2" data-id="someId2" data-name="someName2"></div>
+  <div id="attr_remove" data-name="boom"></div>
+  <form><input id="attr_val" value="Hello World"></form>
 
-  <form><input type="text" id="attr_with_text_input" name="attr_input" value="Hello World" /></form>
+  <div id="data_attr" data-blah="whatever" data-empty></div>
+
+  <form id="attr_with_text_input">
+    <input value="Default input">
+    <input type="text" value="Text input">
+    <input type="email" value="Email input">
+    <input type="search" value="Search input">
+  </form>
 
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
@@ -1279,7 +1287,7 @@
         t.assertEqual('someOtherName', els.attr("data-name"));
         t.assertEqual('someOtherId', $('#attr_2').attr('data-id'));
 
-        t.assertUndefined(els.attr("nonExistentAttribute"));
+        t.assertNull(els.attr("nonExistentAttribute"));
 
         els.attr("data-id", false);
         t.assertEqual("false", els.attr("data-id"));
@@ -1301,52 +1309,49 @@
         t.assertEqual('1id', $('#attr_2').attr('data-id'));
       },
 
-      testAttrOnInputFieldWithTypeOfText: function(t) {
-        var els = $('#attr_with_text_input');
+      testAttrEmpty: function(t){
+        var el = $('#data_attr')
+        t.assertIdentical('', el.attr('data-empty'));
+      },
 
-        t.assertEqual(els.get(0).value, els.attr('value'));
-        t.assertEqual('Hello World', els.attr('value'));
+      testAttrOnTextInputField: function(t) {
+        var inputs = $('#attr_with_text_input input'), values;
 
-        els.attr('value', '');
-        t.assertEqual(els.get(0).value, els.attr('value'));
-        t.assertEqual('', els.attr('value'));
+        values = inputs.map(function(){ return $(this).attr('value') });
+        t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '));
 
-        els.get(0).value = 'Hello World'
+        inputs.val(function(i, value){ return value.replace('input', 'changed') });
+
+        values = inputs.map(function(){ return $(this).attr('value') });
+        t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '));
       },
 
       testRemoveAttr: function(t) {
-        var els = $('#attr_with_text_input');
-
-        els.get(0).removeAttribute('disabled');
-        t.assertFalse(els.attr('disabled'));
-
-        els.attr('disabled', 'definitely');
-        t.assertEqual(els.attr('disabled'), 'definitely');
-
-        els.removeAttr('disabled');
-        t.assertFalse(els.attr('disabled'));
+        var el = $('#attr_remove');
+        t.assertEqual('boom', el.attr('data-name'));
+        el.removeAttr('data-name');
+        t.assertNull(el.attr('data-name'));
       },
 
       testData: function(t) {
         var els = $('#data_attr');
         els.data('fun', 'hello');
-        t.assertEqual(els.attr('data-fun'), 'hello');
+        t.assertEqual('hello', els.attr('data-fun'));
 
-        t.assertEqual(els.data('fun'), 'hello');
-        t.assertEqual(els.data('blah'), 'whatever');
+        t.assertEqual('hello', els.data('fun'));
+        t.assertEqual('whatever', els.data('blah'));
       },
 
       testVal: function(t) {
-        var els = $('#attr_with_text_input');
+        var input = $('#attr_val');
 
-        t.assertEqual(els.get(0).value, els.val());
-        t.assertEqual('Hello World', els.val());
+        t.assertEqual('Hello World', input.val());
 
-        els.val('');
-        t.assertEqual(els.get(0).value, els.val());
-        t.assertEqual('', els.val());
+        input.val('');
+        t.assertEqual('', input.val());
 
-        els.get(0).value = "Hello World";
+        input.get(0).value = 'Hello again';
+        t.assertEqual('Hello again', input.val());
       },
 
       testChaining: function(t){
