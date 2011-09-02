@@ -13,17 +13,35 @@
     See the browser console for results.
   </p>
 
-  <div id="data_attr"></div>
+  <div id="data_attr" data-one="once" data-two="doce"></div>
+  <ol id="data_list">
+    <li data-category="arts"></li>
+    <li data-category="science"></li>
+  </ol>
 
   <script>
     Evidence.TestCase.extend('ZeptoExtendedDataTest', {
+      testEmptyCollection: function(t){
+        var el = $('#does_not_exist');
+        t.assertUndefined(el.data('one'));
+      },
+
+      testReadingAttribute: function(t){
+        var el = $('#data_attr');
+        t.assertEqual('once', el.data('one'));
+      },
+
+      testNotChangingAttribute: function(t){
+        var el = $('#data_attr');
+        t.assertEqual('doce', el.data('two'));
+        el.data('two', 'changed');
+        t.assertEqual('doce', el.attr('data-two'));
+      },
+
       testExtendedData: function(t){
         var els = $('#data_attr'),
           els2 = $('#data_attr'),
           obj  = { a: 'A', b: 'B' };
-
-        els.data('hello', 'world');
-        t.assertEqual('world', els.dataAttr('hello'));
 
         els.data('obj', obj);
         t.assertIdentical(obj, els.data('obj'));
@@ -31,6 +49,26 @@
 
         els2.data('els', els);
         t.assertIdentical(els, els.data('els'));
+      },
+
+      testMultipleElements: function(t){
+        var items = $('#data_list li');
+
+        items.data('each', 'mark');
+
+        var values = items.map(function(){ return $(this).data('each') });
+        t.assertEqual('mark, mark', values.join(', '));
+      },
+
+      testFunctionArg: function(t){
+        var items = $('#data_list li');
+
+        items.data('category', function(i, val){
+          return i + '_' + val.toUpperCase();
+        });
+
+        var values = items.map(function(){ return $(this).data('category') });
+        t.assertEqual('0_ARTS, 1_SCIENCE', values.join(', '));
       }
     });
   </script>

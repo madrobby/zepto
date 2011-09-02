@@ -5,36 +5,28 @@
 // The following code is heavily inspired by jQuery's $.fn.data()
 
 (function($) {
-  var data = {},
+  var data = {}, dataAttr = $.fn.data;
     uuid = $.uuid = +new Date(),
     exp  = $.expando = 'Zepto' + uuid;
 
-  function isScalar(value) {
-    return /boolean|number|string/.test(typeof value);
-  }
-
-  function getData(name) {
-    var id = this[0][exp];
-
+  function getData(node, name) {
+    var id = node[exp];
     return ( id && data[id] && data[id][name] ) ?
-      data[id][name] : this.dataAttr(name);
+      data[id][name] : dataAttr.call($(node), name);
   }
 
-  function setData(name, value) {
-    if (isScalar(value)) return this.dataAttr(name, value);
-
-    var id = this[0][exp] = ++uuid;
-
-    data[id]       = data[id] || {};
+  function setData(node, name, value) {
+    var id = node[exp] = ++uuid;
+    data[id] || (data[id] = {});
     data[id][name] = value;
-
-    return this;
   };
 
-  $.fn.dataAttr = $.fn.data;
-  $.fn.data     = function(name, value) {
+  $.fn.data = function(name, value) {
     return value === undefined ?
-      getData.call(this, name) :
-      setData.call(this, name, value);
+      this.length == 0 ? undefined : getData(this[0], name) :
+      this.each(function(idx){
+        setData(this, name, $.isFunction(value) ?
+                value.call(this, idx, getData(this, name)) : value);
+      });
   };
 })(Zepto);
