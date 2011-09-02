@@ -314,8 +314,8 @@ var Zepto = (function() {
     val: function(value){
       return (value === undefined) ?
         (this.length > 0 ? this[0].value : null) :
-        this.each(function(){
-          this.value = value;
+        this.each(function(idx){
+          this.value = funcArg(this, value, idx, this.value);
         });
     },
     offset: function(){

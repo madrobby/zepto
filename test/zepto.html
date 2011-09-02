@@ -1352,6 +1352,9 @@
 
         input.get(0).value = 'Hello again';
         t.assertEqual('Hello again', input.val());
+
+        input.val(function(i, val){ return val.replace('Hello', 'Bye') });
+        t.assertEqual('Bye again', input.val());
       },
 
       testChaining: function(t){
