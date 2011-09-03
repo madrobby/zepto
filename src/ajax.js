@@ -34,7 +34,7 @@
   //     });
   //
   $.ajaxJSONP = function(options){
-    var jsonpString = 'jsonp' + ++jsonpID,
+    var jsonpString = 'jsonp' + (++jsonpID),
         script = document.createElement('script');
     window[jsonpString] = function(data){
       options.success(data);
