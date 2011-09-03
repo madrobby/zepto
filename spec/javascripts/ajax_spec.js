@@ -137,6 +137,23 @@ describe('Ajax', function () {
         it('should be defined', function () {
             expect($.get).toBeDefined();
         });
+
+        it('should call $.ajax with url and success callback', function () {
+            var successCallback = function () {};
+
+            var zeptoAjax = $.ajax;
+            $.ajax = jasmine.createSpy('$.ajax');
+
+            $.get('/example/url', successCallback);
+
+            var options = $.ajax.mostRecentCall.args[0];
+
+            expect(options.constructor).toBe(Object);
+            expect(options.url).toBe('/example/url');
+            expect(options.success).toBe(successCallback);
+
+            $.ajax = zeptoAjax;
+        });
     });
 
     describe('$.post', function () {
