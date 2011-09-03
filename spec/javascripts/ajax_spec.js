@@ -8,7 +8,7 @@ describe('Ajax', function () {
         });
 
         it('should returns xhr object', function () {
-            expect($.ajax().constructor).toBe(XMLHttpRequest);
+            expect($.ajax().onreadystatechange).toBeDefined();
         });
 
         describe('XHR request', function () {
@@ -192,7 +192,7 @@ describe('Ajax', function () {
             expect($.ajaxSettings.success.constructor).toBe(Function);
             expect($.ajaxSettings.error.constructor).toBe(Function);
             expect($.ajaxSettings.complete.constructor).toBe(Function);
-            expect($.ajaxSettings.xhr().constructor).toBe(XMLHttpRequest);
+            expect($.ajaxSettings.xhr().onreadystatechange).toBeDefined();
             expect($.ajaxSettings.accepts.constructor).toBe(Object);
             expect($.ajaxSettings.accepts.script).toBe('text/javascript, application/javascript');
             expect($.ajaxSettings.accepts.json).toBe('application/json');
