@@ -1,4 +1,7 @@
 describe('Ajax', function () {
+
+    var onSuccess, onError, request;
+
     describe('$.ajax', function () {
         it('should be defined', function () {
             expect($.ajax).toBeDefined();
@@ -7,7 +10,37 @@ describe('Ajax', function () {
         it('should returns xhr object', function () {
             expect($.ajax().constructor).toBe(XMLHttpRequest);
         });
+
+        describe('XHR request', function () {
+
+            beforeEach(function () {
+                jasmine.Ajax.useMock();
+                onSuccess = jasmine.createSpy('onSuccess');
+            });
+
+            describe('on GET request', function () {
+
+                beforeEach(function () {
+                    $.ajax({ url: '/example/url', success: onSuccess });
+                    request = mostRecentAjaxRequest();
+                    request.response({ status: 200, responseText: 'Small is beautiful.' });
+                });
+
+                it('should perform XHR request', function () {
+                    expect(onSuccess).toHaveBeenCalled();
+                });
+
+                it('should pass responseText, success string and xhr object', function () {
+                    var args = onSuccess.mostRecentCall.args;
+                    expect(args.length).toEqual(3);
+                    expect(args[0]).toEqual('Small is beautiful.');
+                    expect(args[1]).toEqual('success');
+                    expect(args[2].constructor).toEqual(FakeXMLHttpRequest);
+                });
+            });
+        });
     });
+
 
     describe('$.get', function () {
         it('should be defined', function () {
