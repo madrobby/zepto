@@ -43,6 +43,23 @@ describe('Ajax', function () {
         it('should be defined', function () {
             expect($.ajaxSettings).toBeDefined();
         });
+
+        it('should contain default ajax settings', function () {
+            expect($.ajaxSettings.constructor).toBe(Object);
+            expect($.ajaxSettings.type).toBe('GET');
+            expect($.ajaxSettings.beforeSend.constructor).toBe(Function);
+            expect($.ajaxSettings.success.constructor).toBe(Function);
+            expect($.ajaxSettings.error.constructor).toBe(Function);
+            expect($.ajaxSettings.complete.constructor).toBe(Function);
+            expect($.ajaxSettings.xhr().constructor).toBe(XMLHttpRequest);
+            expect($.ajaxSettings.accepts.constructor).toBe(Object);
+            expect($.ajaxSettings.accepts.script).toBe('text/javascript, application/javascript');
+            expect($.ajaxSettings.accepts.json).toBe('application/json');
+            expect($.ajaxSettings.accepts.xml).toBe('application/xml, text/xml');
+            expect($.ajaxSettings.accepts.html).toBe('text/html');
+            expect($.ajaxSettings.accepts.text).toBe('text/plain');
+            expect($.ajaxSettings.timeout).toBe(0);
+        });
     });
 
     describe('$.ajaxJSONP', function () {
