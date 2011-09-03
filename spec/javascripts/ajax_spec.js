@@ -1,6 +1,6 @@
 describe('Ajax', function () {
 
-    var onSuccess, onError, request;
+    var beforeSend, onSuccess, onComplete, onError, settings, request, xhrResponse;
 
     describe('$.ajax', function () {
         it('should be defined', function () {
@@ -13,34 +13,125 @@ describe('Ajax', function () {
 
         describe('XHR request', function () {
 
+            var performAjax = function () {
+                $.ajax(settings);
+                request = mostRecentAjaxRequest();
+                request.response(xhrResponse);
+            };
+
             beforeEach(function () {
                 jasmine.Ajax.useMock();
+                beforeSend = jasmine.createSpy('beforeSend');
                 onSuccess = jasmine.createSpy('onSuccess');
+                onError = jasmine.createSpy('onError');
+                onComplete = jasmine.createSpy('onComplete');
             });
 
             describe('on GET request', function () {
 
                 beforeEach(function () {
-                    $.ajax({ url: '/example/url', success: onSuccess });
-                    request = mostRecentAjaxRequest();
-                    request.response({ status: 200, responseText: 'Small is beautiful.' });
+                    settings = {
+                        url:        '/example/url',
+                        success:    onSuccess,
+                        error:      onError,
+                        complete:   onComplete,
+                        beforeSend: beforeSend
+                    };
+
+                    xhrResponse = {
+                        status: 200,
+                        responseText: 'Small is beautiful.'
+                    };
                 });
 
-                it('should perform XHR request', function () {
-                    expect(onSuccess).toHaveBeenCalled();
+                describe('beforeSend callback', function () {
+
+                    beforeEach(function () {
+                        performAjax();
+                    });
+
+                    it('should call beforeSend callback', function () {
+                        expect(beforeSend).toHaveBeenCalled();
+                    });
+
+                    it('should pass xhr and settings to beforeSend callback', function () {
+                        var args = beforeSend.mostRecentCall.args;
+                        expect(args.length).toEqual(2);
+                        expect(args[0].constructor).toEqual(FakeXMLHttpRequest);
+                        expect(args[1].constructor).toEqual(Object);
+                        expect(args[1].beforeSend).toEqual(beforeSend);
+                    });
                 });
 
-                it('should pass responseText, success string and xhr object', function () {
-                    var args = onSuccess.mostRecentCall.args;
-                    expect(args.length).toEqual(3);
-                    expect(args[0]).toEqual('Small is beautiful.');
-                    expect(args[1]).toEqual('success');
-                    expect(args[2].constructor).toEqual(FakeXMLHttpRequest);
+                describe('success callback', function () {
+
+                    beforeEach(function () {
+                        performAjax();
+                    });
+
+                    it('should call success callback', function () {
+                        expect(onSuccess).toHaveBeenCalled();
+                    });
+
+                    it('should pass responseText, success string and xhr object to success callback', function () {
+                        var args = onSuccess.mostRecentCall.args;
+                        expect(args.length).toEqual(3);
+                        expect(args[0]).toEqual('Small is beautiful.');
+                        expect(args[1]).toEqual('success');
+                        expect(args[2].constructor).toEqual(FakeXMLHttpRequest);
+                    });
+                });
+
+                describe('error callback', function () {
+
+                    beforeEach(function () {
+                        xhrResponse.status = 500;
+                        performAjax();
+                    });
+
+                    it('should call error callback', function () {
+                        expect(onError).toHaveBeenCalled();
+                    });
+
+                    it('should pass xhr and error string to error callback', function () {
+                        var args = onError.mostRecentCall.args;
+                        expect(args.length).toEqual(2);
+                        expect(args[0].constructor).toEqual(FakeXMLHttpRequest);
+                        expect(args[1]).toEqual('error');
+                    });
+                });
+
+                describe('complete callback', function () {
+
+                    it('should call error callback on 200', function () {
+                        performAjax();
+                        expect(onComplete).toHaveBeenCalled();
+                    });
+
+                    it('should call error callback on 200', function () {
+                        xhrResponse.status = 500;
+                        performAjax();
+                        expect(onComplete).toHaveBeenCalled();
+                    });
+
+                    it('should pass xhr and success string to complete callback', function () {
+                        performAjax();
+                        var args = onComplete.mostRecentCall.args;
+                        expect(args.length).toEqual(2);
+                        expect(args[0].constructor).toEqual(FakeXMLHttpRequest);
+                        expect(args[1]).toEqual('success');
+                    });
+
+                    it('should pass xhr and error string to complete callback', function () {
+                        xhrResponse.status = 500;
+                        performAjax();
+                        var args = onComplete.mostRecentCall.args;
+                        expect(args[1]).toEqual('error');
+                    });
                 });
             });
         });
     });
-
 
     describe('$.get', function () {
         it('should be defined', function () {
