@@ -42,6 +42,13 @@
     };
     script.src = options.url.replace(/=\?/, '=' + jsonpString);
     $('head').append(script);
+
+    return {
+      abort: function(){
+        $(script).remove();
+        window[jsonpString] = empty;
+      }
+    }
   };
 
   // ### $.ajaxSettings
@@ -252,7 +259,9 @@
   //        }
   //     );
   //
-  $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
+  $.getJSON = function(url, success){
+    return $.ajax({ url: url, success: success, dataType: 'json' });
+  };
 
   // ### $.fn.load
   //
