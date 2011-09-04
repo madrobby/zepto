@@ -40,9 +40,10 @@
         $(script).remove();
         if (callbackName in window) window[callbackName] = empty;
       },
-      xhr = { abort: abort };
+      xhr = { abort: abort }, abortTimeout;
 
     window[callbackName] = function(data){
+      clearTimeout(abortTimeout);
       $(script).remove();
       delete window[callbackName];
       options.success(data);
@@ -50,6 +51,11 @@
 
     script.src = options.url.replace(/=\?/, '=' + callbackName);
     $('head').append(script);
+
+    if (options.timeout > 0) abortTimeout = setTimeout(function(){
+        xhr.abort();
+        options.error(xhr, 'timeout');
+      }, options.timeout);
 
     return xhr;
   };
