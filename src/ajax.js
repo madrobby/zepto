@@ -5,7 +5,7 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
-    var jsonpString = 'jsonp' + ++jsonpID,
+    var jsonpString = 'jsonp' + (++jsonpID),
         script = document.createElement('script');
     window[jsonpString] = function(data){
       options.success(data);
@@ -13,6 +13,13 @@
     };
     script.src = options.url.replace(/=\?/, '=' + jsonpString);
     $('head').append(script);
+    
+    return {
+        'abort': function(){
+            $(script).remove();
+            window[jsonpString] = function(){};
+        }
+    }
   };
 
   $.ajaxSettings = {
@@ -89,7 +96,7 @@
     if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
     $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
-  $.getJSON = function(url, success){ $.ajax({ url: url, success: success, dataType: 'json' }) };
+  $.getJSON = function(url, success){ return $.ajax({ url: url, success: success, dataType: 'json' }) };
 
   $.fn.load = function(url, success){
     if (!this.length) return this;
