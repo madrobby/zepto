@@ -42,20 +42,6 @@
         });
       },
 
-      testAjaxNotNullTimeout: function (t) {
-        var startTime = new Date();
-        t.pause();
-        $.ajax({
-          url:     'fixtures/ajax_load_simple.html',
-          timeout: 300,
-          beforeSend: function () {
-            t.resume(function () {
-              this.assert(new Date() - startTime > 300);
-            });
-          }
-        });
-      },
-
       testAjaxNullTimeout: function (t) {
         var startTime = new Date();
         t.pause();

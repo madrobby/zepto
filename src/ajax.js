@@ -141,14 +141,14 @@
     }
 
     var mime = settings.accepts[settings.dataType],
-        xhr = $.ajaxSettings.xhr(), timeoutID;
+        xhr = $.ajaxSettings.xhr(), abortTimeout;
 
     settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
     if (mime) settings.headers['Accept'] = mime;
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
-        clearTimeout(timeoutID);
+        clearTimeout(abortTimeout);
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
           if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
@@ -171,29 +171,18 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
 
-    var sendRequest = function () {
-      if (settings.beforeSend(xhr, settings) === false) {
-        xhr.abort();
-        return false;
-      }
-      xhr.send(settings.data);
-    };
-
-    var handleTimeout = function() {
-      if (xhr) {
-        xhr.onreadystatechange = function() { };
-        xhr.abort();
-      }
-      settings.error(xhr, 'timeout');
-    };
-
-    if (settings.timeout > 0) {
-      timeoutID = setTimeout(handleTimeout, settings.timeout);
-    }
-    if (sendRequest() === false) {
+    if (settings.beforeSend(xhr, settings) === false) {
+      xhr.abort();
       return false;
     }
 
+    if (settings.timeout > 0) abortTimeout = setTimeout(function(){
+        xhr.onreadystatechange = empty;
+        xhr.abort();
+        settings.error(xhr, 'timeout');
+      }, settings.timeout);
+
+    xhr.send(settings.data);
     return xhr;
   };
 
