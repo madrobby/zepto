@@ -34,21 +34,24 @@
   //     });
   //
   $.ajaxJSONP = function(options){
-    var jsonpString = 'jsonp' + (++jsonpID),
-        script = document.createElement('script');
-    window[jsonpString] = function(data){
+    var callbackName = 'jsonp' + (++jsonpID),
+      script = document.createElement('script'),
+      abort = function(){
+        $(script).remove();
+        if (callbackName in window) window[callbackName] = empty;
+      },
+      xhr = { abort: abort };
+
+    window[callbackName] = function(data){
+      $(script).remove();
+      delete window[callbackName];
       options.success(data);
-      delete window[jsonpString];
     };
-    script.src = options.url.replace(/=\?/, '=' + jsonpString);
+
+    script.src = options.url.replace(/=\?/, '=' + callbackName);
     $('head').append(script);
 
-    return {
-      abort: function(){
-        $(script).remove();
-        window[jsonpString] = empty;
-      }
-    }
+    return xhr;
   };
 
   // ### $.ajaxSettings

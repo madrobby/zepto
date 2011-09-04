@@ -91,11 +91,13 @@
 
       testAjaxGetJSONP: function(t){
         t.pause();
-        var xhr = $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
+        var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
           t.resume(function(){
             this.assertEqual(data.items.length, 0);
+            this.assertEqual(0, $('script[src^=fixtures]').size());
           });
         });
+        t.assertEqual(1, $('script[src^=fixtures]').size());
         t.assertIn('abort', xhr);
       },
 
