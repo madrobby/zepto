@@ -211,7 +211,7 @@
   //        }
   //     );
   //
-  $.get = function(url, success){ $.ajax({ url: url, success: success }) };
+  $.get = function(url, success){ return $.ajax({ url: url, success: success }) };
 
   // ### $.post
   //
@@ -238,7 +238,7 @@
   //
   $.post = function(url, data, success, dataType){
     if ($.isFunction(data)) dataType = dataType || success, success = data, data = null;
-    $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
+    return $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType });
   };
 
   // ### $.getJSON

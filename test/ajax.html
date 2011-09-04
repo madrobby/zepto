@@ -26,20 +26,22 @@
 
       testAjaxGet: function(t){
         t.pause();
-        $.get('fixtures/ajax_load_simple.html', function(response){
+        var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
           t.resume(function(){
             this.assert(response);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxPost: function(t){
         t.pause();
-        $.post('fixtures/ajax_load_simple.html', function(response){
+        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
           t.resume(function(){
             this.assert(response);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxNullTimeout: function (t) {
@@ -79,30 +81,33 @@
 
       testAjaxGetJSON: function(t){
         t.pause();
-        $.getJSON('fixtures/zepto.json', function(data){
+        var xhr = $.getJSON('fixtures/zepto.json', function(data){
           t.resume(function(){
             this.assertEqual('awesomeness', data.zepto);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxGetJSONP: function(t){
         t.pause();
-        $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
+        var xhr = $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
           t.resume(function(){
             this.assertEqual(data.items.length, 0);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
-        testEl.load('fixtures/ajax_load_simple.html', function(){
+        var el = testEl.load('fixtures/ajax_load_simple.html', function(){
           t.resume(function() {
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
         });
+        t.assertIdentical(testEl, el);
       },
 
       testAjaxLoadWithSelector: function(t) {
