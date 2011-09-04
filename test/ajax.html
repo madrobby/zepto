@@ -384,7 +384,31 @@
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh");
       },
 
-      testParamMethodWithArray: function(t) {
+      testParamEscaping: function(t) {
+        var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' });
+        t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result);
+      },
+
+      testParamComplex: function(t) {
+        var data = {
+          a: ['b', 'c', { d:'e', f:['g','h'] }]
+        }
+        var result = $.param(data);
+        result = decodeURIComponent(result);
+        t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result);
+      },
+
+      testParamShallow: function(t) {
+        var data = {
+          libs: ['jQuery', 'Prototype', 'Dojo'],
+          nested: { will: 'be ignored' }
+        }
+        var result = $.param(data, true);
+        result = decodeURIComponent(result);
+        t.assertEqual("libs=jQuery&libs=Prototype&libs=Dojo&nested=[object+Object]", result);
+      },
+
+      testParamArray: function(t) {
         var data = [
           {name:'country', value:'Ecuador'},
           {name:'capital', value:'Quito'}

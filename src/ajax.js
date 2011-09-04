@@ -292,36 +292,38 @@
     return this;
   };
 
+  var escape = encodeURIComponent;
+
+  function serialize(params, obj, traditional, scope){
+    var array = $.isArray(obj);
+    $.each(obj, function(key, value) {
+      if (scope) key = traditional ? scope : scope + '[' + (array ? '' : key) + ']';
+      // handle data in serializeArray() format
+      if (!scope && array) params.add(value.name, value.value);
+      // recurse into nested objects
+      else if (traditional ? $.isArray(value) : isObject(value))
+        serialize(params, value, traditional, key);
+      else params.add(key, value);
+    });
+  }
+
   // ### $.param
   //
-  // Encode object as a string for submission
+  // Encode object as a string of URL-encoded key-value pairs
   //
   // *Arguments:*
   //
   //     obj — object to serialize
-  //     [v] — root node
+  //     [traditional] — perform shallow serialization
   //
   // *Example:*
   //
   //     $.param( { name: 'Zepto.js', version: '0.6' } );
   //
-  $.param = function(obj, v){
-    var isArray = $.isArray(obj), result = [],
-      add = function(key, value){
-        result.push(encodeURIComponent(v ? v + '[' + key + ']' : key)
-          + '=' + encodeURIComponent(value));
-      };
-
-    $.each(obj, function(key, value) {
-      if (isArray) {
-        if (v) add('', value);
-        else add(value.name, value.value);
-      }
-      else if (isObject(value))
-        result.push($.param(value, (v ? v + '[' + key + ']' : key)));
-      else add(key, value);
-    });
-
-    return result.join('&').replace('%20', '+');
+  $.param = function(obj, traditional){
+    var params = [];
+    params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) };
+    serialize(params, obj, traditional);
+    return params.join('&').replace('%20', '+');
   };
 })(Zepto);
