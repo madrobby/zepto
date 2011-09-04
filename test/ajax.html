@@ -129,7 +129,7 @@
   </script>
 
   <script>
-    var OriginalXHR = XMLHttpRequest;
+    var OriginalXHR = $.ajaxSettings.xhr;
 
     function MockXHR() {
       this.headers = [];
@@ -166,11 +166,11 @@
 
     Evidence.TestCase.extend('ZeptoAjaxTest2', {
       setUp: function() {
-        window.XMLHttpRequest = MockXHR;
+        $.ajaxSettings.xhr = function(){ return new MockXHR };
       },
 
       tearDown: function() {
-        window.XMLHttpRequest = OriginalXHR;
+        $.ajaxSettings.xhr = OriginalXHR;
       },
 
       testTypeDefaultsToGET: function(t) {
@@ -364,6 +364,29 @@
 
         MockXHR.last.ready(4, 200, 'OK');
         t.assertEqual('beforeSend,success,complete', order.join(','));
+      },
+
+      testTimeout: function(t) {
+        var successFired = false, xhr, status;
+        t.pause()
+        $.ajax({
+          timeout: 30,
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        });
+
+        setTimeout(function(){
+          t.assertFalse(successFired);
+          t.assertUndefined(status);
+        }, 20);
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertFalse(successFired);
+            t.assertTrue(xhr.aborted);
+            t.assertEqual('timeout', status);
+          });
+        }, 40);
       }
     });
   </script>
