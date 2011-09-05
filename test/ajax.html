@@ -136,7 +136,7 @@
           complete: function () {
             var that = this;
             t.resume(function () {
-              this.assertEqual(that, body);
+              this.assertIdentical(that, body);
             });
           }
       	});
@@ -148,7 +148,7 @@
       	testEL.load('fixtures/ajax_load_simple.html', function () {
           var that = this;
           t.resume(function () {
-            this.assertEqual(that, testEL);
+            this.assertIdentical(that, testEL);
           });
         });
       }
