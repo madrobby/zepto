@@ -118,6 +118,8 @@
   //                             the request succeeds
   //     error                 — callback that is executed if
   //                             the server drops error
+  //     context               — In which context to execute the
+  //                             callbacks in
   //
   // *Example:*
   //
@@ -127,8 +129,9 @@
   //        data:       { name: 'Zepto.js' },
   //        dataType:   'html',
   //        timeout:    100,
+  //        context:    $('body'),
   //        success:    function (data) {
-  //            $('body').append(data);
+  //            this.append(data);
   //        },
   //        error:    function (xhr, type) {
   //            alert('Error!');
@@ -172,13 +175,13 @@
             catch (e) { error = e; }
           }
           else result = xhr.responseText;
-          if (error) settings.error(xhr, 'parsererror', error);
-          else settings.success(result, 'success', xhr);
+          if (error) settings.error.call(settings.context || window, xhr, 'parsererror', error);
+          else settings.success.call(settings.context || window, result, 'success', xhr);
         } else {
           error = true;
-          settings.error(xhr, 'error');
+          settings.error.call(settings.context || window, xhr, 'error');
         }
-        settings.complete(xhr, error ? 'error' : 'success');
+        settings.complete.call(settings.context || window, xhr, error ? 'error' : 'success');
       }
     };
 
@@ -187,7 +190,7 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
 
-    if (settings.beforeSend(xhr, settings) === false) {
+    if (settings.beforeSend.call(settings.context || window, xhr, settings) === false) {
       xhr.abort();
       return false;
     }
@@ -195,7 +198,7 @@
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty;
         xhr.abort();
-        settings.error(xhr, 'timeout');
+        settings.error.call(settings.context || window, xhr, 'timeout');
       }, settings.timeout);
 
     xhr.send(settings.data);
@@ -305,7 +308,7 @@
       self.html(selector ?
         $(document.createElement('div')).html(response).find(selector).html()
         : response);
-      success && success();
+      success && success.call(this);
     });
     return this;
   };
