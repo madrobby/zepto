@@ -125,6 +125,32 @@
       testAjaxRequestHeader: function(t){
         // @see Net Panel/Resources
         // TODO
+      },
+      
+      testAjaxWithContext: function(t) {
+        t.pause();
+      	var body = $('body');
+      	$.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: body,
+          complete: function () {
+            var that = this;
+            t.resume(function () {
+              this.assertEqual(that, body);
+            });
+          }
+      	});
+      },
+      
+      testAjaxLoadWithContext: function (t) {
+        t.pause();
+        var testEl = $('#ajax_load');
+      	testEL.load('fixtures/ajax_load_simple.html', function () {
+          var that = this;
+          t.resume(function () {
+            this.assertEqual(that, testEL);
+          });
+        });
       }
 
     });
