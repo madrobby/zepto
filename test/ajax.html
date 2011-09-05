@@ -142,7 +142,7 @@
       	});
       },
       
-      testAjaxLoadWithContext: function (t) {
+      testAjaxLoadWithContext: function(t) {
         t.pause();
         var testEL = $('#ajax_load');
       	testEL.load('fixtures/ajax_load_simple.html', function () {
@@ -151,6 +151,21 @@
             this.assertIdentical(that, testEL);
           });
         });
+      },
+
+      testAjaxGetJSONPWithContext: function(t) {
+        t.pause();
+        var body = $('body');
+      	$.ajaxJSONP({
+          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          context: body,
+          success: function () {
+            var that = this;
+            t.resume(function () {
+              this.assertIdentical(that, body);
+            });
+          }
+      	});
       }
 
     });
