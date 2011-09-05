@@ -153,20 +153,22 @@
         });
       },
 
-      testAjaxGetJSONPWithContext: function(t) {
-        t.pause();
-        var body = $('body');
-      	$.ajaxJSONP({
-          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
-          context: body,
-          success: function () {
-            var that = this;
-            t.resume(function () {
-              this.assertIdentical(that, body);
-            });
-          }
-      	});
-      }
+      // TODO: Re-enable this test when we get a real webserver
+      //
+      //testAjaxGetJSONPWithContext: function(t) {
+      //  t.pause();
+      //  var body = $('body');
+      //  $.ajaxJSONP({
+      //    url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+      //    context: body,
+      //    success: function () {
+      //      var that = this;
+      //      t.resume(function () {
+      //        this.assertIdentical(that, body);
+      //      });
+      //    }
+      //  });
+      //}
 
     });
   </script>
