@@ -27,8 +27,10 @@
       testAjaxGet: function(t){
         t.pause();
         var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
+          var that = this;
           t.resume(function(){
             this.assert(response);
+            this.assertIdentical(window, that);
           });
         });
         t.assertIn('abort', xhr);
@@ -105,7 +107,9 @@
         var testEl = $('#ajax_load');
         t.pause();
         var el = testEl.load('fixtures/ajax_load_simple.html', function(){
+          var that = this;
           t.resume(function() {
+            this.assertIdentical(testEl, that);
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
         });
@@ -125,6 +129,21 @@
       testAjaxRequestHeader: function(t){
         // @see Net Panel/Resources
         // TODO
+      },
+
+      testAjaxWithContext: function(t) {
+        t.pause();
+        var body = $('body');
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: body,
+          complete: function () {
+            var that = this;
+            t.resume(function () {
+              this.assertIdentical(body, that);
+            });
+          }
+        });
       }
 
     });

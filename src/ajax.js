@@ -23,6 +23,8 @@
   //
   //     url     — url to which the request is sent
   //     success — callback that is executed if the request succeeds
+  //     error   — callback that is executed if the server drops error
+  //     context — in which context to execute the callbacks in
   //
   // *Example:*
   //
@@ -36,6 +38,7 @@
   $.ajaxJSONP = function(options){
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
+      context = options.context,
       abort = function(){
         $(script).remove();
         if (callbackName in window) window[callbackName] = empty;
@@ -46,7 +49,7 @@
       clearTimeout(abortTimeout);
       $(script).remove();
       delete window[callbackName];
-      options.success(data);
+      options.success.call(context, data);
     };
 
     script.src = options.url.replace(/=\?/, '=' + callbackName);
@@ -54,7 +57,7 @@
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.abort();
-        options.error(xhr, 'timeout');
+        options.error.call(context, xhr, 'timeout');
       }, options.timeout);
 
     return xhr;
@@ -75,6 +78,8 @@
     error: empty,
     // Callback that is executed on request complete (both: error and success)
     complete: empty,
+    // The context for the callbacks
+    context: null,
     // Transport
     xhr: function () {
       return new window.XMLHttpRequest();
@@ -118,6 +123,8 @@
   //                             the request succeeds
   //     error                 — callback that is executed if
   //                             the server drops error
+  //     context               — in which context to execute the
+  //                             callbacks in
   //
   // *Example:*
   //
@@ -127,8 +134,9 @@
   //        data:       { name: 'Zepto.js' },
   //        dataType:   'html',
   //        timeout:    100,
+  //        context:    $('body'),
   //        success:    function (data) {
-  //            $('body').append(data);
+  //            this.append(data);
   //        },
   //        error:    function (xhr, type) {
   //            alert('Error!');
@@ -157,7 +165,8 @@
     }
 
     var mime = settings.accepts[settings.dataType],
-        xhr = $.ajaxSettings.xhr(), abortTimeout;
+        xhr = $.ajaxSettings.xhr(), abortTimeout,
+        context = settings.context;
 
     settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
     if (mime) settings.headers['Accept'] = mime;
@@ -172,13 +181,13 @@
             catch (e) { error = e; }
           }
           else result = xhr.responseText;
-          if (error) settings.error(xhr, 'parsererror', error);
-          else settings.success(result, 'success', xhr);
+          if (error) settings.error.call(context, xhr, 'parsererror', error);
+          else settings.success.call(context, result, 'success', xhr);
         } else {
           error = true;
-          settings.error(xhr, 'error');
+          settings.error.call(context, xhr, 'error');
         }
-        settings.complete(xhr, error ? 'error' : 'success');
+        settings.complete.call(context, xhr, error ? 'error' : 'success');
       }
     };
 
@@ -187,7 +196,7 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
 
-    if (settings.beforeSend(xhr, settings) === false) {
+    if (settings.beforeSend.call(context, xhr, settings) === false) {
       xhr.abort();
       return false;
     }
@@ -195,7 +204,7 @@
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty;
         xhr.abort();
-        settings.error(xhr, 'timeout');
+        settings.error.call(context, xhr, 'timeout');
       }, settings.timeout);
 
     xhr.send(settings.data);
@@ -305,7 +314,7 @@
       self.html(selector ?
         $(document.createElement('div')).html(response).find(selector).html()
         : response);
-      success && success();
+      success && success.call(self);
     });
     return this;
   };
