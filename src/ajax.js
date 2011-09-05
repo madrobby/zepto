@@ -23,6 +23,8 @@
   //
   //     url     — url to which the request is sent
   //     success — callback that is executed if the request succeeds
+  //     error   — callback that is executed if the server drops error
+  //     context — in which context to execute the callbacks in
   //
   // *Example:*
   //
@@ -40,13 +42,14 @@
         $(script).remove();
         if (callbackName in window) window[callbackName] = empty;
       },
-      xhr = { abort: abort }, abortTimeout;
+      xhr = { abort: abort }, abortTimeout,
+      context = options.context || null;
 
     window[callbackName] = function(data){
       clearTimeout(abortTimeout);
       $(script).remove();
       delete window[callbackName];
-      options.success(data);
+      options.success.call(context, data);
     };
 
     script.src = options.url.replace(/=\?/, '=' + callbackName);
@@ -54,7 +57,7 @@
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.abort();
-        options.error(xhr, 'timeout');
+        options.error.call(context, xhr, 'timeout');
       }, options.timeout);
 
     return xhr;
@@ -120,7 +123,7 @@
   //                             the request succeeds
   //     error                 — callback that is executed if
   //                             the server drops error
-  //     context               — In which context to execute the
+  //     context               — in which context to execute the
   //                             callbacks in
   //
   // *Example:*
