@@ -29,20 +29,23 @@
           <li>SubMenu 2</li>
         </ul>
       </section>
-      <script src="zepto.min.js"></script>
+      <script src="../../src/zepto.js"></script>
+      <script src="../../src/event.js"></script>
+      <script src="../../src/touch.js"></script>
       <script>
         $(document).ready(function(){
+          var activate = ('createTouch' in document) ? 'touchstart' : 'click';
+
           $("body > section").first().addClass("current")
 
-          $("a.back").live('touchstart', function(event) {
-            var current = $(event.currentTarget).attr("href");
+          $("a.back").live(activate, function(event) {
+            var current = $(this).attr("href");
             $(".current").removeClass("current").addClass("reverse");
             $(current).addClass("current");
           });
 
-          $(".menu a[href]").live('touchstart', function(event) {
-            var section = $(event.currentTarget).closest('section'),
-              link = $(event.currentTarget),
+          $(".menu a[href]").live(activate, function(event) {
+            var link = $(this), section = link.closest('section'),
               prev_element = "#"+(section.removeClass("current").addClass("reverse").attr("id"));
             $(link.attr("href")).addClass("current");
             $(".current .back").remove();
