@@ -75,6 +75,8 @@
     error: empty,
     // Callback that is executed on request complete (both: error and success)
     complete: empty,
+    // The context for the callbacks
+    context: null,
     // Transport
     xhr: function () {
       return new window.XMLHttpRequest();
@@ -175,13 +177,13 @@
             catch (e) { error = e; }
           }
           else result = xhr.responseText;
-          if (error) settings.error.call(settings.context || window, xhr, 'parsererror', error);
-          else settings.success.call(settings.context || window, result, 'success', xhr);
+          if (error) settings.error.call(settings.context, xhr, 'parsererror', error);
+          else settings.success.call(settings.context, result, 'success', xhr);
         } else {
           error = true;
-          settings.error.call(settings.context || window, xhr, 'error');
+          settings.error.call(settings.context, xhr, 'error');
         }
-        settings.complete.call(settings.context || window, xhr, error ? 'error' : 'success');
+        settings.complete.call(settings.context, xhr, error ? 'error' : 'success');
       }
     };
 
@@ -190,7 +192,7 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
 
-    if (settings.beforeSend.call(settings.context || window, xhr, settings) === false) {
+    if (settings.beforeSend.call(settings.context, xhr, settings) === false) {
       xhr.abort();
       return false;
     }
@@ -198,7 +200,7 @@
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty;
         xhr.abort();
-        settings.error.call(settings.context || window, xhr, 'timeout');
+        settings.error.call(settings.context, xhr, 'timeout');
       }, settings.timeout);
 
     xhr.send(settings.data);
