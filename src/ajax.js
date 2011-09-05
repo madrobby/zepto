@@ -308,7 +308,7 @@
       self.html(selector ?
         $(document.createElement('div')).html(response).find(selector).html()
         : response);
-      success && success.call(this);
+      success && success.call(self);
     });
     return this;
   };
