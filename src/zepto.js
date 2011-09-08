@@ -19,7 +19,10 @@ var Zepto = (function() {
       'tbody': table, 'thead': table, 'tfoot': table,
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
-    };
+    },
+    classSelectorRE = /^\.([\w-]+)$/,
+    idSelectorRE = /^#([\w-]+)$/,
+    tagSelectorRE = /^[\w-]+$/;
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -97,7 +100,17 @@ var Zepto = (function() {
     })
     return target;
   }
-  $.qsa = $$ = function(element, selector){ return slice.call(element.querySelectorAll(selector)) }
+
+  $.qsa = $$ = function(element, selector){
+    var found;
+    return (element === document && idSelectorRE.test(selector)) ?
+      ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
+      slice.call(
+        classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
+        tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
+        element.querySelectorAll(selector)
+      );
+  }
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
