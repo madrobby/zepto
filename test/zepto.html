@@ -1653,6 +1653,12 @@
         $('#toggle_element').toggleClass('orange', false);
         t.assert(!$('#toggle_element').hasClass('orange'));
 
+        $('#toggle_element').toggleClass('orange', false);
+        t.assert(!$('#toggle_element').hasClass('orange'));
+
+        $('#toggle_element').toggleClass('orange', true);
+        t.assert($('#toggle_element').hasClass('orange'));
+
         $('#toggle_element').toggleClass('orange', true);
         t.assert($('#toggle_element').hasClass('orange'));
 
