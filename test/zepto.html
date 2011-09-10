@@ -222,6 +222,12 @@
       el.dispatchEvent(event);
     }
 
+    function  mouseup(el){
+      var event = document.createEvent('MouseEvents');
+      event.initMouseEvent('mouseup', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+      el.dispatchEvent(event);
+    }
+
     function outerHTML(node) {
       return node.outerHTML || (function(n) {
         var div = document.createElement('div');
@@ -932,6 +938,11 @@
         click($('#some_element').get(0));
         mousedown($('#some_element').get(0));
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
+
+        counter = 0;
+        $('#some_element').bind({ mouseup: function(){ counter++ } });
+        mouseup($('#some_element').get(0));
+        t.assertEqual(1, counter);
       },
 
       testBindContext: function(t){
