@@ -77,11 +77,16 @@
   };
   $.fn.one = function(event, callback){
     return this.each(function(){
-      var self = this;
-      add(this, event, function wrapper(evt){
-        callback.call(self, evt);
-        remove(self, event, arguments.callee);
-      });
+      var o = $.isObject(event)?event:{};
+      if(!$.isObject(event)) { o[event] = callback; }
+      for(var key in o) {
+        (function (self, event, callback) {
+          add(self, event, function wrapper(evt){
+            callback.call(self, evt);
+            remove(self, event, arguments.callee);
+          });
+        })(this, key, o[key]);
+      }
     });
   };
 
