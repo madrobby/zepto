@@ -1131,7 +1131,7 @@
         var counter = 0, pcounter = 0, content = '';
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });
         $('p').delegate('span.yay', 'click', function(){ counter++ });
-        $(document.body).delegate('p', 'click', function(){ pcounter++ });
+        $(document.body).delegate('p', {click: function(){ pcounter++ }});
 
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
