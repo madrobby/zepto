@@ -1092,6 +1092,10 @@
         mousedown(el);
         t.assertEqual(5, counter);
 
+        $('#another_element').unbind({ click: handler });
+        click(el);
+        t.assertEqual(5, counter);
+
         $('#another_element').unbind();
         click(el);
         mousedown(el);
