@@ -118,15 +118,21 @@
 
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
-      add(element, event, callback, selector, function(e, data){
-        var target = e.target, nodes = $$(element, selector);
-        while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) {
-          return callback.call(target, $.extend(createProxy(e), {
-            currentTarget: target, liveFired: element
-          }), data);
-        }
-      });
+      var o = $.isObject(event)?event:{};
+      if(!$.isObject(event)) { o[event] = callback; }
+      for(var key in o) {
+        (function (event, callback) {
+          add(element, event, callback, selector, function(e, data){
+            var target = e.target, nodes = $$(element, selector);
+            while (target && nodes.indexOf(target) < 0) target = target.parentNode;
+            if (target && !(target === element) && !(target === document)) {
+              return callback.call(target, $.extend(createProxy(e), {
+                currentTarget: target, liveFired: element
+              }), data);
+            }
+          });
+        })(key, o[key]);
+      }
     });
   };
   $.fn.undelegate = function(selector, event, callback){
