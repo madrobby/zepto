@@ -68,7 +68,11 @@
   };
   $.fn.unbind = function(event, callback){
     return this.each(function(){
-      remove(this, event, callback);
+      if($.isObject(event)) {
+        for(var key in event) { remove(this, key, event[key]); }
+      } else {
+        remove(this, event, callback);
+      }
     });
   };
   $.fn.one = function(event, callback){
