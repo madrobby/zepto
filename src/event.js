@@ -59,7 +59,11 @@
 
   $.fn.bind = function(event, callback){
     return this.each(function(){
-      add(this, event, callback);
+      if($.isObject(event)) {
+        for(var key in event) { add(this, key, event[key]); }
+      } else {
+        add(this, event, callback);
+      }
     });
   };
   $.fn.unbind = function(event, callback){
