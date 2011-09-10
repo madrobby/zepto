@@ -29,15 +29,14 @@
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
   }
 
-  function add(element, events, fn, selector, delegate){
+  function add(element, events, fn, selector, getDelegate){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     events.split(/\s/).forEach(function(event){
-      var callback = delegate || fn;
+      var delegate = getDelegate && getDelegate(fn, event),
+        callback = delegate || fn;
       var proxyfn = function (event) {
         var result = callback.apply(element, [event].concat(event.data));
-        if (result === false) {
-          event.preventDefault();
-        }
+        if (result === false) event.preventDefault();
         return result;
       };
       var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
@@ -68,11 +67,13 @@
     });
   };
   $.fn.one = function(event, callback){
-    return this.each(function(){
-      var self = this;
-      add(this, event, function wrapper(evt){
-        callback.call(self, evt);
-        remove(self, event, arguments.callee);
+    return this.each(function(i, element){
+      add(this, event, callback, null, function(fn, type){
+        return function(){
+          var result = fn.apply(element, arguments);
+          remove(element, type, fn);
+          return result;
+        }
       });
     });
   };
@@ -110,13 +111,13 @@
 
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
-      add(element, event, callback, selector, function(e, data){
-        var target = e.target, nodes = $$(element, selector);
-        while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) {
-          return callback.call(target, $.extend(createProxy(e), {
-            currentTarget: target, liveFired: element
-          }), data);
+      add(element, event, callback, selector, function(fn){
+        return function(e){
+          var args = arguments;
+          $(e.target).closest(selector, element).each(function() {
+            var evt = $.extend(createProxy(e), {currentTarget: this, liveFired: element});
+            return fn.apply(this, [evt].concat([].slice.call(args, 1)));
+          })
         }
       });
     });

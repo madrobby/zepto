@@ -226,10 +226,11 @@ var Zepto = (function() {
       return $(result);
     },
     closest: function(selector, context){
-      var node = this[0], nodes = $$(context !== undefined ? context : document, selector);
-      if (nodes.length === 0) node = null;
-      while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
-      return $(node !== document && node);
+      var node = this[0], candidates = $$(context || document, selector);
+      if (!candidates.length) node = null;
+      while (node && candidates.indexOf(node) < 0)
+        node = node !== context && node !== document && node.parentNode;
+      return $(node);
     },
     parents: function(selector){
       var ancestors = [], nodes = this;

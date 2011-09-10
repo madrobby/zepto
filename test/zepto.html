@@ -1113,7 +1113,7 @@
       },
 
       testDelegate: function(t){
-        var counter = 0, pcounter = 0, content = '';
+        var counter = 0, pcounter = 0;
         $(document.body).delegate('#some_element', 'click', function(){ counter++ });
         $('p').delegate('span.yay', 'click', function(){ counter++ });
         $(document.body).delegate('p', 'click', function(){ pcounter++ });
@@ -1132,22 +1132,26 @@
       },
 
       testDelegateWithCustomData: function(t) {
-        var counter = 0, pcounter = 0, content = '';
-        $(document.body).delegate('#some_element', 'custom', function(ev,customData) { counter += customData.counter });
-        $('p').delegate('span.yay', 'custom', function(ev,customData) { counter += customData.counter });
-        $(document.body).delegate('p', 'custom', function(ev,customData) { pcounter += customData.counter });
+        var received;
+        $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more });
+        $('p').delegate('span.yay', 'custom', function(e, data){ received = data });
+        $(document).delegate('p', 'custom', function(e, data){ received = data });
 
-        $('#some_element').trigger('custom', { counter: 1 });
-        t.assertEqual(1, counter);
+        $('#some_element').trigger('custom', 'one');
+        t.assertEqual('oneundefined', received);
+        $('#some_element').trigger('custom', ['one', 'two']);
+        t.assertEqual('onetwo', received);
 
-        $('span.yay').trigger('custom', { counter: 1 });
-        t.assertEqual(2, counter);
+        $('span.yay').trigger('custom', 'boom');
+        t.assertEqual('boom', received);
+        $('span.yay').trigger('custom', ['bam', 'boom']);
+        t.assertEqual('bam', received);
 
-        $('span.nay').trigger('custom', { counter: 1 });
-        t.assertEqual(2, counter);
+        $('span.nay').trigger('custom', 'noes');
+        t.assertEqual('noes', received);
 
-        $('p').first().trigger('custom', { counter: 1 });
-        t.assertEqual(3, pcounter);
+        $('p').first().trigger('custom', 'para');
+        t.assertEqual('para', received);
       },
 
       testDelegateEventProxy: function(t){
@@ -1248,20 +1252,24 @@
       },
 
       testOne: function(t){
-        var counter = 0;
-        $(document.body).one('click', function(){ counter++ });
-        click($('#some_element').get(0));
-        t.assertEqual(1, counter);
-        click($('#some_element').get(0));
-        t.assertEqual(1, counter);
-      },
+        var counter = 0, context, received, el = $('#some_element');
+        $(document.body).one('click', function(e, data, more){
+          context = this;
+          counter++;
+          received = data + more;
+          t.assertIn('preventDefault', e);
+          return false;
+        });
 
-      testOneCallbackEvent: function(t){
-        var target, context, someElement = $('#some_element').get(0);
-        $(document.body).one('click', function(evt){ target = evt.target; context = $(this); });
-        click(someElement);
-        t.assertEqual(someElement, target);
-        t.assertEqualCollection($(document.body), context);
+        var evt = $.Event('click');
+        el.trigger(evt, ['one', 'two']);
+        t.assertEqual(1, counter);
+        t.assertEqual('onetwo', received);
+        t.assertIdentical(document.body, context);
+        t.assertTrue(evt.defaultPrevented);
+
+        el.trigger('click');
+        t.assertEqual(1, counter, "the event handler didn't unbind itself");
       },
 
       testDOMEventWrappers: function(t){
