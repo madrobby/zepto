@@ -137,7 +137,11 @@
   };
   $.fn.undelegate = function(selector, event, callback){
     return this.each(function(){
-      remove(this, event, callback, selector);
+      if($.isObject(event)) {
+        for(var key in event) { remove(this, key, event[key], selector); }
+      } else {
+        remove(this, event, callback, selector);
+      }
     });
   }
 
