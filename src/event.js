@@ -59,21 +59,34 @@
 
   $.fn.bind = function(event, callback){
     return this.each(function(){
-      add(this, event, callback);
+      if($.isObject(event)) {
+        for(var key in event) { add(this, key, event[key]); }
+      } else {
+        add(this, event, callback);
+      }
     });
   };
   $.fn.unbind = function(event, callback){
     return this.each(function(){
-      remove(this, event, callback);
+      if($.isObject(event)) {
+        for(var key in event) { remove(this, key, event[key]); }
+      } else {
+        remove(this, event, callback);
+      }
     });
   };
   $.fn.one = function(event, callback){
     return this.each(function(){
-      var self = this;
-      add(this, event, function wrapper(evt){
-        callback.call(self, evt);
-        remove(self, event, arguments.callee);
-      });
+      var o = $.isObject(event)?event:{};
+      if(!$.isObject(event)) { o[event] = callback; }
+      for(var key in o) {
+        (function (self, event, callback) {
+          add(self, event, function wrapper(evt){
+            callback.call(self, evt);
+            remove(self, event, arguments.callee);
+          });
+        })(this, key, o[key]);
+      }
     });
   };
 
@@ -110,20 +123,30 @@
 
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
-      add(element, event, callback, selector, function(e, data){
-        var target = e.target, nodes = $$(element, selector);
-        while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) {
-          return callback.call(target, $.extend(createProxy(e), {
-            currentTarget: target, liveFired: element
-          }), data);
-        }
-      });
+      var o = $.isObject(event)?event:{};
+      if(!$.isObject(event)) { o[event] = callback; }
+      for(var key in o) {
+        (function (event, callback) {
+          add(element, event, callback, selector, function(e, data){
+            var target = e.target, nodes = $$(element, selector);
+            while (target && nodes.indexOf(target) < 0) target = target.parentNode;
+            if (target && !(target === element) && !(target === document)) {
+              return callback.call(target, $.extend(createProxy(e), {
+                currentTarget: target, liveFired: element
+              }), data);
+            }
+          });
+        })(key, o[key]);
+      }
     });
   };
   $.fn.undelegate = function(selector, event, callback){
     return this.each(function(){
-      remove(this, event, callback, selector);
+      if($.isObject(event)) {
+        for(var key in event) { remove(this, key, event[key], selector); }
+      } else {
+        remove(this, event, callback, selector);
+      }
     });
   }
 
