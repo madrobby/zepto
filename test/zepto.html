@@ -1277,6 +1277,12 @@
         t.assertEqual(1, counter);
         click($('#some_element').get(0));
         t.assertEqual(1, counter);
+
+        $(document.body).one({ click: handler });
+        click($('#some_element').get(0));
+        t.assertEqual(2, counter);
+        click($('#some_element').get(0));
+        t.assertEqual(2, counter);
       },
 
       testOneCallbackEvent: function(t){
