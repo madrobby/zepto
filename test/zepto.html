@@ -1221,6 +1221,14 @@
         $("#undelegate_test").undelegate();
         $("#undelegate_test span.second-level").trigger("mousedown");
         t.assertEqual(8, count);
+
+        $("#undelegate_test").delegate("span.first-level", {click: handler});
+        $("#undelegate_test span.first-level").trigger("click");
+        t.assertEqual(9, count);
+
+        $("#undelegate_test").undelegate("span.first-level", {click: handler});
+        $("#undelegate_test span.first-level").trigger("click");
+        t.assertEqual(9, count);
       },
 
       testLive: function(t){
