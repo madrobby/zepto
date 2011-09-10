@@ -269,7 +269,7 @@
         'Expected %o, got %o.', expected, actual);
     }
 
-    Evidence.TestCase.extend('ZeptoTest', {
+    Evidence('ZeptoTest', {
 
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
@@ -921,134 +921,6 @@
         t.assertEqual('', $('#texttest2').text());
       },
 
-      testBind: function(t){
-        var counter = 0;
-        $(document.body).bind('click', function(){ counter++ });
-        click($('#some_element').get(0));
-        t.assertEqual(1, counter);
-
-        counter = 0;
-        $('#some_element').bind('click mousedown', function(){ counter++ });
-        click($('#some_element').get(0));
-        mousedown($('#some_element').get(0));
-        t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
-      },
-
-      testBindContext: function(t){
-        var context, handler = function(){
-          context = $(this);
-        };
-        $('#empty_test').bind("click",handler);
-        $('#empty_test').bind("mousedown",handler);
-        click($('#empty_test').get(0));
-        t.assertEqualCollection($('#empty_test'), context);
-        context = null;
-        mousedown($('#empty_test').get(0));
-        t.assertEqualCollection($('#empty_test'), context);
-      },
-
-      testBindWithCustomData: function(t) {
-        var counter = 0;
-        var handler = function(ev,customData) { counter = customData.counter };
-
-        $('#some_element').bind('custom', handler);
-        $('#some_element').trigger('custom', { counter: 10 });
-        t.assertEqual(10, counter);
-      },
-
-      testBindPreventDefault: function (t) {
-        var link = $('<a href="#"></a>'),
-            prevented = false;
-
-        link
-          .appendTo('body')
-          .bind('click', function () {
-            return false;
-          })
-          .bind('click', function (e) {
-            prevented = e.defaultPrevented;
-          })
-          .trigger('click');
-
-        t.assert(prevented);
-      },
-
-      testCreateEventObject: function(t){
-        var e = $.Event('custom');
-        t.assertEqual('custom', e.type);
-
-        var e2 = new $.Event('custom');
-        t.assertEqual('custom', e2.type);
-
-        var e3 = $.Event('custom', {customKey: 'customValue'});
-        t.assertEqual('custom', e3.type);
-        t.assertEqual('customValue', e3.customKey);
-
-        var e4 = $.Event('custom', {bubbles: false});
-        t.assertIdentical(false, e4.bubbles);
-      },
-
-      testTriggerEventObject: function(t){
-        $('#some_element').unbind();
-        $(document.body).undelegate('#some_element');
-
-        var counter = 0,
-            customEventKey = 0;
-
-        var handler = function(ev,customData) {
-          counter = customData.counter;
-          customEventKey = ev.customKey;
-        };
-
-        var customEventObject = $.Event('custom', { customKey: 20 });
-
-        $('#some_element').bind('custom', handler);
-        $('#some_element').trigger(customEventObject, { counter: 10 });
-
-        t.assertEqual(10, counter);
-        t.assertEqual(20, customEventKey);
-      },
-
-      testTriggerEventCancelled: function(t){
-        $('#some_element').unbind();
-        $(document.body).undelegate('#some_element');
-
-        $('#some_element').unbind().bind('custom', function(e){
-          e.preventDefault();
-        });
-        var event = $.Event('custom');
-        t.assert(!event.defaultPrevented);
-        $('#some_element').trigger(event);
-        t.assert(event.defaultPrevented);
-      },
-
-      testTriggerHandler: function(t){
-        t.assertUndefined($('doesnotexist').triggerHandler('submit'));
-
-        var form = $('#trigger_handler form').get(0);
-        $('#trigger_handler').bind('submit', function(e) {
-          t.fail("triggerHandler shouldn't bubble");
-        });
-
-        var executed = [];
-        $(form).bind('submit', function(e) {
-          executed.push("1");
-          t.assertEqual(form, e.target);
-          return 1;
-        });
-        $(form).bind('submit', function(e) {
-          executed.push("2");
-          t.assertEqual(form, e.target);
-          e.stopImmediatePropagation();
-          return 2;
-        });
-        $(form).bind('submit', function(e) {
-          t.fail("triggerHandler shouldn't continue after stopImmediatePropagation");
-        });
-        t.assertIdentical(2, $(form).triggerHandler('submit'));
-        t.assertEqual('1 2', executed.join(' '));
-      },
-
       testEmpty: function(t) {
         $('#empty_test').empty();
 
@@ -1056,237 +928,6 @@
         t.assertEqual(document.getElementById('empty_2'), null);
         t.assertEqual(document.getElementById('empty_3'), null);
         t.assertEqual(document.getElementById('empty_4'), null);
-      },
-
-      testUnbind: function(t){
-        var counter = 0, el = $('#another_element').get(0);
-        var handler = function(){ counter++ };
-        $('#another_element').bind('click mousedown', handler);
-        click(el);
-        mousedown(el);
-        t.assertEqual(2, counter);
-
-        $('#another_element').unbind('click', handler);
-        click(el);
-        t.assertEqual(2, counter);
-        mousedown(el);
-        t.assertEqual(3, counter);
-
-        $('#another_element').unbind('mousedown');
-        mousedown(el);
-        t.assertEqual(3, counter);
-
-        $('#another_element').bind('click mousedown', handler);
-        click(el);
-        mousedown(el);
-        t.assertEqual(5, counter);
-
-        $('#another_element').unbind();
-        click(el);
-        mousedown(el);
-        t.assertEqual(5, counter);
-      },
-
-      testUnbindWithNamespace: function(t){
-        var count = 0;
-        $("#namespace_test").bind("click.bar", function() { count++ });
-        $("#namespace_test").bind("click.foo", function() { count++ });
-        $("#namespace_test").bind("mousedown.foo.bar", function() { count++ });
-
-        $("#namespace_test").trigger("click");
-        t.assertEqual(2, count);
-
-        $("#namespace_test").unbind("click.baz");
-        $("#namespace_test").trigger("click");
-        t.assertEqual(4, count);
-
-        $("#namespace_test").unbind("click.foo");
-        $("#namespace_test").trigger("click");
-        t.assertEqual(5, count);
-
-        $("#namespace_test").trigger("mousedown");
-        t.assertEqual(6, count);
-
-        $("#namespace_test").unbind(".bar");
-        $("#namespace_test").trigger("click").trigger("mousedown");
-        t.assertEqual(6, count);
-      },
-
-      testDelegate: function(t){
-        var counter = 0, pcounter = 0;
-        $(document.body).delegate('#some_element', 'click', function(){ counter++ });
-        $('p').delegate('span.yay', 'click', function(){ counter++ });
-        $(document.body).delegate('p', 'click', function(){ pcounter++ });
-
-        click($('#some_element').get(0));
-        t.assertEqual(1, counter);
-
-        click($('span.yay').get(0));
-        t.assertEqual(2, counter);
-
-        click($('span.nay').get(0));
-        t.assertEqual(2, counter);
-
-        click($('p').get(0));
-        t.assertEqual(3, pcounter);
-      },
-
-      testDelegateWithCustomData: function(t) {
-        var received;
-        $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more });
-        $('p').delegate('span.yay', 'custom', function(e, data){ received = data });
-        $(document).delegate('p', 'custom', function(e, data){ received = data });
-
-        $('#some_element').trigger('custom', 'one');
-        t.assertEqual('oneundefined', received);
-        $('#some_element').trigger('custom', ['one', 'two']);
-        t.assertEqual('onetwo', received);
-
-        $('span.yay').trigger('custom', 'boom');
-        t.assertEqual('boom', received);
-        $('span.yay').trigger('custom', ['bam', 'boom']);
-        t.assertEqual('bam', received);
-
-        $('span.nay').trigger('custom', 'noes');
-        t.assertEqual('noes', received);
-
-        $('p').first().trigger('custom', 'para');
-        t.assertEqual('para', received);
-      },
-
-      testDelegateEventProxy: function(t){
-        $('div#delegate_test').delegate('span.second-level', 'click', function(e){
-          t.assertEqual($('span.second-level').get(0), this);
-          t.assertEqual($('span.second-level').get(0), e.currentTarget);
-          t.refuteEqual($('span.second-level').get(0), e.originalEvent.currentTarget);
-          t.assertEqual($('div#delegate_test').get(0), e.liveFired);
-          content = $(this).html();
-        });
-        click($('span.second-level').get(0));
-        t.assertEqual('hi', content);
-
-        var fired = false;
-        if (window.location.hash.length) window.location.hash = '';
-        $('div#delegate_test').html('<a href="#foo"></a>');
-        $('div#delegate_test').delegate('a', 'click', function(e){
-          e.preventDefault();
-          fired = true;
-        });
-        click($('div#delegate_test a').get(0));
-        t.assert(fired);
-        t.refuteEqual('#foo', window.location.hash);
-
-        fired = false;
-        if (window.location.hash.length) window.location.hash = '';
-        $('div#delegate_test').html('<a href="#bar"></a>');
-        $('div#delegate_test a').trigger('click');
-        t.assert(fired);
-        t.refuteEqual('#bar', window.location.hash);
-      },
-
-      testUndelegate: function(t){
-        var count = 0, handler = function() { count++ };
-        $("#undelegate_test").bind("click mousedown", handler);
-        $("#undelegate_test").delegate("span.first-level", "click mousedown", handler);
-        $("#undelegate_test").delegate("span.second-level", "click mousedown", handler);
-        $("#undelegate_test span.second-level").trigger("click");
-        t.assertEqual(3, count);
-
-        $("#undelegate_test").undelegate("span.second-level", "click", handler);
-        $("#undelegate_test span.second-level").trigger("click");
-        t.assertEqual(5, count);
-
-        $("#undelegate_test").undelegate("span.first-level");
-        $("#undelegate_test span.second-level").trigger("click");
-        t.assertEqual(6, count);
-
-        $("#undelegate_test").unbind("click");
-        $("#undelegate_test span.second-level").trigger("click");
-        t.assertEqual(6, count);
-
-        $("#undelegate_test span.second-level").trigger("mousedown");
-        t.assertEqual(8, count);
-
-        $("#undelegate_test").undelegate();
-        $("#undelegate_test span.second-level").trigger("mousedown");
-        t.assertEqual(8, count);
-      },
-
-      testLive: function(t){
-        var counter = 0;
-        $('p.live').live('click', function(){ counter++ });
-
-        $(document.body).append('<p class="live" id="live_1"></p>');
-        $(document.body).append('<p class="live" id="live_2"></p>');
-
-        click($('#live_1').get(0));
-        click($('#live_2').get(0));
-
-        $('p.live').remove();
-        $(document.body).append('<p class="live" id="live_this_test"></p>');
-
-        $('p.live').live('click', function(){
-          t.assertEqual(document.getElementById('live_this_test'), this);
-        });
-        click($('#live_this_test').get(0));
-
-        t.assertEqual(3, counter);
-      },
-
-      testDie: function(t){
-        var count = 0, handler = function() { count++ };
-        $("#another_element").live("click mousedown", handler);
-        $("#another_element").trigger("click");
-        t.assertEqual(1, count);
-
-        $("#another_element").die("click", handler);
-        $("#another_element").trigger("click");
-        t.assertEqual(1, count);
-
-        $("#another_element").trigger("mousedown");
-        t.assertEqual(2, count);
-
-        $("#another_element").die();
-        $("#another_element").trigger("mousedown");
-        t.assertEqual(2, count);
-      },
-
-      testOne: function(t){
-        var counter = 0, context, received, el = $('#some_element');
-        $(document.body).one('click', function(e, data, more){
-          context = this;
-          counter++;
-          received = data + more;
-          t.assertIn('preventDefault', e);
-          return false;
-        });
-
-        var evt = $.Event('click');
-        el.trigger(evt, ['one', 'two']);
-        t.assertEqual(1, counter);
-        t.assertEqual('onetwo', received);
-        t.assertIdentical(document.body, context);
-        t.assertTrue(evt.defaultPrevented);
-
-        el.trigger('click');
-        t.assertEqual(1, counter, "the event handler didn't unbind itself");
-      },
-
-      testDOMEventWrappers: function(t){
-        var events = ('blur focus focusin focusout load resize scroll unload click dblclick '+
-          'mousedown mouseup mousemove mouseover mouseout '+
-          'change select keydown keypress keyup error').split(' ');
-
-        var el = $('#another_element'), count = 0;
-
-        events.forEach(function(event){
-          t.assertTrue($.isFunction(el[event]), 'event type: ' + event);
-        });
-
-        el.click(function(){ count++ });
-        click(el.get(0));
-
-        t.assertEqual(1, count);
       },
 
       testAttr: function(t){
@@ -1736,30 +1377,389 @@
 
         t.assert( secondEl.get(0), nextAndSelf.get(0) );
         t.assert( thirdEl.get(0),  nextAndSelf.get(1) );
+      }
+    });
+
+    Evidence('EventTest', {
+      tearDown: function(){
+        $('*').unbind();
+      },
+
+      testBind: function(t){
+        var counter = 0;
+        $(document.body).bind('click', function(){ counter++ });
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+
+        counter = 0;
+        $('#some_element').bind('click mousedown', function(){ counter++ });
+        click($('#some_element').get(0));
+        mousedown($('#some_element').get(0));
+        t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
+      },
+
+      testBindContext: function(t){
+        var context, handler = function(){
+          context = $(this);
+        };
+        $('#empty_test').bind("click",handler);
+        $('#empty_test').bind("mousedown",handler);
+        click($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
+        context = null;
+        mousedown($('#empty_test').get(0));
+        t.assertEqualCollection($('#empty_test'), context);
+      },
+
+      testBindWithCustomData: function(t) {
+        var counter = 0;
+        var handler = function(ev,customData) { counter = customData.counter };
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger('custom', { counter: 10 });
+        t.assertEqual(10, counter);
+      },
+
+      testBindPreventDefault: function (t) {
+        var link = $('<a href="#"></a>'),
+            prevented = false;
+
+        link
+          .appendTo('body')
+          .bind('click', function () {
+            return false;
+          })
+          .bind('click', function (e) {
+            prevented = e.defaultPrevented;
+          })
+          .trigger('click');
+
+        t.assert(prevented);
+      },
+
+      testCreateEventObject: function(t){
+        var e = $.Event('custom');
+        t.assertEqual('custom', e.type);
+
+        var e2 = new $.Event('custom');
+        t.assertEqual('custom', e2.type);
+
+        var e3 = $.Event('custom', {customKey: 'customValue'});
+        t.assertEqual('custom', e3.type);
+        t.assertEqual('customValue', e3.customKey);
+
+        var e4 = $.Event('custom', {bubbles: false});
+        t.assertIdentical(false, e4.bubbles);
+      },
+
+      testTriggerEventObject: function(t){
+        var counter = 0,
+            customEventKey = 0;
+
+        var handler = function(ev,customData) {
+          counter = customData.counter;
+          customEventKey = ev.customKey;
+        };
+
+        var customEventObject = $.Event('custom', { customKey: 20 });
+
+        $('#some_element').bind('custom', handler);
+        $('#some_element').trigger(customEventObject, { counter: 10 });
+
+        t.assertEqual(10, counter);
+        t.assertEqual(20, customEventKey);
+      },
+
+      testTriggerEventCancelled: function(t){
+        $('#some_element').bind('custom', function(e){
+          e.preventDefault();
+        });
+        var event = $.Event('custom');
+        t.assert(!event.defaultPrevented);
+        $('#some_element').trigger(event);
+        t.assert(event.defaultPrevented);
+      },
+
+      testTriggerHandler: function(t){
+        t.assertUndefined($('doesnotexist').triggerHandler('submit'));
+
+        var form = $('#trigger_handler form').get(0);
+        $('#trigger_handler').bind('submit', function(e) {
+          t.fail("triggerHandler shouldn't bubble");
+        });
+
+        var executed = [];
+        $(form).bind('submit', function(e) {
+          executed.push("1");
+          t.assertEqual(form, e.target);
+          return 1;
+        });
+        $(form).bind('submit', function(e) {
+          executed.push("2");
+          t.assertEqual(form, e.target);
+          e.stopImmediatePropagation();
+          return 2;
+        });
+        $(form).bind('submit', function(e) {
+          t.fail("triggerHandler shouldn't continue after stopImmediatePropagation");
+        });
+        t.assertIdentical(2, $(form).triggerHandler('submit'));
+        t.assertEqual('1 2', executed.join(' '));
+      },
+
+      testUnbind: function(t){
+        var counter = 0, el = $('#another_element').get(0);
+        var handler = function(){ counter++ };
+        $('#another_element').bind('click mousedown', handler);
+        click(el);
+        mousedown(el);
+        t.assertEqual(2, counter);
+
+        $('#another_element').unbind('click', handler);
+        click(el);
+        t.assertEqual(2, counter);
+        mousedown(el);
+        t.assertEqual(3, counter);
+
+        $('#another_element').unbind('mousedown');
+        mousedown(el);
+        t.assertEqual(3, counter);
+
+        $('#another_element').bind('click mousedown', handler);
+        click(el);
+        mousedown(el);
+        t.assertEqual(5, counter);
+
+        $('#another_element').unbind();
+        click(el);
+        mousedown(el);
+        t.assertEqual(5, counter);
+      },
+
+      testUnbindWithNamespace: function(t){
+        var count = 0;
+        $("#namespace_test").bind("click.bar", function() { count++ });
+        $("#namespace_test").bind("click.foo", function() { count++ });
+        $("#namespace_test").bind("mousedown.foo.bar", function() { count++ });
+
+        $("#namespace_test").trigger("click");
+        t.assertEqual(2, count);
+
+        $("#namespace_test").unbind("click.baz");
+        $("#namespace_test").trigger("click");
+        t.assertEqual(4, count);
+
+        $("#namespace_test").unbind("click.foo");
+        $("#namespace_test").trigger("click");
+        t.assertEqual(5, count);
+
+        $("#namespace_test").trigger("mousedown");
+        t.assertEqual(6, count);
+
+        $("#namespace_test").unbind(".bar");
+        $("#namespace_test").trigger("click").trigger("mousedown");
+        t.assertEqual(6, count);
+      },
+
+      testDelegate: function(t){
+        var counter = 0, pcounter = 0;
+        $(document.body).delegate('#some_element', 'click', function(){ counter++ });
+        $('p').delegate('span.yay', 'click', function(){ counter++ });
+        $(document.body).delegate('p', 'click', function(){ pcounter++ });
+
+        click($('#some_element').get(0));
+        t.assertEqual(1, counter);
+
+        click($('span.yay').get(0));
+        t.assertEqual(2, counter);
+
+        click($('span.nay').get(0));
+        t.assertEqual(2, counter);
+
+        click($('p').get(0));
+        t.assertEqual(3, pcounter);
+      },
+
+      testDelegateWithCustomData: function(t) {
+        var received;
+        $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more });
+        $('p').delegate('span.yay', 'custom', function(e, data){ received = data });
+        $(document).delegate('p', 'custom', function(e, data){ received = data });
+
+        $('#some_element').trigger('custom', 'one');
+        t.assertEqual('oneundefined', received);
+        $('#some_element').trigger('custom', ['one', 'two']);
+        t.assertEqual('onetwo', received);
+
+        $('span.yay').trigger('custom', 'boom');
+        t.assertEqual('boom', received);
+        $('span.yay').trigger('custom', ['bam', 'boom']);
+        t.assertEqual('bam', received);
+
+        $('span.nay').trigger('custom', 'noes');
+        t.assertEqual('noes', received);
+
+        $('p').first().trigger('custom', 'para');
+        t.assertEqual('para', received);
+      },
+
+      testDelegateEventProxy: function(t){
+        $('div#delegate_test').delegate('span.second-level', 'click', function(e){
+          t.assertEqual($('span.second-level').get(0), this);
+          t.assertEqual($('span.second-level').get(0), e.currentTarget);
+          t.refuteEqual($('span.second-level').get(0), e.originalEvent.currentTarget);
+          t.assertEqual($('div#delegate_test').get(0), e.liveFired);
+          content = $(this).html();
+        });
+        click($('span.second-level').get(0));
+        t.assertEqual('hi', content);
+
+        var fired = false;
+        if (window.location.hash.length) window.location.hash = '';
+        $('div#delegate_test').html('<a href="#foo"></a>');
+        $('div#delegate_test').delegate('a', 'click', function(e){
+          e.preventDefault();
+          fired = true;
+        });
+        click($('div#delegate_test a').get(0));
+        t.assert(fired);
+        t.refuteEqual('#foo', window.location.hash);
+
+        fired = false;
+        if (window.location.hash.length) window.location.hash = '';
+        $('div#delegate_test').html('<a href="#bar"></a>');
+        $('div#delegate_test a').trigger('click');
+        t.assert(fired);
+        t.refuteEqual('#bar', window.location.hash);
+      },
+
+      testUndelegate: function(t){
+        var count = 0, handler = function() { count++ };
+        $("#undelegate_test").bind("click mousedown", handler);
+        $("#undelegate_test").delegate("span.first-level", "click mousedown", handler);
+        $("#undelegate_test").delegate("span.second-level", "click mousedown", handler);
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(3, count);
+
+        $("#undelegate_test").undelegate("span.second-level", "click", handler);
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(5, count);
+
+        $("#undelegate_test").undelegate("span.first-level");
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(6, count);
+
+        $("#undelegate_test").unbind("click");
+        $("#undelegate_test span.second-level").trigger("click");
+        t.assertEqual(6, count);
+
+        $("#undelegate_test span.second-level").trigger("mousedown");
+        t.assertEqual(8, count);
+
+        $("#undelegate_test").undelegate();
+        $("#undelegate_test span.second-level").trigger("mousedown");
+        t.assertEqual(8, count);
+      },
+
+      testLive: function(t){
+        var counter = 0;
+        $('p.live').live('click', function(){ counter++ });
+
+        $(document.body).append('<p class="live" id="live_1"></p>');
+        $(document.body).append('<p class="live" id="live_2"></p>');
+
+        click($('#live_1').get(0));
+        click($('#live_2').get(0));
+
+        $('p.live').remove();
+        $(document.body).append('<p class="live" id="live_this_test"></p>');
+
+        $('p.live').live('click', function(){
+          t.assertEqual(document.getElementById('live_this_test'), this);
+        });
+        click($('#live_this_test').get(0));
+
+        t.assertEqual(3, counter);
+      },
+
+      testDie: function(t){
+        var count = 0, handler = function() { count++ };
+        $("#another_element").live("click mousedown", handler);
+        $("#another_element").trigger("click");
+        t.assertEqual(1, count);
+
+        $("#another_element").die("click", handler);
+        $("#another_element").trigger("click");
+        t.assertEqual(1, count);
+
+        $("#another_element").trigger("mousedown");
+        t.assertEqual(2, count);
+
+        $("#another_element").die();
+        $("#another_element").trigger("mousedown");
+        t.assertEqual(2, count);
+      },
+
+      testOne: function(t){
+        var counter = 0, context, received, el = $('#some_element');
+        $(document.body).one('click', function(e, data, more){
+          context = this;
+          counter++;
+          received = data + more;
+          t.assertIn('preventDefault', e);
+          return false;
+        });
+
+        var evt = $.Event('click');
+        el.trigger(evt, ['one', 'two']);
+        t.assertEqual(1, counter);
+        t.assertEqual('onetwo', received);
+        t.assertIdentical(document.body, context);
+        t.assertTrue(evt.defaultPrevented);
+
+        el.trigger('click');
+        t.assertEqual(1, counter, "the event handler didn't unbind itself");
+      },
+
+      testDOMEventWrappers: function(t){
+        var events = ('blur focus focusin focusout load resize scroll unload click dblclick '+
+          'mousedown mouseup mousemove mouseover mouseout '+
+          'change select keydown keypress keyup error').split(' ');
+
+        var el = $('#another_element'), count = 0;
+
+        events.forEach(function(event){
+          t.assertTrue($.isFunction(el[event]), 'event type: ' + event);
+        });
+
+        el.click(function(){ count++ });
+        click(el.get(0));
+
+        t.assertEqual(1, count);
       },
 
       testCustomEvents: function (t) {
-        var $body = $(document.body);
+        var el = $(document.body);
 
-        $body.bind('custom', function(evt, a, b) {
+        el.bind('custom', function(evt, a, b) {
           t.assertEqual(a, 1);
           t.assertEqual(b, 2);
-          $body.unbind();
+          el.unbind();
         })
-        $body.trigger('custom', [1, 2]);
+        el.trigger('custom', [1, 2]);
 
-        $body.bind('custom', function(evt, a) {
+        el.bind('custom', function(evt, a) {
           t.assertEqual(a, 1);
-          $body.unbind();
+          el.unbind();
         })
-        $body.trigger('custom', 1);
+        el.trigger('custom', 1);
 
         var eventData = {z: 1};
-        $body.bind('custom', function(evt, a) {
+        el.bind('custom', function(evt, a) {
           t.assertEqual(a, eventData);
-          $body.unbind();
+          el.unbind();
         })
-        $body.trigger('custom', eventData);
+        el.trigger('custom', eventData);
       },
 
       testSpecialEvent: function (t) {
