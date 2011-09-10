@@ -1398,6 +1398,29 @@
         t.assertEqual(3, counter); // 1 = body click, 2 = element click, 3 = element mousedown
       },
 
+      testBindWithObject: function(t){
+        var counter = 0, keyCounter = 0, el = $('#some_element'),
+          eventData = {
+            click: function(){ counter++ },
+            keypress: function(){ keyCounter++ }
+          };
+
+        $(document.body).bind(eventData);
+
+        el.trigger('click');
+        el.trigger('click');
+        t.assertEqual(2, counter);
+        el.trigger('keypress');
+        t.assertEqual(1, keyCounter);
+
+        $(document.body).unbind({ keypress: eventData.keypress });
+
+        el.trigger('click');
+        t.assertEqual(3, counter);
+        el.trigger('keypress');
+        t.assertEqual(1, keyCounter);
+      },
+
       testBindContext: function(t){
         var context, handler = function(){
           context = $(this);
@@ -1580,6 +1603,30 @@
         t.assertEqual(3, pcounter);
       },
 
+      testDelegateWithObject: function(t){
+        var counter = 0, received, el = $('p').first(),
+          eventData = {
+            click: function(){ counter++ },
+            custom: function(e, data){ received = data }
+          };
+
+        $(document.body).delegate('p', eventData);
+
+        el.trigger('click');
+        t.assertEqual(1, counter);
+        el.trigger('click');
+        t.assertEqual(2, counter);
+        el.trigger('custom', 'boo');
+        t.assertEqual('boo', received);
+
+        $(document.body).undelegate('p', {custom: eventData.custom});
+
+        el.trigger('click');
+        t.assertEqual(3, counter);
+        el.trigger('custom', 'bam');
+        t.assertEqual('boo', received);
+      },
+
       testDelegateWithCustomData: function(t) {
         var received;
         $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more });
@@ -1719,6 +1766,24 @@
 
         el.trigger('click');
         t.assertEqual(1, counter, "the event handler didn't unbind itself");
+      },
+
+      testOneWithObject: function(t){
+        var counter = 0, el = $('#some_element');
+        $(document.body).one({
+          click: function() { counter++ },
+          custom: function() { counter-- }
+        });
+
+        el.trigger('click');
+        t.assertEqual(1, counter);
+        el.trigger('click');
+        t.assertEqual(1, counter);
+
+        el.trigger('custom');
+        t.assertEqual(0, counter);
+        el.trigger('custom');
+        t.assertEqual(0, counter);
       },
 
       testDOMEventWrappers: function(t){

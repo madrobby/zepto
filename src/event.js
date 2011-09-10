@@ -29,9 +29,14 @@
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
   }
 
+  function eachEvent(events, fn, iterator){
+    if ($.isObject(events)) $.each(events, iterator);
+    else events.split(/\s/).forEach(function(type){ iterator(type, fn) });
+  }
+
   function add(element, events, fn, selector, getDelegate){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
-    events.split(/\s/).forEach(function(event){
+    eachEvent(events, fn, function(event, fn){
       var delegate = getDelegate && getDelegate(fn, event),
         callback = delegate || fn;
       var proxyfn = function (event) {
@@ -46,7 +51,7 @@
   }
   function remove(element, events, fn, selector){
     var id = zid(element);
-    (events || '').split(/\s/).forEach(function(event){
+    eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i];
         element.removeEventListener(handler.e, handler.proxy, false);
