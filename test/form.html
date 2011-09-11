@@ -45,7 +45,7 @@
   (function(){
 
     var isObjectEquals = function (obj1, obj2) {
-      for (key in obj1) {
+      for (var key in obj1) {
         switch( typeof( obj1[key] ) ) {
           case 'object':
             if ( !isObjectEquals( obj1[key], obj2[key] ) ) {

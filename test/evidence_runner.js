@@ -35,6 +35,7 @@
       stop: function(t1) {
         _super.stop.call(this, t1)
         displayResults(this, (t1-this.t0)/1000)
+        checkLeakedGlobals()
       }
     }
   })
@@ -63,5 +64,13 @@
         container.className = 'passed'
       }
     }
+  }
+
+  var globals = [], expected = ['Zepto', '$', 'Evidence']
+  for (var key in window) globals.push(key)
+
+  function checkLeakedGlobals() {
+    for (var key in window) if (globals.indexOf(key) < 0 && expected.indexOf(key) < 0)
+      if (window.console && console.warn) console.warn("unexpected global: ", key)
   }
 })()

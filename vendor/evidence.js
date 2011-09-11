@@ -1001,7 +1001,7 @@ ConsoleTestResult.displayName = 'ConsoleTestResult';
 Console.TestResult = ConsoleTestResult;
 var UI = (function() {
   function printf(template, args, inspector) {
-    var parts = [],
+    var parts = [], m,
         regexp = /(^%|.%)([a-zA-Z])/,
         args = args.splice(0); // clone args
 

@@ -243,7 +243,7 @@
     var globalVarSetFromReady = "";
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' });
 
-    var gloablVarSetFromReady2 = "";
+    var globalVarSetFromReady2 = "";
     $(function(){ globalVarSetFromReady2 = 'hi!' });
 
     Evidence.Assertions.assertSame = function(expected, actual, message) {
@@ -1182,22 +1182,28 @@
       },
 
       testAppendEval: function (t) {
-        window.someGlobalVariable = false;
-        $('<' + 'script>window.someGlobalVariable = true;</script' + '>').appendTo('body');
-        t.assert(window.someGlobalVariable);
+        try {
+          window.someGlobalVariable = false;
+          $('<' + 'script>window.someGlobalVariable = true;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
 
-        window.someGlobalVariable = false;
-        $('<' + 'script>this.someGlobalVariable = true;</script' + '>').appendTo('body');
-        t.assert(window.someGlobalVariable);
+          window.someGlobalVariable = false;
+          $('<' + 'script>this.someGlobalVariable = true;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
       },
 
       testHtmlEval: function (t) {
-        window.someGlobalVariable = false;
-        var div = $('<div></div>');
-        div
-          .appendTo('body')
-          .html('<' + 'script>window.someGlobalVariable = true;</script' + '>');
-        t.assert(window.someGlobalVariable);
+        try {
+          window.someGlobalVariable = false;
+          $('<div></div>').appendTo('body')
+            .html('<' + 'script>window.someGlobalVariable = true;</script' + '>');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
       },
 
       testRemove: function (t) {
@@ -1660,6 +1666,7 @@
       },
 
       testDelegateEventProxy: function(t){
+        var content;
         $('div#delegate_test').delegate('span.second-level', 'click', function(e){
           t.assertEqual($('span.second-level').get(0), this);
           t.assertEqual($('span.second-level').get(0), e.currentTarget);

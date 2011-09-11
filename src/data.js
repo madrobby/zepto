@@ -5,7 +5,7 @@
 // The following code is heavily inspired by jQuery's $.fn.data()
 
 (function($) {
-  var data = {}, dataAttr = $.fn.data;
+  var data = {}, dataAttr = $.fn.data,
     uuid = $.uuid = +new Date(),
     exp  = $.expando = 'Zepto' + uuid;
 
