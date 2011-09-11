@@ -2,11 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto DOM unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
-  <script src="../vendor/evidence.js"></script>
   <!--<script src="../dist/zepto.min.js"></script>-->
   <style>
     #get_style_element {
@@ -17,9 +20,11 @@
 </head>
 <body>
   <h1>Zepto DOM unit tests</h1>
-  <p>
-    See the browser console for results.
+  <p id="results">
+    Running… see browser console for results
   </p>
+  <div id="fixtures">
+
   <div id="some_element"></div>
   <p>
     <span class="yay">yay</span>
@@ -208,7 +213,10 @@
     </form>
   </div>
 
+  </div><!-- fixtures -->
+
   <script>
+  (function(){
 
     function click(el){
       var event = document.createEvent('MouseEvents');
@@ -643,17 +651,18 @@
         t.assertEqualCollection($('#nested'), el.closest('ul', $('#li1').get(0)));
         t.assertLength(0, el.closest('#parents', $('#li1').get(0)));
         // no ancestor matched
-        t.assertLength(0, el.closest('div'));
+        t.assertLength(0, el.closest('form'));
       },
 
       testParents: function(t){
-        var body = document.body, html = body.parentNode, container = $('#parents');
-        t.assertEqualCollection($([body, html]), container.parents());
+        var body = document.body, html = body.parentNode, container = $('#parents'),
+          wrapper = $('#fixtures').get(0);
+        t.assertEqualCollection($([wrapper, body, html]), container.parents());
 
         var expected = $('#li1 > ul').get();
         expected.push($('#li1').get(0));
         expected.push(container.get(0));
-        expected = expected.concat([body, html]);
+        expected = expected.concat([wrapper, body, html]);
         t.assertEqualCollection($(expected), $('#li1').find('li').parents());
 
         expected = [$('#nested').get(0), $('#parents').get(0)];
@@ -815,7 +824,7 @@
         t.assert(!$('#find1').is('doesnotexist'));
         t.assert(!$('#find1').is());
 
-        t.assert($('div').is('#some_element'));
+        t.assert($('#fixtures div').is('#some_element'));
         t.assert(!$('#doesnotexist').is('p'));
 
         t.assert(!$(window).is('p'));
@@ -1841,6 +1850,7 @@
         t.assertEqual(Event,      submitEvent.constructor);
       }
     });
+  })();
   </script>
 </body>
 </html>

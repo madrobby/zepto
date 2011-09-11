@@ -2,19 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto environment detection unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/detect.js"></script>
-  <script src="../vendor/evidence.js"></script>
 </head>
 <body>
-  <h1>Zepto environment detection unit tests</h1>
-  <p>
-    See the browser console for results.
+  <h1>Browser detection</h1>
+  <p id="results">
+    Running… see browser console for results
   </p>
 
   <script>
+  (function(){
+
     var UA = {
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
@@ -42,7 +47,7 @@
       t.assertEqual(version, $.__detect(ua).version);
     }
 
-    Evidence.TestCase.extend('ZeptoAjaxTest', {
+    Evidence('ZeptoDetectTest', {
 
       testWebOS: function(t){
         detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pre);
@@ -87,6 +92,7 @@
       //  t.assertEqual("533.19.4", $.browser.version);
       // }
     });
+  })();
   </script>
 </body>
 </html>

@@ -2,22 +2,28 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto Ajax unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/ajax.js"></script>
-  <script src="../vendor/evidence.js"></script>
 </head>
 <body>
   <h1>Zepto Ajax unit tests</h1>
-  <p>
-    See the browser console for results.
+  <p id="results">
+    Running… see browser console for results
   </p>
-
-  <div id="ajax_load" style="display:none"></div>
+  <div id="fixtures">
+    <div id="ajax_load"></div>
+  </div>
 
   <script>
-    Evidence.TestCase.extend('ZeptoAjaxTest', {
+  (function(){
+
+    Evidence('ZeptoAjaxTest', {
 
       testAjaxBase: function(t){
         var xhr = $.ajax({ url: 'fixtures/ajax_load_simple.html' });
@@ -147,9 +153,7 @@
       }
 
     });
-  </script>
 
-  <script>
     var OriginalXHR = $.ajaxSettings.xhr;
 
     function MockXHR() {
@@ -185,7 +189,7 @@
       }
     }
 
-    Evidence.TestCase.extend('ZeptoAjaxTest2', {
+    Evidence('ZeptoAjaxTest2', {
       setUp: function() {
         $.ajaxSettings.xhr = function(){ return new MockXHR };
       },
@@ -261,7 +265,7 @@
 
       testDataOptionIsConvertedToSerializedForm: function(t) {
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
-		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
+        MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
       },
 
@@ -410,10 +414,8 @@
         }, 40);
       }
     });
-  </script>
 
-  <script>
-    Evidence.TestCase.extend('ZeptoAjaxHelperMethodsTest',{
+    Evidence('ZeptoAjaxHelperMethodsTest', {
 
       testParamMethod: function(t) {
         var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
@@ -467,6 +469,7 @@
       }
 
     });
+  })();
   </script>
 </body>
 </html>
