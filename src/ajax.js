@@ -84,6 +84,8 @@
     xhr: function () {
       return new window.XMLHttpRequest();
     },
+    // Custom fields
+    xhrFields: {},
     // MIME types mapping
     accepts: {
       script: 'text/javascript, application/javascript',
@@ -192,6 +194,13 @@
     };
 
     xhr.open(settings.type, settings.url, true);
+
+    // Apply custom fields if provided.
+    if (settings.xhrFields) {
+      for (var field in settings.xhrFields) {
+        xhr[field] = settings.xhrFields[field];
+      }
+    }
 
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
