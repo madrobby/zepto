@@ -67,6 +67,7 @@
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
   <div id="appendtoprependto_container"><div id="appendtoprependto"></div></div>
+  <div id="insertbeforeinsertafter_container"><div id="insertbeforeinsertafter"></div></div>
 
   <div id="empty_test">
     <div id="empty_1"></div>
@@ -1178,6 +1179,57 @@
           '<div id="appendtoprependto"><div>prependto</div>'+
           '<div>appendto</div></div>',
           $('#appendtoprependto_container').html()
+        );
+      },
+
+      testInsertBeforeInsertAfter: function(t){
+        //testing with Zepto object
+        function div(contents){
+          var el = document.createElement('div');
+          el.innerHTML = contents;
+          return el;
+        }
+
+        var ib = $(div('insertbefore'));
+        var ia = $(div('insertafter'));
+
+        var ibia = $('#insertbeforeinsertafter');
+        var ib2 = ib.insertBefore(ibia);
+        var ia2 = ia.insertAfter(ibia);
+
+        // Test the object returned is correct for method chaining
+        t.assertEqual(
+          '<div>insertbefore</div><div id="insertbeforeinsertafter">'+
+          '</div><div>insertafter</div>',
+          $('#insertbeforeinsertafter_container').html()
+        );
+
+        //testing with a zepto object of more than one element as parameter
+        $(document.body).append('<div class="insertbefore">insertbefore1</div><div class="insertbefore">insertbefore2</div>');
+        $(document.body).append('<div class="insertafter">insertafter1</div><div class="insertafter">insertafter2</div>');
+
+        $('#insertbeforeinsertafter_container').html('<div id="insertbeforeinsertafter"></div>');
+
+        $('.insertbefore').insertBefore($('#insertbeforeinsertafter'));
+        $('.insertafter').insertAfter($('#insertbeforeinsertafter'));
+
+        t.assertEqual(
+          '<div class="insertbefore">insertbefore1</div><div class="insertbefore">insertbefore2</div>'+
+          '<div id="insertbeforeinsertafter"></div><div class="insertafter">insertafter1</div>'+
+          '<div class="insertafter">insertafter2</div>',
+          $('#insertbeforeinsertafter_container').html()
+        );
+
+        //testing with a selector as parameter
+        $('#insertbeforeinsertafter_container').html('<div id="insertbeforeinsertafter"></div>');
+
+        ib.insertBefore('#insertbeforeinsertafter');
+        ia.insertAfter('#insertbeforeinsertafter');
+
+        t.assertEqual(
+          '<div>insertbefore</div><div id="insertbeforeinsertafter">'+
+          '</div><div>insertafter</div>',
+          $('#insertbeforeinsertafter_container').html()
         );
       },
 
