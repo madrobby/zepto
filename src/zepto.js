@@ -265,9 +265,7 @@ var Zepto = (function() {
     },
     replaceWith: function(newContent) {
       return this.each(function() {
-        var par=this.parentNode,next=this.nextSibling;
-        $(this).remove();
-        next ? $(next).before(newContent) : $(par).append(newContent);
+        $(this).before(newContent).remove();
       });
     },
     wrap: function(newContent) {
