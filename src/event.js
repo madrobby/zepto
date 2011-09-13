@@ -180,9 +180,9 @@
   });
 
   $.Event = function(type, props) {
-    var event = document.createEvent(specialEvents[type] || 'Events');
-    if (props) $.extend(event, props);
-    event.initEvent(type, !(props && props.bubbles === false), true, null, null, null, null, null, null, null, null, null, null, null, null);
+    var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true;
+    if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name]);
+    event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null);
     return event;
   };
 
