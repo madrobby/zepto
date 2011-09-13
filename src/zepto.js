@@ -10,8 +10,7 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
     elementTypes = [1, 9, 11],
-    adjacencyOperators = ['prepend', 'after', 'before', 'append'],
-    reverseAdjacencyOperators = ['append', 'prepend'],
+    adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
     tableRow = document.createElement('tr'),
     containers = {
@@ -415,24 +414,24 @@ var Zepto = (function() {
   });
 
   function insert(operator, target, node) {
-    var parent = (!operator || operator == 3) ? target : target.parentNode;
+    var parent = (operator % 2) ? target : target.parentNode;
     parent.insertBefore(node,
-      !operator ? parent.firstChild :         // prepend
-      operator == 1 ? target.nextSibling :    // after
-      operator == 2 ? target :                // before
-      null);                                  // append
+      !operator ? target.nextSibling :      // after
+      operator == 1 ? parent.firstChild :   // prepend
+      operator == 2 ? target :              // before
+      null);                                // append
   }
 
   function traverseNode (node, fun) {
     fun(node);
-    for (key in node.childNodes) {
+    for (var key in node.childNodes) {
       traverseNode(node.childNodes[key], fun);
     }
   }
 
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
-      var nodes = typeof(html) == 'object' ? html : fragment(html);
+      var nodes = isO(html) ? html : fragment(html);
       if (!('length' in nodes)) nodes = [nodes];
       if (nodes.length < 1) return this;
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
@@ -450,14 +449,12 @@ var Zepto = (function() {
         }
       });
     };
-  });
 
-  reverseAdjacencyOperators.forEach(function(key) {
-    $.fn[key+'To'] = function(html){
-      if (typeof(html) != 'object') html = $(html);
-      html[key](this);
+    var reverseKey = (operator % 2) ? key+'To' : 'insert'+(operator ? 'Before' : 'After');
+    $.fn[reverseKey] = function(html) {
+      $(html)[key](this);
       return this;
-    };
+    }
   });
 
   Z.prototype = $.fn;
