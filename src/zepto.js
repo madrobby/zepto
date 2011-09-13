@@ -10,7 +10,7 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
     elementTypes = [1, 9, 11],
-    operators = [ 'after', 'prepend', 'before', 'append' ],
+    adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
     tableRow = document.createElement('tr'),
     containers = {
@@ -429,7 +429,7 @@ var Zepto = (function() {
     }
   }
 
-  operators.forEach(function(key, operator) {
+  adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
       var nodes = isO(html) ? html : fragment(html);
       if (!('length' in nodes)) nodes = [nodes];
