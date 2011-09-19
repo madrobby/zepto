@@ -21,6 +21,7 @@
 
   $.fx = {
     off: false,
+    cssPrefix: prefix,
     transitionEnd: normalizeEvent('TransitionEnd'),
     animationEnd: normalizeEvent('AnimationEnd')
   };

@@ -14,6 +14,7 @@ ZEPTO_COMPONENTS = [
   'event',
   'detect',
   'fx',
+  # 'fx_methods',
   'ajax',
   'form',
   # 'assets',
