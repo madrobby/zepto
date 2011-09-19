@@ -630,18 +630,32 @@
 
       testWidth: function(t){
         t.assertNull($('#doesnotexist').width());
+        // can't check values here, but make sure it doesn't error out
+        t.assert($(window).width());
+        t.assert($(document).width());
 
-        t.assertEqual(100, $('#offset').width());
+        t.assertIdentical(100, $('#offset').width());
         $('#offset').width('90px');
-        t.assertEqual(90, $('#offset').width());
+        t.assertIdentical(90, $('#offset').width());
+        $('#offset').width(110);
+        t.assertIdentical(110, $('#offset').width());
+        $('#offset').width(function(i, oldWidth) { return oldWidth + 5 });
+        t.assertIdentical(115, $('#offset').width());
       },
 
       testHeight: function(t){
         t.assertNull($('#doesnotexist').height());
+        // can't check values here, but make sure it doesn't error out
+        t.assert($(window).height());
+        t.assert($(document).height());
 
-        t.assertEqual(50, $('#offset').height());
+        t.assertIdentical(50, $('#offset').height());
         $('#offset').height('60px');
-        t.assertEqual(60, $('#offset').height());
+        t.assertIdentical(60, $('#offset').height());
+        $('#offset').height(70);
+        t.assertIdentical(70, $('#offset').height());
+        $('#offset').height(function(i, oldHeight) { return oldHeight + 5 });
+        t.assertIdentical(75, $('#offset').height());
       },
 
       testClosest: function(t){
