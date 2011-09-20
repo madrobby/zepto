@@ -22,21 +22,23 @@
     return el.anim(props, translateSpeed(speed) / 1000, null, callback);
   }
 
+  function hide(el, speed, scale, callback) {
+    return anim(el, speed, 0, scale, function(){
+      origHide.call($(this));
+      callback && callback.call(this);
+    });
+  }
+
   $.fn.show = function(speed, callback) {
     origShow.call(this);
-    if (speed !== undefined) {
-      this.css('opacity', 0);
-      return anim(this, speed, 1, '1,1', callback);
-    }
-    else return this.css('opacity', 1);
+    if (speed === undefined) speed = 0;
+    else this.css('opacity', 0);
+    return anim(this, speed, 1, '1,1', callback);
   };
 
   $.fn.hide = function(speed, callback) {
     if (speed === undefined) return origHide.call(this);
-    else return anim(this, speed, 0, '0,0', function(){
-      origHide.call($(this));
-      callback && callback.call(this);
-    });
+    else return hide(this, speed, '0,0', callback);
   }
 
   $.fn.toggle = function(speed, callback) {
@@ -56,11 +58,12 @@
   };
 
   $.fn.fadeOut = function(speed, callback) {
-    return this.fadeTo(speed, 0, callback);
+    return hide(this, speed, null, callback);
   };
 
   $.fn.fadeToggle = function(speed, callback) {
-    return this.fadeTo(speed, this.css('opacity') < 1 ? 1 : 0, callback);
+    var hidden = this.css('opacity') == 0 || this.css('display') == 'none';
+    return this[hidden ? 'fadeIn' : 'fadeOut'](speed, callback);
   };
 
   $.extend($.fx, {
