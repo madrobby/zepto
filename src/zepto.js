@@ -19,6 +19,7 @@ var Zepto = (function() {
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     },
+    readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/;
@@ -164,8 +165,8 @@ var Zepto = (function() {
       return $(slice.apply(this, arguments));
     },
     ready: function(callback){
-      if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
-      document.addEventListener('DOMContentLoaded', callback, false);
+      if (readyRE.test(document.readyState)) callback($);
+      else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false);
       return this;
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },

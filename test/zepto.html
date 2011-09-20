@@ -1429,9 +1429,17 @@
 
       testDocumentReady: function (t) {
         // Check that if document is already loaded, ready() immediately executes callback
-        var foo = false;
-        $(document).ready(function () { $(document).ready(function () { foo = true; }) });
-        t.assert(foo);
+        var arg1, arg2, fired = false;
+        $(function (Z1) {
+          arg1 = Z1;
+          $(document).ready(function (Z2) {
+            arg2 = Z2;
+            fired = true;
+          })
+        });
+        t.assertTrue(fired);
+        t.assertIdentical(Zepto, arg1);
+        t.assertIdentical(Zepto, arg2);
       },
 
       testSlice: function (t) {
