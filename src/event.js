@@ -118,11 +118,11 @@
     return this.each(function(i, element){
       add(element, event, callback, selector, function(fn){
         return function(e){
-          var args = arguments;
-          $(e.target).closest(selector, element).each(function() {
-            var evt = $.extend(createProxy(e), {currentTarget: this, liveFired: element});
-            return fn.apply(this, [evt].concat([].slice.call(args, 1)));
-          })
+          var evt, match = $(e.target).closest(selector, element).get(0);
+          if (match) {
+            evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element});
+            return fn.apply(match, [evt].concat([].slice.call(arguments, 1)));
+          }
         }
       });
     });

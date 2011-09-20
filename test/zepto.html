@@ -1684,6 +1684,14 @@
         t.assertEqual(3, pcounter);
       },
 
+      testDelegateReturnFalse: function(t){
+        $(document.body).delegate('#some_element', 'click', function(){ return false });
+
+        var event = $.Event('click');
+        $('#some_element').trigger(event);
+        t.assertTrue(event.defaultPrevented);
+      },
+
       testDelegateWithObject: function(t){
         var counter = 0, received, el = $('p').first(),
           eventData = {
