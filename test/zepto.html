@@ -755,6 +755,11 @@
         t.assertLength(4,$('.replacewith div'));
         t.assertEqual("inner first", $('.replacewith div')[0].className);
         t.assertEqual("inner fourth", $('.replacewith div')[1].className);
+
+        //Should be a no-op for fragments
+        var orphanDiv = $("<div />");
+        orphanDiv.replaceWith($("<div class='different' />"));
+        t.assert(!orphanDiv.hasClass('different'));
       },
 
       testWrap: function(t) {
