@@ -137,6 +137,19 @@
         // TODO
       },
 
+      testAjaxWithXhrFields: function(t) {
+        t.pause();
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          xhrFields: {withCredentials: true},
+          beforeSend: function (xhr) {
+            t.resume(function () {
+              this.assertTrue(xhr.withCredentials);
+            });
+          }
+        });
+      },
+
       testAjaxWithContext: function(t) {
         t.pause();
         var body = $('body');
