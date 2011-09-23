@@ -193,7 +193,8 @@
       }
     };
 
-    xhr.open(settings.type, settings.url, true);
+    var async = settings.async != undefined ? settings.async : true;
+    xhr.open(settings.type, settings.url, async);
 
     // Apply custom fields if provided.
     if (settings.xhrFields) {
