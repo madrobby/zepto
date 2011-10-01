@@ -772,6 +772,17 @@
        	$('#wrap_test_div span').wrap('<div class="wrap_test" />');
         t.assert(document.getElementsByClassName("wrap_test")[0].nodeType);
         t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
+
+        //fragments
+        var fragment = $('<div id="fragment" />');
+        fragment.wrapAll('<div id="wrap_test" />');
+        t.assertEqual('wrap_test', fragment.parent().attr('id'));
+        t.assertEqual(0, fragment.children().length);
+
+        fragment = $('<div id="fragment" />');
+       	fragment.wrap('<div id="wrap_test" />');
+        t.assertEqual('wrap_test', fragment.parent().attr('id'));
+        t.assertEqual(0, fragment.children().length);
       },
 
       testUnwrap: function(t){
@@ -788,6 +799,25 @@
         t.assertLength(3,$("span",context));
         //make sure parents are what they should be
         t.assertEqual($("span",context).parent().get(0), document.getElementsByClassName("unwrap_one")[0]);
+
+        //fragments
+        var fragment = $('<div id="outer"><div id="inner"></div></div>');
+        var innerFragment = fragment.find("#inner");
+        innerFragment.unwrap();
+        t.assertEqual(0, fragment.children().length);
+        t.assertEqual("", innerFragment.parent().attr("id"));
+
+        fragment = $('<div id="outer"><div id="inner"></div><div id="uninvolved"></div></div>');
+        innerFragment = fragment.find("#inner");
+        var uninvolved = fragment.find("#uninvolved");
+        innerFragment.unwrap();
+        t.assertEqual(0, fragment.children().length);
+
+        t.assertEqual("", innerFragment.parent().attr("id"));
+        t.assertEqual("", uninvolved.parent().attr("id"));
+
+        t.assertEqual("uninvolved", innerFragment.siblings().attr("id"));
+        t.assertEqual("inner", uninvolved.siblings().attr("id"));
       },
 
       testFind: function(t){
