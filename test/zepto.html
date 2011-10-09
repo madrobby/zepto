@@ -1185,6 +1185,13 @@
         t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','));
       },
 
+      testBeforeAfterFragment: function(t){
+        var fragment = $('<div class=fragment />');
+        fragment.before('before').after('after');
+        t.assertLength(1, fragment);
+        t.assert(fragment.hasClass('fragment'));
+      },
+
       testAppendToPrependTo: function(t){
         //testing with Zepto object
         function div(contents){
