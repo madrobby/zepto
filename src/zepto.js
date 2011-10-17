@@ -436,7 +436,7 @@ var Zepto = (function() {
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
       var nodes = isO(html) ? html : fragment(html);
-      if (!('length' in nodes)) nodes = [nodes];
+      if (!('length' in nodes) || nodes.nodeType) nodes = [nodes];
       if (nodes.length < 1) return this;
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
 

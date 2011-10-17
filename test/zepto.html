@@ -1114,6 +1114,20 @@
 
         t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
 
+        //testing with TextNode as parameter
+        $('#beforeafter_container').html('<div id="beforeafter"></div>');
+
+        function text(contents){
+          return document.createTextNode(contents);
+        }
+
+        $('#beforeafter').append(text('append'));
+        $('#beforeafter').prepend(text('prepend'));
+        $('#beforeafter').before(text('before'));
+        $('#beforeafter').after(text('after'));
+
+        t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
+
         $('#beforeafter_container').html('<div id="beforeafter"></div>');
 
         function div(contents){
