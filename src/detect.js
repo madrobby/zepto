@@ -4,25 +4,29 @@
 
 (function($){
   function detect(ua){
-    var ua = ua, os = {},
+    var os = (this.os = {}), browser = (this.browser = {}),
+      webkit = ua.match(/WebKit\/([\d.]+)/),
       android = ua.match(/(Android)\s+([\d.]+)/),
       ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
       iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
       webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
       touchpad = webos && ua.match(/TouchPad/),
       blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/);
+
+    if (webkit) browser.version = webkit[1];
+    browser.webkit = !!webkit;
+
     if (android) os.android = true, os.version = android[2];
     if (iphone) os.ios = true, os.version = iphone[2].replace(/_/g, '.'), os.iphone = true;
     if (ipad) os.ios = true, os.version = ipad[2].replace(/_/g, '.'), os.ipad = true;
     if (webos) os.webos = true, os.version = webos[2];
     if (touchpad) os.touchpad = true;
     if (blackberry) os.blackberry = true, os.version = blackberry[2];
-    return os;
   }
 
   // ### $.os
   //
-  // Object contains information about running environmental
+  // Object containing information about browser platform
   //
   // *Example:*
   //
@@ -30,16 +34,21 @@
   //     $.os.android  // => true if running on Android
   //     $.os.webos    // => true if running on HP/Palm WebOS
   //     $.os.touchpad // => true if running on a HP TouchPad
-  //     $.os.version  // => string with version number,
+  //     $.os.version  // => string with a version number, e.g.
   //                         "4.0", "3.1.1", "2.1", etc.
   //     $.os.iphone   // => true if running on iPhone
   //     $.os.ipad     // => true if running on iPad
   //     $.os.blackberry // => true if running on BlackBerry
   //
-  $.os = detect(navigator.userAgent);
-  $.__detect = detect;
+  // ### $.browser
+  //
+  // *Example:*
+  //
+  //     $.browser.webkit  // => true if the browser is WebKit-based
+  //     $.browser.version // => WebKit version string
+  detect.call($, navigator.userAgent);
 
-  var v = navigator.userAgent.match(/WebKit\/([\d.]+)/);
-  $.browser = v ? { webkit: true, version: v[1] } : { webkit: false };
+  // make available to unit tests
+  $.__detect = detect;
 
 })(Zepto);

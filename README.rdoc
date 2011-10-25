@@ -88,8 +88,8 @@ Context and .find calls are equivalent:
   attr('attribute', 'value'): set element attribute
   attr('attribute', function(index, oldAttr){ return ...; }): set the value of 'attribute' from a method, for each element in collection
   removeAttr('attribute'): removes an attribute
-  data('name'): gets the HTML5 data attribute value for the element. Shortcut function for $(element).attr('data-<name>')
-  data('name', 'value'): sets the HTML5 data attribute to 'value' for the element
+  data('name'): gets the value of the "data-name" attribute
+  data('name', 'value'): sets the value of the "data-name" attribute
 
   css('css property', 'value'): set a CSS property
   css({ property1: value1, property2: value2 }): set multiple CSS properties

@@ -2,19 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto environment detection unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/detect.js"></script>
-  <script src="../vendor/evidence.js"></script>
 </head>
 <body>
-  <h1>Zepto environment detection unit tests</h1>
-  <p>
-    See the browser console for results.
+  <h1>Browser detection</h1>
+  <p id="results">
+    Running… see browser console for results
   </p>
 
   <script>
+  (function(){
+
     var UA = {
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
@@ -33,60 +38,124 @@
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
 
-      BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+"
+      BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+",
+
+      Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+      Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+
+      Opera_11_51: "Opera/9.80 (Macintosh; Intel Mac OS X 10.7.1; U; en) Presto/2.9.168 Version/11.51",
+      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00"
     };
 
-    function detect(t, os, version, ua){
-      navigator.userAgent = ua;
-      t.assert($.__detect(ua)[os]);
-      t.assertEqual(version, $.__detect(ua).version);
+    function detect(ua, callback){
+      var obj = {};
+      $.__detect.call(obj, ua);
+      callback.call(null, obj.os, obj.browser);
     }
 
-    Evidence.TestCase.extend('ZeptoAjaxTest', {
+    Evidence('ZeptoDetectTest', {
 
       testWebOS: function(t){
-        detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pre);
-        detect(t, "webos", "1.4.0", UA.WebOS_1_4_0_Pixi);
-        detect(t, "webos", "1.2.9", UA.WebOS_1_2_9_Pixi);
-        t.assert(!$.__detect(UA.WebOS_1_4_0_Pre).touchpad);
-
-        detect(t, "webos", "3.0.0", UA.WebOS_3_0_0_TouchPad);
-        t.assert($.__detect(UA.WebOS_3_0_0_TouchPad).touchpad);
+        detect(UA.WebOS_1_4_0_Pre, function(os, browser){
+          t.assertTrue(os.webos);
+          t.assert(!os.touchpad);
+          t.assertTrue(browser.webkit);
+          t.assertEqual("1.4.0", os.version);
+        });
+        detect(UA.WebOS_1_4_0_Pixi, function(os){
+          t.assertTrue(os.webos);
+          t.assertEqual("1.4.0", os.version);
+        });
+        detect(UA.WebOS_1_2_9_Pixi, function(os){
+          t.assertTrue(os.webos);
+          t.assertEqual("1.2.9", os.version);
+        });
+        detect(UA.WebOS_3_0_0_TouchPad, function(os){
+          t.assertTrue(os.webos);
+          t.assertTrue(os.touchpad);
+          t.assertEqual("3.0.0", os.version);
+        });
       },
 
       testAndroid: function(t){
-        detect(t, "android", "1.5", UA.Android_1_5);
-        detect(t, "android", "2.1", UA.Android_2_1);
+        detect(UA.Android_1_5, function(os, browser){
+          t.assertTrue(os.android);
+          t.assertTrue(browser.webkit);
+          t.assertEqual("1.5", os.version);
+        });
+        detect(UA.Android_2_1, function(os){
+          t.assertTrue(os.android);
+          t.assertEqual("2.1", os.version);
+        });
       },
 
       testIOS: function(t){
-        detect(t, "ios", "3.0", UA.iOS_3_0_iPhone);
-        detect(t, "ios", "3.1.1", UA.iOS_3_1_1_iPod);
-        detect(t, "ios", "3.2", UA.iOS_3_2_iPad);
-        detect(t, "ios", "4.0", UA.iOS_4_0_iPhone);
-        detect(t, "ios", "4.2", UA.iOS_4_2_iPad);
-
-        detect(t, "ios", "4.3", UA.iOS_4_3_iPhone_Simulator);
-
-        t.assert($.__detect(UA.iOS_3_2_iPad).ipad);
-        t.assert($.__detect(UA.iOS_3_2_iPad_2).ipad);
-        t.assert(!$.__detect(UA.iOS_3_2_iPad_2).iphone);
-        t.assert($.__detect(UA.iOS_4_2_iPad).ipad);
-        t.assert($.__detect(UA.iOS_4_0_iPhone).iphone);
-        t.assert($.__detect(UA.iOS_4_3_iPhone_Simulator).iphone);
+        detect(UA.iOS_3_0_iPhone, function(os, browser){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.iphone);
+          t.assertTrue(browser.webkit);
+          t.assertEqual("3.0", os.version);
+          t.assertEqual("420.1", browser.version);
+        });
+        detect(UA.iOS_3_1_1_iPod, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.iphone);
+          t.assertUndefined(os.ipod);
+          t.assertEqual("3.1.1", os.version);
+        });
+        detect(UA.iOS_3_2_iPad, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.ipad);
+          t.assert(!os.iphone);
+          t.assertEqual("3.2", os.version);
+        });
+        detect(UA.iOS_3_2_iPad_2, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.ipad);
+          t.assert(!os.iphone);
+          t.assertEqual("3.2", os.version);
+        });
+        detect(UA.iOS_4_0_iPhone, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.iphone);
+          t.assert(!os.ipad);
+          t.assertEqual("4.0", os.version);
+        });
+        detect(UA.iOS_4_2_iPad, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.ipad);
+          t.assertEqual("4.2", os.version);
+        });
+        detect(UA.iOS_4_3_iPhone_Simulator, function(os){
+          t.assertTrue(os.ios);
+          t.assertTrue(os.iphone);
+          t.assertEqual("4.3", os.version);
+        });
       },
 
       testBlackBerry: function(t) {
-        detect(t, "blackberry", "6.0.0.141", UA.BlackBerry_6_0_0_141);
-      }
+        detect(UA.BlackBerry_6_0_0_141, function(os, browser){
+          t.assertTrue(os.blackberry);
+          t.assertTrue(browser.webkit);
+          t.assertEqual("6.0.0.141", os.version);
+        });
+      },
 
-      //, FIXME (needs code change in detect.js)
-      //testBrowser: function(t){
-      //  t.assert($.browser);
-      //  t.assert($.browser.webkit);
-      //  t.assertEqual("533.19.4", $.browser.version);
-      // }
+      testFirefox: function(t) {
+        detect(UA.Firefox_6_0_2, function(os, browser){
+          t.assertFalse(browser.webkit);
+          t.assertUndefined(browser.version);
+        });
+      },
+
+      testOpera: function(t) {
+        detect(UA.Opera_11_51, function(os, browser){
+          t.assertFalse(browser.webkit);
+          t.assertUndefined(browser.version);
+        });
+      }
     });
+  })();
   </script>
 </body>
 </html>

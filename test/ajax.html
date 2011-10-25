@@ -2,22 +2,28 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto Ajax unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/ajax.js"></script>
-  <script src="../vendor/evidence.js"></script>
 </head>
 <body>
   <h1>Zepto Ajax unit tests</h1>
-  <p>
-    See the browser console for results.
+  <p id="results">
+    Running… see browser console for results
   </p>
-
-  <div id="ajax_load" style="display:none"></div>
+  <div id="fixtures">
+    <div id="ajax_load"></div>
+  </div>
 
   <script>
-    Evidence.TestCase.extend('ZeptoAjaxTest', {
+  (function(){
+
+    Evidence('ZeptoAjaxTest', {
 
       testAjaxBase: function(t){
         var xhr = $.ajax({ url: 'fixtures/ajax_load_simple.html' });
@@ -26,34 +32,24 @@
 
       testAjaxGet: function(t){
         t.pause();
-        $.get('fixtures/ajax_load_simple.html', function(response){
+        var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
+          var that = this;
           t.resume(function(){
             this.assert(response);
+            this.assertIdentical(window, that);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxPost: function(t){
         t.pause();
-        $.post('fixtures/ajax_load_simple.html', function(response){
+        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
           t.resume(function(){
             this.assert(response);
           });
         });
-      },
-
-      testAjaxNotNullTimeout: function (t) {
-        var startTime = new Date();
-        t.pause();
-        $.ajax({
-          url:     'fixtures/ajax_load_simple.html',
-          timeout: 300,
-          beforeSend: function () {
-            t.resume(function () {
-              this.assert(new Date() - startTime > 300);
-            });
-          }
-        });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxNullTimeout: function (t) {
@@ -93,30 +89,37 @@
 
       testAjaxGetJSON: function(t){
         t.pause();
-        $.getJSON('fixtures/zepto.json', function(data){
+        var xhr = $.getJSON('fixtures/zepto.json', function(data){
           t.resume(function(){
             this.assertEqual('awesomeness', data.zepto);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxGetJSONP: function(t){
         t.pause();
-        $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
+        var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
           t.resume(function(){
             this.assertEqual(data.items.length, 0);
+            this.assertEqual(0, $('script[src^=fixtures]').size());
           });
         });
+        t.assertEqual(1, $('script[src^=fixtures]').size());
+        t.assertIn('abort', xhr);
       },
 
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
-        testEl.load('fixtures/ajax_load_simple.html', function(){
+        var el = testEl.load('fixtures/ajax_load_simple.html', function(){
+          var that = this;
           t.resume(function() {
+            this.assertIdentical(testEl, that);
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
         });
+        t.assertIdentical(testEl, el);
       },
 
       testAjaxLoadWithSelector: function(t) {
@@ -132,13 +135,26 @@
       testAjaxRequestHeader: function(t){
         // @see Net Panel/Resources
         // TODO
+      },
+
+      testAjaxWithContext: function(t) {
+        t.pause();
+        var body = $('body');
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: body,
+          complete: function () {
+            var that = this;
+            t.resume(function () {
+              this.assertIdentical(body, that);
+            });
+          }
+        });
       }
 
     });
-  </script>
 
-  <script>
-    var OriginalXHR = XMLHttpRequest;
+    var OriginalXHR = $.ajaxSettings.xhr;
 
     function MockXHR() {
       this.headers = [];
@@ -173,13 +189,13 @@
       }
     }
 
-    Evidence.TestCase.extend('ZeptoAjaxTest2', {
+    Evidence('ZeptoAjaxTest2', {
       setUp: function() {
-        window.XMLHttpRequest = MockXHR;
+        $.ajaxSettings.xhr = function(){ return new MockXHR };
       },
 
       tearDown: function() {
-        window.XMLHttpRequest = OriginalXHR;
+        $.ajaxSettings.xhr = OriginalXHR;
       },
 
       testTypeDefaultsToGET: function(t) {
@@ -229,9 +245,27 @@
         t.assertEqual("world", result.hello);
       },
 
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, '');
+        t.assert(success);
+        t.assertEqual('', result);
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, ' ');
+        t.assert(success);
+        t.assertEqual(' ', result);
+      },
+
       testDataOptionIsConvertedToSerializedForm: function(t) {
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
-		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
+        MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
       },
 
@@ -355,15 +389,36 @@
 
         MockXHR.last.ready(4, 200, 'OK');
         t.assertEqual('beforeSend,success,complete', order.join(','));
+      },
+
+      testTimeout: function(t) {
+        var successFired = false, xhr, status;
+        t.pause()
+        $.ajax({
+          timeout: 30,
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        });
+
+        setTimeout(function(){
+          t.assertFalse(successFired);
+          t.assertUndefined(status);
+        }, 20);
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertFalse(successFired);
+            t.assertTrue(xhr.aborted);
+            t.assertEqual('timeout', status);
+          });
+        }, 40);
       }
     });
-  </script>
 
-  <script>
-    Evidence.TestCase.extend('ZeptoAjaxHelperMethodsTest',{
+    Evidence('ZeptoAjaxHelperMethodsTest', {
 
       testParamMethod: function(t) {
-        result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
+        var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
         result = decodeURIComponent(result);
         t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo");
 
@@ -378,9 +433,43 @@
         });
         result = decodeURIComponent(result);
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh");
+      },
+
+      testParamEscaping: function(t) {
+        var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' });
+        t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result);
+      },
+
+      testParamComplex: function(t) {
+        var data = {
+          a: ['b', 'c', { d:'e', f:['g','h'] }]
+        }
+        var result = $.param(data);
+        result = decodeURIComponent(result);
+        t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result);
+      },
+
+      testParamShallow: function(t) {
+        var data = {
+          libs: ['jQuery', 'Prototype', 'Dojo'],
+          nested: { will: 'be ignored' }
+        }
+        var result = $.param(data, true);
+        result = decodeURIComponent(result);
+        t.assertEqual("libs=jQuery&libs=Prototype&libs=Dojo&nested=[object+Object]", result);
+      },
+
+      testParamArray: function(t) {
+        var data = [
+          {name:'country', value:'Ecuador'},
+          {name:'capital', value:'Quito'}
+        ];
+        var result = $.param(data);
+        t.assertEqual(result, "country=Ecuador&capital=Quito");
       }
 
     });
+  })();
   </script>
 </body>
 </html>
