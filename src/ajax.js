@@ -5,7 +5,8 @@
 (function($){
   var jsonpID = 0,
       isObject = $.isObject,
-      key;
+      key,
+      name;
 
   // Empty function, used as default callback
   function empty() {}
