@@ -1317,6 +1317,31 @@
         }
       },
 
+      testAppendTemplateNonEval: function (t) {
+        try {
+          window.someGlobalVariable = true;
+          $('<' + 'script type="text/template">window.someGlobalVariable = false;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
+
+          window.someGlobalVariable = true;
+          $('<' + 'script type="text/template">this.someGlobalVariable = false;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
+      },
+
+      testHtmlTemplateNonEval: function (t) {
+        try {
+          window.someGlobalVariable = true;
+          $('<div></div>').appendTo('body')
+            .html('<' + 'script type="text/template">window.someGlobalVariable = false;</script' + '>');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
+      },
+
       testRemove: function (t) {
         var newElement1 = $('<div id="some_new_element_1" />');
 

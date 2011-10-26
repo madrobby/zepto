@@ -444,7 +444,7 @@ var Zepto = (function() {
         for (var i = 0; i < nodes.length; i++) {
           var node = nodes[inReverse ? nodes.length-i-1 : i];
           traverseNode(node, function (node) {
-            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT') {
+            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT' && (!node.type || node.type === 'text/javascript')) {
               window['eval'].call(window, node.innerHTML);
             }
           });
