@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'bundler/setup'
+
 require 'rake'
 require 'rake/packagetask'
 
@@ -14,6 +17,7 @@ ZEPTO_COMPONENTS = [
   'event',
   'detect',
   'fx',
+  # 'fx_methods',
   'ajax',
   'form',
   # 'assets',
@@ -144,4 +148,13 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
     'test/**/*',
     'examples/**/*'
   )
+end
+
+begin
+  require 'jasmine'
+  load 'jasmine/tasks/jasmine.rake'
+rescue LoadError
+  task :jasmine do
+    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
+  end
 end

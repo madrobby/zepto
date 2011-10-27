@@ -630,18 +630,32 @@
 
       testWidth: function(t){
         t.assertNull($('#doesnotexist').width());
+        // can't check values here, but make sure it doesn't error out
+        t.assert($(window).width());
+        t.assert($(document).width());
 
-        t.assertEqual(100, $('#offset').width());
+        t.assertIdentical(100, $('#offset').width());
         $('#offset').width('90px');
-        t.assertEqual(90, $('#offset').width());
+        t.assertIdentical(90, $('#offset').width());
+        $('#offset').width(110);
+        t.assertIdentical(110, $('#offset').width());
+        $('#offset').width(function(i, oldWidth) { return oldWidth + 5 });
+        t.assertIdentical(115, $('#offset').width());
       },
 
       testHeight: function(t){
         t.assertNull($('#doesnotexist').height());
+        // can't check values here, but make sure it doesn't error out
+        t.assert($(window).height());
+        t.assert($(document).height());
 
-        t.assertEqual(50, $('#offset').height());
+        t.assertIdentical(50, $('#offset').height());
         $('#offset').height('60px');
-        t.assertEqual(60, $('#offset').height());
+        t.assertIdentical(60, $('#offset').height());
+        $('#offset').height(70);
+        t.assertIdentical(70, $('#offset').height());
+        $('#offset').height(function(i, oldHeight) { return oldHeight + 5 });
+        t.assertIdentical(75, $('#offset').height());
       },
 
       testClosest: function(t){
@@ -743,6 +757,12 @@
         t.assertEqual("inner fourth", $('.replacewith div')[1].className);
       },
 
+      testReplaceWithFragment: function(t) {
+        var orphanDiv = $("<div />");
+        orphanDiv.replaceWith($("<div class='different' />"));
+        t.assert(!orphanDiv.hasClass('different'));
+      },
+
       testWrap: function(t) {
         t.assert(document.getElementById("wrap_test_div").nodeType);
 
@@ -750,9 +770,21 @@
         t.assert(document.getElementById("wrap_test").nodeType);
         t.assertEqual($("#wrap_test").children().length, 2);
 
-       	$('#wrap_test_div span').wrap('<div class="wrap_test" />');
+        $('#wrap_test_div span').wrap('<div class="wrap_test" />');
         t.assert(document.getElementsByClassName("wrap_test")[0].nodeType);
         t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length);
+      },
+
+      testWrapFragment: function(t) {
+        var fragment = $('<div id="fragment" />');
+        fragment.wrapAll('<div id="wrap_test" />');
+        t.assertEqual('wrap_test', fragment.parent().attr('id'));
+        t.assertEqual(0, fragment.children().length);
+
+        fragment = $('<div id="fragment" />');
+        fragment.wrap('<div id="wrap_test" />');
+        t.assertEqual('wrap_test', fragment.parent().attr('id'));
+        t.assertEqual(0, fragment.children().length);
       },
 
       testUnwrap: function(t){
@@ -769,6 +801,26 @@
         t.assertLength(3,$("span",context));
         //make sure parents are what they should be
         t.assertEqual($("span",context).parent().get(0), document.getElementsByClassName("unwrap_one")[0]);
+      },
+
+      testUnwrapFragment: function(t){
+        var fragment = $('<div id="outer"><div id="inner"></div></div>');
+        var innerFragment = fragment.find("#inner");
+        innerFragment.unwrap();
+        t.assertEqual(0, fragment.children().length);
+        t.assertEqual("", innerFragment.parent().attr("id"));
+
+        fragment = $('<div id="outer"><div id="inner"></div><div id="uninvolved"></div></div>');
+        innerFragment = fragment.find("#inner");
+        var uninvolved = fragment.find("#uninvolved");
+        innerFragment.unwrap();
+        t.assertEqual(0, fragment.children().length);
+
+        t.assertEqual("", innerFragment.parent().attr("id"));
+        t.assertEqual("", uninvolved.parent().attr("id"));
+
+        t.assertEqual("uninvolved", innerFragment.siblings().attr("id"));
+        t.assertEqual("inner", uninvolved.siblings().attr("id"));
       },
 
       testFind: function(t){
@@ -1062,6 +1114,20 @@
 
         t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
 
+        //testing with TextNode as parameter
+        $('#beforeafter_container').html('<div id="beforeafter"></div>');
+
+        function text(contents){
+          return document.createTextNode(contents);
+        }
+
+        $('#beforeafter').append(text('append'));
+        $('#beforeafter').prepend(text('prepend'));
+        $('#beforeafter').before(text('before'));
+        $('#beforeafter').after(text('after'));
+
+        t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
+
         $('#beforeafter_container').html('<div id="beforeafter"></div>');
 
         function div(contents){
@@ -1133,6 +1199,13 @@
         t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','));
       },
 
+      testBeforeAfterFragment: function(t){
+        var fragment = $('<div class=fragment />');
+        fragment.before('before').after('after');
+        t.assertLength(1, fragment);
+        t.assert(fragment.hasClass('fragment'));
+      },
+
       testAppendToPrependTo: function(t){
         //testing with Zepto object
         function div(contents){
@@ -1193,14 +1266,14 @@
         var ib = $(div('insertbefore'));
         var ia = $(div('insertafter'));
 
-		    var ibia = $('#insertbeforeinsertafter');
+        var ibia = $('#insertbeforeinsertafter');
         var ib2 = ib.insertBefore(ibia);
         var ia2 = ia.insertAfter(ibia);
 
         // Test the object returned is correct for method chaining
         t.assertEqual(
           '<div>insertbefore</div><div id="insertbeforeinsertafter">'+
-		      '</div><div>insertafter</div>',
+          '</div><div>insertafter</div>',
           $('#insertbeforeinsertafter_container').html()
         );
 
@@ -1228,7 +1301,7 @@
 
         t.assertEqual(
           '<div>insertbefore</div><div id="insertbeforeinsertafter">'+
-		      '</div><div>insertafter</div>',
+          '</div><div>insertafter</div>',
           $('#insertbeforeinsertafter_container').html()
         );
       },
@@ -1252,6 +1325,31 @@
           window.someGlobalVariable = false;
           $('<div></div>').appendTo('body')
             .html('<' + 'script>window.someGlobalVariable = true;</script' + '>');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
+      },
+
+      testAppendTemplateNonEval: function (t) {
+        try {
+          window.someGlobalVariable = true;
+          $('<' + 'script type="text/template">window.someGlobalVariable = false;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
+
+          window.someGlobalVariable = true;
+          $('<' + 'script type="text/template">this.someGlobalVariable = false;</script' + '>').appendTo('body');
+          t.assert(window.someGlobalVariable);
+        } finally {
+          delete window.someGlobalVariable;
+        }
+      },
+
+      testHtmlTemplateNonEval: function (t) {
+        try {
+          window.someGlobalVariable = true;
+          $('<div></div>').appendTo('body')
+            .html('<' + 'script type="text/template">window.someGlobalVariable = false;</script' + '>');
           t.assert(window.someGlobalVariable);
         } finally {
           delete window.someGlobalVariable;
@@ -1415,9 +1513,17 @@
 
       testDocumentReady: function (t) {
         // Check that if document is already loaded, ready() immediately executes callback
-        var foo = false;
-        $(document).ready(function () { $(document).ready(function () { foo = true; }) });
-        t.assert(foo);
+        var arg1, arg2, fired = false;
+        $(function (Z1) {
+          arg1 = Z1;
+          $(document).ready(function (Z2) {
+            arg2 = Z2;
+            fired = true;
+          })
+        });
+        t.assertTrue(fired);
+        t.assertIdentical(Zepto, arg1);
+        t.assertIdentical(Zepto, arg2);
       },
 
       testSlice: function (t) {
@@ -1539,7 +1645,7 @@
         t.assertEqual('customValue', e3.customKey);
 
         var e4 = $.Event('custom', {bubbles: false});
-        t.assertIdentical(false, e4.bubbles);
+        t.assertFalse(e4.bubbles);
       },
 
       testTriggerEventObject: function(t){
@@ -1668,6 +1774,14 @@
 
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+      },
+
+      testDelegateReturnFalse: function(t){
+        $(document.body).delegate('#some_element', 'click', function(){ return false });
+
+        var event = $.Event('click');
+        $('#some_element').trigger(event);
+        t.assertTrue(event.defaultPrevented);
       },
 
       testDelegateWithObject: function(t){
@@ -1813,6 +1927,48 @@
         $("#another_element").die();
         $("#another_element").trigger("mousedown");
         t.assertEqual(2, count);
+      },
+
+      testOn: function(t){
+        var el = $('#some_element'), node = el.get(0), ret,
+          bindTriggered = 0, delegateTriggered = 0;
+
+        ret = el.on('click', function(e){
+          bindTriggered++;
+          t.assertIdentical(node, this);
+        })
+          .on({ click: function(){bindTriggered++} });
+        t.assertIdentical(el, ret);
+
+        ret = $(document.body).on('click', 'div', function(e){
+          delegateTriggered++;
+          t.assertIdentical(node, this);
+        })
+          .on({ click: function(){delegateTriggered++} }, '*[id^=some]');
+        t.assertIdentical(document.body, ret.get(0));
+
+        click(node);
+        t.assertEqual(2, bindTriggered, "bind handlers");
+        t.assertEqual(2, delegateTriggered, "delegate handlers");
+      },
+
+      testOff: function(t){
+        var el = $('#some_element'), bindTriggered = 0, delegateTriggered = 0,
+          handler = function(){ bindTriggered++ };
+
+        el.bind('click', handler).bind('click', function(){ bindTriggered++ });
+        el.live('click', function(){ delegateTriggered++ });
+
+        click(el.get(0));
+        t.assertEqual(2, bindTriggered, "bind handlers before unbind");
+        t.assertEqual(1, delegateTriggered, "delegate handlers before unbind");
+
+        el.off('click', handler);
+        $(document.body).off('click', '#some_element');
+
+        click(el.get(0));
+        t.assertEqual(3, bindTriggered, "bind handlers");
+        t.assertEqual(1, delegateTriggered, "delegate handlers");
       },
 
       testOne: function(t){

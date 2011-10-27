@@ -19,6 +19,7 @@ var Zepto = (function() {
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     },
+    readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/;
@@ -164,8 +165,8 @@ var Zepto = (function() {
       return $(slice.apply(this, arguments));
     },
     ready: function(callback){
-      if (document.readyState == 'complete' || document.readyState == 'loaded') callback();
-      document.addEventListener('DOMContentLoaded', callback, false);
+      if (readyRE.test(document.readyState)) callback($);
+      else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false);
       return this;
     },
     get: function(idx){ return idx === undefined ? this : this[idx] },
@@ -403,17 +404,22 @@ var Zepto = (function() {
     }
   });
 
-  ['width', 'height'].forEach(function(property){
-    $.fn[property] = function(value) {
-      var offset;
-      if (value === undefined) { return (offset = this.offset()) && offset[property] }
-      else return this.css(property, value);
+  ['width', 'height'].forEach(function(dimension){
+    $.fn[dimension] = function(value) {
+      var offset, Dimension = dimension.replace(/./, function(m) { return m[0].toUpperCase() });
+      if (value === undefined) return this[0] == window ? window['inner' + Dimension] :
+        this[0] == document ? document.documentElement['offset' + Dimension] :
+        (offset = this.offset()) && offset[dimension];
+      else return this.each(function(idx){
+        var el = $(this);
+        el.css(dimension, funcArg(this, value, idx, el[dimension]()));
+      });
     }
   });
 
   function insert(operator, target, node) {
     var parent = (operator % 2) ? target : target.parentNode;
-    parent.insertBefore(node,
+    parent && parent.insertBefore(node,
       !operator ? target.nextSibling :      // after
       operator == 1 ? parent.firstChild :   // prepend
       operator == 2 ? target :              // before
@@ -430,7 +436,7 @@ var Zepto = (function() {
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
       var nodes = isO(html) ? html : fragment(html);
-      if (!('length' in nodes)) nodes = [nodes];
+      if (!('length' in nodes) || nodes.nodeType) nodes = [nodes];
       if (nodes.length < 1) return this;
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
 
@@ -438,7 +444,7 @@ var Zepto = (function() {
         for (var i = 0; i < nodes.length; i++) {
           var node = nodes[inReverse ? nodes.length-i-1 : i];
           traverseNode(node, function (node) {
-            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT') {
+            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT' && (!node.type || node.type === 'text/javascript')) {
               window['eval'].call(window, node.innerHTML);
             }
           });

@@ -3,52 +3,59 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 (function($, undefined){
-  var supportedTransforms = [
-    'scale', 'scaleX', 'scaleY',
-    'translate', 'translateX', 'translateY', 'translate3d',
-    'skew',      'skewX',      'skewY',
-    'rotate',    'rotateX',    'rotateY',    'rotateZ',    'rotate3d',
-    'matrix'
-  ];
+  var prefix = '', eventPrefix, endEventName, endAnimationName,
+    vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
+    document = window.document, testEl = document.createElement('div'),
+    supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
+
+  function downcase(str) { return str.toLowerCase() }
+  function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) };
+
+  $.each(vendors, function(vendor, event){
+    if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
+      prefix = '-' + downcase(vendor) + '-';
+      eventPrefix = event;
+      return false;
+    }
+  });
+
+  $.fx = {
+    off: false,
+    cssPrefix: prefix,
+    transitionEnd: normalizeEvent('TransitionEnd'),
+    animationEnd: normalizeEvent('AnimationEnd')
+  };
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var transforms = [], cssProperties = {}, key, that = this, wrappedCallback, endEventName = 'webkitTransitionEnd';
+    var transforms, cssProperties = {}, key, that = this, wrappedCallback, endEvent = $.fx.transitionEnd;
     if (duration === undefined) duration = 0.5;
+    if ($.fx.off) duration = 0;
 
-    if (typeof properties === 'string') {
-
-      // Keyframe animation
-
-      cssProperties['-webkit-animation-name'] = properties;
-      cssProperties['-webkit-animation-duration'] = duration + 's';
-
-      endEventName = 'webkitAnimationEnd';
-
+    if (typeof properties == 'string') {
+      // keyframe animation
+      cssProperties[prefix + 'animation-name'] = properties;
+      cssProperties[prefix + 'animation-duration'] = duration + 's';
+      endEvent = $.fx.animationEnd;
     } else {
-
-      // CSS / transition animation
-
+      // CSS transitions
       for (key in properties)
-        if (supportedTransforms.indexOf(key)>=0)
+        if (supportedTransforms.test(key)) {
+          transforms || (transforms = []);
           transforms.push(key + '(' + properties[key] + ')');
-        else
-          cssProperties[key] = properties[key];
+        }
+        else cssProperties[key] = properties[key];
 
-      if (transforms.length > 0) {
-        cssProperties['-webkit-transform'] = transforms.join(' ')
-      }
-
-      cssProperties['-webkit-transition'] = 'all ' + duration + 's ' + (ease || '');
+      if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ');
+      if (!$.fx.off) cssProperties[prefix + 'transition'] = 'all ' + duration + 's ' + (ease || '');
     }
 
     wrappedCallback = function(){
-      $(this).css({
-        '-webkit-transition': 'none',
-        '-webkit-animation-name': 'none'
-      });
+      var props = {};
+      props[prefix + 'transition'] = props[prefix + 'animation-name'] = 'none';
+      $(this).css(props);
       callback && callback.call(this);
     }
-    if (duration > 0) this.one(endEventName, wrappedCallback);
+    if (duration > 0) this.one(endEvent, wrappedCallback);
 
     setTimeout(function() {
       that.css(cssProperties);
@@ -58,5 +65,7 @@
     }, 0);
 
     return this;
-  }
+  };
+
+  testEl = null;
 })(Zepto);
