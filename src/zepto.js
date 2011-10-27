@@ -466,4 +466,5 @@ var Zepto = (function() {
   return $;
 })();
 
+window.Zepto = Zepto;
 '$' in window || (window.$ = Zepto);
