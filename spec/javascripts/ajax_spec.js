@@ -95,9 +95,10 @@ describe('Ajax', function () {
 
                     it('should pass xhr and error string to error callback', function () {
                         var args = onError.mostRecentCall.args;
-                        expect(args.length).toEqual(2);
+                        expect(args.length).toEqual(3);
                         expect(args[0].constructor).toEqual(FakeXMLHttpRequest);
                         expect(args[1]).toEqual('error');
+                        expect(args[2]).toBe(null);
                     });
                 });
 
