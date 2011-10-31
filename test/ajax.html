@@ -161,9 +161,10 @@
       MockXHR.last = this;
     }
     MockXHR.prototype = {
-      open: function(method, url) {
+      open: function(method, url, async) {
         this.method = method;
         this.url = url;
+        this.async = async;
       },
       setRequestHeader: function(name, value) {
         this.headers.push({ name: name, value: value });
@@ -412,6 +413,16 @@
             t.assertEqual('timeout', status);
           });
         }, 40);
+      },
+
+      testAsyncDefaultsToTrue: function(t) {
+        $.ajax({ url: '/foo' });
+        t.assertTrue(MockXHR.last.async);
+      },
+
+      testAsyncFalse: function(t) {
+        $.ajax({ url: '/foo', async: false });
+        t.assertFalse(MockXHR.last.async);
       }
     });
 
