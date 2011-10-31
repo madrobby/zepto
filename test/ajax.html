@@ -24,6 +24,10 @@
   <script>
   (function(){
 
+    function deferredResume(t, fn) {
+      setTimeout(function() { t.resume(fn || function(){}) }, 5);
+    }
+
     Evidence('ZeptoAjaxTest', {
 
       tearDown: function() {
@@ -31,15 +35,19 @@
       },
 
       testAjaxBase: function(t){
-        var xhr = $.ajax({ url: 'fixtures/ajax_load_simple.html' });
-        this.assertEqual('function', typeof xhr['getResponseHeader']);
+        t.pause();
+        var xhr = $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          complete: function() { deferredResume(t) }
+        });
+        t.assertEqual('function', typeof xhr['getResponseHeader']);
       },
 
       testAjaxGet: function(t){
         t.pause();
         var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
           var that = this;
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assert(response);
             this.assertIdentical(window, that);
           });
@@ -50,28 +58,13 @@
       testAjaxPost: function(t){
         t.pause();
         var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assert(response);
           });
         });
         t.assertIn('abort', xhr);
       },
 
-      testAjaxNullTimeout: function (t) {
-        var startTime = new Date();
-        t.pause();
-        $.ajax({
-          url:     'fixtures/ajax_load_simple.html',
-          timeout: 0,
-          beforeSend: function () {
-            t.resume(function () {
-              this.assert(new Date() - startTime < 10);
-            });
-          }
-        });
-      },
-
-      // FIXME: this test sometimes passes even if purposely broken. Something stinks
       testNumberOfActiveRequests: function(t) {
         var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0;
         t.assertIdentical(0, $.active);
@@ -82,24 +75,23 @@
             if ($.active > maxActive) maxActive = $.active;
           })
           .on('ajaxComplete', function() {
-            if (++requestsCompleted == 3) setTimeout(function() {
-              t.resume(function() {
-                t.assertEqual(3, maxActive);
-                t.assertIdentical(0, $.active);
+            if (++requestsCompleted == 3)
+              deferredResume(t, function() {
+                this.assertEqual(3, maxActive);
+                this.assertIdentical(0, $.active);
               });
-            }, 10)
           });
 
-        $.ajax({url: 'fixtures/ajax_load_simple.html'});
-        $.ajax({url: 'fixtures/ajax_load_simple.html'});
-        $.ajax({url: 'fixtures/ajax_load_simple.html'});
         t.pause();
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
       },
 
       testAjaxPostWithAcceptType: function(t) {
         t.pause();
         $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assert(response);
           });
         }, 'text/plain');
@@ -108,7 +100,7 @@
       testAjaxGetJSON: function(t){
         t.pause();
         var xhr = $.getJSON('fixtures/zepto.json', function(data){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assertEqual('awesomeness', data.zepto);
           });
         });
@@ -118,7 +110,7 @@
       testAjaxGetJSONP: function(t){
         t.pause();
         var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assertEqual(data.items.length, 0);
             this.assertEqual(0, $('script[src^=fixtures]').size());
           });
@@ -132,7 +124,7 @@
         t.pause();
         var el = testEl.load('fixtures/ajax_load_simple.html', function(){
           var that = this;
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assertIdentical(testEl, that);
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
@@ -144,15 +136,10 @@
         var testEl = $('#ajax_load');
         t.pause();
         testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assertEqual('ajax load with selector', testEl.html().trim());
           });
         });
-      },
-
-      testAjaxRequestHeader: function(t){
-        // @see Net Panel/Resources
-        // TODO
       },
 
       testAjaxWithContext: function(t) {
@@ -163,7 +150,7 @@
           context: body,
           complete: function () {
             var that = this;
-            t.resume(function () {
+            deferredResume(t, function() {
               this.assertIdentical(body, that);
             });
           }
