@@ -8,7 +8,7 @@ GEM
       execjs
     coffee-script-source (1.1.2)
     diff-lcs (1.1.2)
-    execjs (1.2.4)
+    execjs (1.2.9)
       multi_json (~> 1.0)
     ffi (1.0.9)
     jasmine (1.0.2.1)
