@@ -631,7 +631,8 @@
       testWidth: function(t){
         t.assertNull($('#doesnotexist').width());
         // can't check values here, but make sure it doesn't error out
-        t.assert($(window).width());
+        var viewportWidth = $(window).width();
+        t.assert(viewportWidth > 0 || viewportWidth === 0);
         t.assert($(document).width());
 
         t.assertIdentical(100, $('#offset').width());
@@ -646,7 +647,8 @@
       testHeight: function(t){
         t.assertNull($('#doesnotexist').height());
         // can't check values here, but make sure it doesn't error out
-        t.assert($(window).height());
+        var viewportHeight = $(window).height();
+        t.assert(viewportHeight > 0 || viewportHeight === 0);
         t.assert($(document).height());
 
         t.assertIdentical(50, $('#offset').height());

@@ -1,7 +1,3 @@
-require 'rubygems'
-require 'bundler/setup'
-
-require 'rake'
 require 'rake/packagetask'
 
 ZEPTO_VERSION  = "0.7"
@@ -27,6 +23,16 @@ ZEPTO_COMPONENTS = [
 ]
 
 task :default => [:clean, :concat, :dist]
+
+ZEPTO_TESTS = %w[
+  test/zepto.html
+  test/ajax.html
+  test/data.html
+  test/detect.html
+  test/form.html
+  test/fx.html
+  test/polyfill.html
+]
 
 desc "Clean the distribution directory."
 task :clean do
@@ -150,9 +156,38 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
   )
 end
 
+desc "Run tests in headless WebKit"
+task :test do
+  require 'rubygems'
+  require 'rubygems/specification'
+
+  # HACK: jasmine-headless-webkit doesn't let us access its compiled specrunner directly
+  if jasmine_gem = Gem::Specification.find_by_name('jasmine-headless-webkit')
+    headless_root = jasmine_gem.full_gem_path
+    runner = File.join(headless_root, 'ext/jasmine-webkit-specrunner/jasmine-webkit-specrunner')
+
+    exec runner, '-c', *ZEPTO_TESTS
+  else
+    abort "Can't find 'jasmine-headless-webkit' gem"
+  end
+end
+
+def silence_warnings
+  require 'stringio'
+  begin
+    old_stderr = $stderr
+    $stderr = StringIO.new
+    yield
+  ensure
+    $stderr = old_stderr
+  end
+end
+
 begin
-  require 'jasmine'
-  load 'jasmine/tasks/jasmine.rake'
+  silence_warnings {
+    require 'jasmine'
+    load 'jasmine/tasks/jasmine.rake'
+  }
 rescue LoadError
   task :jasmine do
     abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"

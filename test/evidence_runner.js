@@ -1,6 +1,7 @@
 (function(){
   var ConsoleTestRunner = Evidence.AutoRunner.RUNNERS.console,
       ConsoleTestResult = Evidence.UI.Console.TestResult,
+      Logger = Evidence.UI.Console.Logger,
       AutoRunner = Evidence.AutoRunner,
       printf = Evidence.UI.printf
 
@@ -40,12 +41,97 @@
     }
   })
 
+  /* JHW = Jasmine Headless WebKit */
+
+  var JHWLogger = inherit(Logger, function(_super) {
+    Evidence.AutoRunner.LOGGERS.jhw = this
+    return {
+      log: function(level, msg, params) {
+        level = level || Logger.NOTSET;
+        if (level >= this.level) {
+          if (params) msg = printf(msg, params)
+          if (level >= Logger.WARN) console.log(msg)
+          else JHW.log(msg)
+        }
+      }
+    }
+  })
+
+  var JHWTestRunner = inherit(ConsoleTestRunner, function(_super) {
+    Evidence.AutoRunner.RUNNERS.jhw = this
+    return {
+      _makeResult: function() { return new JHWTestResult(this.logger) }
+    }
+  })
+
+  var JHWTestResult = inherit(Evidence.TestResult, function(_super) {
+    return {
+      initialize: function(logger) {
+        Evidence.TestResult.call(this)
+        this.logger = logger
+        this.failuresBuffer = []
+      },
+      addSkip: function(testcase, msg) {
+        _super.addSkip.call(this, testcase, msg)
+        this.failuresBuffer.push(function(){
+          JHW.printResult('Skipping testcase ' + testcase + ': ' + msg.message)
+        })
+      },
+      addFailure: function(testcase, msg) {
+        _super.addFailure.call(this, testcase, msg)
+        JHW.specFailed(msg)
+        this.failuresBuffer.push(function(){
+          JHW.printResult(printf(testcase + ': ' + msg.message + ' ' + msg.template, msg.args))
+        })
+      },
+      addError: function(testcase, error) {
+        _super.addError.call(this, testcase, error)
+        JHW.specFailed(error)
+        this.failuresBuffer.push(function(){
+          JHW.printResult(testcase + ': ' + error)
+        })
+      },
+      startTest: function(testcase) {
+        _super.startTest.call(this, testcase)
+        this.logger.debug('Started testcase ' + testcase + '.')
+      },
+      stopTest: function(testcase) {
+        this.logger.debug('Completed testcase ' + testcase + '.')
+        JHW.specPassed()
+      },
+      pauseTest: function(testcase) {
+        this.logger.debug('Paused testcase ' + testcase + '.')
+      },
+      restartTest: function(testcase) {
+        this.logger.debug('Restarted testcase ' + testcase + '.')
+      },
+      startSuite: function(suite) {
+        this.logger.info('Started suite ' + suite + '.')
+      },
+      stopSuite: function(suite) {
+        this.logger.debug('Completed suite ' + suite + '.')
+        if (this.failuresBuffer.length) JHW.printResult('') // HACK: force newline
+        while (this.failuresBuffer.length)
+          this.failuresBuffer.shift().call(this)
+      },
+      start: function(t0) {
+        _super.start.call(this, t0)
+        this.logger.debug('Started tests.')
+      },
+      stop: function(t1) {
+        _super.stop.call(this, t1)
+        JHW.finishSuite((t1-this.t0)/1000, this.testCount, this.failureCount + this.errorCount)
+      }
+    }
+  })
+
   // HACK: force our test runner as default
   ;(function(){
     var _super = AutoRunner.prototype.retrieveOptions
     AutoRunner.prototype.retrieveOptions = function() {
       var options = _super.call(this)
-      if (!options.runner) options.runner = 'zepto'
+      if (!options.runner) options.runner = window.JHW ? 'jhw' : 'zepto'
+      if (!options.logger && window.JHW) options.logger = 'jhw'
       return options
     }
   })()
