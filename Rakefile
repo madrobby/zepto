@@ -157,7 +157,7 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
 end
 
 desc "Run tests in headless WebKit"
-task :test do
+task :test => "jasmine:headless" do
   require 'rubygems'
   require 'rubygems/specification'
 
@@ -187,7 +187,12 @@ begin
   silence_warnings {
     require 'jasmine'
     load 'jasmine/tasks/jasmine.rake'
+    require 'jasmine/headless/task'
   }
+
+  Jasmine::Headless::Task.new do |task|
+    task.colors = true
+  end
 rescue LoadError
   task :jasmine do
     abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
