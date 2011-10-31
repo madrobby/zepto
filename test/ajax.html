@@ -202,6 +202,7 @@
       tearDown: function() {
         $.ajaxSettings.xhr = OriginalXHR;
         $(document).off();
+        $.active = 0;
       },
 
       testTypeDefaultsToGET: function(t) {
@@ -423,6 +424,45 @@
 
         MockXHR.last.ready(4, 200, 'OK');
         t.assertEqual('beforeSend,success,complete', order.join(','));
+      },
+
+      testGlobalCallbacks: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('ajaxStart beforeSend ajaxBeforeSend ajaxSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success ajaxSuccess complete ajaxComplete ajaxStop', fired.join(' '));
+      },
+
+      testGlobalCallbacksOff: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          global:     false,
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('beforeSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success complete', fired.join(' '));
       },
 
       testTimeout: function(t) {

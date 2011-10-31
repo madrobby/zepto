@@ -202,9 +202,8 @@
   //     });
   //
   $.ajax = function(options){
-    options = options || {};
-    var settings = $.extend({}, options);
-    for (key in $.ajaxSettings) if (!settings[key]) settings[key] = $.ajaxSettings[key];
+    var settings = $.extend({}, options || {});
+    for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key];
 
     ajaxStart(settings);
 
