@@ -148,6 +148,8 @@
       html:   'text/html',
       text:   'text/plain'
     },
+    // Whether the request is to another domain
+    crossDomain: false,
     // Default timeout
     timeout: 0
   };
@@ -206,6 +208,9 @@
 
     ajaxStart(settings);
 
+    if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
+      RegExp.$2 != window.location.host;
+
     if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
     if (!settings.url) settings.url = window.location.toString();
@@ -223,10 +228,12 @@
     }
 
     var mime = settings.accepts[settings.dataType],
+        baseHeaders = { },
         xhr = $.ajaxSettings.xhr(), abortTimeout;
 
-    settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
-    if (mime) settings.headers['Accept'] = mime;
+    if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest';
+    if (mime) baseHeaders['Accept'] = mime;
+    settings.headers = $.extend(baseHeaders, settings.headers || {});
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {

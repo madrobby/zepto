@@ -205,13 +205,27 @@
       },
 
       testTypeDefaultsToGET: function(t) {
-        $.ajax({ url: '/foo' });
+        $.ajax({
+          url: '/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain);
+          }
+        });
         t.assertEqual('GET', MockXHR.last.method);
       },
 
       testURLDefaultsToWindowLocation: function(t) {
         $.ajax();
         t.assertEqual(window.location, MockXHR.last.url);
+      },
+
+      testCrossDomain: function(t) {
+        $.ajax({
+          url: 'http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain);
+          }
+        });
       },
 
       testDataTypeOptionSetsAcceptHeader: function(t) {
