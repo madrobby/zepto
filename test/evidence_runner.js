@@ -132,6 +132,7 @@
       var options = _super.call(this)
       if (!options.runner) options.runner = window.JHW ? 'jhw' : 'zepto'
       if (!options.logger && window.JHW) options.logger = 'jhw'
+      if (!options.timeout && window.JHW) options.timeout = 4
       return options
     }
   })()
