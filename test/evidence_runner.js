@@ -33,10 +33,23 @@
 
   var TestResult = inherit(ConsoleTestResult, function(_super) {
     return {
+      start: function(t0) {
+        Evidence.TestResult.prototype.start.call(this, t0)
+        this.logger.debug('Started tests.')
+      },
       stop: function(t1) {
         _super.stop.call(this, t1)
         displayResults(this, (t1-this.t0)/1000)
         checkLeakedGlobals()
+      },
+      pauseTest: function(testcase) {
+        this.logger.debug('Paused testcase ' + testcase + '.')
+      },
+      restartTest: function(testcase) {
+        this.logger.debug('Restarted testcase ' + testcase + '.')
+      },
+      startSuite: function(suite) {
+        this.logger.debug('Started suite ' + suite + '.')
       }
     }
   })
