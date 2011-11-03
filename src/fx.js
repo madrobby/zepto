@@ -20,7 +20,7 @@
   });
 
   $.fx = {
-    off: false,
+    off: (eventPrefix === undefined && testEl.style.transitionProperty === undefined),
     cssPrefix: prefix,
     transitionEnd: normalizeEvent('TransitionEnd'),
     animationEnd: normalizeEvent('AnimationEnd')
