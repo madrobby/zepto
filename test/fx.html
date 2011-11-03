@@ -39,7 +39,8 @@
     Running… see browser console for results
   </p>
 
-  <div id="animtest" style="width:40px;height:40px;background:red"></div>
+  <div id="animtest_1" style="width:40px;height:40px;background:red"></div>
+  <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="callbacktest" style="width:40px;height:40px;background:red"></div>
@@ -94,21 +95,32 @@
 
     Evidence('ZeptoFXTest', {
 
-      testAnim: function(t){
-        var el = $('#animtest');
+      testAnimate: function(t){
+        var el = $('#animtest_1'), el2 = $('#animtest_2');
         t.pause();
-        el.anim({
+        el.animate({
           translate3d: '100px, 100px, 100px',
           rotateZ: '90deg',
           scale: '0.8',
           opacity: 0.5,
           'background-color': '#BADA55'
-        }, 2, 'ease-out');
+        }, 2000, 'ease-out');
+
+        el2.animate({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '-90deg',
+          'background-color': '#BADA55'
+        }, {
+          duration: 1800,
+          easing: 'ease-out'
+        });
 
         defer(function(){
           t.resume(function(){
             t.assertStyle('translate3d(100px, 100px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform');
             t.assertStyle('ease-out', el, 'transition-timing-function');
+            t.assertStyle('2s', el, 'transition-duration');
+            t.assertStyle('1.8s', el2, 'transition-duration');
             t.assertStyle('0.5', el, 'opacity');
             t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase());
           });

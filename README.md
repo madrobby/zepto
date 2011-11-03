@@ -126,16 +126,21 @@ val() // returns the value of the form element
 val('value') // sets the value of the form element
 ```
 
+## CSS Animation
+
+``` js
+animate(transforms, duration, easing, callback)
+animate(transforms, { duration: milliseconds, easing: '...', complete: callback })
+// use -webkit-transform/opacity and do an animation,
+// optionally supply a callback method to be executed after the animation is complete
+```
+
 ## Non-jQuery functions
 
 ``` js
 pluck(property)
 // return property for each element
 // e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
-
-anim(transform, opacity, duration, callback)
-// use -webkit-transform/opacity and do an animation,
-// optionally supply a callback method to be executed after the animation is complete
 ```
 
 # Utility functions:

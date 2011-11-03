@@ -26,6 +26,13 @@
     animationEnd: normalizeEvent('AnimationEnd')
   };
 
+  $.fn.animate = function(properties, duration, ease, callback){
+    if ($.isObject(duration))
+      ease = duration.easing, callback = duration.complete, duration = duration.duration;
+    if (duration) duration = duration / 1000;
+    return this.anim(properties, duration, ease, callback);
+  };
+
   $.fn.anim = function(properties, duration, ease, callback){
     var transforms, cssProperties = {}, key, that = this, wrappedCallback, endEvent = $.fx.transitionEnd;
     if (duration === undefined) duration = 0.4;
