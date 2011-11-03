@@ -228,6 +228,7 @@
 
     var mime = settings.accepts[settings.dataType],
         baseHeaders = { },
+        protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
         xhr = $.ajaxSettings.xhr(), abortTimeout;
 
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest';
@@ -238,7 +239,7 @@
       if (xhr.readyState == 4) {
         clearTimeout(abortTimeout);
         var result, error = false;
-        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
+        if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
           if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
             try { result = JSON.parse(xhr.responseText); }
             catch (e) { error = e; }
