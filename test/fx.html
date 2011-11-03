@@ -122,9 +122,6 @@
           rotateZ: '90deg',
           opacity: 0.5
         });
-        defer(function(){
-          t.assertStyle('0.5s', el1, 'transition-duration');
-        });
 
         var el2 = $('#durationtest_2').anim({
           translate3d: '100px, 100px, 100px',
@@ -133,6 +130,7 @@
         }, 0);
         defer(function(){
           t.resume(function(){
+            t.assertStyle('0.4s', el1, 'transition-duration');
             t.assertStyle('0s', el2, 'transition-duration');
           });
         });

@@ -28,7 +28,7 @@
 
   $.fn.anim = function(properties, duration, ease, callback){
     var transforms, cssProperties = {}, key, that = this, wrappedCallback, endEvent = $.fx.transitionEnd;
-    if (duration === undefined) duration = 0.5;
+    if (duration === undefined) duration = 0.4;
     if ($.fx.off) duration = 0;
 
     if (typeof properties == 'string') {
