@@ -22,6 +22,10 @@ Secondary platforms (for plugin/extension development) are:
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
 * Other WebKit-based browsers/runtimes
+* Mozilla Firefox 4+
+* Opera 10+
+
+In short, Zepto is expected to work in every modern browser except Internet Explorer.
 
 # Syntax & features:
 
