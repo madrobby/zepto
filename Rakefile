@@ -147,13 +147,14 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
   package.need_zip = true
   package.package_dir = ZEPTO_PKG_DIR
   package.package_files.include(
-    'README.rdoc',
+    'README.md',
     'MIT-LICENSE',
     'dist/**/*',
     'src/**/*',
     'test/**/*',
+    'vendor/evidence.js',
     'examples/**/*'
-  )
+  ).exclude(*`git ls-files -o test src examples -z`.split("\0"))
 end
 
 desc "Run tests in headless WebKit"
