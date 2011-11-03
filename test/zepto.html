@@ -269,8 +269,11 @@
     }
 
     Evidence.Assertions.assertEqualCollection = function(expectedCollection, actualCollection, message) {
-      var expected = expectedCollection.get(), actual = actualCollection.get(),
+      var expected = expectedCollection, actual = actualCollection,
           passed = expected.length == actual.length;
+
+      if (typeof expected.get == 'function') expected = expected.get();
+      if (typeof actual.get == 'function') actual = actual.get();
 
       if (passed) for (var i=0; i<expected.length; i++) passed = expected[i] == actual[i];
 
@@ -316,6 +319,12 @@
         t.assertLength(0, $(undefined));
         t.assertLength(0, $(false));
         t.assertLength(0, $(''));
+      },
+
+      testDollarWithNonDOM: function(t){
+        var zepto = $(['a', 'b', 'c']);
+        t.assertLength(3, zepto);
+        t.assertEqualCollection(['a', 'b', 'c'], zepto);
       },
 
       testSize: function(t){
@@ -539,6 +548,10 @@
         t.assertLength(0, $('nonexistent').first());
       },
 
+      testFirstNonDOM: function(t){
+        t.assertEqual('a', $(['a', 'b', 'c']).first());
+      },
+
       testLast: function(t){
         var zepto = $('h1,p');
         t.assertLength(5, zepto);
@@ -551,6 +564,10 @@
         t.assertEqual('P', zepto2.get(0).tagName);
 
         t.assertLength(0, $('nonexistent').last());
+      },
+
+      testLastNonDOM: function(t){
+        t.assertEqual('c', $(['a', 'b', 'c']).last());
       },
 
       testPluck: function(t){

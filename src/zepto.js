@@ -217,8 +217,8 @@ var Zepto = (function() {
     eq: function(idx){
       return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1);
     },
-    first: function(){ return $(this[0]) },
-    last: function(){ return $(this[this.length - 1]) },
+    first: function(){ var el = this[0]; return el && !isO(el) ? el : $(el) },
+    last: function(){ var el = this[this.length - 1]; return el && !isO(el) ? el : $(el) },
     find: function(selector){
       var result;
       if (this.length == 1) result = $$(this[0], selector);
