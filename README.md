@@ -274,7 +274,7 @@ $.post(url, [data], [callback], [mime-type])
 $.getJSON(url, callback)
 ```
 
-If the url contains a =? parameter, a JSONP request is assumed.
+If the url contains `=?`, JSON-P mode is assumed.
 
 If you need more control (all keys are optional):
 
@@ -282,7 +282,7 @@ If you need more control (all keys are optional):
 $.ajax({
   type: 'POST', // defaults to 'GET'
   url: '/foo', // defaults to window.location
-  data: {name: 'Zepto'}, // can be a string or object (objects are automatically serialized to JSON)
+  data: {name: 'Zepto'}, // can be a string, object or result of serializeArray()
   dataType: 'json', // what response type you accept from the server ('json', 'xml', 'html', or 'text')
   success: function(body) { ... }, // body is a string (or if dataType is 'json', a parsed JSON object)
   error: function(xhr, type) { ... } // type is a string ('error' for HTTP errors, 'parsererror' for invalid JSON)
@@ -324,7 +324,7 @@ First of all, check you have the uglifier gem installed typing
 $ gem install uglifier
 ```
 
-Then build the minified Zepto.js library with
+Then build the minified file with
 
 ``` sh
 $ rake
@@ -338,7 +338,7 @@ Minified: 11.826k
 Minified and gzipped: 4.485k, compression factor 4.912
 ```
 
-The minified file is saved in dist/zepto.min.js.
+The minified file is saved in "dist/zepto.min.js".
 
 # Loading Zepto
 
