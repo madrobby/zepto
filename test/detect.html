@@ -47,30 +47,30 @@
       Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00"
     };
 
-    function detect(ua, callback){
+    function detect(ua, width, callback){
       var obj = {};
-      $.__detect.call(obj, ua);
-      callback.call(null, obj.os, obj.browser);
+      $.__detect.call(obj, ua, width);
+      callback.call(null, obj.os, obj.browser, obj.deviceType);
     }
 
     Evidence('ZeptoDetectTest', {
 
       testWebOS: function(t){
-        detect(UA.WebOS_1_4_0_Pre, function(os, browser){
+        detect(UA.WebOS_1_4_0_Pre, 0, function(os, browser){
           t.assertTrue(os.webos);
           t.assert(!os.touchpad);
           t.assertTrue(browser.webkit);
           t.assertEqual("1.4.0", os.version);
         });
-        detect(UA.WebOS_1_4_0_Pixi, function(os){
+        detect(UA.WebOS_1_4_0_Pixi, 0, function(os){
           t.assertTrue(os.webos);
           t.assertEqual("1.4.0", os.version);
         });
-        detect(UA.WebOS_1_2_9_Pixi, function(os){
+        detect(UA.WebOS_1_2_9_Pixi, 0, function(os){
           t.assertTrue(os.webos);
           t.assertEqual("1.2.9", os.version);
         });
-        detect(UA.WebOS_3_0_0_TouchPad, function(os){
+        detect(UA.WebOS_3_0_0_TouchPad, 0, function(os){
           t.assertTrue(os.webos);
           t.assertTrue(os.touchpad);
           t.assertEqual("3.0.0", os.version);
@@ -78,55 +78,55 @@
       },
 
       testAndroid: function(t){
-        detect(UA.Android_1_5, function(os, browser){
+        detect(UA.Android_1_5, 0, function(os, browser){
           t.assertTrue(os.android);
           t.assertTrue(browser.webkit);
           t.assertEqual("1.5", os.version);
         });
-        detect(UA.Android_2_1, function(os){
+        detect(UA.Android_2_1, 0, function(os){
           t.assertTrue(os.android);
           t.assertEqual("2.1", os.version);
         });
       },
 
       testIOS: function(t){
-        detect(UA.iOS_3_0_iPhone, function(os, browser){
+        detect(UA.iOS_3_0_iPhone, 0, function(os, browser){
           t.assertTrue(os.ios);
           t.assertTrue(os.iphone);
           t.assertTrue(browser.webkit);
           t.assertEqual("3.0", os.version);
           t.assertEqual("420.1", browser.version);
         });
-        detect(UA.iOS_3_1_1_iPod, function(os){
+        detect(UA.iOS_3_1_1_iPod, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.iphone);
           t.assertUndefined(os.ipod);
           t.assertEqual("3.1.1", os.version);
         });
-        detect(UA.iOS_3_2_iPad, function(os){
+        detect(UA.iOS_3_2_iPad, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.ipad);
           t.assert(!os.iphone);
           t.assertEqual("3.2", os.version);
         });
-        detect(UA.iOS_3_2_iPad_2, function(os){
+        detect(UA.iOS_3_2_iPad_2, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.ipad);
           t.assert(!os.iphone);
           t.assertEqual("3.2", os.version);
         });
-        detect(UA.iOS_4_0_iPhone, function(os){
+        detect(UA.iOS_4_0_iPhone, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.iphone);
           t.assert(!os.ipad);
           t.assertEqual("4.0", os.version);
         });
-        detect(UA.iOS_4_2_iPad, function(os){
+        detect(UA.iOS_4_2_iPad, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.ipad);
           t.assertEqual("4.2", os.version);
         });
-        detect(UA.iOS_4_3_iPhone_Simulator, function(os){
+        detect(UA.iOS_4_3_iPhone_Simulator, 0, function(os){
           t.assertTrue(os.ios);
           t.assertTrue(os.iphone);
           t.assertEqual("4.3", os.version);
@@ -134,7 +134,7 @@
       },
 
       testBlackBerry: function(t) {
-        detect(UA.BlackBerry_6_0_0_141, function(os, browser){
+        detect(UA.BlackBerry_6_0_0_141, 0, function(os, browser){
           t.assertTrue(os.blackberry);
           t.assertTrue(browser.webkit);
           t.assertEqual("6.0.0.141", os.version);
@@ -142,16 +142,30 @@
       },
 
       testFirefox: function(t) {
-        detect(UA.Firefox_6_0_2, function(os, browser){
+        detect(UA.Firefox_6_0_2, 0, function(os, browser){
           t.assertFalse(browser.webkit);
           t.assertUndefined(browser.version);
         });
       },
 
       testOpera: function(t) {
-        detect(UA.Opera_11_51, function(os, browser){
+        detect(UA.Opera_11_51, 0, function(os, browser){
           t.assertFalse(browser.webkit);
           t.assertUndefined(browser.version);
+        });
+      },
+
+      testTablet: function(t) {
+        detect(UA.iOS_4_2_iPad, 768, function(os, browser, deviceType) {
+          t.assertTrue(deviceType.tablet);
+          t.assertFalse(deviceType.mobile);
+        });
+      },
+
+      testMobile: function(t) {
+        detect(UA.iOS_4_0_iPhone, 640, function(os, browser, deviceType) {
+          t.assertTrue(deviceType.mobile);
+          t.assertFalse(deviceType.tablet);
         });
       }
     });

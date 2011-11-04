@@ -3,8 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 (function($){
-  function detect(ua){
-    var os = (this.os = {}), browser = (this.browser = {}),
+  function detect(ua, width){
+    var os = (this.os = {}), browser = (this.browser = {}), deviceType = (this.deviceType = {}),
       webkit = ua.match(/WebKit\/([\d.]+)/),
       android = ua.match(/(Android)\s+([\d.]+)/),
       ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
@@ -22,6 +22,9 @@
     if (webos) os.webos = true, os.version = webos[2];
     if (touchpad) os.touchpad = true;
     if (blackberry) os.blackberry = true, os.version = blackberry[2];
+
+    deviceType.tablet = (width > 767);
+    deviceType.mobile = !deviceType.tablet;
   }
 
   // ### $.os
@@ -46,7 +49,14 @@
   //
   //     $.browser.webkit  // => true if the browser is WebKit-based
   //     $.browser.version // => WebKit version string
-  detect.call($, navigator.userAgent);
+  //
+  // ### $.deviceType
+  //
+  // *Example:*
+  //
+  //     $.deviceType.tablet // => true if running on a tablet
+  //     $.deviceType.mobile // => true if running on a mobile phone
+  detect.call($, navigator.userAgent, screen.width);
 
   // make available to unit tests
   $.__detect = detect;
