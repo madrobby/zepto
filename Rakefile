@@ -1,10 +1,6 @@
-require 'rubygems'
-require 'bundler/setup'
-
-require 'rake'
 require 'rake/packagetask'
 
-ZEPTO_VERSION  = "0.7"
+ZEPTO_VERSION  = "0.8"
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
 ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
@@ -27,6 +23,16 @@ ZEPTO_COMPONENTS = [
 ]
 
 task :default => [:clean, :concat, :dist]
+
+ZEPTO_TESTS = %w[
+  test/zepto.html
+  test/ajax.html
+  test/data.html
+  test/detect.html
+  test/form.html
+  test/fx.html
+  test/polyfill.html
+]
 
 desc "Clean the distribution directory."
 task :clean do
@@ -141,18 +147,53 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
   package.need_zip = true
   package.package_dir = ZEPTO_PKG_DIR
   package.package_files.include(
-    'README.rdoc',
+    'README.md',
     'MIT-LICENSE',
     'dist/**/*',
     'src/**/*',
     'test/**/*',
+    'vendor/evidence.js',
     'examples/**/*'
-  )
+  ).exclude(*`git ls-files -o test src examples -z`.split("\0"))
+end
+
+desc "Run tests in headless WebKit"
+task :test => "jasmine:headless" do
+  require 'rubygems'
+  require 'rubygems/specification'
+
+  # HACK: jasmine-headless-webkit doesn't let us access its compiled specrunner directly
+  if jasmine_gem = Gem::Specification.find_by_name('jasmine-headless-webkit')
+    headless_root = jasmine_gem.full_gem_path
+    runner = File.join(headless_root, 'ext/jasmine-webkit-specrunner/jasmine-webkit-specrunner')
+
+    exec runner, '-c', *ZEPTO_TESTS
+  else
+    abort "Can't find 'jasmine-headless-webkit' gem"
+  end
+end
+
+def silence_warnings
+  require 'stringio'
+  begin
+    old_stderr = $stderr
+    $stderr = StringIO.new
+    yield
+  ensure
+    $stderr = old_stderr
+  end
 end
 
 begin
-  require 'jasmine'
-  load 'jasmine/tasks/jasmine.rake'
+  silence_warnings {
+    require 'jasmine'
+    load 'jasmine/tasks/jasmine.rake'
+    require 'jasmine/headless/task'
+  }
+
+  Jasmine::Headless::Task.new do |task|
+    task.colors = true
+  end
 rescue LoadError
   task :jasmine do
     abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"

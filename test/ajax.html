@@ -9,6 +9,7 @@
   <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
   <script src="../src/ajax.js"></script>
 </head>
 <body>
@@ -23,18 +24,30 @@
   <script>
   (function(){
 
+    function deferredResume(t, fn) {
+      setTimeout(function() { t.resume(fn || function(){}) }, 5);
+    }
+
     Evidence('ZeptoAjaxTest', {
 
+      tearDown: function() {
+        $(document).off();
+      },
+
       testAjaxBase: function(t){
-        var xhr = $.ajax({ url: 'fixtures/ajax_load_simple.html' });
-        this.assertEqual('function', typeof xhr['getResponseHeader']);
+        t.pause();
+        var xhr = $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          complete: function() { deferredResume(t) }
+        });
+        t.assertEqual('function', typeof xhr['getResponseHeader']);
       },
 
       testAjaxGet: function(t){
         t.pause();
         var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
           var that = this;
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assert(response);
             this.assertIdentical(window, that);
           });
@@ -45,43 +58,40 @@
       testAjaxPost: function(t){
         t.pause();
         var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assert(response);
           });
         });
         t.assertIn('abort', xhr);
       },
 
-      testAjaxNullTimeout: function (t) {
-        var startTime = new Date();
+      testNumberOfActiveRequests: function(t) {
+        var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0;
+        t.assertIdentical(0, $.active);
+        $(document)
+          .on('ajaxStart', function() { ajaxStarted++ })
+          .on('ajaxEnd', function() { ajaxEnded++ })
+          .on('ajaxSend', function() {
+            if ($.active > maxActive) maxActive = $.active;
+          })
+          .on('ajaxComplete', function() {
+            if (++requestsCompleted == 3)
+              deferredResume(t, function() {
+                this.assertEqual(3, maxActive);
+                this.assertIdentical(0, $.active);
+              });
+          });
+
         t.pause();
-        $.ajax({
-          url:     'fixtures/ajax_load_simple.html',
-          timeout: 0,
-          beforeSend: function () {
-            t.resume(function () {
-              this.assert(new Date() - startTime < 10);
-            });
-          }
-        });
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
       },
-
-
-      // TODO: It's time to integrate a real webserver (webrick) to test POSTS
-      //
-      //testAjaxPostWithData: function(t) {
-      //  t.pause();
-      //  $.post('fixtures/ajax_post_json_echo.php', { sample: 'data', letters: ['a', 'b', 'c'] }, function(response) {
-      //    t.resume(function() {
-      //      this.assertEqual(response, '{"sample":"data","letters":["a","b","c"]}');
-      //    });
-      //  });
-      //},
 
       testAjaxPostWithAcceptType: function(t) {
         t.pause();
         $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assert(response);
           });
         }, 'text/plain');
@@ -90,7 +100,7 @@
       testAjaxGetJSON: function(t){
         t.pause();
         var xhr = $.getJSON('fixtures/zepto.json', function(data){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assertEqual('awesomeness', data.zepto);
           });
         });
@@ -100,7 +110,7 @@
       testAjaxGetJSONP: function(t){
         t.pause();
         var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
-          t.resume(function(){
+          deferredResume(t, function(){
             this.assertEqual(data.items.length, 0);
             this.assertEqual(0, $('script[src^=fixtures]').size());
           });
@@ -114,7 +124,7 @@
         t.pause();
         var el = testEl.load('fixtures/ajax_load_simple.html', function(){
           var that = this;
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assertIdentical(testEl, that);
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
@@ -126,15 +136,10 @@
         var testEl = $('#ajax_load');
         t.pause();
         testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assertEqual('ajax load with selector', testEl.html().trim());
           });
         });
-      },
-
-      testAjaxRequestHeader: function(t){
-        // @see Net Panel/Resources
-        // TODO
       },
 
       testAjaxWithContext: function(t) {
@@ -145,7 +150,7 @@
           context: body,
           complete: function () {
             var that = this;
-            t.resume(function () {
+            deferredResume(t, function() {
               this.assertIdentical(body, that);
             });
           }
@@ -196,16 +201,32 @@
 
       tearDown: function() {
         $.ajaxSettings.xhr = OriginalXHR;
+        $(document).off();
+        $.active = 0;
       },
 
       testTypeDefaultsToGET: function(t) {
-        $.ajax({ url: '/foo' });
+        $.ajax({
+          url: '/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain);
+          }
+        });
         t.assertEqual('GET', MockXHR.last.method);
       },
 
       testURLDefaultsToWindowLocation: function(t) {
         $.ajax();
         t.assertEqual(window.location, MockXHR.last.url);
+      },
+
+      testCrossDomain: function(t) {
+        $.ajax({
+          url: 'http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain);
+          }
+        });
       },
 
       testDataTypeOptionSetsAcceptHeader: function(t) {
@@ -370,6 +391,20 @@
         t.assert(xhr.aborted);
       },
 
+      testGlobalBeforeSendAbort: function(t) {
+        var xhr;
+        $(document).on('ajaxBeforeSend', function(e, x) { xhr = x; return false });
+        t.assertFalse($.ajax());
+        t.assert(xhr.aborted);
+      },
+
+      testGlobalAjaxSendCantAbort: function(t) {
+        var xhr;
+        $(document).on('ajaxSend', function(e, x) { xhr = x; return false });
+        t.assert($.ajax());
+        t.assert(!xhr.aborted);
+      },
+
       testCompleteCallback: function(t) {
         var status, xhr;
         $.ajax({ complete: function(x, s) { status = s, xhr = x } });
@@ -389,6 +424,45 @@
 
         MockXHR.last.ready(4, 200, 'OK');
         t.assertEqual('beforeSend,success,complete', order.join(','));
+      },
+
+      testGlobalCallbacks: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('ajaxStart beforeSend ajaxBeforeSend ajaxSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success ajaxSuccess complete ajaxComplete ajaxStop', fired.join(' '));
+      },
+
+      testGlobalCallbacksOff: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          global:     false,
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('beforeSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success complete', fired.join(' '));
       },
 
       testTimeout: function(t) {

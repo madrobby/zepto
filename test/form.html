@@ -20,22 +20,32 @@
 
   <div id="fixtures">
   <form id="login_form" target="formtarget" action="./idontexist.html">
-    <input name="email" value="koss@nocorp.me" />
-    <input name="password" value="123456" /><br>
+    <input name="email" value="koss@nocorp.me">
+    <input name="password" value="123456">
     <input name="unchecked_hasValue" value="myValue" type="checkbox">
     <input name="unchecked_noValue" type="checkbox">
-    <input name="checked_hasValue" checked="checked" value="myValue" type="checkbox">
-    <input name="checked_noValue" checked="checked" type="checkbox">
+    <input name="checked_hasValue" checked value="myValue" type="checkbox">
+    <input name="checked_disabled" checked value="ImDisabled" type="checkbox" disabled>
+    <input name="checked_noValue" checked type="checkbox">
 
-    <input type="radio" name="radio1" value="r1">
-    <input type="radio" name="radio1" checked="checked" value="r2">
-    <input type="radio" name="radio1" value="r3">
+    <div>
+      <input type="radio" name="radio1" value="r1">
+      <input type="radio" name="radio1" checked value="r2">
+      <input type="radio" name="radio1" value="r3">
+    </div>
 
     <select name="selectbox">
         <option value="selectopt1">select1</option>
         <option value="selectopt2">select2</option>
         <option value="selectopt3">select3</option>
     </select>
+
+    <div class="actions">
+      <input type="submit" name="submit" value="Save">
+      <input type="button" name="preview" value="Preview">
+      <input type="reset" name="clear" value="Clear form">
+      <button name="button">I'm a button</button>
+    </div>
   </form>
 
   <iframe name="formtarget"></iframe>

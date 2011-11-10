@@ -20,15 +20,22 @@
   });
 
   $.fx = {
-    off: false,
+    off: (eventPrefix === undefined && testEl.style.transitionProperty === undefined),
     cssPrefix: prefix,
     transitionEnd: normalizeEvent('TransitionEnd'),
     animationEnd: normalizeEvent('AnimationEnd')
   };
 
+  $.fn.animate = function(properties, duration, ease, callback){
+    if ($.isObject(duration))
+      ease = duration.easing, callback = duration.complete, duration = duration.duration;
+    if (duration) duration = duration / 1000;
+    return this.anim(properties, duration, ease, callback);
+  };
+
   $.fn.anim = function(properties, duration, ease, callback){
     var transforms, cssProperties = {}, key, that = this, wrappedCallback, endEvent = $.fx.transitionEnd;
-    if (duration === undefined) duration = 0.5;
+    if (duration === undefined) duration = 0.4;
     if ($.fx.off) duration = 0;
 
     if (typeof properties == 'string') {

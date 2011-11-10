@@ -22,6 +22,10 @@ Secondary platforms (for plugin/extension development) are:
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
 * Other WebKit-based browsers/runtimes
+* Mozilla Firefox 4+
+* Opera 10+
+
+In short, Zepto is expected to work in every modern browser except Internet Explorer.
 
 # Syntax & features:
 
@@ -126,16 +130,21 @@ val() // returns the value of the form element
 val('value') // sets the value of the form element
 ```
 
+## CSS Animation
+
+``` js
+animate(transforms, duration, easing, callback)
+animate(transforms, { duration: milliseconds, easing: '...', complete: callback })
+// use -webkit-transform/opacity and do an animation,
+// optionally supply a callback method to be executed after the animation is complete
+```
+
 ## Non-jQuery functions
 
 ``` js
 pluck(property)
 // return property for each element
 // e.g. pluck('innerHTML') returns an array of all innerHTML properties of all elements found
-
-anim(transform, opacity, duration, callback)
-// use -webkit-transform/opacity and do an animation,
-// optionally supply a callback method to be executed after the animation is complete
 ```
 
 # Utility functions:
@@ -265,7 +274,7 @@ $.post(url, [data], [callback], [mime-type])
 $.getJSON(url, callback)
 ```
 
-If the url contains a =? parameter, a JSONP request is assumed.
+If the url contains `=?`, JSON-P mode is assumed.
 
 If you need more control (all keys are optional):
 
@@ -273,7 +282,7 @@ If you need more control (all keys are optional):
 $.ajax({
   type: 'POST', // defaults to 'GET'
   url: '/foo', // defaults to window.location
-  data: {name: 'Zepto'}, // can be a string or object (objects are automatically serialized to JSON)
+  data: {name: 'Zepto'}, // can be a string, object or result of serializeArray()
   dataType: 'json', // what response type you accept from the server ('json', 'xml', 'html', or 'text')
   success: function(body) { ... }, // body is a string (or if dataType is 'json', a parsed JSON object)
   error: function(xhr, type) { ... } // type is a string ('error' for HTTP errors, 'parsererror' for invalid JSON)
@@ -315,7 +324,7 @@ First of all, check you have the uglifier gem installed typing
 $ gem install uglifier
 ```
 
-Then build the minified Zepto.js library with
+Then build the minified file with
 
 ``` sh
 $ rake
@@ -329,7 +338,7 @@ Minified: 11.826k
 Minified and gzipped: 4.485k, compression factor 4.912
 ```
 
-The minified file is saved in dist/zepto.min.js.
+The minified file is saved in "dist/zepto.min.js".
 
 # Loading Zepto
 

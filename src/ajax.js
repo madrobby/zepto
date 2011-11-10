@@ -5,8 +5,61 @@
 (function($){
   var jsonpID = 0,
       isObject = $.isObject,
+      document = window.document,
       key,
       name;
+
+  // trigger a custom event and return false if it was cancelled
+  function triggerAndReturn(context, eventName, data) {
+    var event = $.Event(eventName);
+    $(context).trigger(event, data);
+    return !event.defaultPrevented;
+  }
+
+  // trigger an Ajax "global" event
+  function triggerGlobal(settings, context, eventName, data) {
+    if (settings.global) return triggerAndReturn(context || document, eventName, data);
+  }
+
+  // Number of active Ajax requests
+  $.active = 0;
+
+  function ajaxStart(settings) {
+    if (settings.global && $.active++ === 0) triggerGlobal(settings, null, 'ajaxStart');
+  }
+  function ajaxStop(settings) {
+    if (settings.global && !(--$.active)) triggerGlobal(settings, null, 'ajaxStop');
+  }
+
+  // triggers an extra global event "ajaxBeforeSend" that's like "ajaxSend" but cancelable
+  function ajaxBeforeSend(xhr, settings) {
+    var context = settings.context;
+    if (settings.beforeSend.call(context, xhr, settings) === false ||
+        triggerGlobal(settings, context, 'ajaxBeforeSend', [xhr, settings]) === false)
+      return false;
+
+    triggerGlobal(settings, context, 'ajaxSend', [xhr, settings]);
+  }
+  function ajaxSuccess(data, xhr, settings) {
+    var context = settings.context, status = 'success';
+    settings.success.call(context, data, status, xhr);
+    triggerGlobal(settings, context, 'ajaxSuccess', [xhr, settings, data]);
+    ajaxComplete(status, xhr, settings);
+  }
+  // type: "timeout", "error", "abort", "parsererror"
+  function ajaxError(error, type, xhr, settings) {
+    var context = settings.context;
+    settings.error.call(context, xhr, type, error);
+    triggerGlobal(settings, context, 'ajaxError', [xhr, settings, error]);
+    ajaxComplete(type, xhr, settings);
+  }
+  // status: "success", "notmodified", "error", "timeout", "abort", "parsererror"
+  function ajaxComplete(status, xhr, settings) {
+    var context = settings.context;
+    settings.complete.call(context, xhr, status);
+    triggerGlobal(settings, context, 'ajaxComplete', [xhr, settings]);
+    ajaxStop(settings);
+  }
 
   // Empty function, used as default callback
   function empty() {}
@@ -39,10 +92,10 @@
   $.ajaxJSONP = function(options){
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
-      context = options.context,
       abort = function(){
         $(script).remove();
         if (callbackName in window) window[callbackName] = empty;
+        ajaxComplete(xhr, options, 'abort');
       },
       xhr = { abort: abort }, abortTimeout;
 
@@ -50,7 +103,7 @@
       clearTimeout(abortTimeout);
       $(script).remove();
       delete window[callbackName];
-      options.success.call(context, data);
+      ajaxSuccess(data, xhr, options);
     };
 
     script.src = options.url.replace(/=\?/, '=' + callbackName);
@@ -58,7 +111,7 @@
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.abort();
-        options.error.call(context, xhr, 'timeout');
+        ajaxComplete(xhr, options, 'timeout');
       }, options.timeout);
 
     return xhr;
@@ -81,6 +134,8 @@
     complete: empty,
     // The context for the callbacks
     context: null,
+    // Whether to trigger "global" Ajax events
+    global: true,
     // Transport
     xhr: function () {
       return new window.XMLHttpRequest();
@@ -93,6 +148,8 @@
       html:   'text/html',
       text:   'text/plain'
     },
+    // Whether the request is to another domain
+    crossDomain: false,
     // Default timeout
     timeout: 0
   };
@@ -145,9 +202,13 @@
   //     });
   //
   $.ajax = function(options){
-    options = options || {};
-    var settings = $.extend({}, options);
-    for (key in $.ajaxSettings) if (!settings[key]) settings[key] = $.ajaxSettings[key];
+    var settings = $.extend({}, options || {});
+    for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key];
+
+    ajaxStart(settings);
+
+    if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
+      RegExp.$2 != window.location.host;
 
     if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
 
@@ -166,29 +227,29 @@
     }
 
     var mime = settings.accepts[settings.dataType],
-        xhr = $.ajaxSettings.xhr(), abortTimeout,
-        context = settings.context;
+        baseHeaders = { },
+        protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
+        xhr = $.ajaxSettings.xhr(), abortTimeout;
 
-    settings.headers = $.extend({'X-Requested-With': 'XMLHttpRequest'}, settings.headers || {});
-    if (mime) settings.headers['Accept'] = mime;
+    if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest';
+    if (mime) baseHeaders['Accept'] = mime;
+    settings.headers = $.extend(baseHeaders, settings.headers || {});
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
         clearTimeout(abortTimeout);
         var result, error = false;
-        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 0) {
+        if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
           if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
             try { result = JSON.parse(xhr.responseText); }
             catch (e) { error = e; }
           }
           else result = xhr.responseText;
-          if (error) settings.error.call(context, xhr, 'parsererror', error);
-          else settings.success.call(context, result, 'success', xhr);
+          if (error) ajaxError(error, 'parsererror', xhr, settings);
+          else ajaxSuccess(result, xhr, settings);
         } else {
-          error = true;
-          settings.error.call(context, xhr, 'error');
+          ajaxError(null, 'error', xhr, settings);
         }
-        settings.complete.call(context, xhr, error ? 'error' : 'success');
       }
     };
 
@@ -197,7 +258,7 @@
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
 
-    if (settings.beforeSend.call(context, xhr, settings) === false) {
+    if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort();
       return false;
     }
@@ -205,7 +266,7 @@
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty;
         xhr.abort();
-        settings.error.call(context, xhr, 'timeout');
+        ajaxError(null, 'timeout', xhr, settings);
       }, settings.timeout);
 
     xhr.send(settings.data);

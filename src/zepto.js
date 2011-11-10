@@ -217,8 +217,8 @@ var Zepto = (function() {
     eq: function(idx){
       return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1);
     },
-    first: function(){ return $(this[0]) },
-    last: function(){ return $(this[this.length - 1]) },
+    first: function(){ var el = this[0]; return el && !isO(el) ? el : $(el) },
+    last: function(){ var el = this[this.length - 1]; return el && !isO(el) ? el : $(el) },
     find: function(selector){
       var result;
       if (this.length == 1) result = $$(this[0], selector);
@@ -337,8 +337,8 @@ var Zepto = (function() {
       if(this.length==0) return null;
       var obj = this[0].getBoundingClientRect();
       return {
-        left: obj.left + document.body.scrollLeft,
-        top: obj.top + document.body.scrollTop,
+        left: obj.left + window.pageXOffset,
+        top: obj.top + window.pageYOffset,
         width: obj.width,
         height: obj.height
       };
@@ -466,4 +466,5 @@ var Zepto = (function() {
   return $;
 })();
 
+window.Zepto = Zepto;
 '$' in window || (window.$ = Zepto);
