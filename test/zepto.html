@@ -61,6 +61,7 @@
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
   <div id="htmltest3"></div>
+  <table id="htmltest4"></table>
 
   <div id="texttest1" class="texttest"><span>Here <strong>is</strong> some text</span></div>
   <div id="texttest2" class="texttest">And <em>some more</em></div>
@@ -987,6 +988,11 @@
           return idx+html;
         });
         t.assertEqual('<u>0a</u><u>1b</u><u>2c</u>', div.html());
+        
+        var table = $('#htmltest4'),
+          html = '<tbody><tr><td>ok</td></tr></tbody>';
+        table.html('<tbody><tr><td>ok</td></tr></tbody>');
+        t.assertEqual(html, table.html());
       },
 
       testText: function(t){
