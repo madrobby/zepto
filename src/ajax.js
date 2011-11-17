@@ -98,6 +98,8 @@
         ajaxComplete(xhr, options, 'abort');
       },
       xhr = { abort: abort }, abortTimeout;
+      
+    for (key in $.ajaxSettings) if (options[key] === undefined) options[key] = $.ajaxSettings[key];
 
     window[callbackName] = function(data){
       clearTimeout(abortTimeout);
