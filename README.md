@@ -116,6 +116,8 @@ hasClass('classname') // returns true of first element has a classname set
 toggleClass('classname'[, switch]) // adds/removes class, or adds/removes it when switch == true/false
 toggleClass(function(index, existingClasses){ return ...; }) // adds/removes class from a method
 
+on(type, [selector,] function) // add event listener to elements
+off(type, [selector,] function) // remove event listener from elements
 bind(type, function) // add an event listener (see below)
 one(type, function) // add an event listener that only fires once
 unbind([type [, function]]) // remove event listeners
