@@ -1,5 +1,4 @@
 
-
 # Zepto.js: a minimalist framework for mobile WebKit browsers
 
 Zepto.js is a minimalist framework for mobile WebKit browsers,
@@ -116,6 +115,8 @@ hasClass('classname') // returns true of first element has a classname set
 toggleClass('classname'[, switch]) // adds/removes class, or adds/removes it when switch == true/false
 toggleClass(function(index, existingClasses){ return ...; }) // adds/removes class from a method
 
+on(type, selector[, function]) // Adds event listener to selected elements
+off(type, selector[, function]) // Removes event listener from selected elements
 bind(type, function) // add an event listener (see below)
 one(type, function) // add an event listener that only fires once
 unbind([type [, function]]) // remove event listeners
