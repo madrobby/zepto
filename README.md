@@ -1,5 +1,4 @@
 
-
 # Zepto.js: a minimalist framework for mobile WebKit browsers
 
 Zepto.js is a minimalist framework for mobile WebKit browsers,
@@ -152,7 +151,7 @@ pluck(property)
 ``` js
 $(document).ready(function(){ ... }); // call function after DOM is ready to use (before load event fires)
 $.isFunction(function), $.isObject(object), $.isArray(array); // returns true if given parameter is a function; an object; or an array, respectively
-$.extend(target, secondObject) // extends (merge) the target object with secondObject. Modifies and returns target
+$.extend(target, object1 [,objectN]) // extends (merge) the target object with additional objects. Modifies and returns target
 ```
 
 # Event handlers
