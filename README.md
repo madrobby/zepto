@@ -1,5 +1,4 @@
 
-
 # Zepto.js: a minimalist framework for mobile WebKit browsers
 
 Zepto.js is a minimalist framework for mobile WebKit browsers,
@@ -94,8 +93,8 @@ show() // forces elements to be displayed (only works correctly for block elemen
 hide() // removes a elements from layout
 
 offset() // get object with top: left: width: height: properties (in px)
-height() // get first elements height in px
-width() // get first elements width in px
+height() // get first elements height in px, including padding and border (equivalent to jQuery.outerHeight(false))
+width() // get first elements width in px, including padding and border (equivalent to jQuery.outerWidth(false))
 
 attr('attribute') // get element attribute
 attr('attribute', 'value') // set element attribute
