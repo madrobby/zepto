@@ -1,0 +1,60 @@
+@import url(http://fonts.googleapis.com/css?family=Rammetto+One);
+body {
+	font-family: 'Rammetto One';
+	background-color: #222222;
+	font-size: 1.5em
+}
+h1 {
+	font-family: 'Rammetto One';
+	font-size: 1.2em;
+	color: #FFFFCC;
+	line-height: 1.2em;
+	-webkit-text-shadow: 0 4px 2px rgba(0, 0, 0, 0.45);
+	-moz-text-shadow: 0 4px 2px rgba(0, 0, 0, 0.45);
+	text-shadow: 0 4px 2px rgba(0, 0, 0, 0.45);
+}
+h1 > a, h1 > a:visited {
+	color: #5840AE;
+	text-decoration: none;
+	-webkit-text-stroke: 2px;
+	-webkit-text-stroke-color: #FFFFFF;
+}
+div {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+#main {
+	background-color: #6D84A2;
+	border: 2px solid #ffffff;
+	position: relative;
+	top: 20px;
+	min-height: 100px;
+	padding: 15px;
+	margin: 0 auto;
+}
+#main div {
+	display: inline-block;
+	padding: 15px;
+	text-align: center;
+	background-color: #EEEEEE;
+	margin: 10px 0;
+	border: 1px solid #000000;
+}
+div.swipeV {
+	height: 7em;
+}
+
+#main div[data-type="swipe"] {
+    height: 3em;
+	padding-top: 2.5em;
+}
+#main div.off {display:none;}
+#main div.pinch {
+	height: 7em;
+	width: 7em;
+}
+#main a.test{font-size:.5em; float:left}
+
