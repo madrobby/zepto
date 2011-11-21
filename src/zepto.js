@@ -354,11 +354,16 @@ var Zepto = (function() {
       var css = '';
       for (key in property) {
         if(typeof property[key] == 'string' && property[key] == '')
-          this[0].style.removeProperty(dasherize(key));
+          this.each(function() {this.style.removeProperty(dasherize(key))});
         else
           css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
       }
-      if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
+      if (typeof property == 'string') {
+        if (value == '')
+          this.each(function() {this.style.removeProperty(dasherize(property))});
+        else
+          css = dasherize(property) + ":" + maybeAddPx(property, value);
+      }
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
