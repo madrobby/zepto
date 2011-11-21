@@ -64,6 +64,7 @@ index('selector') // the position of element matching 'selector' in the current 
 first() // new collection containing only the first matched element
 last() // new collection containing only the last matched element
 add() // merges collections of elements
+eq(n) // reduce the set of matched elements to the one at the specified index
 
 find('selector') // find all children/grandchildren that match the given selector
 closest('selector') // find the first matching element by going upwards starting from the current element
