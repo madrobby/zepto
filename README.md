@@ -1,5 +1,4 @@
 
-
 # Zepto.js: a minimalist framework for mobile WebKit browsers
 
 Zepto.js is a minimalist framework for mobile WebKit browsers,
@@ -201,8 +200,7 @@ $('some selector').unbind();
 
 # Touch events
 
-Zepto has several extensions over the jQuery API to make it easy to react to touch events.
-You need to include touch.js and/or gesture.js to use these.
+Zepto has several extensions over the jQuery API to make it easy to react to touch events. 
 
 Tapping:
 
