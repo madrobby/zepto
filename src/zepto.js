@@ -197,7 +197,7 @@ var Zepto = (function() {
       return $(uniq(this.concat($(selector,context))));
     },
     is: function(selector){
-      return this.length > 0 && $(this[0]).filter(selector).length > 0;
+      return this[0] && this[0].webkitMatchesSelector(selector)
     },
     not: function(selector){
       var nodes=[];
