@@ -161,32 +161,47 @@
 
     var OriginalXHR = $.ajaxSettings.xhr;
 
-    function MockXHR() {
-      this.headers = [];
+    function MockXHR(responseHeaders) {
+      XMLHttpRequest.prototype.constructor.call(this);
+      this.headers = [], this.responseHeaders = {};
       MockXHR.last = this;
     }
-    MockXHR.prototype = {
-      open: function(method, url) {
+
+    MockXHR.prototype = Object.create(XMLHttpRequest.prototype, {
+      responseXML: { get: function() {
+        return (new DOMParser()).parseFromString(this.responseText, 'text/xml');
+      }, configurable: true },
+      open: { value: function(method, url) {
         this.method = method;
         this.url = url;
-      },
-      setRequestHeader: function(name, value) {
+      }, configurable: true, writable: true },
+      getResponseHeader: { value: function(header) {
+        return this.responseHeaders[header.toLowerCase()] || null;
+      }, configurable: true, writable: true },
+      setRequestHeader: { value: function(name, value) {
         this.headers.push({ name: name, value: value });
-      },
-      send: function(data) {
+      }, configurable: true, writable: true },
+      send: { value: function(data) {
         this.data = data;
-      },
-      abort: function() {
+      }, configurable: true, writable: true },
+      abort: { value: function() {
         this.aborted = true;
-      },
-      ready: function(readyState, status, responseText) {
+      }, configurable: true, writable: true },
+      overrideMimeType: { value: function(mime) {
+        Object.defineProperty(this.responseHeaders, 'content-type', {
+          value: mime, writable: false, configurable: true, enumerable: false });
+      }, configurable: true, writable: true },
+      ready: { value: function(readyState, status, responseText, responseHeaders) {
         this.readyState = readyState;
         this.status = status;
         this.responseText = responseText;
+        Object.keys(responseHeaders || {}).forEach(function(key) {
+          this.responseHeaders[key.toLowerCase()] = responseHeaders[key];
+        }, this);
         this.onreadystatechange();
-      },
-      onreadystatechange: function() {}
-    };
+      }, configurable: true, writable: true },
+      onreadystatechange: { value: function() { }, configurable: true, writable: true }
+    });
 
     function matchHeader(name, value) {
       return function(header) {
@@ -230,11 +245,13 @@
       },
 
       testDataTypeOptionSetsAcceptHeader: function(t) {
+        try {
         $.ajax();
         t.assert(!MockXHR.last.headers.some(matchHeader('Accept')));
 
         $.ajax({ dataType: 'json' });
         t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')));
+        } catch(e) { console.error(e); }
       },
 
       testContentTypeOptionSetsContentTypeHeader: function(t) {
@@ -282,6 +299,28 @@
         MockXHR.last.ready(4, 200, ' ');
         t.assert(success);
         t.assertEqual(' ', result);
+      },
+
+      testJSONResponseBodiesAreParsedWhenResponseContentTypeIsJSON: function(t) {
+        var result = {};
+        $.ajax({ success: function(json) { result = json; }});
+        MockXHR.last.ready(4, 200, '{"hello":"world"}', { 'Content-Type': 'application/json' });
+        t.assertEqual("world", result.hello);
+      },
+
+      testXMLResponseBodiesAreParsedWhenResponseContentTypeIsXML: function(t) {
+        var result = {};
+        $.ajax({ success: function(xml) { result = xml; }});
+        MockXHR.last.ready(4, 200, '<hello>world</hello>', { 'Content-Type': 'text/xml' });
+        t.assert(result instanceof XMLDocument);
+      },
+
+      testScriptResponseBodiesAreExecutedWhenResponseContentTypeIsScript: function(t) {
+        var result = false;
+        $.ajax({ success: function(res) { result = res; }});
+        MockXHR.last.ready(4, 200, 'this._globalContext = true;', { 'Content-Type': 'application/javascript' });
+        t.assert(window._globalContext); delete window._globalContext;
+        t.assert(result === true);
       },
 
       testDataOptionIsConvertedToSerializedForm: function(t) {
@@ -337,6 +376,7 @@
 
       test201ResponseIsSuccess: function(t) {
         var successFired, errorFired;
+
         $.ajax({
           success: function() { successFired = true },
           error: function() { errorFired = true }
