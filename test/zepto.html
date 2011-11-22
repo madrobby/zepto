@@ -1057,8 +1057,11 @@
       },
 
       testIsWithoutParent: function(t){
-        var elem = $('<div />')
+        var elem = $('<div id=outOfDOM />')
         t.assert(elem.is('div'))
+        t.assert(elem.is('#outOfDOM'))
+        t.assert(!elem.is('p'))
+        t.assert(!elem.is())
       },
 
       testCSS: function(t){
