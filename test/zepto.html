@@ -895,6 +895,14 @@
         t.assert($('#li2').is(':first-child'));
         t.assert(!$('#find1').is('doesnotexist'));
         t.assert(!$('#find1').is());
+        
+        var div = document.createElement('div');
+        div.id = 'outOfDOM';
+        
+        t.assert($(div).is('div'));
+        t.assert($(div).is('#outOfDOM'));
+        t.assert(!$(div).is('p'));
+        t.assert(!$(div).is());
 
         t.assert($('#fixtures div').is('#some_element'));
         t.assert(!$('#doesnotexist').is('p'));
