@@ -155,6 +155,7 @@ var Zepto = (function() {
   $.fn = {
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
+    every: emptyArray.every,
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
