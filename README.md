@@ -15,7 +15,7 @@ Primary target platforms are:
 * Android 2.2+
 * webOS 1.4.5+
 
-Secondary platforms (for plugin/extension development) are:
+Other supported platforms are:
 
 * Safari 5+ (desktop)
 * Chrome 5+ (desktop)
