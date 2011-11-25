@@ -1,10 +1,9 @@
+# Zepto.js -- a minimalist JavaScript framework
 
-# Zepto.js: a minimalist framework for mobile WebKit browsers
+Zepto.js is a minimalist framework for modern browsers with a
+jQuery-compatible chaining syntax.
 
-Zepto.js is a minimalist framework for mobile WebKit browsers,
-with a jQuery-compatible chaining syntax.
-
-100% jQuery coverage is not a design goal, however all APIs provided
+100% jQuery coverage is not a design goal, however the APIs provided
 match their jQuery counterparts.
 
 The ultimate goal is to have a ~5k library that handles most basic dredge work
@@ -137,7 +136,7 @@ val('value') // sets the value of the form element
 ``` js
 animate(transforms, duration, easing, callback)
 animate(transforms, { duration: milliseconds, easing: '...', complete: callback })
-// use -webkit-transform/opacity and do an animation,
+// use CSS transform/opacity to do an animation,
 // optionally supply a callback method to be executed after the animation is complete
 ```
 
