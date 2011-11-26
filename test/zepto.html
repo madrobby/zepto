@@ -525,6 +525,15 @@
         t.assertEqual('abc', $.each(array, function(){}).join(''));
       },
 
+      testDollarEachContext: function(t){
+        $.each(['a'], function(key, val) {
+          t.assertEqual(this, val);
+        });
+        $.each({a:'b'}, function(key, val) {
+          t.assertEqual(this, val);
+        });
+      },
+
       testEq: function(t){
         var $els = $('#eq_test div');
         t.assertLength(1, $els.eq(0));
