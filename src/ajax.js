@@ -95,7 +95,7 @@
       abort = function(){
         $(script).remove();
         if (callbackName in window) window[callbackName] = empty;
-        ajaxComplete(xhr, options, 'abort');
+        ajaxComplete('abort', xhr, options);
       },
       xhr = { abort: abort }, abortTimeout;
 
@@ -111,7 +111,7 @@
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.abort();
-        ajaxComplete(xhr, options, 'timeout');
+        ajaxComplete('timeout', xhr, options);
       }, options.timeout);
 
     return xhr;
