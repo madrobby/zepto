@@ -468,3 +468,7 @@ var Zepto = (function() {
 
 window.Zepto = Zepto;
 '$' in window || (window.$ = Zepto);
+
+if ( typeof define === "function" && define.amd ) {
+  define( "zepto", [], function () { return Zepto; } );
+}
