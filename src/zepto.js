@@ -458,7 +458,7 @@ var Zepto = (function() {
     $.fn[reverseKey] = function(html) {
       $(html)[key](this);
       return this;
-    };
+    }
   });
 
   Z.prototype = $.fn;
