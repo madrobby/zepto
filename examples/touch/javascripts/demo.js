@@ -1,49 +1,45 @@
-$(document).ready(function() {
-    var $elements = $("#main div:not(.off)"),
-    	duration = 2,
-        fx = ['rotateX', 'rotateY', 'rotate'],
-        animateFx = function(opt) {
-            var temp = {};
-            fx = fx[Math.floor(Math.random() * fx.length)];
-            temp[fx] = '360deg';
-            return temp;
-        },
-        testNum = 0,
-        count = {};
-	
-	function action(obj, test) {
-		var type = obj.data('type'); 
-		switch(test) {
-			case 0:
-				alert(type);
-				break;
-			case 1:
-				obj.anim(animateFx(), duration, 'linear', function() {
-					//obj.attr('style', ''); // Reset?.. No worky.
-				});
-				break;
-			case 2:				
-				if(!count.hasOwnProperty(type)){
-					count[type] = 1;
+/* zepto.js demo
+ * Simple touch demo that uses the following zepto.js methods:
+ * each(), data(), bind(), anim(), attr(), text();
+ * Preform the events indicated on the buttons to randomly animate
+ * the button and keep track of the amount of times executed by updating it's text.  
+ */
+$(document).ready(function() {"use strict";
+	var $elements = $("#main div:not(.off)"), 
+		duration = 2, 
+		fx = 'rotate', 
+		animObj = {}, 
+		count = {};
+	$elements.each(function() {
+		var $this = $(this),
+			eventType = $this.data('type'), 
+			transform;
+						
+		$this.bind(eventType, function() {
+			// Randomly select and assign webkit transform for animation 
+			transform = ( function(transform) {
+				if(transform > 0.5) {
+					return (Math.random() > 0.5) ? fx + 'X' : fx + 'Y';
 				} else {
-					count[type] += 1;
+					return fx;
 				}
-				obj.text(type + " " + count[type]);
-				break;
-			default:
-				alert(type);
-		}
-	}
-      
-    $(window).bind('hashchange', function(){
-    	// Represents the test case in action()
-    	testNum = parseInt(location.hash[1], 10);	
-    });
-       
-    $elements.each(function(index) {
-        var $this = $(this);
-        $this.bind($this.data('type'), function() {
-            action($this, testNum);
-        });
-    });
+			}(Math.random()));
+			// Create object to pass to anim()
+			animObj[transform] = '360deg';
+			$this.anim(animObj, duration, 'linear', function() {
+				// Reset the style after the animation
+				$this.attr('style', '');
+			});
+			// Increment count object based on eventType
+			if(!count.hasOwnProperty(eventType)) {
+				// Create new property initialized at 1
+				count[eventType] = 1;
+			} else {
+				// Increment current eventType
+				count[eventType] += 1;
+			}
+			// Show counter in text
+			$this.text(eventType + " " + count[eventType]);
+		});
+	});
 });
