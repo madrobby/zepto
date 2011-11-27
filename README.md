@@ -6,7 +6,7 @@ jQuery-compatible chaining syntax.
 100% jQuery coverage is not a design goal, however the APIs provided
 match their jQuery counterparts.
 
-The ultimate goal is to have a ~5k library that handles most basic dredge work
+The ultimate goal is to have a ~5-10k library that handles most basic dredge work
 for you in a nice API so you can concentrate on getting stuff done.
 
 Primary target platforms are:
@@ -14,6 +14,7 @@ Primary target platforms are:
 * iOS 4+
 * Android 2.2+
 * webOS 1.4.5+
+* BlackBerry Tablet OS 1.0.7+
 
 Other supported platforms are:
 
