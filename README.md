@@ -293,8 +293,8 @@ $.ajax({
 Loading content into an element:
 
 ``` js
-$('selector').load('url'[, callback]);
-$('selector').load('url #fragment-selector'[, callback]);
+$('selector').load('url', [callback]);
+$('selector').load('url #fragment-selector', [callback]);
 ```
 
 # Environmental information
