@@ -22,7 +22,27 @@ var Zepto = (function() {
     readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
-    tagSelectorRE = /^[\w-]+$/;
+    tagSelectorRE = /^[\w-]+$/,
+    tempParent = document.createElement("div"),
+    proto = HTMLElement.prototype,
+    matchesSelector = (proto.mozMatchesSelector || proto.webkitMatchesSelector || proto.oMatchesSelector || proto.matchesSelector || function(selector){
+      var temp = !this.parentNode, parent;
+
+      if(temp){
+        parent = tempParent;
+        tempParent.appendChild(this)
+      }
+      else
+      {
+        parent = this.parentNode;
+      }
+      var match = ~$$(parent, selector).indexOf(this);
+      temp && tempParent.removeChild(this);
+      return match;
+    })
+
+
+  function matches(element, selector) { return element && element.nodeType === 1 && matchesSelector.call(element, selector)}
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
@@ -184,7 +204,7 @@ var Zepto = (function() {
     },
     filter: function(selector){
       return $([].filter.call(this, function(element){
-        return element.webkitMatchesSelector && element.webkitMatchesSelector(selector);
+        return matches(element, selector);
       }));
     },
     end: function(){
@@ -197,8 +217,7 @@ var Zepto = (function() {
       return $(uniq(this.concat($(selector,context))));
     },
     is: function(selector){
-      var element = this[0];
-      return element && selector && element.webkitMatchesSelector && this[0].webkitMatchesSelector(selector);
+      return matches(this[0], selector);
     },
     not: function(selector){
       var nodes=[];
