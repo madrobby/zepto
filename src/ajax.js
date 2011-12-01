@@ -232,7 +232,9 @@
         xhr = $.ajaxSettings.xhr(), abortTimeout;
 
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest';
-    if (mime) baseHeaders['Accept'] = mime;
+    if (mime) {
+      baseHeaders['Accept'] = mime;
+      xhr.overrideMimeType && xhr.overrideMimeType(mime); }
     settings.headers = $.extend(baseHeaders, settings.headers || {});
 
     xhr.onreadystatechange = function(){
@@ -240,11 +242,18 @@
         clearTimeout(abortTimeout);
         var result, error = false;
         if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
-          if (mime == 'application/json' && !(/^\s*$/.test(xhr.responseText))) {
-            try { result = JSON.parse(xhr.responseText); }
-            catch (e) { error = e; }
-          }
-          else result = xhr.responseText;
+          var ctype = xhr.getResponseHeader('content-type'), dtype = settings.dataType;
+          dtype = dtype || (/^(text|application)\/javascript/i.test(ctype) ? 'script' :
+            /^application\/json/i.test(ctype) ? 'json' :
+            /^(application|text)\/xml/i.test(ctype) ? 'xml' :
+            /^text\/html/i.test(ctype) === 'text/html' ? 'html' : 'text');
+
+          try {
+            result = dtype === 'script' ? eval.call(window, xhr.responseText) :
+              dtype === 'xml' ? xhr.responseXML :
+              dtype === 'json' && ! (/^\s*$/.test(xhr.responseText)) ? JSON.parse(xhr.responseText) : xhr.responseText;
+          } catch (e) { error = e; }
+
           if (error) ajaxError(error, 'parsererror', xhr, settings);
           else ajaxSuccess(result, xhr, settings);
         } else {
