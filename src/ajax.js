@@ -254,6 +254,8 @@
     };
 
     xhr.open(settings.type, settings.url, true);
+    
+    if (settings.withCredentials) xhr.withCredentials = true;
 
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);
