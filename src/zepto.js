@@ -352,8 +352,17 @@ var Zepto = (function() {
         );
       }
       var css = '';
-      for (key in property) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
-      if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
+      if (typeof property == 'object') for (key in property) {
+        if (property[key].length)
+          css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
+        else
+          this.each(function() { this.style.cssText = this.style.cssText.replace( RegExp( dasherize(key) + ':\\s+.*?;\\s+', 'g' ), '' ); });
+      }
+      else if (typeof property == 'string')
+        if( value.length )
+          css = dasherize(property) + ":" + maybeAddPx(property, value);
+        else
+          this.each(function() { this.style.cssText = this.style.cssText.replace( RegExp( dasherize(property) + ':\\s+.*?;\\s+', 'g' ), '' ); });
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
