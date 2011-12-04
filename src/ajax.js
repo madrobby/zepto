@@ -253,7 +253,8 @@
       }
     };
 
-    xhr.open(settings.type, settings.url, true);
+    var async = 'async' in settings ? settings.async : true;
+    xhr.open(settings.type, settings.url, async);
 
     if (settings.contentType) settings.headers['Content-Type'] = settings.contentType;
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name]);

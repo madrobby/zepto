@@ -285,6 +285,7 @@ $.ajax({
   url: '/foo', // defaults to window.location
   data: {name: 'Zepto'}, // can be a string, object or result of serializeArray()
   dataType: 'json', // what response type you accept from the server ('json', 'xml', 'html', or 'text')
+  async: true, // set async flag (true by default)
   success: function(body) { ... }, // body is a string (or if dataType is 'json', a parsed JSON object)
   error: function(xhr, type) { ... } // type is a string ('error' for HTTP errors, 'parsererror' for invalid JSON)
 })
