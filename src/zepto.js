@@ -411,7 +411,7 @@ var Zepto = (function() {
     }
   };
 
-  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings'.split(',').forEach(function(property){
+  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings,clone'.split(',').forEach(function(property){
     var fn = $.fn[property];
     $.fn[property] = function() {
       var ret = fn.apply(this, arguments);
