@@ -254,6 +254,13 @@ var Zepto = (function() {
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
       }), selector);
     },
+    clone: function() {
+      var nodes=[];
+      this.each(function(){
+      	nodes.push(this.cloneNode(true));
+      });
+      return $(nodes);
+    },
     empty: function(){ return this.each(function(){ this.innerHTML = '' }) },
     pluck: function(property){ return this.map(function(){ return this[property] }) },
     show: function(){
