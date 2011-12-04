@@ -45,6 +45,10 @@ var Zepto = (function() {
     return name in classCache ?
       classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'));
   }
+  
+  function removeCSSProperty(style, name){
+    style.cssText = style.cssText.replace( RegExp( dasherize(name) + ':\\s*.*?;\\s*', 'g' ), '' );
+  }
 
   function maybeAddPx(name, value) { return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value; }
 
@@ -352,8 +356,18 @@ var Zepto = (function() {
         );
       }
       var css = '';
-      for (key in property) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
-      if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
+      if (typeof property == 'object')
+        for (key in property) {
+          if(property[key].length)
+            css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
+          else
+            this.each(function() { removeCSSProperty(this.style, key); });
+        }
+      else if (typeof property == 'string')
+        if(value.length)
+          css = dasherize(property) + ":" + maybeAddPx(property, value);
+        else
+          this.each(function() { removeCSSProperty(this.style, property); });
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){

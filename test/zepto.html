@@ -957,6 +957,12 @@
         var div = $('#get_style_element');
         t.assertEqual('48px', div.css('font-size'));
         t.assertEqual('rgb(0, 0, 0)', div.css('color'));
+        
+        $('#some_element').css({
+          'background-color': ''
+        });
+        
+        t.assertEqual('', el.style.backgroundColor);
       },
 
       testCSSOnNonExistElm: function (t) {
