@@ -254,6 +254,13 @@ var Zepto = (function() {
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el });
       }), selector);
     },
+    clone: function() {
+      var nodes=[];
+      this.each(function(){
+      	nodes.push(this.cloneNode(true));
+      });
+      return $(nodes);
+    },
     empty: function(){ return this.each(function(){ this.innerHTML = '' }) },
     pluck: function(property){ return this.map(function(){ return this[property] }) },
     show: function(){
@@ -352,8 +359,17 @@ var Zepto = (function() {
         );
       }
       var css = '';
-      for (key in property) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
-      if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
+      if (typeof property == 'object') for (key in property) {
+        if (property[key].length)
+          css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
+        else
+          this.each(function() { this.style.cssText = this.style.cssText.replace( RegExp( dasherize(key) + ':\\s+.*?;\\s+', 'g' ), '' ); });
+      }
+      else if (typeof property == 'string')
+        if( value.length )
+          css = dasherize(property) + ":" + maybeAddPx(property, value);
+        else
+          this.each(function() { this.style.cssText = this.style.cssText.replace( RegExp( dasherize(property) + ':\\s+.*?;\\s+', 'g' ), '' ); });
       return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
@@ -395,7 +411,7 @@ var Zepto = (function() {
     }
   };
 
-  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings'.split(',').forEach(function(property){
+  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings,clone'.split(',').forEach(function(property){
     var fn = $.fn[property];
     $.fn[property] = function() {
       var ret = fn.apply(this, arguments);
