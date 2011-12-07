@@ -32,7 +32,7 @@
 
   $.fn.data = function(name, value) {
     return value === undefined ?
-      this.length == 0 ? undefined : 
+      this.length == 0 ? undefined :
       $.isObject(name) ? setDataAttributes(this, name) : getData(this[0], name) :
       this.each(function(idx){
         setData(this, name, $.isFunction(value) ?
