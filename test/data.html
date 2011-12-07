@@ -18,9 +18,14 @@
   <div id="fixtures">
   <div id="data_attr" data-one="uno" data-two="due"></div>
   <div id="data_full" data-mode="awesome"></div>
+  <div id="data_obj" data-mode="awesome"></div>
   <ol id="data_list">
     <li data-category="arts"></li>
     <li data-category="science"></li>
+  </ol>
+  <ol id="data_list2">
+    <li></li>
+    <li></li>
   </ol>
   </div>
 
@@ -89,7 +94,45 @@
         t.assertEqual('ni', all.two)
         t.assertEqual('Kurosawa', all.person.name)
         t.assertUndefined(all.mode)
+      },
+
+      testSettingDataWithObj: function(t){
+          var el = $('#data_obj')
+
+          el.data({
+              'foo': 'bar',
+              'answer': 42,
+              'color': 'blue'
+          })
+
+          var all = el.data()
+
+          t.assertEqual(all.answer, 42)
+          t.assertEqual(all.color, 'blue')
+          t.assertEqual(all.foo, 'bar')
+
+          el.data('foo', 'baz')
+
+          t.assertEqual(all.foo, 'baz')
+          t.assertEqual(all.answer, 42)
+      },
+
+      testSettingDataWithObjOnManyElements: function(t){
+          var items = $('#data_list2 li')
+
+          items.data({
+              'foo': 'bar',
+              'answer': 42,
+              'color': 'purple'
+          })
+
+          var values = items.map(function(){ return $(this).data('foo') })
+          t.assertEqual('bar, bar', values.join(', '))
+
+          var values2 = items.map(function(){ return $(this).data('answer') })
+          t.assertEqual('42, 42', values2.join(', '))
       }
+
     })
   </script>
 </body>
