@@ -95,12 +95,12 @@ var Zepto = (function() {
   }
 
   $.extend = function(target){
-    var args;
+    var args, deep=false;
     if ( typeof target === 'boolean' ) {
-      target = arguments[1];
+      deep = target;
       args = slice.call(arguments, 2);
+      target = arguments[1];
     } else {
-      deep = false;
       args = slice.call(arguments, 1);
     }
     args.forEach(function(source) {
