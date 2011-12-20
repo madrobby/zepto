@@ -22,7 +22,7 @@
 </head>
 <body>
   <h1>Zepto assets functional test</h1>
-  
+
   <div id="browser"></div>
 
   <ul>
@@ -35,7 +35,7 @@
   <p><strong>PLEASE NOTE:</strong> You <strong>must restart Safari</strong> between runs (click the home button to return to the home screen, double-click the home button, tap-and-hold the Safari icon, then tap the minus badge).</p>
 
   <div id="container"></div>
-  
+
   <script>
     var prefix = 'http://stuff.vandervossen.net/temporary/zepto_assets_test/sintel-',
         mode = window.location.search.slice(1),
@@ -53,7 +53,7 @@
         if (i++ < 51) timeout = setTimeout(frame, 6000);
       })();
     }
-    
+
     $('#browser').text(navigator.userAgent);
   </script>
 </body>

@@ -15,12 +15,12 @@
   <div id="gesture_test" style="width: 200px; height: 200px; background: #ddd; -webkit-user-select: none">
     gesture events test
   </div>
-  
+
   <div id="browser"> </div>
 
   <script>
     $('#browser').text(navigator.userAgent);
-  
+
     $('#gesture_test')
       .pinch(function(){
         $(this).append(' | pinch!');

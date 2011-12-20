@@ -11,16 +11,16 @@
 </head>
 <body>
   <h1>Zepto touch functional test</h1>
-  
+
   <div id="touch_test" style="width: 200px; height: 200px; background: #ddd; -webkit-user-select: none">
     touch events test
   </div>
 
   <div id="browser"> </div>
-  
+
   <script>
     $('#browser').text(navigator.userAgent);
-  
+
     $('body').bind('touchmove', function (e) {e.preventDefault();} );
     $('#touch_test')
       .tap(function(){

@@ -203,7 +203,7 @@ $('some selector').unbind();
 
 # Touch events
 
-Zepto has several extensions over the jQuery API to make it easy to react to touch events. 
+Zepto has several extensions over the jQuery API to make it easy to react to touch events.
 
 Tapping:
 

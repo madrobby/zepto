@@ -16,20 +16,20 @@
     Double-tap and hold until the JavaScript alert occurs. After closing the
     alert, tap again. Without touchcancel you will see a double tap instead of a tap.
   </p>
-  
+
   <div id="touch_test" style="width: 200px; height: 200px; background: #ddd">
     touch events test
   </div>
-  
+
   <div id="browser"> </div>
 
   <script>
     $('#browser').text(navigator.userAgent);
-  
+
     setTimeout(function(){
       alert("Alert! Now tap again, you should see a tap!, not a double tap!");
     }, 3000);
-    
+
     $('body').bind('touchmove', function (e) {e.preventDefault();} );
     $('#touch_test')
       .tap(function(){
