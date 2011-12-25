@@ -534,6 +534,13 @@
         });
       },
 
+      testDollarInArray: function(t) {
+        t.assertIdentical( 0,  $.inArray(1, [1,2,3]) );
+        t.assertIdentical( 1,  $.inArray(2, [1,2,3]) );
+        t.assertIdentical( -1, $.inArray(4, [1,2,3]) );
+        t.assertIdentical( 3,  $.inArray(1, [1,2,3,1], 1) );
+      },
+
       testEq: function(t){
         var $els = $('#eq_test div');
         t.assertLength(1, $els.eq(0));
