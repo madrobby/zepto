@@ -125,8 +125,8 @@ var Zepto = (function() {
   $.isArray = isA;
 
   $.inArray = function(elem, array, i) {
-		return emptyArray.indexOf.call(array, elem, i);
-	}
+    return Array.prototype.indexOf.call(array, elem, i);
+  }
 
   $.map = function(elements, callback) {
     var value, values = [], i, key;
