@@ -122,7 +122,7 @@
       testAjaxWithJSONPDataType: function(t){
         t.pause();
         var xhr = $.ajax({
-          url:'fixtures/jsonp2.js?timestamp='+(+new Date),
+          url:'fixtures/jsonp_data_type.js?timestamp='+(+new Date),
           dataType: "jsonp",
           success: function(data){
             deferredResume(t, function(){
