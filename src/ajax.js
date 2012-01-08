@@ -216,7 +216,7 @@
       if (settings.url.match(/\?.*=/)) {
         settings.url += '&callback=?'
       } else {
-        settings.url += '?' + queryString;
+        settings.url += '?callback=?'
       }
 
       return $.ajaxJSONP(settings);
