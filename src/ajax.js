@@ -106,7 +106,9 @@
       ajaxSuccess(data, xhr, options);
     };
 
-    script.src = options.url.replace(/=\?/, '=' + callbackName);
+    if (isObject(options.data)) options.data = $.param(options.data);
+
+    script.src = options.url.replace(/=\?/, '=' + callbackName) + "&" + options.data;
     $('head').append(script);
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
