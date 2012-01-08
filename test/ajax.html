@@ -128,9 +128,11 @@
             param2: 'val2'
           },
           success: function(){
-            deferredResume(t, function(){})
+            deferredResume(t, function(){              
+            })
           }
         });
+
         t.assert($('script[src^=fixtures]').attr('src').match('param1=val1&param2=val2'));
       },
 

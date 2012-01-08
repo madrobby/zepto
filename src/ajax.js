@@ -108,7 +108,11 @@
 
     if (isObject(options.data)) options.data = $.param(options.data);
 
-    script.src = options.url.replace(/=\?/, '=' + callbackName) + "&" + options.data;
+    url = options.url.replace(/=\?/, '=' + callbackName)
+    if (options.data) url += "&" + options.data;
+
+    script.src = url
+
     $('head').append(script);
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
