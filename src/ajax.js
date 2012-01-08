@@ -92,7 +92,13 @@
       ajaxSuccess(data, xhr, options)
     }
 
-    script.src = options.url.replace(/=\?/, '=' + callbackName)
+    if (isObject(options.data)) options.data = $.param(options.data)
+
+    url = options.url.replace(/=\?/, '=' + callbackName)
+    if (options.data) url += "&" + options.data
+
+    script.src = url
+
     $('head').append(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){

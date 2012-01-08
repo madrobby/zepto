@@ -144,6 +144,18 @@
         })
       },
 
+      testAjaxJSONPWithDataSupport: function(t) {
+        var xhr = $.ajax({
+          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          data: {
+            param1: 'val1',
+            param2: 'val2'
+          }
+        })
+        t.assert($('script[src^=fixtures]').attr('src').match('param1=val1&param2=val2'))
+        xhr.abort()
+      },
+
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load')
         t.pause()
