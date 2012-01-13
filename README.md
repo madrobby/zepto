@@ -347,7 +347,7 @@ The minified file is saved in "dist/zepto.min.js".
 You load Zepto by using
 
 ``` html
-<script src="/path/to/zepto.min.js"></script>
+<script src="/path/to/zepto.js"></script>
 ```
 
 Or alternatively, you can just stick in the contents of zepto.min.js into a `<script>` tag
