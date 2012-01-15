@@ -31,7 +31,7 @@ In short, Zepto is expected to work in every modern browser except Internet Expl
 Basic call with CSS selector:
 
 ``` js
-$('p>span').html('yoho').css('color:red');
+$('p>span').html('yoho').css({color: 'red'});
 ```
 
 Instead of a selector, a DOM Element, or a list of nodes can be passed in.
@@ -42,7 +42,7 @@ The $ function takes an optional context argument, which can be a DOM Element or
 $('span', $('p'))  // -> find all <span> elements in <p> elements
 
 $('p').bind('click', function(){
-  $('span', this).css('color:red'); // affects "span" children/grandchildren
+  $('span', this).css({color: 'red'}); // affects "span" children/grandchildren
 });
 ```
 
