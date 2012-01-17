@@ -1,0 +1,15 @@
+src_dir: src
+
+src_files:
+- zepto.js
+- "*.js"
+
+helpers:
+- "helpers/**/*.js"
+
+spec_dir: spec/javascripts
+
+spec_files:
+- "**/*[sS]pec.js"
+
+stylesheets:

@@ -23,6 +23,8 @@
 <body>
   <h1>Zepto assets functional test</h1>
 
+  <div id="browser"></div>
+
   <ul>
     <li><a href="?without">Run without the assets plugin</a></li>
     <li><a href="?with">Run with the assets plugin</a></li>
@@ -51,6 +53,8 @@
         if (i++ < 51) timeout = setTimeout(frame, 6000);
       })();
     }
+
+    $('#browser').text(navigator.userAgent);
   </script>
 </body>
 </html>

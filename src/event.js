@@ -1,5 +1,12 @@
+//     Zepto.js
+//     (c) 2010-2012 Thomas Fuchs
+//     Zepto.js may be freely distributed under the MIT license.
+
 (function($){
-  var $$ = $.qsa, handlers = {}, _zid = 1;
+  var $$ = $.qsa, handlers = {}, _zid = 1, specialEvents={};
+
+  specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents';
+
   function zid(element) {
     return element._zid || (element._zid = _zid++);
   }
@@ -22,11 +29,21 @@
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
   }
 
-  function add(element, events, fn, selector, delegate){
+  function eachEvent(events, fn, iterator){
+    if ($.isObject(events)) $.each(events, iterator);
+    else events.split(/\s/).forEach(function(type){ iterator(type, fn) });
+  }
+
+  function add(element, events, fn, selector, getDelegate){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
-    events.split(/\s/).forEach(function(event){
-      var callback = delegate || fn;
-      var proxyfn = function(event) { return callback(event, event.data) };
+    eachEvent(events, fn, function(event, fn){
+      var delegate = getDelegate && getDelegate(fn, event),
+        callback = delegate || fn;
+      var proxyfn = function (event) {
+        var result = callback.apply(element, [event].concat(event.data));
+        if (result === false) event.preventDefault();
+        return result;
+      };
       var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
       set.push(handler);
       element.addEventListener(handler.e, proxyfn, false);
@@ -34,7 +51,7 @@
   }
   function remove(element, events, fn, selector){
     var id = zid(element);
-    (events || '').split(/\s/).forEach(function(event){
+    eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i];
         element.removeEventListener(handler.e, handler.proxy, false);
@@ -42,14 +59,7 @@
     });
   }
 
-  $.event = {
-    add: function(element, events, fn){
-      add(element, events, fn);
-    },
-    remove: function(element, events, fn){
-      remove(element, events, fn);
-    }
-  };
+  $.event = { add: add, remove: remove }
 
   $.fn.bind = function(event, callback){
     return this.each(function(){
@@ -62,33 +72,57 @@
     });
   };
   $.fn.one = function(event, callback){
-    return this.each(function(){
-      var self = this;
-      add(this, event, function wrapper(){
-        callback();
-        remove(self, event, arguments.callee);
+    return this.each(function(i, element){
+      add(this, event, callback, null, function(fn, type){
+        return function(){
+          var result = fn.apply(element, arguments);
+          remove(element, type, fn);
+          return result;
+        }
       });
     });
   };
 
-  var eventMethods = ['preventDefault', 'stopImmediatePropagation', 'stopPropagation'];
+  var returnTrue = function(){return true},
+      returnFalse = function(){return false},
+      eventMethods = {
+        preventDefault: 'isDefaultPrevented',
+        stopImmediatePropagation: 'isImmediatePropagationStopped',
+        stopPropagation: 'isPropagationStopped'
+      };
   function createProxy(event) {
     var proxy = $.extend({originalEvent: event}, event);
-    eventMethods.forEach(function(key) {
-      proxy[key] = function() {return event[key].apply(event, arguments)};
-    });
+    $.each(eventMethods, function(name, predicate) {
+      proxy[name] = function(){
+        this[predicate] = returnTrue;
+        return event[name].apply(event, arguments);
+      };
+      proxy[predicate] = returnFalse;
+    })
     return proxy;
+  }
+
+  // emulates the 'defaultPrevented' property for browsers that have none
+  function fix(event) {
+    if (!('defaultPrevented' in event)) {
+      event.defaultPrevented = false;
+      var prevent = event.preventDefault;
+      event.preventDefault = function() {
+        this.defaultPrevented = true;
+        prevent.call(this);
+      }
+    }
   }
 
   $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
-      add(element, event, callback, selector, function(e, data){
-        var target = e.target, nodes = $$(element, selector);
-        while (target && nodes.indexOf(target) < 0) target = target.parentNode;
-        if (target && !(target === element) && !(target === document)) {
-          callback.call(target, $.extend(createProxy(e), {
-            currentTarget: target, liveFired: element
-          }), data);
+      add(element, event, callback, selector, function(fn){
+        return function(e){
+          var evt, match = $(e.target).closest(selector, element).get(0);
+          if (match) {
+            evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element});
+            return fn.apply(match, [evt].concat([].slice.call(arguments, 1)));
+          }
         }
       });
     });
@@ -108,12 +142,57 @@
     return this;
   };
 
-  $.fn.trigger = function(event, data){
-    return this.each(function(){
-      var e = document.createEvent('Events');
-      e.initEvent(event, true, true)
-      e.data = data;
-      this.dispatchEvent(e);
-    });
+  $.fn.on = function(event, selector, callback){
+    return selector === undefined || $.isFunction(selector) ?
+      this.bind(event, selector) : this.delegate(selector, event, callback);
   };
+  $.fn.off = function(event, selector, callback){
+    return selector === undefined || $.isFunction(selector) ?
+      this.unbind(event, selector) : this.undelegate(selector, event, callback);
+  };
+
+  $.fn.trigger = function(event, data){
+    if (typeof event == 'string') event = $.Event(event);
+    fix(event);
+    event.data = data;
+    return this.each(function(){ this.dispatchEvent(event) });
+  };
+
+  // triggers event handlers on current element just as if an event occurred,
+  // doesn't trigger an actual event, doesn't bubble
+  $.fn.triggerHandler = function(event, data){
+    var e, result;
+    this.each(function(i, element){
+      e = createProxy(typeof event == 'string' ? $.Event(event) : event);
+      e.data = data; e.target = element;
+      $.each(findHandlers(element, event.type || event), function(i, handler){
+        result = handler.proxy(e);
+        if (e.isImmediatePropagationStopped()) return false;
+      });
+    });
+    return result;
+  };
+
+  // shortcut methods for `.bind(event, fn)` for each event type
+  ('focusin focusout load resize scroll unload click dblclick '+
+  'mousedown mouseup mousemove mouseover mouseout '+
+  'change select keydown keypress keyup error').split(' ').forEach(function(event) {
+    $.fn[event] = function(callback){ return this.bind(event, callback) };
+  });
+
+  ['focus', 'blur'].forEach(function(name) {
+    $.fn[name] = function(callback) {
+      if (callback) this.bind(name, callback);
+      else if (this.length) try { this.get(0)[name]() } catch(e){};
+      return this;
+    };
+  });
+
+  $.Event = function(type, props) {
+    var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true;
+    if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name]);
+    event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null);
+    return event;
+  };
+
 })(Zepto);

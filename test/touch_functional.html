@@ -12,11 +12,16 @@
 <body>
   <h1>Zepto touch functional test</h1>
 
-  <div id="touch_test" style="width: 200px; height: 200px; background: #ddd">
+  <div id="touch_test" style="width: 200px; height: 200px; background: #ddd; -webkit-user-select: none">
     touch events test
   </div>
 
+  <div id="browser"> </div>
+
   <script>
+    $('#browser').text(navigator.userAgent);
+
+    $('body').bind('touchmove', function (e) {e.preventDefault();} );
     $('#touch_test')
       .tap(function(){
         $(this).append(' | tap!');
@@ -32,6 +37,18 @@
       })
       .swipeRight(function(){
         $(this).append(' | swipe right!');
+      })
+      .swipeUp(function(){
+        $(this).append(' | swipe up!');
+      })
+      .swipeDown(function(){
+        $(this).append(' | swipe down!');
+      })
+      .longTap(function(){
+        $(this).append(' | long tap!');
+      })
+      .singleTap(function(){
+        $(this).append(' | single tap!');
       });
   </script>
 </body>

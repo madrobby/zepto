@@ -1,25 +1,38 @@
-require 'rake'
 require 'rake/packagetask'
 
-ZEPTO_VERSION  = "0.5"
+ZEPTO_VERSION  = "0.8"
 
 ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
 ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
 ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
 ZEPTO_PKG_DIR  = File.join(ZEPTO_ROOT, 'pkg')
 
-ZEPTO_FILES    = [
-  File.join(ZEPTO_SRC_DIR,'polyfill.js'),
-  File.join(ZEPTO_SRC_DIR,'zepto.js'),
-  File.join(ZEPTO_SRC_DIR,'event.js'),
-  File.join(ZEPTO_SRC_DIR,'detect.js'),
-  File.join(ZEPTO_SRC_DIR,'fx.js'),
-  File.join(ZEPTO_SRC_DIR,'touch.js'),
-  File.join(ZEPTO_SRC_DIR,'ajax.js'),
-  File.join(ZEPTO_SRC_DIR,'assets.js')
+ZEPTO_COMPONENTS = [
+  'polyfill',
+  'zepto',
+  'event',
+  'detect',
+  'fx',
+  # 'fx_methods',
+  'ajax',
+  'form',
+  # 'assets',
+  # 'data',
+  'touch',
+  # 'gesture'
 ]
 
 task :default => [:clean, :concat, :dist]
+
+ZEPTO_TESTS = %w[
+  test/zepto.html
+  test/ajax.html
+  test/data.html
+  test/detect.html
+  test/form.html
+  test/fx.html
+  test/polyfill.html
+]
 
 desc "Clean the distribution directory."
 task :clean do
@@ -42,10 +55,22 @@ task :whitespace do
   end
 end
 
-desc "Concatenate Zepto core and plugins to build a distributable zepto.js file"
-task :concat => :whitespace do
-  File.open(File.join(ZEPTO_DIST_DIR,'zepto.js'),"w") do |f|
-    f.puts ZEPTO_FILES.map{ |s| IO.read(s) }
+desc "Concatenate source files to build zepto.js"
+task :concat, [:addons] => :whitespace do |task, args|
+  # colon-separated arguments such as `concat[foo:bar:-baz]` specify
+  # which components to add or exclude, depending on if it starts with "-"
+  add, exclude = args[:addons].to_s.split(':').partition {|c| c !~ /^-/ }
+  exclude.each {|c| c.sub!('-', '') }
+  components = (ZEPTO_COMPONENTS | add) - exclude
+
+  unless components == ZEPTO_COMPONENTS
+    puts "Building zepto.js by including: #{components.join(', ')}"
+  end
+
+  File.open(File.join(ZEPTO_DIST_DIR, 'zepto.js'), 'w') do |f|
+    f.puts components.map { |component|
+      File.read File.join(ZEPTO_SRC_DIR, "#{component}.js")
+    }
   end
 end
 
@@ -110,16 +135,67 @@ task :yuidist do
   process_minified src, target
 end
 
+desc "Generate docco documentation from sources."
+task :docs do
+  puts "Generating docs..."
+  puts "Note: to work, install node.js first, then install docco with 'sudo npm install docco -g'."
+  puts `docco src/*`
+end
+
 Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
   package.need_tar_gz = true
   package.need_zip = true
   package.package_dir = ZEPTO_PKG_DIR
   package.package_files.include(
-    'README.rdoc',
+    'README.md',
     'MIT-LICENSE',
     'dist/**/*',
     'src/**/*',
     'test/**/*',
+    'vendor/evidence.js',
     'examples/**/*'
-  )
+  ).exclude(*`git ls-files -o test src examples -z`.split("\0"))
+end
+
+desc "Run tests in headless WebKit"
+task :test => "jasmine:headless" do
+  require 'rubygems'
+  require 'rubygems/specification'
+
+  # HACK: jasmine-headless-webkit doesn't let us access its compiled specrunner directly
+  if jasmine_gem = Gem::Specification.find_by_name('jasmine-headless-webkit')
+    headless_root = jasmine_gem.full_gem_path
+    runner = File.join(headless_root, 'ext/jasmine-webkit-specrunner/jasmine-webkit-specrunner')
+
+    exec runner, '-c', *ZEPTO_TESTS
+  else
+    abort "Can't find 'jasmine-headless-webkit' gem"
+  end
+end
+
+def silence_warnings
+  require 'stringio'
+  begin
+    old_stderr = $stderr
+    $stderr = StringIO.new
+    yield
+  ensure
+    $stderr = old_stderr
+  end
+end
+
+begin
+  silence_warnings {
+    require 'jasmine'
+    load 'jasmine/tasks/jasmine.rake'
+    require 'jasmine/headless/task'
+  }
+
+  Jasmine::Headless::Task.new do |task|
+    task.colors = true
+  end
+rescue LoadError
+  task :jasmine do
+    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
+  end
 end

@@ -2,56 +2,96 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
   <title>Zepto Ajax unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
   <script src="../src/ajax.js"></script>
-  <script src="../vendor/evidence.js"></script>
 </head>
 <body>
   <h1>Zepto Ajax unit tests</h1>
-  <p>
-    See the browser console for results.
+  <p id="results">
+    Running… see browser console for results
   </p>
-
-  <div id="ajax_load" style="display:none"></div>
+  <div id="fixtures">
+    <div id="ajax_load"></div>
+  </div>
 
   <script>
-    Evidence.TestCase.extend('ZeptoAjaxTest', {
+  (function(){
+
+    function deferredResume(t, fn) {
+      setTimeout(function() { t.resume(fn || function(){}) }, 5);
+    }
+
+    Evidence('ZeptoAjaxTest', {
+
+      tearDown: function() {
+        $(document).off();
+      },
+
+      testAjaxBase: function(t){
+        t.pause();
+        var xhr = $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          complete: function() { deferredResume(t) }
+        });
+        t.assertEqual('function', typeof xhr['getResponseHeader']);
+      },
 
       testAjaxGet: function(t){
         t.pause();
-        $.get('fixtures/ajax_load_simple.html', function(response){
-          t.resume(function(){
+        var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
+          var that = this;
+          deferredResume(t, function(){
             this.assert(response);
+            this.assertIdentical(window, that);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxPost: function(t){
         t.pause();
-        $.post('fixtures/ajax_load_simple.html', function(response){
-          t.resume(function(){
+        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
+          deferredResume(t, function(){
             this.assert(response);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
-      // TODO: It's time to integrate a real webserver (webrick) to test POSTS
-      //
-      //testAjaxPostWithData: function(t) {
-      //  t.pause();
-      //  $.post('fixtures/ajax_post_json_echo.php', { sample: 'data', letters: ['a', 'b', 'c'] }, function(response) {
-      //    t.resume(function() {
-      //      this.assertEqual(response, '{"sample":"data","letters":["a","b","c"]}');
-      //    });
-      //  });
-      //},
+      testNumberOfActiveRequests: function(t) {
+        var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0;
+        t.assertIdentical(0, $.active);
+        $(document)
+          .on('ajaxStart', function() { ajaxStarted++ })
+          .on('ajaxEnd', function() { ajaxEnded++ })
+          .on('ajaxSend', function() {
+            if ($.active > maxActive) maxActive = $.active;
+          })
+          .on('ajaxComplete', function() {
+            if (++requestsCompleted == 3)
+              deferredResume(t, function() {
+                this.assertEqual(3, maxActive);
+                this.assertIdentical(0, $.active);
+              });
+          });
+
+        t.pause();
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+        $.ajax({url: 'fixtures/ajax_load_simple.html'});
+      },
 
       testAjaxPostWithAcceptType: function(t) {
         t.pause();
         $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assert(response);
           });
         }, 'text/plain');
@@ -59,61 +99,77 @@
 
       testAjaxGetJSON: function(t){
         t.pause();
-        $.getJSON('zepto.json', function(data){
-          t.resume(function(){
+        var xhr = $.getJSON('fixtures/zepto.json', function(data){
+          deferredResume(t, function(){
             this.assertEqual('awesomeness', data.zepto);
           });
         });
+        t.assertIn('abort', xhr);
       },
 
       testAjaxGetJSONP: function(t){
         t.pause();
-        $.getJSON('fixtures/jsonp.js?jsoncallback=?&timestamp='+(+new Date), function(data){
-          t.resume(function(){
+        var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
+          deferredResume(t, function(){
             this.assertEqual(data.items.length, 0);
+            this.assertEqual(0, $('script[src^=fixtures]').size());
           });
         });
+        t.assertEqual(1, $('script[src^=fixtures]').size());
+        t.assertIn('abort', xhr);
       },
 
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
-        testEl.load('fixtures/ajax_load_simple.html', function(){
-          t.resume(function() {
+        var el = testEl.load('fixtures/ajax_load_simple.html', function(){
+          var that = this;
+          deferredResume(t, function() {
+            this.assertIdentical(testEl, that);
             this.assertEqual('simple ajax load', testEl.html().trim());
           });
         });
+        t.assertIdentical(testEl, el);
       },
 
       testAjaxLoadWithSelector: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
         testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
-          t.resume(function() {
+          deferredResume(t, function() {
             this.assertEqual('ajax load with selector', testEl.html().trim());
           });
         });
       },
 
-      testAjaxRequestHeader: function(t){
-        // @see Net Panel/Resources
-        // TODO
+      testAjaxWithContext: function(t) {
+        t.pause();
+        var body = $('body');
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: body,
+          complete: function () {
+            var that = this;
+            deferredResume(t, function() {
+              this.assertIdentical(body, that);
+            });
+          }
+        });
       }
 
     });
-  </script>
 
-  <script>
-    var OriginalXHR = XMLHttpRequest;
+    var OriginalXHR = $.ajaxSettings.xhr;
 
     function MockXHR() {
       this.headers = [];
       MockXHR.last = this;
     }
     MockXHR.prototype = {
-      open: function(method, url) {
+      open: function(method, url, async) {
         this.method = method;
         this.url = url;
+        this.async = async;
       },
       setRequestHeader: function(name, value) {
         this.headers.push({ name: name, value: value });
@@ -139,23 +195,39 @@
       }
     }
 
-    Evidence.TestCase.extend('ZeptoAjaxTest2', {
+    Evidence('ZeptoAjaxTest2', {
       setUp: function() {
-        window.XMLHttpRequest = MockXHR;
+        $.ajaxSettings.xhr = function(){ return new MockXHR };
       },
 
       tearDown: function() {
-        window.XMLHttpRequest = OriginalXHR;
+        $.ajaxSettings.xhr = OriginalXHR;
+        $(document).off();
+        $.active = 0;
       },
 
       testTypeDefaultsToGET: function(t) {
-        $.ajax({ url: '/foo' });
+        $.ajax({
+          url: '/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain);
+          }
+        });
         t.assertEqual('GET', MockXHR.last.method);
       },
 
       testURLDefaultsToWindowLocation: function(t) {
         $.ajax();
         t.assertEqual(window.location, MockXHR.last.url);
+      },
+
+      testCrossDomain: function(t) {
+        $.ajax({
+          url: 'http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain);
+          }
+        });
       },
 
       testDataTypeOptionSetsAcceptHeader: function(t) {
@@ -195,9 +267,27 @@
         t.assertEqual("world", result.hello);
       },
 
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, '');
+        t.assert(success);
+        t.assertEqual('', result);
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function(t) {
+        var result = {};
+        var success = false;
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } });
+        MockXHR.last.ready(4, 200, ' ');
+        t.assert(success);
+        t.assertEqual(' ', result);
+      },
+
       testDataOptionIsConvertedToSerializedForm: function(t) {
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } });
-		MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
+        MockXHR.last.data = decodeURIComponent(MockXHR.last.data);
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data);
       },
 
@@ -302,6 +392,20 @@
         t.assert(xhr.aborted);
       },
 
+      testGlobalBeforeSendAbort: function(t) {
+        var xhr;
+        $(document).on('ajaxBeforeSend', function(e, x) { xhr = x; return false });
+        t.assertFalse($.ajax());
+        t.assert(xhr.aborted);
+      },
+
+      testGlobalAjaxSendCantAbort: function(t) {
+        var xhr;
+        $(document).on('ajaxSend', function(e, x) { xhr = x; return false });
+        t.assert($.ajax());
+        t.assert(!xhr.aborted);
+      },
+
       testCompleteCallback: function(t) {
         var status, xhr;
         $.ajax({ complete: function(x, s) { status = s, xhr = x } });
@@ -321,15 +425,85 @@
 
         MockXHR.last.ready(4, 200, 'OK');
         t.assertEqual('beforeSend,success,complete', order.join(','));
+      },
+
+      testGlobalCallbacks: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('ajaxStart beforeSend ajaxBeforeSend ajaxSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success ajaxSuccess complete ajaxComplete ajaxStop', fired.join(' '));
+      },
+
+      testGlobalCallbacksOff: function(t) {
+        var fired = [];
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type);
+        });
+
+        $.ajax({
+          global:     false,
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        });
+        t.assertEqual('beforeSend', fired.join(' '));
+
+        fired = [];
+        MockXHR.last.ready(4, 200, 'OK');
+        t.assertEqual('success complete', fired.join(' '));
+      },
+
+      testTimeout: function(t) {
+        var successFired = false, xhr, status;
+        t.pause()
+        $.ajax({
+          timeout: 30,
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        });
+
+        setTimeout(function(){
+          t.assertFalse(successFired);
+          t.assertUndefined(status);
+        }, 20);
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertFalse(successFired);
+            t.assertTrue(xhr.aborted);
+            t.assertEqual('timeout', status);
+          });
+        }, 40);
+      },
+
+      testAsyncDefaultsToTrue: function(t) {
+        $.ajax({ url: '/foo' });
+        t.assertTrue(MockXHR.last.async);
+      },
+
+      testAsyncFalse: function(t) {
+        $.ajax({ url: '/foo', async: false });
+        t.assertFalse(MockXHR.last.async);
       }
     });
-  </script>
 
-  <script>
-    Evidence.TestCase.extend('ZeptoAjaxHelperMethodsTest',{
+    Evidence('ZeptoAjaxHelperMethodsTest', {
 
       testParamMethod: function(t) {
-        result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
+        var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] });
         result = decodeURIComponent(result);
         t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo");
 
@@ -344,9 +518,43 @@
         });
         result = decodeURIComponent(result);
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh");
+      },
+
+      testParamEscaping: function(t) {
+        var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' });
+        t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result);
+      },
+
+      testParamComplex: function(t) {
+        var data = {
+          a: ['b', 'c', { d:'e', f:['g','h'] }]
+        }
+        var result = $.param(data);
+        result = decodeURIComponent(result);
+        t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result);
+      },
+
+      testParamShallow: function(t) {
+        var data = {
+          libs: ['jQuery', 'Prototype', 'Dojo'],
+          nested: { will: 'be ignored' }
+        }
+        var result = $.param(data, true);
+        result = decodeURIComponent(result);
+        t.assertEqual("libs=jQuery&libs=Prototype&libs=Dojo&nested=[object+Object]", result);
+      },
+
+      testParamArray: function(t) {
+        var data = [
+          {name:'country', value:'Ecuador'},
+          {name:'capital', value:'Quito'}
+        ];
+        var result = $.param(data);
+        t.assertEqual(result, "country=Ecuador&capital=Quito");
       }
 
     });
+  })();
   </script>
 </body>
 </html>
