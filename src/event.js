@@ -34,17 +34,19 @@
     else events.split(/\s/).forEach(function(type){ iterator(type, fn) });
   }
 
-  function add(element, events, fn, selector, getDelegate){
+  function add(element, events, bindData, fn, selector, getDelegate){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     eachEvent(events, fn, function(event, fn){
       var delegate = getDelegate && getDelegate(fn, event),
         callback = delegate || fn;
       var proxyfn = function (event) {
-        var result = callback.apply(element, [event].concat(event.data));
+        var handler = findHandlers(this, event.type, callback);
+        if (handler.length) event.data = handler[0].bindData;
+        var result = callback.apply(element, [event].concat(event.trigData));
         if (result === false) event.preventDefault();
         return result;
       };
-      var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
+      var handler = $.extend(parse(event), {fn: callback, bindData: bindData, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
       set.push(handler);
       element.addEventListener(handler.e, proxyfn, false);
     });
@@ -61,9 +63,14 @@
 
   $.event = { add: add, remove: remove }
 
-  $.fn.bind = function(event, callback){
+  $.fn.bind = function(event, arg2, arg3){
+    var data, callback = arg2;
+    if (arg3 instanceof Function){
+      data = arg2;
+      callback = arg3;
+    }
     return this.each(function(){
-      add(this, event, callback);
+      add(this, event, data, callback);
     });
   };
   $.fn.unbind = function(event, callback){
@@ -71,14 +78,20 @@
       remove(this, event, callback);
     });
   };
-  $.fn.one = function(event, callback){
+  $.fn.one = function(event, arg2, arg3){
+    var data, callback = arg2;
+    if (arg3 instanceof Function){
+      data = arg2;
+      callback = arg3;
+    }
     return this.each(function(i, element){
-      add(this, event, callback, null, function(fn, type){
-        return function(){
+      add(this, event, data, callback, null, function(fn, type){
+        function retFunc(){
+          remove(element, type, retFunc);
           var result = fn.apply(element, arguments);
-          remove(element, type, fn);
           return result;
         }
+        return retFunc;
       });
     });
   };
@@ -154,7 +167,7 @@
   $.fn.trigger = function(event, data){
     if (typeof event == 'string') event = $.Event(event);
     fix(event);
-    event.data = data;
+    event.trigData = data;
     return this.each(function(){ this.dispatchEvent(event) });
   };
 
@@ -164,7 +177,7 @@
     var e, result;
     this.each(function(i, element){
       e = createProxy(typeof event == 'string' ? $.Event(event) : event);
-      e.data = data; e.target = element;
+      e.trigData = data; e.target = element;
       $.each(findHandlers(element, event.type || event), function(i, handler){
         result = handler.proxy(e);
         if (e.isImmediatePropagationStopped()) return false;
