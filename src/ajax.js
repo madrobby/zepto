@@ -343,10 +343,6 @@
   $.getJSON = function(url, success){
     return $.ajax({ url: url, success: success, dataType: 'json' });
   };
-<<<<<<< HEAD
-  $.getJSON = function(url, success){ return $.ajax({ url: url, success: success, dataType: 'json' }) };
-=======
->>>>>>> 5eaef379a4981f8902cd9d20461c4d3a120d08f5
 
   // ### $.fn.load
   //
