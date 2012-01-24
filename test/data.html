@@ -77,10 +77,12 @@
       },
 	  
 	  testRemoveData: function(t) {
-		var items = $('#data_attr');
+		var items = $('<div>');
+		items.data('un', 'one').data('deux', 'two');
 		
-		items.removeData('uno');
-		t.assertEqual(null, items.data('uno'));
+		items.removeData('un').removeData('deux');
+		t.assertEqual(null, items.data('un'));
+		t.assertEqual(null, items.data('deux'));
 	  },
 
       testAllData: function(t){

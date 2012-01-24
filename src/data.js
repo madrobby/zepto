@@ -31,8 +31,9 @@
       });
   };
   $.fn.removeData = function(name) {
-	this.each(function(idx) {
-		setData(this, name, null);
-	});
+	return this.length == 0 ? undefined :
+      this.each(function(idx) {
+        setData(this, name, null);
+      });
   };
 })(Zepto);
