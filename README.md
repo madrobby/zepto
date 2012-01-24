@@ -101,8 +101,9 @@ attr('attribute') // get element attribute
 attr('attribute', 'value') // set element attribute
 attr('attribute', function(index, oldAttr){ return ...; }) // set the value of 'attribute' from a method, for each element in collection
 removeAttr('attribute') // removes an attribute
-data('name') // gets the value of the "data-name" attribute
+data('name') // gets the value of the "data-name" attribute. Returns null if doesn't exist.
 data('name', 'value') // sets the value of the "data-name" attribute
+removeData('name') // Resets the data-name attribute to null
 
 css('css property', 'value') // set a CSS property
 css({ property1: value1, property2: value2 }) // set multiple CSS properties
