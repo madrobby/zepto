@@ -30,4 +30,9 @@
                 value.call(this, idx, getData(this, name)) : value);
       });
   };
+  $.fn.removeData = function(name) {
+	this.each(function(idx) {
+		setData(this, name, null);
+	});
+  };
 })(Zepto);
