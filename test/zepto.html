@@ -871,6 +871,12 @@
         t.assertLength(11, found);
       },
 
+      testFindWithInvalidNode: function(t) {
+        var found = $('<div><a>1</a></div>\n<div></div>').find('a');
+        t.assertLength(1, found);
+        t.assertEqual('1', found.get(0).innerHTML);
+      },
+
       testFilter: function(t){
         var found = $('div');
         t.assertLength(2, found.filter('.filtertest'));
