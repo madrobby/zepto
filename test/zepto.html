@@ -328,6 +328,21 @@
         t.assertEqualCollection(['a', 'b', 'c'], zepto);
       },
 
+      testGetWithoutIndex: function(t){
+        var zepto = $('#find1 .findme');
+        var array = zepto.get();
+        t.assertFalse(zepto === array);
+        t.assertTrue($.isArray(array));
+        t.assertTrue(array.pop === ([]).pop);
+      },
+
+      testGetWithIndex: function(t){
+        var zepto = $('#find1 .findme');
+        var outofbounds = zepto.get(zepto.size());
+        t.assertEqual(zepto.get(0), zepto[0]);
+        t.assertUndefined(outofbounds);
+      },
+
       testSize: function(t){
         t.assertEqual(4, $('#find1 .findme').size());
       },
