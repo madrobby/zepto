@@ -99,6 +99,11 @@
       },
       xhr = { abort: abort }, abortTimeout;
 
+    if (options.error) script.onerror = function() {
+      xhr.abort();
+      options.error();
+    };
+
     window[callbackName] = function(data){
       clearTimeout(abortTimeout);
       $(script).remove();
