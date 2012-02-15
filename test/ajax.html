@@ -119,6 +119,23 @@
         t.assertIn('abort', xhr);
       },
 
+      testAjaxJSONPWithDataSupport: function(t){
+        t.pause();
+        var xhr = $.ajax({
+          url: 'fixtures/jsonp_data_support.js?callback=?&timestamp='+(+new Date),
+          data: {
+            param1: 'val1',
+            param2: 'val2'
+          },
+          success: function(){
+            deferredResume(t, function(){              
+            })
+          }
+        });
+
+        t.assert($('script[src^=fixtures]').attr('src').match('param1=val1&param2=val2'));
+      },
+
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
