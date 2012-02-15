@@ -119,6 +119,22 @@
         t.assertIn('abort', xhr);
       },
 
+      testAjaxWithJSONPDataType: function(t){
+        t.pause();
+        var xhr = $.ajax({
+          url:'fixtures/jsonp_data_type.js?timestamp='+(+new Date),
+          dataType: "jsonp",
+          success: function(data){
+            deferredResume(t, function(){
+              this.assertEqual(data.items.length, 0);
+              this.assertEqual(0, $('script[src^=fixtures]').size());
+            });
+          }
+        });
+        t.assertEqual(1, $('script[src^=fixtures]').size());
+        t.assertIn('abort', xhr);
+      },
+
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();

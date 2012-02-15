@@ -210,7 +210,17 @@
     if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
       RegExp.$2 != window.location.host;
 
-    if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings);
+    if (/=\?/.test(settings.url)) {
+      return $.ajaxJSONP(settings);
+    } else if (settings.dataType && settings.dataType.match(/jsonp/i)) {
+      if (settings.url.match(/\?.*=/)) {
+        settings.url += '&callback=?'
+      } else {
+        settings.url += '?callback=?'
+      }
+
+      return $.ajaxJSONP(settings);
+    }
 
     if (!settings.url) settings.url = window.location.toString();
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded';
