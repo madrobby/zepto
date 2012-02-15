@@ -119,6 +119,16 @@
         t.assertIn('abort', xhr);
       },
 
+      testAjaxGetJSONPErrorCallback: function(t){
+        var successFired, errorFired, xhr = $.ajax({
+          type: 'GET',
+          url: 'fixtures/404.js?callback=?&timestamp='+(+new Date),
+          dataType: 'jsonp',
+          success: function() { t.refute(true); },
+          error: function() { t.assert(true); }
+        });
+      },
+
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load');
         t.pause();
