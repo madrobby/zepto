@@ -29,9 +29,9 @@
         $('body').append(el);
         el.css({ left: rand(100)+'%', top: -100-rand(500), fontSize: 20+rand(30) });
         el.anim(
-          { translateY: 1500+rand(500)+'px', translateX: 50-rand(100)+'px', rotate: (2e3-rand(4e3))+'deg' }, 
-          6+rand(10), 
-          'linear', 
+          { translateY: 1500+rand(500)+'px', translateX: 50-rand(100)+'px', rotate: (2e3-rand(4e3))+'deg' },
+          6+rand(10),
+          'linear',
           function(){
             addFlake();
             el.remove(); // garbage collect
@@ -40,7 +40,7 @@
       }
 
       while(i--) addFlake();
-      
+
       // enable for extra fun
       //window.ondeviceorientation = function(event){
       //  ('alpha' in event) && $('body').css({ '-webkit-transform': 'rotate('+event.alpha+'deg)'});
