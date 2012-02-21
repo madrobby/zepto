@@ -115,6 +115,7 @@
   }
 
   $.fn.delegate = function(selector, event, callback){
+    event = event == 'blur' ? 'focusout' : event == 'focus' ? 'focusin' : event;
     return this.each(function(i, element){
       add(element, event, callback, selector, function(fn){
         return function(e){
