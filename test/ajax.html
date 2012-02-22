@@ -152,6 +152,28 @@
         });
       },
 
+	testAjaxLoadWithJavaScript: function (t) {
+		var testEl = $('#ajax_load');
+		t.pause();
+		window.testValue = 0;
+		testEl.load('fixtures/ajax_load_selector_javascript.html', function() {
+			deferredResume(t, function () {
+				this.assertEqual(window.testValue, 1);
+			});
+		});
+	},
+
+	testAjaxLoadWithSelectorAndJavaScript: function (t) {
+		var testEl = $('#ajax_load');
+		t.pause();
+		window.testValue = 0;
+		testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function() {
+			deferredResume(t, function () {
+				this.assertEqual(window.testValue, 0);
+			});
+		});
+	},
+
       testAjaxWithContext: function(t) {
         t.pause();
         var body = $('body');
