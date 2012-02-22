@@ -211,7 +211,8 @@ Tapping:
 $('some selector').tap(function(){ ... });
 ```
 
-Single Tap: (Use this instead of "tap" if you're using the "doubleTap" event. It it will give you a 250
+Single Tap:
+(Only use this instead of "tap" if you're using the "doubleTap" event. It it will give you a 250
 ms buffer to be able to differentiate between a single tap and a double tap. Don't use it if you're not
 using "doubleTap" since it will cause a 250ms delay, which could lead to a bad user experience.)
 
