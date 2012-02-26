@@ -199,3 +199,8 @@ rescue LoadError
     abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
   end
 end
+
+require "jshintrb/jshinttask"
+Jshintrb::JshintTask.new :jshint do |t|
+  t.pattern = 'src/**/*.js'
+end
