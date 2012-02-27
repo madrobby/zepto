@@ -388,7 +388,21 @@ Checklist for submitting patches:
 * Run `rake whitespace` to clean up whitespace in code & tests
 * Use Github's pull request system to submit patches
 
+# Running tests
+
 If you submit patches, please include tests.
+
+There are currently two different set of tests, using different testing frameworks. One is using
+Evidence.js (https://github.com/tobie/Evidence) and those can be found in the top level test folder.
+The other set of tests are inside the test/fixtures and use rake + jasmine to run.
+
+For the simple Evidence.js unit tests, simply edit the html files (i.e., test/zepto.html), add some
+tests and open the html file in a web browser. You will see the results in the web console.
+
+For the jasmine tests, you will need to install some ruby gems and use rake to run them. If you have
+ruby and bundler installed, simply type bundle to installed the required gems, and then type "rake -T"
+to see available commands.
+
 
 Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
 
