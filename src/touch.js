@@ -26,12 +26,6 @@
     }
   }
 
-  function ghostClickHandler(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      document.removeEventListener('click', ghostClickHandler, true);
-  }
-
   $(document).ready(function(){
     $(document.body).bind('touchstart', function(e){
       var now = Date.now(), delta = now - (touch.last || now);
@@ -56,7 +50,7 @@
         touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0;
       } else if ('last' in touch) {
         touch.el.trigger('tap');
-        document.addEventListener('click', ghostClickHandler, true);
+
         touchTimeout = setTimeout(function(){
           touchTimeout = null;
           touch.el.trigger('singleTap');
