@@ -26,6 +26,28 @@ var Zepto = (function() {
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
+  function isPO(obj) {
+    var ctor, key;
+    // Must be an Object.
+    // Because of IE, we also have to check the presence of the constructor property.
+    // Make sure that DOM nodes and window objects don't pass through, as well
+    if (typeof obj != 'object' || !obj || toString.call(obj) !== '[object Object]'
+        || obj.nodeType || "setInterval" in obj) {
+      return false;
+    }
+
+    // Not own constructor property must be Object
+    ctor = typeof obj.constructor === 'function' && obj.constructor.prototype;
+    if (!ctor || !hasOwnProperty.call(ctor, 'isPrototypeOf')) {
+      return false;
+    }
+    // Own properties are enumerated firstly, so to speed up,
+    // if last one is own, then all properties are own.
+    for ( key in obj ) {}
+
+    return key === undefined || hasOwnProperty.call( obj, key );
+  };
+
   function isA(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
@@ -123,6 +145,7 @@ var Zepto = (function() {
 
   $.isFunction = isF;
   $.isObject = isO;
+  $.isPlainObject = isPO;
   $.isArray = isA;
 
   $.inArray = function(elem, array, i) {
