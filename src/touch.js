@@ -19,8 +19,6 @@
   }
 
   var longTapDelay = 750;
-  var swipeThreshold = 10;
-
   function longTap(){
     if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
       touch.el.trigger('longTap');
@@ -52,14 +50,13 @@
         touch.el.trigger('doubleTap');
         touch = {};
       } else if (touch.x2 > 0 || touch.y2 > 0) {
-        (Math.abs(touch.x1 - touch.x2) > swipeThreshold || Math.abs(touch.y1 - touch.y2) > swipeThreshold)  &&
+        (Math.abs(touch.x1 - touch.x2) > 30 || Math.abs(touch.y1 - touch.y2) > 30)  &&
           touch.el.trigger('swipe') &&
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)));
         touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0;
       } else if ('last' in touch) {
         touch.el.trigger('tap');
-        e.preventDefault();
-
+        document.addEventListener('click', ghostClickHandler, true);
         touchTimeout = setTimeout(function(){
           touchTimeout = null;
           touch.el.trigger('singleTap');
