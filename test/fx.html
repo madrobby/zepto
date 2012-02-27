@@ -163,7 +163,7 @@
           t.resume(function(){
             t.assert($(context).is('#callbacktest'), "context for callback is wrong");
             t.assert((new Date().getTime() - start) >= duration);
-            t.assertStyle(/^(none( 0s ease 0s ?)?)?$/, context, 'transition');
+            t.assertStyle(/^(none( 0s linear?)?)?$/, context, 'transition');
           });
         });
 

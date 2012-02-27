@@ -53,12 +53,19 @@
         else cssProperties[key] = properties[key];
 
       if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ');
-      if (!$.fx.off) cssProperties[prefix + 'transition'] = 'all ' + duration + 's ' + (ease || '');
+      if (!$.fx.off && typeof properties === 'object') {
+        cssProperties[prefix + 'transition-property'] = Object.keys(properties).join(', ');
+        cssProperties[prefix + 'transition-duration'] = duration + 's';
+        cssProperties[prefix + 'transition-timing-function'] = (ease || 'linear');
+      }
     }
 
     wrappedCallback = function(){
       var props = {};
-      props[prefix + 'transition'] = props[prefix + 'animation-name'] = 'none';
+      props[prefix + 'transition-property'] = 'none';
+      props[prefix + 'transition-duration'] = '0s';
+      props[prefix + 'transition-timing-function'] = 'linear';
+      props[prefix + 'animation-name'] = 'none';
       $(this).css(props);
       callback && callback.call(this);
     }
