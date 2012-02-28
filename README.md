@@ -392,25 +392,21 @@ Checklist for submitting patches:
 
 If you submit patches, please include tests.
 
-There are currently two different set of tests, using different testing frameworks. One is using
-Evidence.js (https://github.com/tobie/Evidence) and those can be found in the top level test folder.
-The other set of tests are inside the test/fixtures and use rake + jasmine to run.
+Zepto tests are written using Evidence.js and can be found
+in the `test` folder. See https://github.com/tobie/Evidence for more info on Evidence.
 
-For the simple Evidence.js unit tests, simply edit the html files (i.e., test/zepto.html), add some
-tests and open the html file in a web browser. You will see the results in the web console.
+Simply add your tests (see existing tests as templates) and then view the HTML file in a browser).
+For detailed results, see the JavaScript console in your browser. 
 
-For the jasmine tests, you will need to install some ruby gems and use rake to run them. If you have
-ruby and bundler installed, simply type bundle to installed the required gems, and then type "rake -T"
-to see available commands.
+_There's experimental support for automatically running tests on the command line and integrating them
+with a continuous integration server, using the `jasmine-headless-webkit` Rubygem, which in turnrequires 
+Qt to be installed and a `CI` environment variable set (you can then run `bundle` to install the 
+required dependencies and run `rake test` to run the tests). (This is not for the faint of heart and
+right now is experimental only, so don't blame us if you can't get it to work!)_
 
+IRC channel: #zepto on irc.freenode.net — stay updated on http://twitter.com/zeptojs
 
-Also, Zepto.js contains some non-jQuery extensions, that are geared towards mobile devices.
-
-Visit http://zeptojs.com/
-
-Join Zepto.js Convore group https://convore.com/zeptojs/, #zepto on irc.freenode.net and stay updated on http://twitter.com/zeptojs
-
-Have fun!
+Remember to have fun!
 
 # License
 
