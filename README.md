@@ -94,8 +94,12 @@ show() // forces elements to be displayed (only works correctly for block elemen
 hide() // removes a elements from layout
 
 offset() // get object with top: left: width: height: properties (in px)
-height() // get first elements height in px, including padding and border (equivalent to jQuery.outerHeight(false))
-width() // get first elements width in px, including padding and border (equivalent to jQuery.outerWidth(false))
+height() // get first element's height in px
+innerHeight() // get first element's inner height in px
+outerHeight(bool) // get first element's outer height in px (pass true to include margin)
+width() // get first element's width in px
+innerWidth() // get first element's inner width in px
+outerWidth(bool) // get first element's outer width in px (pass true to include margin)
 
 attr('attribute') // get element attribute
 attr('attribute', 'value') // set element attribute
