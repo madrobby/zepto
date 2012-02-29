@@ -410,20 +410,12 @@ var Zepto = (function() {
     }
   });
 
-  function documentContains(node) {
-    if (document.contains) return document.contains(node);
-    while(node && node !== document) {
-      node = node.parentNode;
-    }
-    return !!node;
-  }
-
   function getWidthOrHeight(elem, name, extra) {
     if (!elem) return null;
-    var Name = cssExpand[name === 'width' ? 4 : 5], style, i, result = 0;
+    var Name = cssExpand[name === 'width' ? 4 : 5], style, i, result;
     if (elem == window) return window['inner' + Name];
     else if (elem == document) return elem.documentElement['offset' + Name];
-    else if (documentContains(elem)) {
+    else {
       style = getComputedStyle(elem, '');
       result = elem['offset' + Name];
       if (extra !== 'border') {
@@ -434,7 +426,7 @@ var Zepto = (function() {
         }
       }
     }
-    return result;
+    return result || 0;
   }
   
   ['width', 'height'].forEach(function(dimension, dimIndex) {
