@@ -63,8 +63,8 @@ var Zepto = (function() {
 
   function fragment(html, name) {
     if (name === undefined) {
-	if (!fragmentRE.test(html)) return document.createTextNode(html);
-	name = RegExp.$1;
+        if (!fragmentRE.test(html)) return document.createTextNode(html);
+        name = RegExp.$1;
     }
     if (!(name in containers)) name = '*';
     var container = containers[name];

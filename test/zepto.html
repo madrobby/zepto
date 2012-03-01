@@ -1169,7 +1169,7 @@
       },
 
       testAppendPrependBeforeAfter: function(t){
-	//test with string parameter
+        //test with string parameter
         $('#beforeafter').append('append');
         $('#beforeafter').prepend('prepend');
         $('#beforeafter').before('before');
@@ -1191,7 +1191,7 @@
 
         t.assertEqual('before<div id="beforeafter">prependappend</div>after', $('#beforeafter_container').html());
 
-	//test with multiple strings as parameters
+        //test with multiple strings as parameters
         $('#beforeafter_container').html('<div id="beforeafter"></div>');
         $('#beforeafter').append('append1','append2');
         $('#beforeafter').prepend('prepend1','prepend2');
@@ -1279,7 +1279,7 @@
         //testing with more than one Zepto object as parameter
         $('#beforeafter_container').html('<div id="beforeafter"></div>');
 
-	//testing with more than one Zepto object as parameters
+        //testing with more than one Zepto object as parameters
         $('#beforeafter').append($(div('append1')),$(div('append2')));
         $('#beforeafter').prepend($(div('prepend1')),$(div('prepend2')));
         $('#beforeafter').before($(div('before1')),$(div('before2')));
