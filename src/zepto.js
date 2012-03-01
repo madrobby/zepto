@@ -62,7 +62,10 @@ var Zepto = (function() {
   }
 
   function fragment(html, name) {
-    if (name === undefined) name = fragmentRE.test(html) && RegExp.$1;
+    if (name === undefined) {
+	if (!fragmentRE.test(html)) return document.createTextNode(html);
+	name = RegExp.$1;
+    }
     if (!(name in containers)) name = '*';
     var container = containers[name];
     container.innerHTML = '' + html;
@@ -439,9 +442,10 @@ var Zepto = (function() {
   }
 
   adjacencyOperators.forEach(function(key, operator) {
-    $.fn[key] = function(html){
-      var nodes = isO(html) ? html : fragment(html);
-      if (!('length' in nodes) || nodes.nodeType) nodes = [nodes];
+    $.fn[key] = function(){
+      var nodes = $.map(arguments, function(html) {
+        return isO(html) ? html : fragment(html);
+      });
       if (nodes.length < 1) return this;
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
 
