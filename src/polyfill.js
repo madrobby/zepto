@@ -27,7 +27,7 @@
       else curr = arguments[1];
 
       for (;i < l;++i) // "for" is smaller than "while"; ++i is faster than i++
-        if(i in obj) curr = accumulator.call(undefined, curr, obj[i], i, this);
+        if(i in obj) curr = accumulator.call(undefined, curr, obj[i], i, obj);
 
       return curr;
     };
