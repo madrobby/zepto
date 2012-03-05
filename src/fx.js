@@ -6,7 +6,8 @@
   var prefix = '', eventPrefix, endEventName, endAnimationName,
     vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
     document = window.document, testEl = document.createElement('div'),
-    supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
+    supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
+    animationShouldStop = false;
 
   function downcase(str) { return str.toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) };
@@ -54,6 +55,10 @@
 
       if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ');
       if (!$.fx.off) cssProperties[prefix + 'transition'] = 'all ' + duration + 's ' + (ease || '');
+    }
+
+    $.fn.stop = function(){
+      animationShouldStop = true;
     }
 
     wrappedCallback = function(){
