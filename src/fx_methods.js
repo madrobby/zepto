@@ -22,6 +22,10 @@
     return el.anim(props, translateSpeed(speed) / 1000, null, callback);
   }
 
+  function stop(){
+    $.fx.stop();
+  }
+
   function hide(el, speed, scale, callback) {
     return anim(el, speed, 0, scale, function(){
       origHide.call($(this));
