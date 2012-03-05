@@ -26,6 +26,14 @@ Other supported platforms are:
 
 In short, Zepto is expected to work in every modern browser except Internet Explorer.
 
+Zepto's main object is `$` so unlike jQuery, there is no mode that allows it to get
+along nicely with other frameworks.
+
+Because of the compactness goal, you won't have to include each source file in your
+final build. If you want to make the Zepto part of your app as small as possible,
+only add these as needed during development, then combine and minimize when you are
+ready to deploy.
+
 # Syntax & features:
 
 Basic call with CSS selector:
@@ -39,7 +47,7 @@ Instead of a selector, a DOM Element, or a list of nodes can be passed in.
 The $ function takes an optional context argument, which can be a DOM Element or a Zepto object:
 
 ``` js
-$('span', $('p'))  // -> find all <span> elements in <p> elements
+$('span', $('p'))  // -> find all `<span>` elements in `<p>` elements
 
 $('p').bind('click', function(){
   $('span', this).css({color: 'red'}); // affects "span" children/grandchildren
@@ -53,7 +61,21 @@ $('span', $('p'))    // same
 $('p').find('span')  // same
 ```
 
+Note: Most functions, in particular element functions, are chainable, as with jQuery. For example:
+
+``` js
+$('#my-fine-id').append('<b>hello!</b>').addClass('voodoo');
+```
+
+or
+
+``` js
+$('.thingie').not('.nextButton')
+```
+
 # Element functions:
+
+Use `zepto.js` in your project for these functions to work.
 
 ``` js
 get() // return array of all elements found
@@ -90,8 +112,15 @@ text('new text') // set the text contents of the element(s)
 append(), prepend() // like html(), but add html (or a DOM Element or a Zepto object) to element contents
 before(), after() // add html (or a DOM Element or a Zepto object) before/after the element
 appendTo(), prependTo() // reverse appending/prepending
+
 show() // forces elements to be displayed (only works correctly for block elements right now)
 hide() // removes a elements from layout
+
+Note: If you include fx.js and fx_methods.js, you can use the optional speed and callback version of these.
+Speed is given in milliseconds. Typically 400-600 is the range used for this kind of effect. YMMV.
+
+show(speed, callback)  // shows an element, and calling `callback` on completion
+hide(speed, callback)  // shows an element, and calling `callback` on completion
 
 offset() // get object with top: left: width: height: properties (in px)
 height() // get first elements height in px, including padding and border (equivalent to jQuery.outerHeight(false))
@@ -134,14 +163,20 @@ val('value') // sets the value of the form element
 
 ## CSS Animation
 
+Use `fx.js` in your project for these functions to work.
+
 ``` js
 animate(transforms, duration, easing, callback)
 animate(transforms, { duration: milliseconds, easing: '...', complete: callback })
 // use CSS transform/opacity to do an animation,
 // optionally supply a callback method to be executed after the animation is complete
+
+stop() // Stop whatever animation is in progress right in its tracks.
 ```
 
 ## Non-jQuery functions
+
+Use `zepto.js` in your project for these functions to work.
 
 ``` js
 pluck(property)
@@ -151,6 +186,8 @@ pluck(property)
 
 # Utility functions:
 
+Use `fx.js` in your project for these functions to work.
+
 ``` js
 $(document).ready(function(){ ... }); // call function after DOM is ready to use (before load event fires)
 $.isFunction(function), $.isObject(object), $.isArray(array); // returns true if given parameter is a function; an object; or an array, respectively
@@ -159,7 +196,29 @@ $.extend(target, object1 [,objectN]) // extends (merge) the target object with a
 
 # Event handlers
 
-Adding an event listener:
+These functions allow you to adding and remove event listeners:
+
+Use `event.js` in your project for these functions to work. As with jQuery, the event object
+comes complete with a target you can use in the callback that handles the event. So, you
+might write code like this:
+
+``` js
+$('menubar').bind('click', function(event){
+  $(event.target).hide(); // Hide the element when it's clicked.
+});
+```
+
+While the `event` object comes complete with information such as the kind of event,
+mouse location (for a click) and so on, character code (for a key event), you may
+not care about all that. In cases where the event details are irrelevant, `this` 
+is set to the DOM object where the click occurred, so you can write the
+(possibly simpler) code:
+
+``` js
+$('menubar').bind('click', function(event){
+  $(this).hide(); // Hide the element when it's clicked.
+});
+```
 
 ``` js
 $('some selector').bind('click', function(event){ ... });
@@ -205,6 +264,8 @@ $('some selector').unbind();
 
 Zepto has several extensions over the jQuery API to make it easy to react to touch events.
 
+Use `touch.js` in your project for these functions to work.
+
 Tapping:
 
 ``` js
@@ -247,6 +308,8 @@ Swiping down:
 $('some selector').swipeDown(function(){ ... });
 ```
 
+Use `gesture.js` in your project for these iOS functions to work.
+
 Pinch (iOS only):
 
 ``` js
@@ -266,6 +329,8 @@ $('some selector').pinchOut(function(){ ... });
 ```
 
 # Ajax
+
+Use `ajax.js` in your project for these functions to work.
 
 Simple GET and POST:
 
@@ -301,6 +366,8 @@ $('selector').load('url #fragment-selector'[, callback]);
 # Environmental information
 
 Zepto includes information about the environment it is running in the $.os object:
+
+Use `detect.js` in your project for these functions to work.
 
 
 ``` js
