@@ -2,8 +2,8 @@
 //     (c) 2010-2012 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-(function(){
-  if (String.prototype.trim === void 0) // fix for iOS 3.2
+(function(undefined){
+  if (!String.prototype.trim) // fix for iOS 3.2
     String.prototype.trim = function(){ this.replace(/^\s+|\s+$/g, '') }; // smaller trim (from jQuery)
     
   // For iOS 3.x
@@ -29,7 +29,7 @@
       else curr = arguments[1];
 
       for (;i < l;++i) // "for" is smaller than "while"; ++i is faster than i++
-        if (i in obj) curr = accumulator.call({}, curr, obj[i], i, obj);
+        if (i in obj) curr = accumulator.call(undefined, curr, obj[i], i, obj);
 
       return curr;
     };
