@@ -2,13 +2,13 @@
 //     (c) 2010-2012 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-(function(undefined){
-  if (String.prototype.trim === undefined) // fix for iOS 3.2
+(function(void 0){
+  if (!String.prototype.trim) // fix for iOS 3.2
     String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') };
 
   // For iOS 3.x
   // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
-  if (Array.prototype.reduce === undefined)
+  if (!Array.prototype.reduce)
     Array.prototype.reduce = function(fun){
       if(this === void 0 || this === null) throw new TypeError();
       var t = Object(this), len = t.length >>> 0, k = 0, accumulator;
@@ -27,7 +27,7 @@
         } while (true);
 
       while (k < len){
-        if(k in t) accumulator = fun.call(undefined, accumulator, t[k], k, t);
+        if(k in t) accumulator = fun.call({}, accumulator, t[k], k, t); // {} for strict mode
         k++;
       }
       return accumulator;
