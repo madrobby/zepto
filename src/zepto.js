@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function(window) {
-  var key, $$, classList, emptyArray = [], slice = emptyArray.slice, concat = emptyArray.concat,
+  var undefined, key, $$, classList, emptyArray = [], slice = emptyArray.slice, concat = emptyArray.concat,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -29,7 +29,7 @@ var Zepto = (function(window) {
   function isA(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length === 'number' }
 
-  function compact(array) { return array.filter(function(item){ return item !== void 0 && item !== null }) }
+  function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array) { return array.length > 0 ? concat.apply([], array) : array }
   function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function dasherize(str){
@@ -61,7 +61,7 @@ var Zepto = (function(window) {
   }
 
   function fragment(html, name) {
-    if (name === void 0) name = fragmentRE.test(html) && RegExp.$1;
+    if (name === undefined) name = fragmentRE.test(html) && RegExp.$1;
     if (!(name in containers)) name = '*';
     var container = containers[name];
     container.innerHTML = '' + html;
@@ -77,7 +77,7 @@ var Zepto = (function(window) {
 
   function $(selector, context){
     if (!selector) return Z();
-    if (context !== void 0) return $(context).find(selector);
+    if (context !== undefined) return $(context).find(selector);
     else if (isF(selector)) return $(document).ready(selector);
     else if (selector instanceof Z) return selector;
     else {
@@ -113,7 +113,7 @@ var Zepto = (function(window) {
   }
 
   function filtered(nodes, selector){
-    return selector === void 0 ? $(nodes) : $(nodes).filter(selector);
+    return selector === undefined ? $(nodes) : $(nodes).filter(selector);
   }
 
   function funcArg(context, arg, idx, payload){
@@ -173,7 +173,7 @@ var Zepto = (function(window) {
       else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false);
       return this;
     },
-    get: function(idx){ return idx === void 0 ? slice.call(this) : this[idx] },
+    get: function(idx){ return idx === undefined ? slice.call(this) : this[idx] },
     size: function(){ return this.length },
     remove: function () {
       return this.each(function () {
@@ -205,7 +205,7 @@ var Zepto = (function(window) {
     },
     not: function(selector){
       var nodes=[];
-      if (isF(selector) && selector.call !== void 0)
+      if (isF(selector) && selector.call !== undefined)
         this.each(function(idx){
           if (!selector.call(this,idx)) nodes.push(this);
         });
@@ -295,12 +295,12 @@ var Zepto = (function(window) {
       return this.css("display", "none")
     },
     toggle: function(setting){
-      return (setting === void 0 ? this.css("display") === "none" : setting) ? this.show() : this.hide();
+      return (setting === undefined ? this.css("display") === "none" : setting) ? this.show() : this.hide();
     },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
-      return html === void 0 ?
+      return html === undefined ?
         (this.length ? this[0].innerHTML : null) :
         this.each(function (idx) {
           var originHtml = this.innerHTML;
@@ -308,14 +308,14 @@ var Zepto = (function(window) {
         });
     },
     text: function(text){
-      return text === void 0 ?
+      return text === undefined ?
         (this.length > 0 ? this[0].textContent : null) :
         this.each(function(){ this.textContent = text });
     },
     attr: function(name, value){
       var res;
-      return (typeof name === 'string' && value === void 0) ?
-        (this.length === 0 ? void 0:
+      return (typeof name === 'string' && value === undefined) ?
+        (this.length === 0 ? undefined:
           (name === 'value' && this[0].nodeName === 'INPUT') ? this.val() :
           (!(res = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : res
         ) :
@@ -331,7 +331,7 @@ var Zepto = (function(window) {
       return this.attr('data-' + name, value);
     },
     val: function(value){
-      return (value === void 0) ?
+      return (value === undefined) ?
         (this.length > 0 ? this[0].value : null) :
         this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value);
@@ -348,10 +348,10 @@ var Zepto = (function(window) {
       };
     },
     css: function(property, value){
-      if (value === void 0 && typeof property === 'string') {
+      if (value === undefined && typeof property === 'string') {
         return(
           this.length === 0
-            ? void 0
+            ? undefined
             : this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property)
         );
       }
@@ -381,7 +381,7 @@ var Zepto = (function(window) {
     },
     removeClass: function(name){
       return this.each(function(idx) {
-        if(name === void 0)
+        if(name === undefined)
           return this.className = '';
         classList = this.className;
         funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass) {
@@ -393,7 +393,7 @@ var Zepto = (function(window) {
     toggleClass: function(name, when){
       return this.each(function(idx){
         var newName = funcArg(this, name, idx, this.className);
-        (when === void 0 ? !$(this).hasClass(newName) : when) ?
+        (when === undefined ? !$(this).hasClass(newName) : when) ?
           $(this).addClass(newName) : $(this).removeClass(newName);
       });
     }
@@ -411,7 +411,7 @@ var Zepto = (function(window) {
   ['width', 'height'].forEach(function(dimension){
     $.fn[dimension] = function(value) {
       var offset, Dimension = dimension.replace(/./, function(m) { return m[0].toUpperCase() });
-      if (value === void 0) return this[0] === window ? window['inner' + Dimension] :
+      if (value === undefined) return this[0] === window ? window['inner' + Dimension] :
         this[0] === document ? document.documentElement['offset' + Dimension] :
         (offset = this.offset()) && offset[dimension];
       else return this.each(function(idx){
