@@ -10,12 +10,12 @@
   // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
   if (!Array.prototype.reduce) {
     Array.prototype.reduce = function reduce(accumulator){
-      var i = 0, obj = this, l = obj.length >> 0, curr;
+      var i = 0, obj = this||{}, l = obj.length >> 0, curr;
 
       /* null and undefined will always be replaced by the global (window) on ".call"s. 
        * Any other input (Number, Boolean, ..) will have no length, generating a TypeError.
-       * That's why we don't need "Object(this)".
-       * The issue is: how could we receive and avoid the real null or undefined values on reduce.calls?
+       * Strict mode will pass null and undefined, but we use a new object with no length,
+       * keeping code small and throwing a TypeError
        */
 
       if (typeof accumulator !== "function") // ES5 : "If IsCallable(callbackfn) is false, throw a TypeError exception."
