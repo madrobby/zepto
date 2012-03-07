@@ -210,6 +210,12 @@ Tapping:
 ``` js
 $('some selector').tap(function(){ ... });
 ```
+Single Tapping:
+Like tap() but without the delay
+
+``` js
+$('some selector').singleTap(function(){ ... });
+```
 
 Double-tapping:
 
