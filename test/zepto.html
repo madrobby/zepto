@@ -377,9 +377,12 @@
         var zepto = $('p#find1, #find2');
         t.assertLength(11, $('span', zepto));
 
-        // DOM Element
+        // Selector with DOM Element Context
         var domElement = document.getElementById('find1');
         t.assertLength(4, $('span.findme', domElement));
+
+        // DOM Element with DOM Element Context
+        t.assertLength(1, $(domElement, domElement));
       },
 
       testDollarWithDocument: function(t){
