@@ -11,7 +11,7 @@
   // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
   if (!Array.prototype.reduce)
     Array.prototype.reduce = function reduce(accumulator){
-      var i = 0, obj = this || {}, l = obj.length >> 0, curr // o >> 0 === parseInt(o, 10)||0
+      var i = 0, obj = this || {}, l = obj.length >> 0, curr; // o >> 0 === parseInt(o, 10)||0
 
       /* null and undefined will always be replaced by the global (window) on ".call"s. 
        * Any other input (Number, Boolean, ..) will have no length, generating a TypeError.
