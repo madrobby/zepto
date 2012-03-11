@@ -19,13 +19,6 @@
   }
 
   var longTapDelay = 750;
-  function longTap(){
-    if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
-      touch.el.trigger('longTap');
-      touch = {};
-    }
-  }
-
   var doubleTapDuration = 250;
   var minSwipeLengthX = 30;
   var minSwipeLengthY = 30;
@@ -38,7 +31,6 @@
       touch.y1 = e.touches[0].pageY;
       if (delta > 0 && delta <= doubleTapDuration) touch.isDoubleTap = true;
       touch.last = now;
-      setTimeout(longTap, longTapDelay);
     }).bind('touchmove', function(e){
       touch.x2 = e.touches[0].pageX;
       touch.y2 = e.touches[0].pageY;
@@ -52,13 +44,18 @@
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)));
         touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0;
       } else if ('last' in touch) {
-        touch.el.trigger('tap');
+        if (Date.now() - touch.last >= longTapDelay) {
+          touch.el.trigger('longTap');
+        }
+        else {
+          touch.el.trigger('tap');
 
-        singleTapTimeout = setTimeout(function(){
-          singleTapTimeout = null;
-          touch.el.trigger('singleTap');
-          touch = {};
-        }, doubleTapDuration);
+          singleTapTimeout = setTimeout(function(){
+            singleTapTimeout = null;
+            touch.el.trigger('singleTap');
+            touch = {};
+          }, doubleTapDuration);
+        }
       }
     }).bind('touchcancel', function(){ touch = {} });
   });
