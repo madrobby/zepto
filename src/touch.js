@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 (function($){
-  var touch = {}, touchTimeout;
+  var touch = {}, singleTapTimeout;
 
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode;
@@ -26,14 +26,17 @@
     }
   }
 
+  var doubleTapDuration = 250;
+  var minSwipeLengthX = 30;
+  var minSwipeLengthY = 30;
   $(document).ready(function(){
     $(document.body).bind('touchstart', function(e){
       var now = Date.now(), delta = now - (touch.last || now);
       touch.el = $(parentIfText(e.touches[0].target));
-      touchTimeout && clearTimeout(touchTimeout);
+      singleTapTimeout && clearTimeout(singleTapTimeout);
       touch.x1 = e.touches[0].pageX;
       touch.y1 = e.touches[0].pageY;
-      if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
+      if (delta > 0 && delta <= doubleTapDuration) touch.isDoubleTap = true;
       touch.last = now;
       setTimeout(longTap, longTapDelay);
     }).bind('touchmove', function(e){
@@ -44,18 +47,18 @@
         touch.el.trigger('doubleTap');
         touch = {};
       } else if (touch.x2 > 0 || touch.y2 > 0) {
-        (Math.abs(touch.x1 - touch.x2) > 30 || Math.abs(touch.y1 - touch.y2) > 30)  &&
+        (Math.abs(touch.x1 - touch.x2) > minSwipeLengthX || Math.abs(touch.y1 - touch.y2) > minSwipeLengthY)  &&
           touch.el.trigger('swipe') &&
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)));
         touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0;
       } else if ('last' in touch) {
         touch.el.trigger('tap');
 
-        touchTimeout = setTimeout(function(){
-          touchTimeout = null;
+        singleTapTimeout = setTimeout(function(){
+          singleTapTimeout = null;
           touch.el.trigger('singleTap');
           touch = {};
-        }, 250);
+        }, doubleTapDuration);
       }
     }).bind('touchcancel', function(){ touch = {} });
   });
