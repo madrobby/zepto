@@ -2,7 +2,7 @@
 //     (c) 2010-2012 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-(function ($, window) {
+(function ($) {
 
   // ### $.fn.serializeArray
   //
@@ -26,7 +26,7 @@
   //     ]
   //
   
-  var encodeURIComponent = window.encodeURIComponent; // better for minification
+  var encodeURIComponent = this.encodeURIComponent; // better for minification
   
   $.fn.serializeArray = function () {
     var result = [], el;
@@ -95,4 +95,4 @@
     return this;
   }
 
-})(Zepto, this);
+})(Zepto);
