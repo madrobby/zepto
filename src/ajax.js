@@ -26,10 +26,10 @@
   $.active = 0;
 
   function ajaxStart(settings) {
-    if (settings.global && $.active++ === 0) triggerGlobal(settings, null, 'ajaxStart');
+    settings.global && $.active++ === 0 && triggerGlobal(settings, null, 'ajaxStart');
   }
   function ajaxStop(settings) {
-    if (settings.global && !(--$.active)) triggerGlobal(settings, null, 'ajaxStop');
+    settings.global && !(--$.active)) && triggerGlobal(settings, null, 'ajaxStop');
   }
 
   // triggers an extra global event "ajaxBeforeSend" that's like "ajaxSend" but cancelable
