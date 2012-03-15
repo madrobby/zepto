@@ -96,10 +96,10 @@ var Zepto = (function() {
 
   $.extend = function(target){
     slice.call(arguments, 1).forEach(function(source) {
-      for (key in source) target[key] = source[key];
-    })
+      for (key in source) if (source.hasOwnProperty(key)) target[key] = source[key];
+    });
     return target;
-  }
+  };
 
   $.qsa = $$ = function(element, selector){
     var found;
@@ -111,7 +111,7 @@ var Zepto = (function() {
         tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
         element.querySelectorAll(selector)
       );
-  }
+  };
 
   function filtered(nodes, selector){
     return selector === undefined ? $(nodes) : $(nodes).filter(selector);
@@ -126,8 +126,8 @@ var Zepto = (function() {
   $.isArray = isA;
 
   $.inArray = function(elem, array, i) {
-		return emptyArray.indexOf.call(array, elem, i);
-	}
+    return emptyArray.indexOf.call(array, elem, i);
+  };
 
   $.map = function(elements, callback) {
     var value, values = [], i, key;
@@ -138,11 +138,11 @@ var Zepto = (function() {
       }
     else
       for (key in elements) {
-        value = callback(elements[key], key);
+        if (elements.hasOwnProperty(key)) value = callback(elements[key], key);
         if (value != null) values.push(value);
       }
     return flatten(values);
-  }
+  };
 
   $.each = function(elements, callback) {
     var i, key;
@@ -152,7 +152,7 @@ var Zepto = (function() {
       }
     else
       for(key in elements) {
-        if(callback.call(elements[key], key, elements[key]) === false) return elements;
+        if (elements.hasOwnProperty(key)) if(callback.call(elements[key], key, elements[key]) === false) return elements;
       }
     return elements;
   }
@@ -321,7 +321,7 @@ var Zepto = (function() {
           (!(res = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : res
         ) :
         this.each(function(idx){
-          if (isO(name)) for (key in name) this.setAttribute(key, name[key])
+          if (isO(name)) for (key in name) if (name.hasOwnProperty(key)) this.setAttribute(key, name[key]);
           else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)));
         });
     },
@@ -357,7 +357,7 @@ var Zepto = (function() {
         );
       }
       var css = '';
-      for (key in property) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
+      for (key in property) if (property.hasOwnProperty(key)) css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';';
       if (typeof property == 'string') css = dasherize(property) + ":" + maybeAddPx(property, value);
       return this.each(function() { this.style.cssText += ';' + css });
     },
@@ -434,7 +434,9 @@ var Zepto = (function() {
   function traverseNode (node, fun) {
     fun(node);
     for (var key in node.childNodes) {
-      traverseNode(node.childNodes[key], fun);
+      if (node.childNodes.hasOwnProperty(key)) {
+        traverseNode(node.childNodes[key], fun);
+      }
     }
   }
 
