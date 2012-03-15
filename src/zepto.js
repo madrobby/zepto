@@ -158,6 +158,8 @@ var Zepto = (function() {
   }
 
   $.fn = {
+    // The current version of Zepto being used
+    zepto: "0.1",
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
