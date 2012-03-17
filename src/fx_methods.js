@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 (function($, undefined){
-  var document = window.document, docElem = document.documentElement,
+  var document = this.document, docElem = document.documentElement,
     origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle,
     speeds = { _default: 400, fast: 200, slow: 600 };
 
@@ -19,7 +19,7 @@
       else props.scale = scale;
       el.css($.fx.cssPrefix + 'transform-origin', '0 0');
     }
-    return el.anim(props, translateSpeed(speed) / 1000, null, callback);
+    return el.anim(props, translateSpeed(speed) * 0.001, null, callback);
   }
 
   function hide(el, speed, scale, callback) {
@@ -31,19 +31,18 @@
 
   $.fn.show = function(speed, callback) {
     origShow.call(this);
-    if (speed === undefined) speed = 0;
-    else this.css('opacity', 0);
+    speed ? this.css('opacity', 0) : speed = 0;
     return anim(this, speed, 1, '1,1', callback);
   };
 
   $.fn.hide = function(speed, callback) {
-    if (speed === undefined) return origHide.call(this);
-    else return hide(this, speed, '0,0', callback);
+    return speed === undefined ? origHide.call(this) : hide(this, speed, '0,0', callback);
   }
 
   $.fn.toggle = function(speed, callback) {
-    if (speed === undefined || typeof speed == 'boolean') return origToggle.call(this, speed);
-    else return this[this.css('display') == 'none' ? 'show' : 'hide'](speed, callback);
+    return speed === undefined || typeof speed == 'boolean' ?
+      origToggle.call(this, speed) :
+      (this[this.css('display') == 'none' ? 'show' : 'hide'](speed, callback));
   };
 
   $.fn.fadeTo = function(speed, opacity, callback) {
@@ -52,8 +51,7 @@
 
   $.fn.fadeIn = function(speed, callback) {
     var target = this.css('opacity')
-    if (target > 0) this.css('opacity', 0)
-    else target = 1
+    target > 0 ? this.css('opacity', 0) : target = 1;
     return origShow.call(this).fadeTo(speed, target, callback);
   };
 
@@ -83,11 +81,9 @@
 
   function webkitTransforms3d() {
     var ret, div = document.createElement('div'),
-      testEl = document.createElement('div'),
-      css = '@media (-webkit-transform-3d){#zeptotest{left:9px;position:absolute}}',
-      style = ['&shy;', '<style>', css, '</style>'].join('');
+      testEl = document.createElement('div');
 
-    div.innerHTML += style;
+    div.innerHTML += '&shy;<style>@media (-webkit-transform-3d){#zeptotest{left:9px;position:absolute}}</style>';
     testEl.id = 'zeptotest';
     div.appendChild(testEl);
     docElem.appendChild(div);

@@ -5,7 +5,7 @@
 (function($, undefined){
   var prefix = '', eventPrefix, endEventName, endAnimationName,
     vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
-    document = window.document, testEl = document.createElement('div'),
+    document = this.document, testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
 
   function downcase(str) { return str.toLowerCase() }
