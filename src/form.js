@@ -25,6 +25,9 @@
   //         }
   //     ]
   //
+  
+  var encodeURIComponent = this.encodeURIComponent; // better for minification
+  
   $.fn.serializeArray = function () {
     var result = [], el;
     $( Array.prototype.slice.call(this.get(0).elements) ).each(function () {
