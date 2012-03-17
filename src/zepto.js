@@ -29,7 +29,24 @@ var Zepto = (function() {
     tagSelectorRE = /^[\w-]+$/,
     toString = ({}).toString,
     zepto = {},
-    init, fragment, Z
+    init, fragment, Z,
+    tempParent = document.createElement('div')
+
+  function matches(elem, selector) {
+    if (!elem || elem.nodeType !== 1) return false
+    var matchesSel = elem.mozMatchesSelector || elem.webkitMatchesSelector || elem.oMatchesSelector || elem.matchesSelector
+    if (matchesSel) return matchesSel.call(elem, selector)
+    var temp = !elem.parentNode, parent
+
+    if (temp) {
+      parent = tempParent
+      tempParent.appendChild(elem)
+    }
+    else parent = elem.parentNode
+    var match = ~$$(parent, selector).indexOf(elem)
+    temp && tempParent.removeChild(elem)
+    return match
+  }
 
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
@@ -268,14 +285,14 @@ var Zepto = (function() {
     },
     filter: function(selector){
       return $([].filter.call(this, function(element){
-        return element.parentNode && $$(element.parentNode, selector).indexOf(element) >= 0
+        return matches(element, selector)
       }))
     },
     add: function(selector,context){
       return $(uniq(this.concat($(selector,context))))
     },
     is: function(selector){
-      return this.length > 0 && $(this[0]).filter(selector).length > 0
+      return this.length > 0 && matches(this[0], selector)
     },
     not: function(selector){
       var nodes=[]
