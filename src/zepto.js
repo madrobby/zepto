@@ -23,25 +23,31 @@ var Zepto = (function() {
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/,
-    tempParent = document.createElement('div'),
-    proto = HTMLElement.prototype,
-    matchesSelector = (proto.mozMatchesSelector || proto.webkitMatchesSelector || proto.oMatchesSelector || proto.matchesSelector || function(selector){	
-      var temp = !this.parentNode, parent;
-	
+    tempParent = document.createElement('div');
+    
+  function matches(elem, selector){
+      if(!elem || elem.nodeType !== 1){
+        return false;
+      }
+      var matchesSel = elem.mozMatchesSelector || elem.webkitMatchesSelector || elem.oMatchesSelector || elem.matchesSelector;
+      if(matchesSel){
+        return matchesSel.call(elem, selector);
+      }
+      var temp = !elem.parentNode, parent;
+        
       if(temp){
         parent = tempParent;
-        tempParent.appendChild(this)
+        tempParent.appendChild(elem)
       }
       else
       {
-        parent = this.parentNode;
+        parent = elem.parentNode;
       }
-      var match = ~$$(parent, selector).indexOf(this);
-      temp && tempParent.removeChild(this);
+      var match = ~$$(parent, selector).indexOf(elem);
+      temp && tempParent.removeChild(elem);
+      
       return match;	
-    });
-    
-  function matches(element, selector) { return element && element.nodeType === 1 && matchesSelector.call(element, selector)}
+  }
 
   function isF(value) { return ({}).toString.call(value) == "[object Function]" }
   function isO(value) { return value instanceof Object }
