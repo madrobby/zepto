@@ -371,7 +371,9 @@ If you encounter bugs, please follow these steps:
 1. First, try if the bug is fixed in the latest Zepto.js master branch:
    Get it from http://github.com/madrobby/zepto.
 
-2. Submit the bug on our issue tracker:
+2. If you don't know it yet, read http://github.github.com/github-flavored-markdown/
+
+3. Submit the bug on our issue tracker:
    http://github.com/madrobby/zepto/issues
 
 Let us know in detail what is going on, including the exact browser version you're on
