@@ -156,11 +156,11 @@
     var container = $('results')
     if (container) {
       if (results.failureCount || results.errorCount) {
-        container.innerHTML = printf("Finished in %d s. &ndash; <em>%d failures, %d errors</em>",
-          [seconds, results.failureCount, results.errorCount])
+        container.innerHTML = printf("Finished in %d s. &ndash; <em>%d failures, %d errors</em> (%d assertions)",
+          [seconds, results.failureCount, results.errorCount, results.assertionCount])
         container.className = 'failed'
       } else {
-        container.innerHTML = printf("Finished in %d s. &ndash; <em>%d tests passed</em>", [seconds, results.testCount])
+        container.innerHTML = printf("Finished in %d s. &ndash; <em>%d tests passed</em> (%d assertions)", [seconds, results.testCount, results.assertionCount])
         container.className = 'passed'
       }
     }
