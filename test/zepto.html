@@ -164,6 +164,9 @@
   <div id="delegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
   <div id="undelegate_test"><span class="first-level"><span class="second-level">hi</span></span></div>
 
+  <div id="delegate_blur_test"><input type="text"></div>
+  <div id="delegate_focus_test"><input type="text"></div>
+
   <div id="another_element"></div>
 
   <div id="namespace_test"></div>
@@ -1836,6 +1839,29 @@
 
         click($('p').get(0));
         t.assertEqual(3, pcounter);
+      },
+
+      testDelegateBlurFocus: function(t) {
+        var counter = 0;
+        $('#delegate_blur_test').delegate('input', 'blur', function(){ counter++; });
+
+        $('#delegate_blur_test').find('input').focus();
+        $('#delegate_blur_test').find('input').blur();
+        t.assertEqual(1, counter);
+
+        $('#delegate_blur_test').find('input').focus();
+        $('#delegate_blur_test').find('input').blur();
+        t.assertEqual(2, counter);
+
+        $('#delegate_focus_test').delegate('input', 'focus', function(){ counter++; });
+
+        $('#delegate_focus_test').find('input').focus();
+        $('#delegate_focus_test').find('input').blur();
+        t.assertEqual(3, counter);
+
+        $('#delegate_focus_test').find('input').focus();
+        $('#delegate_focus_test').find('input').blur();
+        t.assertEqual(4, counter);
       },
 
       testDelegateReturnFalse: function(t){
