@@ -20,6 +20,7 @@ ZEPTO_COMPONENTS = [
   # 'data',
   'touch',
   # 'gesture'
+  # 'jquery_compat'
 ]
 
 task :default => [:clean, :concat, :dist]
@@ -32,6 +33,7 @@ ZEPTO_TESTS = %w[
   test/form.html
   test/fx.html
   test/polyfill.html
+  test/jquery_compat.html
 ]
 
 desc "Clean the distribution directory."
