@@ -56,13 +56,17 @@
       if (!$.fx.off) cssProperties[prefix + 'transition'] = 'all ' + duration + 's ' + (ease || '');
     }
 
-    wrappedCallback = function(){
+    wrappedCallback = function(event){
+      if (typeof event !== 'undefined') {
+        if (event.target !== event.currentTarget) return; // makes sure the event didn't bubble from "below"
+        $(event.target).unbind(endEvent, arguments.callee);
+      }
       var props = {};
       props[prefix + 'transition'] = props[prefix + 'animation-name'] = 'none';
       $(this).css(props);
       callback && callback.call(this);
     }
-    if (duration > 0) this.one(endEvent, wrappedCallback);
+    if (duration > 0) this.bind(endEvent, wrappedCallback);
 
     setTimeout(function() {
       that.css(cssProperties);

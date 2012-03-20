@@ -43,7 +43,7 @@
   <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
-  <div id="callbacktest" style="width:40px;height:40px;background:red"></div>
+  <div id="callbacktest" style="width:40px;height:40px;background:red"><div style="width:40px;height:40px;background:blue"></div></div>
   <div id="keyframetest" style="width:40px;height:40px;background:red;opacity: 0;"></div>
 
   <div id="anim_zero_duration_callback_test"></div>
@@ -162,10 +162,13 @@
           var context = this;
           t.resume(function(){
             t.assert($(context).is('#callbacktest'), "context for callback is wrong");
-            t.assert((new Date().getTime() - start) >= duration);
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early');
             t.assertStyle(/^(none( 0s ease 0s ?)?)?$/, context, 'transition');
           });
         });
+
+        // tests bubbling
+        $('#callbacktest div').anim({ opacity: 0.0 }, 0.1, 'linear');
 
         var el = $('#anim_zero_duration_callback_test'),
             callbackCalled = false;
