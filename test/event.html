@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto event unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+</head>
+<body>
+  <h1>Zepto form tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+  
+  <div id="fixtures">
+      <div id="element"></div>
+  </div>
+  
+  <script>
+  (function(){
+      
+    var element = $("#element");
+    
+    function defer(fn, delay) {
+      setTimeout(fn, delay || 0);
+    }
+    
+    Evidence('EventTest', {
+      
+      // test bind(type, callback) and trigger(type)
+      testBindTrigger: function(t){
+        var type = "click";
+        var callback = function(e){
+          element.unbind(type, callback);
+          
+          defer(function(){
+            t.resume(function(){
+              t.assert(e);
+              t.assertEqual(e.type, type);
+            });
+          });
+        };
+        
+        t.pause();
+        element.bind(type, callback);
+        element.trigger(type);
+      },
+      
+      // test bind(type, data, callback)
+      testBindWithData: function(t){
+        var type = "click",
+          data = {"foo": "bar"};
+          
+        var callback = function(e){
+          element.unbind(type, callback);
+          
+          defer(function(){
+            t.resume(function(){
+              t.assert(e.data);
+              t.assertEqual(e.data.foo, data.foo);
+            });
+          });
+        };
+        
+        t.pause();
+        element.bind(type, data, callback);
+        element.trigger(type);
+      },
+      
+      // test trigger(type, data)
+      testTriggerWithData: function(t){
+        var type = "click",
+          data = {"foo": "bar"};
+          
+        var callback = function(e, d){            
+          element.unbind(type, callback);
+          
+          defer(function(){
+            t.resume(function(){
+              t.assert(d);
+              t.assertEqual(d.foo, data.foo);
+            });
+          });
+        };
+        
+        t.pause();
+        element.bind(type, callback);
+        element.trigger(type, data);
+      },
+      
+      // test bind(type, data, callback) and trigger(type, data)
+      testBindWithDataTriggerWithData: function(t){
+        var type = "click",
+          bData = {"foo": "bar"},
+          tData = {"foo": "baz"};
+          
+        var callback = function(e, d){
+          element.unbind(type, callback);
+          
+          defer(function(){
+            t.resume(function(){
+              t.assert(e.data);
+              t.assertEqual(e.data.foo, bData.foo);
+              t.assert(d);
+              t.assertEqual(d.foo, tData.foo);
+            });
+          });
+        };
+        
+        t.pause();
+        element.bind(type, bData, callback);
+        element.trigger(type, tData);
+      },
+      
+      // test one(type, callback)
+      testOneBind: function(t){
+        var type = "click";
+          
+        var callback = function(e){          
+          defer(function(){
+              t.resume(function(){
+              t.assert(e);
+              t.assertEqual(e.type, type);
+            });
+          });
+        };
+        
+        t.pause();
+        element.one(type, callback);
+        element.trigger(type);
+      },
+      
+      // test that one(type, callback) self unbinds
+      testOneUnbind: function(t){
+        var type = "click",
+          count = 0;
+         
+        var callback = function(e){
+          count++;
+
+          defer(function(){
+            t.resume(function(){
+              t.assertEqual(count, 1);
+              element.trigger(type);
+            });
+          });
+        };
+        
+        t.pause();
+        element.one(type, callback);
+        element.trigger(type);
+      },
+      
+      // test one(type, data, callback)
+      testOneBindsWithData: function(t){
+        var type = "click",
+          data = {"foo": "bar"};
+          
+        var callback = function(e){
+          defer(function(){
+            t.resume(function(){
+              t.assert(e.data);
+              t.assertEqual(e.data.foo, data.foo);
+            });
+          });
+        };
+        
+        t.pause();
+        element.one(type, data, callback);
+        element.trigger(type);
+      }
+
+    });
+  })();
+  </script>
+</body>
+</html>
