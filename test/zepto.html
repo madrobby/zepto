@@ -1697,6 +1697,47 @@
 
         t.assert(prevented);
       },
+      
+      testBindData: function (t) {
+        var eventData;
+        
+        var handler = function (e) {
+          eventData = e.data;
+        };
+        
+        // bind
+        $('#some_element')
+          .bind('click', {customKey: 10}, handler)
+          .trigger('click');
+
+        t.assertEqual(eventData.customKey, 10);
+        
+        
+        // one
+        $('#another_element')
+          .one('click', {customKey: 20}, handler)
+          .trigger('click');
+          
+        t.assertEqual(eventData.customKey, 20);
+        
+        // on
+        $('p').on('click', 'span.yay', {customKey: 30}, handler);
+        $('span.yay').trigger('click');
+
+        t.assertEqual(eventData.customKey, 30);
+        
+        // live
+        $('body p').live('click', {customKey: 40}, handler);
+        click($('p').get(0));
+
+        t.assertEqual(eventData.customKey, 40);
+        
+        // delegate
+        $('div#delegate_test').delegate('span.second-level', 'click', {customKey: 50}, handler);
+        click($('span.second-level').get(0));
+        t.assertEqual(eventData.customKey, 50);
+        
+      },
 
       testCreateEventObject: function(t){
         var e = $.Event('custom');
@@ -1766,6 +1807,24 @@
         });
         t.assertIdentical(2, $(form).triggerHandler('submit'));
         t.assertEqual('1 2', executed.join(' '));
+      },
+      
+      testBindDataAndTriggerEventObject: function (t) {
+        var eventData, triggerData;
+        
+        var handler = function (e, data) {
+          eventData = e.data;
+          triggerData = data;
+        };
+        
+        $('#some_element')
+          .bind('click', {customKey: 10}, handler)
+          .trigger('click', {customKey: 20});
+
+        t.assert(eventData);
+        t.assertEqual(eventData.customKey, 10);
+        t.assert(triggerData);
+        t.assertEqual(triggerData.customKey, 20);
       },
 
       testUnbind: function(t){
