@@ -1,15 +1,15 @@
-/* yanked from underscore.js */
+/* yanked from <http://underscorejs.org> */
 body {
   font-size: 14px;
   line-height: 22px;
   background: #f4f4f4;
   color: #000;
-  font-family: Helvetica Neue, Helvetica, Arial;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 .interface {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
 }
-div#sidebar {
+#sidebar {
   background: #fff;
   position: fixed;
   top: 0; left: 0; bottom: 0;
@@ -40,12 +40,12 @@ ul.toc_section {
   margin: 5px 0 0 0;
   padding-left: 0px;
   list-style-type: none;
-  font-family: Lucida Grande;
 }
 .toc_section li {
   cursor: pointer;
   margin: 0 0 3px 0;
 }
+.toc_section li:before { content: "- "; }
 .toc_section li a {
   text-decoration: none;
   color: black;
@@ -53,18 +53,17 @@ ul.toc_section {
 .toc_section li a:hover {
   text-decoration: underline;
 }
-div.container {
-  width: 550px;
-  margin: 40px 0 50px 260px;
+.container {
+  max-width: 550px;
+  margin: 30px 0 50px 260px;
 }
-div.warning {
+.warning {
   margin-top: 15px;
   font: bold 11px Arial;
   color: #770000;
 }
 p {
   margin: 20px 0;
-  width: 550px;
 }
 a, a:visited {
   color: #444;
@@ -73,57 +72,49 @@ a:active, a:hover {
   color: #000;
 }
 h1, h2, h3, h4, h5, h6 {
-  padding-top: 20px;
+  margin: 0;
+  padding-top: 1.5em;
   line-height: 1.1;
 }
 h1:first-child {
   margin-top: 0;
   padding-top: 0;
+  font-size: 2.2em;
+  font-weight: 200;
 }
-h2 {
-  font-size: 20px;
-}
-b.header {
-  font-size: 16px;
-  line-height: 30px;
-}
-span.alias {
-  font-size: 14px;
+h1:first-child span { display: none }
+h1:first-child small {
+  display: block;
+  font-size: .7em;
   font-style: italic;
-  margin-left: 20px;
+  font-weight: 100;
 }
-table, tr, td {
-  margin: 0; padding: 0;
-}
-td {
-  padding: 2px 12px 2px 0;
-}
+h2 { font-size: 20px; padding-bottom: .5em }
 ul {
   list-style-type: circle;
   padding: 0 0 0 20px;
 }
-li {
-  width: 500px;
-  margin-bottom: 10px;
+li + li {
+  margin-top: .3em;
 }
 code, pre, tt {
   font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace;
 }
+pre { margin: 0 }
 tt {
   padding: 0px 3px;
   background: #fff;
   border: 1px solid #ddd;
   zoom: 1;
 }
-pre {
+
+article.method h3 { margin-bottom: .2em; }
+article.method p { margin: .5em 0 }
+article.method .highlight pre {
   font-size: 12px;
   padding: 2px 0 2px 15px;
   border-left: 5px solid #bbb;
-  margin: 0px 0 30px;
 }
-
-article.method h3 { margin-bottom: .2em }
-article.method p { margin: .5em 0 }
 
 /* syntax */
 .hll { background-color: #ffffcc }

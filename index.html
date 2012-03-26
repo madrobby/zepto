@@ -1,12 +1,14 @@
 ---
 title: Zepto.js
 layout: default
+description: >
+  The aerogel-weight mobile javascript framework
 ---
 
-<div id="sidebar" class="interface">
+<aside id="sidebar" class="interface">
 
   <a class="toc_title" href="#">
-    {{ title }} <span class="version">(0.8)</span>
+    {{ page.title }} <span class="version">(0.8)</span>
   </a>
 
   <a class="toc_title" href="#core">
@@ -14,49 +16,48 @@ layout: default
   </a>
   <ul class="toc_section">
     {% for post in site.categories.core reversed %}
-    <li>- <a href="#{{ post.slug }}">{{ post.title }}</a></li>
+    <li><a href="#{{ post.title }}">{{ post.title }}</a></li>
     {% endfor %}
   </ul>
 
-</div>
+</aside>
 
 <div class="container">
 
+  <header>
   <h1>
-    zepto.js — the aerogel-weight mobile javascript framework
+    {{ page.title }}
+    <span>–</span>
+    <small>{{ page.description }}</small>
   </h1>
 
   <p>
-    <b>Zepto.js is a minimalist JavaScript framework</b> for mobile WebKit
-    browsers, with&nbsp;a&nbsp;jQuery-compatible syntax.
+    <b><a href="https://github.com/madrobby/zepto">Zepto</a>
+    is a minimalist JavaScript framework</b>
+    with&nbsp;a&nbsp;jQuery-compatible syntax,
+    designed for mobile apps in mind.
   </p>
+  </header>
 
-  <p>
-    The goal: a <b>~5k micro-library</b> that handles most basic drudge work
-    with a nice API so you can <b>concentrate on getting stuff done</b>.
-  </p>
+  <ul>
+    <li>
+      <a href="zepto.js">zepto.js v0.8</a>
+      – <i>48 kB uncompressed</i>
+    </li>
+    <li>
+      <a href="zepto.min.js">zepto.min.js v0.8</a>
+      – <i>7.6 kB when gzipped</i>
+    </li>
+  </ul>
 
-  <h2>Downloads</h2>
-
-  <table>
-    <tr>
-      <td><a href="zepto.js">Development Version (0.8)</a></td>
-      <td><i>34kb, Uncompressed with Comments</i></td>
-    </tr>
-    <tr>
-      <td><a href="zepto.min.js">Production Version (0.8)</a></td>
-      <td><i>&lt; 4kb, Minified and Gzipped</i></td>
-    </tr>
-  </table>
-
-  <div id="documentation">
+  <section id=documentation>
 
     <h2 id="core">Core methods</h2>
 
     {% for post in site.categories.core reversed %}
-    <article class=method id="{{post.slug }}">
+    <article class=method id="{{post.title }}">
       <h3>{{ post.title }}</h3>
-      <code>{{ post.signature }}</code>
+      <pre class=signature><code>{{ post.signature | escape }}</code></pre>
       {{ post.content }}
     </article>
     {% endfor %}
@@ -72,6 +73,8 @@ layout: default
       </ul>
     </p>
 
-  </div>
+  </section>
 
 </div>
+
+<script src="zepto.js"></script>
