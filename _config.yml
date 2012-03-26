@@ -1,0 +1,5 @@
+lsi:         false
+pygments:    true
+destination: public
+markdown:    rdiscount
+rdiscount:   { extensions: [smart] }
