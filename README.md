@@ -424,7 +424,7 @@ Remember to have fun!
 # Code style guide
 
 These are the style guidelines:
- 
+
 * Use `function name() { }` for named functions
 * Use `function(){ }` for anonymous functions
 * Don't use curly braces for single-line statements with `if` and friends
@@ -432,7 +432,7 @@ These are the style guidelines:
 * Use a single semicolon before statements that start with `(` or `[`
 * Use full word-length descriptive variable names
 * Use whitespace to indicate blocks of code and make code more readable
-* Use comments to describe unexpected code behavior 
+* Use comments to describe unexpected code behavior
 
 For the semicolon-less rules, please refer to http://mislav.uniqpath.com/2010/05/semicolons/ for why
 we're doing this.

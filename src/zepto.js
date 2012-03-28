@@ -46,7 +46,9 @@ var Zepto = (function() {
       classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
   }
 
-  function maybeAddPx(name, value) { return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value }
+  function maybeAddPx(name, value) {
+    return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value
+  }
 
   function defaultDisplay(nodeName) {
     var element, display
@@ -95,7 +97,7 @@ var Zepto = (function() {
   }
 
   $.extend = function(target){
-    slice.call(arguments, 1).forEach(function(source) {
+    slice.call(arguments, 1).forEach(function(source){
       for (key in source) target[key] = source[key]
     })
     return target
@@ -174,13 +176,16 @@ var Zepto = (function() {
       else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false)
       return this
     },
-    get: function(idx){ return idx === undefined ? slice.call(this) : this[idx] },
-    size: function(){ return this.length },
+    get: function(idx){
+      return idx === undefined ? slice.call(this) : this[idx]
+    },
+    size: function(){
+      return this.length
+    },
     remove: function(){
       return this.each(function(){
-        if (this.parentNode != null) {
+        if (this.parentNode != null)
           this.parentNode.removeChild(this)
-        }
       })
     },
     each: function(callback){
@@ -195,10 +200,10 @@ var Zepto = (function() {
     end: function(){
       return this.prevObject || $()
     },
-    andSelf:function(){
+    andSelf: function(){
       return this.add(this.prevObject || $())
     },
-    add:function(selector,context){
+    add: function(selector,context){
       return $(uniq(this.concat($(selector,context))))
     },
     is: function(selector){
@@ -222,8 +227,14 @@ var Zepto = (function() {
     eq: function(idx){
       return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1)
     },
-    first: function(){ var el = this[0]; return el && !isObject(el) ? el : $(el) },
-    last: function(){ var el = this[this.length - 1]; return el && !isObject(el) ? el : $(el) },
+    first: function(){
+      var el = this[0]
+      return el && !isObject(el) ? el : $(el)
+    },
+    last: function(){
+      var el = this[this.length - 1]
+      return el && !isObject(el) ? el : $(el)
+    },
     find: function(selector){
       var result
       if (this.length == 1) result = $$(this[0], selector)
@@ -259,14 +270,17 @@ var Zepto = (function() {
         return slice.call(el.parentNode.children).filter(function(child){ return child!==el })
       }), selector)
     },
-    empty: function(){ return this.each(function(){ this.innerHTML = '' }) },
-    pluck: function(property){ return this.map(function(){ return this[property] }) },
+    empty: function(){
+      return this.each(function(){ this.innerHTML = '' })
+    },
+    pluck: function(property){
+      return this.map(function(){ return this[property] })
+    },
     show: function(){
       return this.each(function(){
         this.style.display == "none" && (this.style.display = null)
-        if (getComputedStyle(this, '').getPropertyValue("display") == "none") {
+        if (getComputedStyle(this, '').getPropertyValue("display") == "none")
           this.style.display = defaultDisplay(this.nodeName)
-        }
       })
     },
     replaceWith: function(newContent){
@@ -373,9 +387,7 @@ var Zepto = (function() {
         classList = []
         var cls = this.className, newName = funcArg(this, name, idx, cls)
         newName.split(/\s+/g).forEach(function(klass){
-          if (!$(this).hasClass(klass)) {
-            classList.push(klass)
-          }
+          if (!$(this).hasClass(klass)) classList.push(klass)
         }, this)
         classList.length && (this.className += (cls ? " " : "") + classList.join(" "))
       })
@@ -447,9 +459,8 @@ var Zepto = (function() {
         for (var i = 0; i < nodes.length; i++) {
           var node = nodes[inReverse ? nodes.length-i-1 : i]
           traverseNode(node, function(node){
-            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT' && (!node.type || node.type === 'text/javascript')) {
+            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT' && (!node.type || node.type === 'text/javascript'))
               window['eval'].call(window, node.innerHTML)
-            }
           })
           if (copyByClone && index < size - 1) node = node.cloneNode(true)
           insert(operator, target, node)
