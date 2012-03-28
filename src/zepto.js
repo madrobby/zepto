@@ -24,9 +24,9 @@ var Zepto = (function() {
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/
 
-  function isF(value) { return ({}).toString.call(value) == "[object Function]" }
-  function isO(value) { return value instanceof Object }
-  function isA(value) { return value instanceof Array }
+  function isFunction(value) { return ({}).toString.call(value) == "[object Function]" }
+  function isObject(value) { return value instanceof Object }
+  function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
   function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
@@ -79,11 +79,11 @@ var Zepto = (function() {
   function $(selector, context) {
     if (!selector) return Z()
     if (context !== undefined) return $(context).find(selector)
-    else if (isF(selector)) return $(document).ready(selector)
+    else if (isFunction(selector)) return $(document).ready(selector)
     else if (selector instanceof Z) return selector
     else {
       var dom
-      if (isA(selector)) dom = compact(selector)
+      if (isArray(selector)) dom = compact(selector)
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null
       else if (fragmentRE.test(selector))
@@ -118,12 +118,12 @@ var Zepto = (function() {
   }
 
   function funcArg(context, arg, idx, payload) {
-   return isF(arg) ? arg.call(context, idx, payload) : arg
+   return isFunction(arg) ? arg.call(context, idx, payload) : arg
   }
 
-  $.isFunction = isF
-  $.isObject = isO
-  $.isArray = isA
+  $.isFunction = isFunction
+  $.isObject = isObject
+  $.isArray = isArray
 
   $.inArray = function(elem, array, i){
 		return emptyArray.indexOf.call(array, elem, i)
@@ -177,7 +177,7 @@ var Zepto = (function() {
     get: function(idx){ return idx === undefined ? slice.call(this) : this[idx] },
     size: function(){ return this.length },
     remove: function(){
-      return this.each(function () {
+      return this.each(function(){
         if (this.parentNode != null) {
           this.parentNode.removeChild(this)
         }
@@ -206,13 +206,13 @@ var Zepto = (function() {
     },
     not: function(selector){
       var nodes=[]
-      if (isF(selector) && selector.call !== undefined)
+      if (isFunction(selector) && selector.call !== undefined)
         this.each(function(idx){
           if (!selector.call(this,idx)) nodes.push(this)
         })
       else {
         var excludes = typeof selector == 'string' ? this.filter(selector) :
-          (likeArray(selector) && isF(selector.item)) ? slice.call(selector) : $(selector)
+          (likeArray(selector) && isFunction(selector.item)) ? slice.call(selector) : $(selector)
         this.forEach(function(el){
           if (excludes.indexOf(el) < 0) nodes.push(el)
         })
@@ -222,8 +222,8 @@ var Zepto = (function() {
     eq: function(idx){
       return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1)
     },
-    first: function(){ var el = this[0]; return el && !isO(el) ? el : $(el) },
-    last: function(){ var el = this[this.length - 1]; return el && !isO(el) ? el : $(el) },
+    first: function(){ var el = this[0]; return el && !isObject(el) ? el : $(el) },
+    last: function(){ var el = this[this.length - 1]; return el && !isObject(el) ? el : $(el) },
     find: function(selector){
       var result
       if (this.length == 1) result = $$(this[0], selector)
@@ -321,7 +321,7 @@ var Zepto = (function() {
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
-          if (isO(name)) for (key in name) this.setAttribute(key, name[key])
+          if (isObject(name)) for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)))
         })
     },
@@ -350,7 +350,7 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (value === undefined && typeof property == 'string') {
-        return(
+        return (
           this.length == 0
             ? undefined
             : this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property)
@@ -411,7 +411,7 @@ var Zepto = (function() {
 
   ;['width', 'height'].forEach(function(dimension){
     $.fn[dimension] = function(value){
-      var offset, Dimension = dimension.replace(/./, function(m) { return m[0].toUpperCase() })
+      var offset, Dimension = dimension.replace(/./, function(m){ return m[0].toUpperCase() })
       if (value === undefined) return this[0] == window ? window['inner' + Dimension] :
         this[0] == document ? document.documentElement['offset' + Dimension] :
         (offset = this.offset()) && offset[dimension]
@@ -431,14 +431,14 @@ var Zepto = (function() {
       null)                                 // append
   }
 
-  function traverseNode (node, fun) {
+  function traverseNode(node, fun) {
     fun(node)
     for (var key in node.childNodes) traverseNode(node.childNodes[key], fun)
   }
 
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
-      var nodes = isO(html) ? html : fragment(html)
+      var nodes = isObject(html) ? html : fragment(html)
       if (!('length' in nodes) || nodes.nodeType) nodes = [nodes]
       if (nodes.length < 1) return this
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2
