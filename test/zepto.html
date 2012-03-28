@@ -305,6 +305,9 @@
         obj = {};
         t.assertIdentical(obj, $.extend(obj, {a: 1}, {b: 2}))
         t.assertEqual(2, obj.b);
+
+        // undefined values are not copied over
+        t.assertSame({a:1}, $.extend({a:1}, {b:undefined}));
       },
 
       testDollar: function(t){
