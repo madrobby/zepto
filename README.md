@@ -396,7 +396,7 @@ Checklist for submitting patches:
 * Small bug fixes can go in right away.
 * Always, always, always update the tests. All tests must pass.
 * Write concise code.
-* Adhere to the Zepto coding style rules (see below)
+* Please adhere to the Zepto code style guide (see below)
 * Don't add more than one feature or bug fix per pull request.
 * Run `rake whitespace` to clean up whitespace in code & tests
 * Use Github's pull request system to submit patches
@@ -423,9 +423,8 @@ Remember to have fun!
 
 # Code style guide
 
-We're opinionated about code and, for the ease of understanding and use for the core team, we're enforcing
-the following style rules—please make sure to adhere to these rules when submitting code!
-
+These are the style guidelines:
+ 
 * Use `function name() { }` for named functions
 * Use `function(){ }` for anonymous functions
 * Don't use curly braces for single-line statements with `if` and friends
