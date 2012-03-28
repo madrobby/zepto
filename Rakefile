@@ -74,16 +74,6 @@ task :concat, [:addons] => :whitespace do |task, args|
   end
 end
 
-def google_compiler(src, target)
-  puts "Minifying #{src} with Google Closure Compiler..."
-  `java -jar vendor/google-compiler/compiler.jar --js #{src} --summary_detail_level 3 --js_output_file #{target}`
-end
-
-def yui_compressor(src, target)
-  puts "Minifying #{src} with YUI Compressor..."
-  `java -jar vendor/yuicompressor/yuicompressor-2.4.2.jar #{src} -o #{target}`
-end
-
 def uglifyjs(src, target)
   begin
     require 'uglifier'
@@ -118,20 +108,6 @@ desc "Generates a minified version for distribution, using UglifyJS."
 task :dist do
   src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
   uglifyjs src, target
-  process_minified src, target
-end
-
-desc "Generates a minified version for distribution using the Google Closure compiler."
-task :googledist do
-  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
-  google_compiler src, target
-  process_minified src, target
-end
-
-desc "Generates a minified version for distribution using the YUI compressor."
-task :yuidist do
-  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
-  yui_compressor src, target
   process_minified src, target
 end
 
