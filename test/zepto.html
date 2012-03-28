@@ -1138,6 +1138,8 @@
 
         input.val(function(i, val){ return val.replace('Hello', 'Bye') });
         t.assertEqual('Bye again', input.val());
+
+        t.assertUndefined($('non-existent').val());
       },
 
       testChaining: function(t){
