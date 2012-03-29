@@ -4,6 +4,7 @@ layout: default
 description: >
   The aerogel-weight mobile javascript framework
 version: 0.8
+github_url: https://github.com/madrobby/zepto
 ---
 
 <aside id="sidebar" class="interface">
@@ -46,7 +47,7 @@ version: 0.8
   </h1>
 
   <p>
-    <b><a href="https://github.com/madrobby/zepto">Zepto</a>
+    <b><a href="{{ page.github_url }}">Zepto</a>
     is a minimalist JavaScript framework</b>
     with&nbsp;a&nbsp;jQuery-compatible syntax,
     designed for mobile apps in mind.
@@ -92,7 +93,9 @@ version: 0.8
     <article class=changelog>
       <h3>
         {{ change.title }}
-        <small>&mdash; <i>{{ change.date | date_to_string }}</i></small>
+        <small>&mdash; <i>{{ change.date | date_to_string }}</i>
+        {% if change.diff %}&mdash; <a href="{{ page.github_url }}/compare/{{ change.diff }}">diff</a>{% endif %}
+        </small>
       </h3>
       {{ change.content }}
     </article>
