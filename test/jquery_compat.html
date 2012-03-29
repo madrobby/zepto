@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto jQuery Compat unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/jquery_compat.js"></script>
+
+</head>
+<body>
+  <h1>Zepto DOM unit tests</h1>
+
+  <p id="results">Running… see browser console for results</p>
+
+  <div id="fixtures">
+
+  </div><!-- fixtures -->
+
+  <script>
+  (function(){
+
+    Evidence('ZeptoTest', {
+
+      testIsPlainObject: function(t) {
+        t.assertTrue($.isPlainObject(new Object()), 'Object is plain object');
+        t.assertTrue($.isPlainObject({}), '{} is plain object');
+        t.assertTrue($.isPlainObject({one : 1}), '{one : 1} is plain object');
+        t.assertTrue($.isPlainObject({one : 1, two: [1,2]}), '{one : 1, two: [1,2]} is plain object');
+
+        t.assertFalse($.isPlainObject(new Array()), 'Array object is not plain object');
+        t.assertFalse($.isPlainObject([]), '[] is not plain object');
+        t.assertFalse($.isPlainObject(null), 'null is not plain object');
+        t.assertFalse($.isPlainObject(), 'undefined is not plain object');
+        t.assertFalse($.isPlainObject(new String()), 'empty String object is not plain object');
+        t.assertFalse($.isPlainObject(new String('moe')), 'String object is not plain object');
+        t.assertFalse($.isPlainObject(''), 'the empty string is not plain object');
+        t.assertFalse($.isPlainObject('moe'), 'a string is not plain object');
+        t.assertFalse($.isPlainObject(new RegExp('test')), 'RegExp object is not plain object');
+        t.assertFalse($.isPlainObject(/test/), 'regex is not plain object');
+        t.assertFalse($.isPlainObject(new Boolean(true)), 'Boolean object is not plain object');
+        t.assertFalse($.isPlainObject(true), 'a boolean is not plain object');
+        t.assertFalse($.isPlainObject(new Number(2)), 'Number object is not plain object');
+        t.assertFalse($.isPlainObject(2), 'a number is not plain object');
+        t.assertFalse($.isPlainObject(new Function()), 'Function object is not plain object');
+        t.assertFalse($.isPlainObject(function() {}), 'a function is not plain object');
+        t.assertFalse($.isPlainObject(new Date()), 'Date object is not plain object');
+
+        var F = function(){}, obj;
+        F.prototype = {'a':1};
+        obj = new F();
+
+        t.assertFalse($.isPlainObject(obj), 'function with prototype is not a plain object');
+        t.assertFalse($.isPlainObject(window), 'window is not a plain object');
+        t.assertFalse($.isPlainObject($("html")[0]), 'html node is not a plain object');
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
