@@ -158,6 +158,14 @@ var Zepto = (function() {
       }
     return elements;
   }
+  
+  $.grep = function(array, callback, invert) {
+    array = isA(array) ? array : [].slice.call(array); // arrayify if needed
+    invert = !!invert; // ensure boolean
+    return array.filter(function(item, i){ 
+      return invert !== callback(item, i); 
+    });
+  }
 
   $.fn = {
     forEach: emptyArray.forEach,
@@ -190,9 +198,10 @@ var Zepto = (function() {
       return this;
     },
     filter: function(selector){
-      return $([].filter.call(this, function(element){
+      var fn = !isF(selector) || !selector.call ? function(element){
         return element.parentNode && $$(element.parentNode, selector).indexOf(element) >= 0;
-      }));
+      } : selector;
+      return $($.grep(this, fn));
     },
     end: function(){
       return this.prevObject || $();
@@ -209,9 +218,7 @@ var Zepto = (function() {
     not: function(selector){
       var nodes=[];
       if (isF(selector) && selector.call !== undefined)
-        this.each(function(idx){
-          if (!selector.call(this,idx)) nodes.push(this);
-        });
+        nodes = $.grep(this, selector, true);
       else {
         var excludes = typeof selector == 'string' ? this.filter(selector) :
           (likeArray(selector) && isF(selector.item)) ? slice.call(selector) : $(selector);
