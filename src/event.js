@@ -28,24 +28,29 @@
   function matcherFor(ns) {
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
   }
+  function normalizeArgs(arg1, arg2){
+    return ($.isFunction(arg2)) ? {data: arg1, callback: arg2} : {callback: arg1};
+  }
 
   function eachEvent(events, fn, iterator){
     if ($.isObject(events)) $.each(events, iterator);
     else events.split(/\s/).forEach(function(type){ iterator(type, fn) });
   }
 
-  function add(element, events, fn, selector, getDelegate, capture){
+  function add(element, events, bindData, fn, selector, getDelegate, capture){
     capture = !!capture;
     var id = zid(element), set = (handlers[id] || (handlers[id] = []));
     eachEvent(events, fn, function(event, fn){
       var delegate = getDelegate && getDelegate(fn, event),
         callback = delegate || fn;
       var proxyfn = function (event) {
-        var result = callback.apply(element, [event].concat(event.data));
+        var handler = findHandlers(this, event.type, fn);
+        if (handler.length) event.data = handler[0].bindData;
+        var result = callback.apply(element, [event].concat(event.trigData));
         if (result === false) event.preventDefault();
         return result;
       };
-      var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
+      var handler = $.extend(parse(event), {fn: fn, bindData: bindData, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
       set.push(handler);
       element.addEventListener(handler.e, proxyfn, capture);
     });
@@ -62,9 +67,10 @@
 
   $.event = { add: add, remove: remove }
 
-  $.fn.bind = function(event, callback){
+  $.fn.bind = function(event, arg2, arg3){
+    var args = normalizeArgs(arg2, arg3);
     return this.each(function(){
-      add(this, event, callback);
+      add(this, event, args.data, args.callback);
     });
   };
   $.fn.unbind = function(event, callback){
@@ -72,9 +78,10 @@
       remove(this, event, callback);
     });
   };
-  $.fn.one = function(event, callback){
+  $.fn.one = function(event, arg2, arg3){
+    var args = normalizeArgs(arg2, arg3);
     return this.each(function(i, element){
-      add(this, event, callback, null, function(fn, type){
+      add(this, event, args.data, args.callback, null, function(fn, type){
         return function(){
           var result = fn.apply(element, arguments);
           remove(element, type, fn);
@@ -115,8 +122,9 @@
     }
   }
 
-  $.fn.delegate = function(selector, event, callback){
-    var capture = false;
+  $.fn.delegate = function(selector, event, arg3, arg4){
+    var capture = false,
+      args = normalizeArgs(arg3, arg4);
     if(event == 'blur' || event == 'focus'){
       if($.iswebkit)
         event = event == 'blur' ? 'focusout' : event == 'focus' ? 'focusin' : event;
@@ -125,7 +133,7 @@
     }
 
     return this.each(function(i, element){
-      add(element, event, callback, selector, function(fn){
+      add(element, event, args.data, args.callback, selector, function(fn){
         return function(e){
           var evt, match = $(e.target).closest(selector, element).get(0);
           if (match) {
@@ -142,8 +150,9 @@
     });
   }
 
-  $.fn.live = function(event, callback){
-    $(document.body).delegate(this.selector, event, callback);
+  $.fn.live = function(event, arg2, arg3){
+    var args = normalizeArgs(arg2, arg3);
+    $(document.body).delegate(this.selector, event, args.data, args.callback);
     return this;
   };
   $.fn.die = function(event, callback){
@@ -151,9 +160,11 @@
     return this;
   };
 
-  $.fn.on = function(event, selector, callback){
-    return selector === undefined || $.isFunction(selector) ?
-      this.bind(event, selector) : this.delegate(selector, event, callback);
+  $.fn.on = function(event, arg2, arg3, arg4){
+    if (!arg2 || $.isFunction(arg2) || $.isObject(arg2))
+      return this.bind(event, arg2, arg3);
+    else
+      return this.delegate(arg2, event, arg3, arg4);
   };
   $.fn.off = function(event, selector, callback){
     return selector === undefined || $.isFunction(selector) ?
@@ -163,7 +174,7 @@
   $.fn.trigger = function(event, data){
     if (typeof event == 'string') event = $.Event(event);
     fix(event);
-    event.data = data;
+    event.trigData = data;
     return this.each(function(){ this.dispatchEvent(event) });
   };
 
@@ -173,7 +184,7 @@
     var e, result;
     this.each(function(i, element){
       e = createProxy(typeof event == 'string' ? $.Event(event) : event);
-      e.data = data; e.target = element;
+      e.trigData = data; e.target = element;
       $.each(findHandlers(element, event.type || event), function(i, handler){
         result = handler.proxy(e);
         if (e.isImmediatePropagationStopped()) return false;

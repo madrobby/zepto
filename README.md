@@ -116,16 +116,16 @@ hasClass('classname') // returns true of first element has a classname set
 toggleClass('classname'[, switch]) // adds/removes class, or adds/removes it when switch == true/false
 toggleClass(function(index, existingClasses){ return ...; }) // adds/removes class from a method
 
-on(type, [selector,] function) // add event listener to elements
+on(type [, selector] [, data], function) // add event listener to elements
 off(type, [selector,] function) // remove event listener from elements
-bind(type, function) // add an event listener (see below)
-one(type, function) // add an event listener that only fires once
+bind(type [,data], function) // add an event listener (see below)
+one(type [,data], function) // add an event listener that only fires once
 unbind([type [, function]]) // remove event listeners
-delegate(selector, type, function) // add an event listener w/ event delegation (see below)
+delegate(selector, type [,data], function) // add an event listener w/ event delegation (see below)
 undelegate(selector [, type[, function]]) // remove event listeners w/ event delegation
-live(type, function) // add an event listener that listens to the selector for current and future elements
+live(type [,data], function) // add an event listener that listens to the selector for current and future elements
 die([, type[, function]]) // remove live listener
-trigger(type) // triggers an event
+trigger(type [,data]) // triggers an event
 
 submit() // trigger form submit event
 val() // returns the value of the form element

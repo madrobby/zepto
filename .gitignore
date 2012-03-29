@@ -6,4 +6,5 @@ pkg
 *.swp
 docs/*
 .jhw-cache
-.rbenv-version
+.rbenv-version/.project
+/.project
