@@ -1,0 +1,6 @@
+---
+title: serializeArray
+signature: |
+  serializeArray()
+---
+

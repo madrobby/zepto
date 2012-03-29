@@ -1,0 +1,12 @@
+{% for post in posts reversed %}
+<article class=method id="{{post.title }}">
+  <h3>{{ post.title }}</h3>
+  {% if post.signature %}
+  <pre class=signature><code>{{ post.signature | escape }}</code></pre>
+  {% endif %}
+  {% if post.deprecated %}
+  <p class=warning>Deprecated in favor of <a href="#{{ post.deprecated }}">{{ post.deprecated }}</a></p>
+  {% endif %}
+  {{ post.content }}
+</article>
+{% endfor %}

@@ -3,22 +3,34 @@ title: Zepto.js
 layout: default
 description: >
   The aerogel-weight mobile javascript framework
+version: 0.8
 ---
 
 <aside id="sidebar" class="interface">
 
   <a class="toc_title" href="#">
-    {{ page.title }} <span class="version">(0.8)</span>
+    {{ page.title }} <span class="version">({{ page.version }})</span>
   </a>
 
-  <a class="toc_title" href="#core">
-    Core
-  </a>
-  <ul class="toc_section">
-    {% for post in site.categories.core reversed %}
-    <li><a href="#{{ post.title }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+  <a class=toc_title href="#core">Core</a>
+  {% assign posts = site.categories.core %}
+  {% include methods_sidebar.html %}
+
+  <a class=toc_title href="#event">Event</a>
+  {% assign posts = site.categories.event %}
+  {% include methods_sidebar.html %}
+
+  <a class=toc_title href="#ajax">Ajax</a>
+  {% assign posts = site.categories.ajax %}
+  {% include methods_sidebar.html %}
+
+  <a class=toc_title href="#form">Form</a>
+  {% assign posts = site.categories.form %}
+  {% include methods_sidebar.html %}
+
+  <a class=toc_title href="#fx">Effects</a>
+  {% assign posts = site.categories.fx %}
+  {% include methods_sidebar.html %}
 
 </aside>
 
@@ -41,11 +53,11 @@ description: >
 
   <ul>
     <li>
-      <a href="zepto.js">zepto.js v0.8</a>
+      <a href="zepto.js">zepto.js v{{ page.version }}</a>
       – <i>40 kB uncompressed</i>
     </li>
     <li>
-      <a href="zepto.min.js">zepto.min.js v0.8</a>
+      <a href="zepto.min.js">zepto.min.js v{{ page.version }}</a>
       – <i>7.6 kB when gzipped</i>
     </li>
   </ul>
@@ -53,14 +65,24 @@ description: >
   <section id=documentation>
 
     <h2 id="core">Core methods</h2>
+    {% assign posts = site.categories.core %}
+    {% include methods_full.html %}
 
-    {% for post in site.categories.core reversed %}
-    <article class=method id="{{post.title }}">
-      <h3>{{ post.title }}</h3>
-      <pre class=signature><code>{{ post.signature | escape }}</code></pre>
-      {{ post.content }}
-    </article>
-    {% endfor %}
+    <h2 id="event">Event handling</h2>
+    {% assign posts = site.categories.event %}
+    {% include methods_full.html %}
+
+    <h2 id="ajax">Ajax requests</h2>
+    {% assign posts = site.categories.ajax %}
+    {% include methods_full.html %}
+
+    <h2 id="form">Form methods</h2>
+    {% assign posts = site.categories.form %}
+    {% include methods_full.html %}
+
+    <h2 id="fx">Effects</h2>
+    {% assign posts = site.categories.fx %}
+    {% include methods_full.html %}
 
     <h2 id="changelog">Change Log</h2>
 

@@ -1,0 +1,6 @@
+---
+title: serialize
+signature: |
+  serialize()
+---
+
