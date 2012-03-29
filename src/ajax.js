@@ -361,15 +361,15 @@
   //
   // *Examples:*
   //
-  //     $('#project_container').get(
+  //     $('#project_container').load(
   //        '/projects/42',
   //        function () {
   //            alert('Project was successfully loaded');
   //        }
   //     );
   //
-  //     $('#project_comments').get(
-  //        '/projects/42 #comments',
+  //     $('#project_comments').load(
+  //        '/projects/42/comments',
   //        function () {
   //            alert('Comments was successfully loaded');
   //        }
