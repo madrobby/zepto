@@ -103,6 +103,8 @@ attr('attribute', function(index, oldAttr){ return ...; }) // set the value of '
 removeAttr('attribute') // removes an attribute
 data('name') // gets the value of the "data-name" attribute
 data('name', 'value') // sets the value of the "data-name" attribute
+data() // gets an object with key-value pair of all the "data-name" attributes
+data({ 'key1': value1, 'key2': value2 }) // sets multiple "data-name" attributes at once
 
 css('css property', 'value') // set a CSS property
 css({ property1: value1, property2: value2 }) // set multiple CSS properties

@@ -19,15 +19,30 @@
     var id = node[exp] || (node[exp] = ++uuid),
       store = data[id] || (data[id] = {});
     if (name !== undefined) store[name] = value;
+    else {
+      attr = node.attributes;
+      for (i = 0, l = attr.length; i < l; i++) {
+        name = attr[i].name;
+        if ( name.indexOf( "data-" ) === 0 ) setData(node, name.substring(5), attr[i].value);
+      }
+    }
     return store;
+  };
+
+  function setDataAttributes(node,obj) {
+    node.each(function() {
+      for (var k in obj) setData(this, k, obj[k]);
+    });
   };
 
   $.fn.data = function(name, value) {
     return value === undefined ?
-      this.length == 0 ? undefined : getData(this[0], name) :
-      this.each(function(idx){
-        setData(this, name, $.isFunction(value) ?
-                value.call(this, idx, getData(this, name)) : value);
-      });
+      this.length == 0 ?
+        undefined : $.isObject(name) ?
+          setDataAttributes(this, name) : getData(this[0], name) :
+          this.each(function(idx){
+            setData(this, name, $.isFunction(value) ?
+            value.call(this, idx, getData(this, name)) : value);
+          });
   };
 })(Zepto);

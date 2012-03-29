@@ -18,6 +18,7 @@
   <div id="fixtures">
   <div id="data_attr" data-one="uno" data-two="due"></div>
   <div id="data_full" data-mode="awesome"></div>
+  <div id="data_object" data-key1="value1" data-key2="value2">
   <ol id="data_list">
     <li data-category="arts"></li>
     <li data-category="science"></li>
@@ -88,7 +89,21 @@
         t.assertEqual('ichi', all.one);
         t.assertEqual('ni', all.two);
         t.assertEqual('Kurosawa', all.person.name);
-        t.assertUndefined(all.mode);
+      },
+
+      testObjectData: function(t){
+        var el = $('#data_object');
+
+        var object = el.data();
+        t.assertEqual(object.key1, "value1");
+        t.assertEqual(object.key2, "value2");
+
+        object = { "key2": "value2bis", "key3": "value3" };
+        el.data(object);
+        object = el.data();
+        t.assertEqual(object.key1, "value1");
+        t.assertEqual(object.key2, "value2bis");
+        t.assertEqual(object.key3, "value3");
       }
     });
   </script>
