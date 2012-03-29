@@ -31,7 +31,7 @@ In short, Zepto is expected to work in every modern browser except Internet Expl
 Basic call with CSS selector:
 
 ``` js
-$('p>span').html('yoho').css({color: 'red'});
+$('p>span').html('yoho').css({color: 'red'})
 ```
 
 Instead of a selector, a DOM Element, or a list of nodes can be passed in.
@@ -42,8 +42,8 @@ The $ function takes an optional context argument, which can be a DOM Element or
 $('span', $('p'))  // -> find all <span> elements in <p> elements
 
 $('p').bind('click', function(){
-  $('span', this).css({color: 'red'}); // affects "span" children/grandchildren
-});
+  $('span', this).css({color: 'red'}) // affects "span" children/grandchildren
+})
 ```
 
 Context and .find calls are equivalent:
@@ -77,12 +77,12 @@ prev() // previous siblings
 filter('selector') // reduce the current set of elements to match the given selector
 is('selector') // returns true/false if first element matches the selector
 not('selector') // remove elements matching 'selector' from the current collection
-not(function(index){return true / false;}) // remove elements from current collection if the callback method returns `true`
+not(function(index){return true / false}) // remove elements from current collection if the callback method returns `true`
 
 remove() // remove element
 
 html('new html') // set the contents of the element(s)
-html(function(index, oldhtml){ return ...; }) // set the contents of the element(s) from a method
+html(function(index, oldhtml){ return ... }) // set the contents of the element(s) from a method
 
 html() // get first element's .innerHTML
 text() // get first element's .textContent
@@ -99,7 +99,7 @@ width() // get first elements width in px, including padding and border (equival
 
 attr('attribute') // get element attribute
 attr('attribute', 'value') // set element attribute
-attr('attribute', function(index, oldAttr){ return ...; }) // set the value of 'attribute' from a method, for each element in collection
+attr('attribute', function(index, oldAttr){ return ... }) // set the value of 'attribute' from a method, for each element in collection
 removeAttr('attribute') // removes an attribute
 data('name') // gets the value of the "data-name" attribute
 data('name', 'value') // sets the value of the "data-name" attribute
@@ -109,12 +109,12 @@ css({ property1: value1, property2: value2 }) // set multiple CSS properties
 css('css property') // get this CSS property of the first element, looks at both .style object properties and the computed style
 
 addClass('classname') // adds a CSS class name
-addClass(function(index, existingClasses){ return ...; }) // adds a CSS class name from a method
+addClass(function(index, existingClasses){ return ... }) // adds a CSS class name from a method
 removeClass('classname') // removes a CSS class name
-removeClass(function(index, existingClasses){ return ...; }) // removes a CSS class name from a method
+removeClass(function(index, existingClasses){ return ... }) // removes a CSS class name from a method
 hasClass('classname') // returns true of first element has a classname set
 toggleClass('classname'[, switch]) // adds/removes class, or adds/removes it when switch == true/false
-toggleClass(function(index, existingClasses){ return ...; }) // adds/removes class from a method
+toggleClass(function(index, existingClasses){ return ... }) // adds/removes class from a method
 
 on(type, [selector,] function) // add event listener to elements
 off(type, [selector,] function) // remove event listener from elements
@@ -152,8 +152,8 @@ pluck(property)
 # Utility functions:
 
 ``` js
-$(document).ready(function(){ ... }); // call function after DOM is ready to use (before load event fires)
-$.isFunction(function), $.isObject(object), $.isArray(array); // returns true if given parameter is a function; an object; or an array, respectively
+$(document).ready(function(){ ... }) // call function after DOM is ready to use (before load event fires)
+$.isFunction(function), $.isObject(object), $.isArray(array) // returns true if given parameter is a function; an object; or an array, respectively
 $.extend(target, object1 [,objectN]) // extends (merge) the target object with additional objects. Modifies and returns target
 ```
 
@@ -162,43 +162,43 @@ $.extend(target, object1 [,objectN]) // extends (merge) the target object with a
 Adding an event listener:
 
 ``` js
-$('some selector').bind('click', function(event){ ... });
+$('some selector').bind('click', function(event){ ... })
 ```
 
 Adding an event listener on multiple events:
 
 ``` js
-$('some selector').bind('touchstart touchmove touchend', function(event){ ... });
+$('some selector').bind('touchstart touchmove touchend', function(event){ ... })
 ```
 
 Adding one event listener that uses event delegation to be only active on a range of children/grandchildren (as given with the subselector):
 
 ``` js
-$('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") });
+$('some selector').delegate('some subselector', 'touchstart', function(event){ alert("I'm touched!") })
 ```
 
 Adding a "live" event listener, that fires on all elements that match the selector now and in the future:
 
 ``` js
-$('p.yay').live('click', function(){ alert("Clicked a p.yay element!") });
+$('p.yay').live('click', function(){ alert("Clicked a p.yay element!") })
 ```
 
 Removing an event listener:
 
 ``` js
-$('some selector').unbind('click', listener);
+$('some selector').unbind('click', listener)
 ```
 
 Removing all event listeners for a particular event:
 
 ``` js
-$('some selector').unbind('click');
+$('some selector').unbind('click')
 ```
 
 Removing all event listeners:
 
 ``` js
-$('some selector').unbind();
+$('some selector').unbind()
 ```
 
 # Touch events
@@ -208,7 +208,7 @@ Zepto has several extensions over the jQuery API to make it easy to react to tou
 Tapping:
 
 ``` js
-$('some selector').tap(function(){ ... });
+$('some selector').tap(function(){ ... })
 ```
 
 Single Tap:
@@ -218,61 +218,61 @@ ms buffer to be able to differentiate between a single tap and a double tap. Don
 using "doubleTap" since it will cause a 250 ms delay, which could lead to a bad user experience.
 
 ``` js
-$('some selector').singleTap(function(){ ... });
+$('some selector').singleTap(function(){ ... })
 ```
 
 Double-tapping:
 
 ``` js
-$('some selector').doubleTap(function(){ ... });
+$('some selector').doubleTap(function(){ ... })
 ```
 
 Swiping (e.g. "delete" button when swiping over a list entry):
 
 ``` js
-$('some selector').swipe(function(){ ... });
+$('some selector').swipe(function(){ ... })
 ```
 
 Swiping left:
 
 ``` js
-$('some selector').swipeLeft(function(){ ... });
+$('some selector').swipeLeft(function(){ ... })
 ```
 
 Swiping right:
 
 ``` js
-$('some selector').swipeRight(function(){ ... });
+$('some selector').swipeRight(function(){ ... })
 ```
 
 Swiping up:
 
 ``` js
-$('some selector').swipeUp(function(){ ... });
+$('some selector').swipeUp(function(){ ... })
 ```
 
 Swiping down:
 
 ``` js
-$('some selector').swipeDown(function(){ ... });
+$('some selector').swipeDown(function(){ ... })
 ```
 
 Pinch (iOS only):
 
 ``` js
-$('some selector').pinch(function(){ ... });
+$('some selector').pinch(function(){ ... })
 ```
 
 Pinch in (iOS only):
 
 ``` js
-$('some selector').pinchIn(function(){ ... });
+$('some selector').pinchIn(function(){ ... })
 ```
 
 Pinch out (iOS only):
 
 ``` js
-$('some selector').pinchOut(function(){ ... });
+$('some selector').pinchOut(function(){ ... })
 ```
 
 # Ajax
@@ -304,8 +304,8 @@ $.ajax({
 Loading content into an element:
 
 ``` js
-$('selector').load('url'[, callback]);
-$('selector').load('url #fragment-selector'[, callback]);
+$('selector').load('url'[, callback])
+$('selector').load('url #fragment-selector'[, callback])
 ```
 
 # Environmental information
