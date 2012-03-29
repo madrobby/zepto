@@ -75,6 +75,15 @@
         var values = items.map(function(){ return $(this).data('category') });
         t.assertEqual('0_ARTS, 1_SCIENCE', values.join(', '));
       },
+	  
+	  testRemoveData: function(t) {
+		var items = $('<div>');
+		items.data('un', 'one').data('deux', 'two');
+		
+		items.removeData('un').removeData('deux');
+		t.assertEqual(null, items.data('un'));
+		t.assertEqual(null, items.data('deux'));
+	  },
 
       testAllData: function(t){
         var el = $('#data_full');
