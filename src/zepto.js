@@ -61,7 +61,11 @@ var Zepto = (function() {
     return elementDisplay[nodeName];
   }
 
-  function fragment(html, name) {
+  function $(selector, context){
+    return $.fn.init(selector, context);
+  };
+  
+  $.fragment = function (html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1;
     if (!(name in containers)) name = '*';
     var container = containers[name];
@@ -69,29 +73,11 @@ var Zepto = (function() {
     return slice.call(container.childNodes);
   }
 
-  function Z(dom, selector){
+  $.Z = function(dom, selector){
     dom = dom || emptyArray;
-    dom.__proto__ = Z.prototype;
+    dom.__proto__ = $.Z.prototype;
     dom.selector = selector || '';
     return dom;
-  }
-
-  function $(selector, context){
-    if (!selector) return Z();
-    if (context !== undefined) return $(context).find(selector);
-    else if (isF(selector)) return $(document).ready(selector);
-    else if (selector instanceof Z) return selector;
-    else {
-      var dom;
-      if (isA(selector)) dom = compact(selector);
-      else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
-        dom = [selector], selector = null;
-      else if (fragmentRE.test(selector))
-        dom = fragment(selector.trim(), RegExp.$1), selector = null;
-      else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
-      else dom = $$(document, selector);
-      return Z(dom, selector);
-    }
   }
 
   $.extend = function(target){
@@ -128,8 +114,8 @@ var Zepto = (function() {
   $.isArray = isA;
 
   $.inArray = function(elem, array, i) {
-		return emptyArray.indexOf.call(array, elem, i);
-	}
+    return emptyArray.indexOf.call(array, elem, i);
+  }
 
   $.map = function(elements, callback) {
     var value, values = [], i, key;
@@ -160,6 +146,23 @@ var Zepto = (function() {
   }
 
   $.fn = {
+    init: function(selector, context) {
+      if (!selector) return $.Z();
+      if (context !== undefined) return $(context).find(selector);
+      else if (isF(selector)) return $(document).ready(selector);
+      else if (selector instanceof $.Z) return selector;
+      else {
+        var dom;
+        if (isA(selector)) dom = compact(selector);
+        else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
+          dom = [selector], selector = null;
+        else if (fragmentRE.test(selector))
+          dom = $.fragment(selector.trim(), RegExp.$1), selector = null;
+        else if (selector.nodeType && selector.nodeType == 3) dom = [selector];
+        else dom = $$(document, selector);
+        return $.Z(dom, selector);
+      }
+    },  
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
@@ -442,7 +445,7 @@ var Zepto = (function() {
 
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
-      var nodes = isO(html) ? html : fragment(html);
+      var nodes = isO(html) ? html : $.fragment(html);
       if (!('length' in nodes) || nodes.nodeType) nodes = [nodes];
       if (nodes.length < 1) return this;
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2;
@@ -468,7 +471,7 @@ var Zepto = (function() {
     };
   });
 
-  Z.prototype = $.fn;
+  $.Z.prototype = $.fn;
 
   return $;
 })();
