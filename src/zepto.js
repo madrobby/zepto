@@ -199,12 +199,6 @@ var Zepto = (function() {
         return element.parentNode && $$(element.parentNode, selector).indexOf(element) >= 0
       }))
     },
-    end: function(){
-      return this.prevObject || $()
-    },
-    andSelf: function(){
-      return this.add(this.prevObject || $())
-    },
     add: function(selector,context){
       return $(uniq(this.concat($(selector,context))))
     },
@@ -413,15 +407,6 @@ var Zepto = (function() {
       })
     }
   }
-
-  'filter,add,not,eq,first,last,find,closest,parents,parent,children,siblings'.split(',').forEach(function(property){
-    var fn = $.fn[property]
-    $.fn[property] = function(){
-      var ret = fn.apply(this, arguments)
-      ret.prevObject = this
-      return ret
-    }
-  })
 
   ;['width', 'height'].forEach(function(dimension){
     $.fn[dimension] = function(value){

@@ -19,7 +19,8 @@ ZEPTO_COMPONENTS = [
   # 'assets',
   # 'data',
   'touch',
-  # 'gesture'
+  # 'gesture',
+  # 'stack',
 ]
 
 task :default => [:clean, :concat, :dist]
@@ -32,6 +33,7 @@ ZEPTO_TESTS = %w[
   test/form.html
   test/fx.html
   test/polyfill.html
+  test/stack.html
 ]
 
 desc "Clean the distribution directory."
