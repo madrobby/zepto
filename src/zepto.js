@@ -10,6 +10,7 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
     elementTypes = [1, 9, 11],
+    cssExpand = ['top', 'right', 'bottom', 'left', 'Width', 'Height'],
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
     tableRow = document.createElement('tr'),
@@ -411,17 +412,39 @@ var Zepto = (function() {
     }
   });
 
-  ['width', 'height'].forEach(function(dimension){
+  function getWidthOrHeight(elem, name, extra) {
+    if (!elem) return null;
+    var Name = cssExpand[name === 'width' ? 4 : 5], style, i, result;
+    if (elem == window) return window['inner' + Name];
+    else if (elem == document) return elem.documentElement['offset' + Name];
+    else {
+      style = getComputedStyle(elem, '');
+      result = elem['offset' + Name];
+      if (extra !== 'border') {
+        for (i = name === 'width' ? 1 : 0; i < 4; i += 2) {
+          if (!extra) result -= parseFloat(style.getPropertyValue('padding-' + cssExpand[i]));
+          if (extra === 'margin') result += parseFloat(style.getPropertyValue('margin-' + cssExpand[i]));
+          else result -= parseFloat(style.getPropertyValue('border-' + cssExpand[i] + '-width'));
+        }
+      }
+    }
+    return result || 0;
+  }
+  
+  ['width', 'height'].forEach(function(dimension, dimIndex) {
     $.fn[dimension] = function(value) {
-      var offset, Dimension = dimension.replace(/./, function(m) { return m[0].toUpperCase() });
-      if (value === undefined) return this[0] == window ? window['inner' + Dimension] :
-        this[0] == document ? document.documentElement['offset' + Dimension] :
-        (offset = this.offset()) && offset[dimension];
-      else return this.each(function(idx){
+      if (value === undefined) return getWidthOrHeight(this[0], dimension);
+      else return this.each(function(idx) {
         var el = $(this);
         el.css(dimension, funcArg(this, value, idx, el[dimension]()));
       });
-    }
+    };
+
+    ['inner', 'outer'].forEach(function(prefix, index) {
+      $.fn[prefix + cssExpand[dimIndex ? 5 : 4]] = function(margin) {
+        return getWidthOrHeight(this[0], dimension, index ? margin ? 'margin' : 'border' : 'padding');
+      }
+    });
   });
 
   function insert(operator, target, node) {

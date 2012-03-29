@@ -96,6 +96,20 @@
   </div>
 
   <div style="position:absolute;width:100px;height:50px" id="offset">test</div>
+  
+  <style>
+    #dimensions {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      padding: 1px 2px 4px 3px;
+      border-style: solid;
+      border-width: 10px 20px 40px 30px;
+      margin: 100px 200px 400px 300px;
+      overflow-y: scroll;
+    }
+  </style>
+  <div id="dimensions">test</div>
 
   <ul id="parents">
     <li id="li1">
@@ -689,6 +703,8 @@
         var viewportWidth = $(window).width();
         t.assert(viewportWidth > 0 || viewportWidth === 0);
         t.assert($(document).width());
+        //check that we return zero for elements that are not in the DOM
+        t.assertIdentical(0, $(document.createElement('div')).width('90px').width());
 
         t.assertIdentical(100, $('#offset').width());
         $('#offset').width('90px');
@@ -699,13 +715,36 @@
         t.assertIdentical(115, $('#offset').width());
       },
 
+      testInnerWidth: function(t) {
+        t.assertIdentical(105, $('#dimensions').innerWidth());
+        $('#dimensions').width('105px');
+        t.assertIdentical(110, $('#dimensions').innerWidth());
+        $('#dimensions').width('100px').css('padding-left','8px').css('border-left-width', '80px');
+        t.assertIdentical(110, $('#dimensions').innerWidth());
+        $('#dimensions').css('padding-left','3px').css('border-left-width', '30px');
+      },
+
+      testOuterWidth: function(t) {
+        t.assertIdentical(155, $('#dimensions').outerWidth());
+        t.assertIdentical(655, $('#dimensions').outerWidth(true));
+        $('#dimensions').width('105px');
+        t.assertIdentical(160, $('#dimensions').outerWidth());
+        t.assertIdentical(660, $('#dimensions').outerWidth(true));
+        $('#dimensions').width('100px').css('padding-left','8px').css('border-left-width', '80px').css('margin-left', '800px');
+        t.assertIdentical(210, $('#dimensions').outerWidth());
+        t.assertIdentical(1210, $('#dimensions').outerWidth(true));
+        $('#dimensions').css('padding-left','3px').css('border-left-width', '30px').css('margin-left', '300px');
+      },
+
       testHeight: function(t){
         t.assertNull($('#doesnotexist').height());
         // can't check values here, but make sure it doesn't error out
         var viewportHeight = $(window).height();
         t.assert(viewportHeight > 0 || viewportHeight === 0);
         t.assert($(document).height());
-
+        //check that we return zero for elements that are not in the DOM
+        t.assertIdentical(0, $(document.createElement('div')).height('90px').height());
+        
         t.assertIdentical(50, $('#offset').height());
         $('#offset').height('60px');
         t.assertIdentical(60, $('#offset').height());
@@ -713,6 +752,27 @@
         t.assertIdentical(70, $('#offset').height());
         $('#offset').height(function(i, oldHeight) { return oldHeight + 5 });
         t.assertIdentical(75, $('#offset').height());
+      },
+
+      testInnerHeight: function(t) {
+        t.assertIdentical(105, $('#dimensions').innerHeight());
+        $('#dimensions').height('105px');
+        t.assertIdentical(110, $('#dimensions').innerHeight());
+        $('#dimensions').height('100px').css('padding-top','6px').css('border-top-width', '60px');
+        t.assertIdentical(110, $('#dimensions').innerHeight());
+        $('#dimensions').css('padding-top','1px').css('border-top-width', '10px');
+      },
+
+      testOuterHeight: function(t) {
+        t.assertIdentical(155, $('#dimensions').outerHeight());
+        t.assertIdentical(655, $('#dimensions').outerHeight(true));
+        $('#dimensions').height('105px');
+        t.assertIdentical(160, $('#dimensions').outerHeight());
+        t.assertIdentical(660, $('#dimensions').outerHeight(true));
+        $('#dimensions').height('100px').css('padding-top','6px').css('border-top-width', '60px').css('margin-top', '600px');
+        t.assertIdentical(210, $('#dimensions').outerHeight());
+        t.assertIdentical(1210, $('#dimensions').outerHeight(true));
+        $('#dimensions').css('padding-top','1px').css('border-top-width', '10px').css('margin-top', '100px');
       },
 
       testClosest: function(t){
