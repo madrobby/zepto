@@ -39,11 +39,15 @@
     }).bind('touchmove', function(e){
       touch.x2 = e.touches[0].pageX;
       touch.y2 = e.touches[0].pageY;
+      if( Math.abs(touch.x1 - touch.x2 ) > 10) {
+        e.preventDefault();
+      }
     }).bind('touchend', function(e){
       if (touch.isDoubleTap) {
         touch.el.trigger('doubleTap');
         touch = {};
       } else if (touch.x2 > 0 || touch.y2 > 0) {
+        ((Date.now() - touch.last < 1000) && (Math.abs(touch.x1 - touch.x2) > 30) && (Math.abs(touch.y1 - touch.y2) < 75)) &&
         (Math.abs(touch.x1 - touch.x2) > 30 || Math.abs(touch.y1 - touch.y2) > 30)  &&
           touch.el.trigger('swipe') &&
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)));
