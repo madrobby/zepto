@@ -27,6 +27,7 @@
   }
 
   $(document).ready(function(){
+    var longTapTimeout;
     $(document.body).bind('touchstart', function(e){
       var now = Date.now(), delta = now - (touch.last || now);
       touch.el = $(parentIfText(e.touches[0].target));
@@ -35,8 +36,9 @@
       touch.y1 = e.touches[0].pageY;
       if (delta > 0 && delta <= 250) touch.isDoubleTap = true;
       touch.last = now;
-      setTimeout(longTap, longTapDelay);
+      longTapTimeout = setTimeout(longTap, longTapDelay);
     }).bind('touchmove', function(e){
+      clearTimeout(longTapTimeout);
       touch.x2 = e.touches[0].pageX;
       touch.y2 = e.touches[0].pageY;
     }).bind('touchend', function(e){
