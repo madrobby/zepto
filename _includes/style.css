@@ -116,6 +116,8 @@ article.method .highlight pre {
   border-left: 5px solid #bbb;
 }
 
+article.changelog h3 small { font-weight: normal }
+
 /* syntax */
 .hll { background-color: #ffffcc }
 .c { color: #888888 } /* Comment */

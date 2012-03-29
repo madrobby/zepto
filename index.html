@@ -12,6 +12,8 @@ version: 0.8
     {{ page.title }} <span class="version">({{ page.version }})</span>
   </a>
 
+  <a class=toc_title href="#changelog">Change log</a>
+
   <a class=toc_title href="#core">Core</a>
   {% assign posts = site.categories.core %}
   {% include methods_sidebar.html %}
@@ -86,14 +88,15 @@ version: 0.8
 
     <h2 id="changelog">Change Log</h2>
 
-    <p>
-      <b class="header">0.8</b> &mdash; <small><i>November 3, 2011</i></small><br />
-      <ul>
-        <li>CSS transitions for every browser with <code>animate()</code> method;</li>
-        <li>unified event handling with <code>fn.on()</code> &amp; <code>off()</code>;</li>
-        <li>performance boost for selectors.</li>
-      </ul>
-    </p>
+    {% for change in site.categories.changelog %}
+    <article class=changelog>
+      <h3>
+        {{ change.title }}
+        <small>&mdash; <i>{{ change.date | date_to_string }}</i></small>
+      </h3>
+      {{ change.content }}
+    </article>
+    {% endfor %}
 
   </section>
 
