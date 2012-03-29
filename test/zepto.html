@@ -305,6 +305,24 @@
         obj = {};
         t.assertIdentical(obj, $.extend(obj, {a: 1}, {b: 2}))
         t.assertEqual(2, obj.b);
+
+        // Shallow copy by default
+        obj = {a: "b", c: {d: "e"}};
+        var obj2 = $.extend({}, obj);
+        t.assertIdentical(obj.c.d, obj2.c.d);
+        t.assertIdentical(obj.c, obj2.c);
+
+        // Deep copy
+        obj = {a: "b", c: {d: "e"}};
+        obj2 = $.extend(true, {}, obj);
+        t.assertIdentical(obj.c.d, obj2.c.d);
+        t.refuteIdentical(obj.c, obj2.c);
+
+        // Shallow copy
+        obj = {a: "b", c: {d: "e"}};
+        obj2 = $.extend(false, {}, obj);
+        t.assertIdentical(obj.c.d, obj2.c.d);
+        t.assertIdentical(obj.c, obj2.c);
       },
 
       testDollar: function(t){

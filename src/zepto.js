@@ -95,8 +95,23 @@ var Zepto = (function() {
   }
 
   $.extend = function(target){
-    slice.call(arguments, 1).forEach(function(source) {
-      for (key in source) target[key] = source[key];
+    var args, deep=false;
+    if ( typeof target === 'boolean' ) {
+      deep = target;
+      args = slice.call(arguments, 2);
+      target = arguments[1];
+    } else {
+      args = slice.call(arguments, 1);
+    }
+    args.forEach(function(source) {
+      for (key in source) {
+        if ( $.isObject(source[key]) && deep && !source.nodeName ) {
+          target[key] = {};
+          $.extend(true, target[key], source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
     })
     return target;
   }
