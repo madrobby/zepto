@@ -4,7 +4,7 @@ signature: |
   prependTo(target) ⇒ self
 ---
 
-Prepend elements in the current collection inside the target element(s). This is
+Prepend elements of the current collection inside each of the target elements. This is
 like [prepend](#prepend), only with reversed operands.
 
 {% highlight js %}
