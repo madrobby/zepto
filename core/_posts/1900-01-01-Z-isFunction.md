@@ -1,6 +1,7 @@
 ---
 title: $.isFunction
 signature: |
-  $.isFunction(object)
+  $.isFunction(object) ⇒ boolean
 ---
 
+True if the object is a Function.

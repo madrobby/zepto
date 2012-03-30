@@ -1,6 +1,7 @@
 ---
 title: serialize
 signature: |
-  serialize()
+  serialize() ⇒ string
 ---
 
+Serialize form values to an URL-encoded string for use in Ajax post requests.
