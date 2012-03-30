@@ -40,23 +40,35 @@ github_url: https://github.com/madrobby/zepto
 <div class="container">
 
   <header>
-    
   <img src="logo.png">
-    
-  <h1>
-    {{ page.title }}
-    <span>–</span>
-    <small>{{ page.description }}</small>
-  </h1>
+  
+  <p>
+    <b><a href="{{ page.github_url }}">Zepto</a> is a minimalist JavaScript framework
+    for modern browsers</b> with a jQuery-compatible chaining syntax.
+  </p>
 
   <p>
-    <b><a href="{{ page.github_url }}">Zepto</a>
-    is a minimalist JavaScript framework</b>
-    with&nbsp;a&nbsp;jQuery-compatible syntax,
-    designed for mobile apps in mind.
+    While 100% jQuery coverage is not a design goal, the APIs provided 
+    match their jQuery counterparts. The ultimate goal is to have a ~5-10k library 
+    that downloads and executes fast, with a familiar and versatile API,
+    so you can concentrate on getting stuff done.
   </p>
+  
+  <p>
+    Zepto is released under the developer- and business-friendly
+    <a href="#license">MIT license</a>.
+  </p>
+  
   </header>
-
+  
+  <h3>Download Zepto</h3>
+  
+  <p>
+    These downloads include a build of Zepto that includes the
+    <em>Core, Ajax, Event, Form, Effects, Touch, Polyfill, and Detect</em>
+    modules.
+  </p>
+  
   <ul>
     <li>
       <a href="zepto.js">zepto.js v{{ page.version }}</a>
@@ -66,7 +78,78 @@ github_url: https://github.com/madrobby/zepto
       <a href="zepto.min.js">zepto.min.js v{{ page.version }}</a>
       – <i>7.6 kB when gzipped</i>
     </li>
+    <li>
+      <a href="https://github.com/madrobby/zepto">Source code on GitHub</a>
+      — <i>Latest and greatest!</i>
+    </li>
   </ul>
+  
+  <p>
+    To include Zepto on your page, download the minified version (or build it yourself)
+    and include it like this on your page:
+  </p>
+  
+  {% highlight html %}<script src="/path/to/zepto.min.js"></script>{% endhighlight %}
+
+  <p>
+    We recommend to place this tag at the end of your page, just before
+    the closing <code>&lt;/html&gt;</code> tag.
+  </p>
+
+  <h3>Target platforms</h3>
+
+  <p>
+    Primarily, Zepto is targeted at these mobile platforms:
+  </p>
+
+  <ul>
+    <li>iOS 4+</li>
+    <li>Android 2.2+</li>
+    <li>webOS 1.4.5+</li>
+    <li>BlackBerry Tablet OS 1.0.7+</li>
+  </ul>
+  
+  <p>
+    Other supported platforms are:
+  </p>
+
+  <ul>
+    <li>Safari 5+ (desktop)</li>
+    <li>Chrome 5+ (desktop)</li>
+    <li>Other WebKit-based browsers/runtimes</li>
+    <li>Mozilla Firefox 4+</li>
+    <li>Opera 10+</li>
+  </ul>
+  
+  <p>
+    Zepto is a good choice for browser extensions (for Safari and Chrome) and
+    to develop HTML-based views within native app frameworks, such as
+    <a href="http://phonegap.com/">PhoneGap</a>.
+  <p>
+    
+  <p>    
+    In short, Zepto is expected to work in every modern browser
+    and browser-like environment; except for Internet Explorer.
+  </p>
+  
+  <h3>Manually building Zepto</h3>
+  
+  <p>
+    <code>zepto.js</code> and <code>zepto.min.js</code> can be used as-is.
+    However, for best efficiency and customizability, run the build system
+    that comes with Zepto's source code.
+    It allows you to select modules, run tests,
+    use <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a> to
+    minify your custom build, and gives you an estimate on the compression 
+    that is achievable when  <code>zepto.min.js</code> is served Gzipped.
+  </p>
+
+  <p>
+    Please refer to <a href="https://github.com/madrobby/zepto/blob/master/README.md">
+    the README in the zepto GitHub repository</a> for further instructions on how
+    to build Zepto; including running the tests and contributing patches.
+  </p>
+
 
   <section id=documentation>
 
