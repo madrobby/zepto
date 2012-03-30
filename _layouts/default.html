@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name=viewport content="width=device-width, initial-scale=1.0">
   <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <title>{{ page.title | replace:'&nbsp;',' ' | escape }}</title>
   {% if page.description %}
-  <meta name="description" content="{{ page.description | escape }}">
+  <meta name=description content="{{ page.description | escape }}">
   {% endif %}
-  <style>{% include style.css %}</style>
+  <link rel=stylesheet href=style.css>
 </head>
 <body>
 
