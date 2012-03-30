@@ -2,7 +2,7 @@
 body {
   font-size: 14px;
   line-height: 22px;
-  background: #f4f4f4;
+  background: #fff;
   color: #000;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
@@ -10,7 +10,7 @@ body {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
 }
 #sidebar {
-  background: #fff;
+  background: #f4f4f4;
   position: fixed;
   top: 0; left: 0; bottom: 0;
   width: 200px;
@@ -89,7 +89,9 @@ h1:first-child small {
   font-style: italic;
   font-weight: 100;
 }
-h2 { font-size: 20px; padding-bottom: .5em }
+h2 { 
+  font-size: 20px; padding-bottom: .5em 
+}
 ul {
   list-style-type: circle;
   padding: 0 0 0 20px;
@@ -98,9 +100,37 @@ li + li {
   margin-top: .3em;
 }
 code, pre, tt {
-  font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace;
+  font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace; 
 }
-pre { margin: 0 }
+pre {
+background: #f8f8ff;
+border: 2px solid #eee;
+padding: 10px;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+overflow: auto;
+}
+pre.signature {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  background: 0;
+  overflow: visible;
+}
+pre.signature code {
+  background-color: transparent !important;
+}
+code {
+background-color: #f8f8ff;
+padding: 1px 3px;
+-webkit-border-radius: 2px;
+-moz-border-radius: 2px;
+border-radius: 2px;
+}
+p > code, li > code {
+  border: 1px solid #eee;
+}
 tt {
   padding: 0px 3px;
   background: #fff;
@@ -108,13 +138,12 @@ tt {
   zoom: 1;
 }
 
+article {
+  margin: 0 0 20px 0;
+}
+
 article.method h3 { margin-bottom: .2em; }
 article.method p { margin: .5em 0 }
-article.method .highlight pre {
-  font-size: 12px;
-  padding: 2px 0 2px 15px;
-  border-left: 5px solid #bbb;
-}
 
 article.changelog h3 small { font-weight: normal }
 
