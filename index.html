@@ -234,7 +234,7 @@ github_url: https://github.com/madrobby/zepto
 
 <script type="text/javascript">
   var _gauges = _gauges || [];
-  (function() {
+  if (/\.com$/.test(location.hostname)) (function() {
     var t   = document.createElement('script');
     t.type  = 'text/javascript';
     t.async = true;
