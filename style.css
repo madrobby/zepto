@@ -145,6 +145,13 @@ article {
 }
 
 article.method h3 { margin-bottom: .2em; }
+article.method h3 .emoji { display: none }
+.emoji-enabled article.method h3 .emoji {
+  display: inline;
+  font-weight: normal;
+  font-size: 28px;
+  cursor: default;
+}
 article.method p { margin: .5em 0 }
 
 article.changelog h3 small { font-weight: normal }

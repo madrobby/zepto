@@ -216,6 +216,9 @@ github_url: https://github.com/madrobby/zepto
   $('.signature code').html(function(i, html){
     return html.replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
   })
+
+  if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
+    $(document.body).addClass('emoji-enabled')
 </script>
 
 <script src="http://platform.twitter.com/widgets.js"></script>
