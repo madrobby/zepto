@@ -7,3 +7,4 @@ pkg
 docs/*
 .jhw-cache
 .rbenv-version
+public/
