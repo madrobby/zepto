@@ -55,13 +55,8 @@ github_url: https://github.com/madrobby/zepto
   </p>
   
   <p>
-    See <a href="http://mir.aculo.us/2010/10/28/zepto-js-a-jquery-compatible-mobile-javascript-framework-in-2k-presentation/">a presentation on Zepto</a> to get a better
-    understanding about what it is all about!
-  </p>
-  
-  <p>
     Zepto is released under the developer- and business-friendly
-    <a href="#license">MIT license</a>.
+    <a href="{{ page.github_url }}/blob/master/MIT-LICENSE">MIT license</a>.
   </p>
   
   <p>
@@ -70,12 +65,11 @@ github_url: https://github.com/madrobby/zepto
   
   </header>
   
-  <h3>Download Zepto</h3>
+  <h3 id=download>Download Zepto</h3>
   
   <p>
-    These downloads include a build of Zepto that includes the
-    <em>Core, Ajax, Event, Form, Effects, Touch, Polyfill, and Detect</em>
-    modules.
+    The default build includes the following modules:<br>
+    <em>Core, Ajax, Event, Form, Effects, Touch, Polyfill, and Detect</em>.
   </p>
   
   <ul>
@@ -88,22 +82,19 @@ github_url: https://github.com/madrobby/zepto
       – <i>7.6 kB when gzipped</i>
     </li>
     <li>
-      <a href="https://github.com/madrobby/zepto">Source code on GitHub</a>
-      — <i>Latest and greatest!</i>
+      <a href="{{ page.github_url }}">source code</a>
     </li>
   </ul>
   
   <p>
-    To include Zepto on your page, download the minified version (or build it yourself)
-    and include it like this on your page:
+    Include Zepto with a script tag near the end of your page:
   </p>
   
-  {% highlight html %}<script src="/path/to/zepto.min.js"></script>{% endhighlight %}
-
-  <p>
-    We recommend to place this tag at the end of your page, just before
-    the closing <code>&lt;/html&gt;</code> tag.
-  </p>
+  {% highlight html %}
+  ...
+  </body>
+  <script src="zepto.js"></script>
+  </html>{% endhighlight %}
 
   <h3>Target platforms</h3>
 
@@ -154,9 +145,9 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <p>
-    Please refer to <a href="https://github.com/madrobby/zepto/blob/master/README.md">
+    Please refer to <a href="{{ page.github_url }}/blob/master/README.md">
     the README in the zepto GitHub repository</a> for further instructions on how
-    to build Zepto; including running the tests and contributing patches.
+    to build Zepto, including running the tests and contributing patches.
   </p>
 
 
@@ -210,14 +201,11 @@ github_url: https://github.com/madrobby/zepto
     </p>
     
     <p>
-      This documentation is based in part on the 
+      This documentation is based on the layout of
       <a href="https://github.com/documentcloud/backbone/">Backbone.js</a> 
       documentation, which is released under the 
       <a href="https://github.com/documentcloud/backbone/blob/master/LICENSE">MIT license</a>.
     </p>
-    
-    <h2 id="license">License</h2>
-    {% include license.html %}
 
   </section>
 
