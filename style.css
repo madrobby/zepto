@@ -121,6 +121,7 @@ pre.signature {
 pre.signature code {
   background-color: transparent !important;
 }
+pre.signature .return { color: gray }
 code {
 background-color: #f8f8ff;
 padding: 1px 3px;
@@ -128,6 +129,7 @@ padding: 1px 3px;
 -moz-border-radius: 2px;
 border-radius: 2px;
 }
+pre code { padding: 0 }
 p > code, li > code {
   border: 1px solid #eee;
 }
