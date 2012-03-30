@@ -2,7 +2,7 @@
 # wget -q http://api.cld.me/FQsT/download/jekyll-reloaded-0.11.2.gem && gem i *.gem
 
 guard 'jekyll' do
-  ignores   = %r{^(?:bin|public)/}
+  ignores   = %r{^(?:\.|Guardfile|bin/|public/)}
   includes  = %r{^_includes/}
   posts     = %r{(?:^|/)_posts/}
   home_page = 'index.html'
