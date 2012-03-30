@@ -134,7 +134,7 @@
         t.pause()
         var el = testEl.load('fixtures/ajax_load_simple.html', function(){
           var that = this
-          deferredResume(t, function() {
+          deferredResume(t, function(){
             this.assertIdentical(testEl, that)
             this.assertEqual('simple ajax load', testEl.html().trim())
           })
@@ -145,34 +145,34 @@
       testAjaxLoadWithSelector: function(t) {
         var testEl = $('#ajax_load')
         t.pause()
-        testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function() {
+        testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function(){
           deferredResume(t, function() {
             this.assertEqual('ajax load with selector', testEl.html().trim())
           })
         })
       },
 
-	testAjaxLoadWithJavaScript: function (t) {
-		var testEl = $('#ajax_load')
-		t.pause()
-		window.testValue = 0
-		testEl.load('fixtures/ajax_load_selector_javascript.html', function() {
-			deferredResume(t, function () {
-				this.assertEqual(window.testValue, 1)
-			})
-		})
-	},
-
-	testAjaxLoadWithSelectorAndJavaScript: function (t) {
-		var testEl = $('#ajax_load')
-		t.pause()
-		window.testValue = 0
-		testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function() {
-			deferredResume(t, function () {
-				this.assertEqual(window.testValue, 0)
-			})
-		})
-	},
+      testAjaxLoadWithJavaScript: function (t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        window.testValue = 0
+        testEl.load('fixtures/ajax_load_selector_javascript.html', function(){
+          deferredResume(t, function(){
+            this.assertEqual(window.testValue, 1)
+          })
+        })
+      },
+      
+      testAjaxLoadWithSelectorAndJavaScript: function (t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        window.testValue = 0
+        testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function() {
+          deferredResume(t, function(){
+            this.assertEqual(window.testValue, 0)
+          })
+        })
+      },
 
       testAjaxWithContext: function(t) {
         t.pause()
@@ -180,11 +180,23 @@
         $.ajax({
           url: 'fixtures/ajax_load_simple.html',
           context: body,
-          complete: function () {
+          complete: function(){
             var that = this
-            deferredResume(t, function() {
+            deferredResume(t, function(){
               this.assertIdentical(body, that)
             })
+          }
+        })
+      },
+      
+      testAjaxWithObjectContext: function(t) {
+        t.pause()
+        var context = {}
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: context,
+          complete: function(){
+            deferredResume(t)
           }
         })
       }
@@ -403,7 +415,7 @@
         t.assertEqual(MockXHR.last, xhr)
       },
 
-      testBeforeSendCallback: function(t) {
+      testBeforeSendAbortCallback: function(t) {
         var xhr, beforeFired = false, settings = {}
         $.ajax({
           data: "1=2",

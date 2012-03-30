@@ -26,6 +26,7 @@ var Zepto = (function() {
 
   function isFunction(value) { return ({}).toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
+  function isJSObject(value) { return ({}).toString.call(value) == "[object Object]" }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
@@ -86,6 +87,8 @@ var Zepto = (function() {
     else {
       var dom
       if (isArray(selector)) dom = compact(selector)
+      else if (isJSObject(selector)) 
+        dom = [$.extend({}, selector)], selector = null
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null
       else if (fragmentRE.test(selector))

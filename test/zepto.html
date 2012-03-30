@@ -332,6 +332,9 @@
         var zepto = $(['a', 'b', 'c'])
         t.assertLength(3, zepto)
         t.assertEqualCollection(['a', 'b', 'c'], zepto)
+        
+        t.assert($({}))
+        t.assertTrue($({ a:true })[0].a)
       },
 
       testGetWithoutIndex: function(t){
