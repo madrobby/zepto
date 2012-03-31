@@ -24,7 +24,7 @@ var Zepto = (function() {
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/
 
-  function isFunction(value) { return toString.call(value) == "[object Function]" }
+  function isFunction(value) { return typeof value === 'function' }
   function isObject(value) { return value instanceof Object }
   function isPlainObject(value) {
     var key, ctor
