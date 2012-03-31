@@ -202,6 +202,20 @@ p.compat a {
   color: #000 !important;
 }
 
+/* this solves scrolling issues and taps not being recognized specifically on ipad */
+body.ipad .container { 
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  overflow: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px 30px 20px 0;
+  margin: 0;
+  max-width: 480px;
+}
+body.ipad img[src^=logo] { max-width: 460px }  
+
 @media only screen and (max-width: 480px) {
   body { margin: 0; padding: 0 }
   p { margin: .5em 0 }

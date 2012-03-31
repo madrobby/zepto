@@ -201,7 +201,7 @@ github_url: https://github.com/madrobby/zepto
     </p>
     
     <p>
-      This documentation is based on the layout of
+      This documentation is based on the layout of the
       <a href="https://github.com/documentcloud/backbone/">Backbone.js</a> 
       documentation, which is released under the 
       <a href="https://github.com/documentcloud/backbone/blob/master/LICENSE">MIT license</a>.
@@ -217,6 +217,9 @@ github_url: https://github.com/madrobby/zepto
     return html.replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
   })
 
+  if ($.os.ipad)
+    $(document.body).addClass('ipad')
+
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
 
@@ -230,7 +233,7 @@ github_url: https://github.com/madrobby/zepto
 
 <script src="http://platform.twitter.com/widgets.js"></script>
 
-<script type="text/javascript">
+<script>
   var _gauges = _gauges || [];
   if (/\.com$/.test(location.hostname)) (function() {
     var t   = document.createElement('script');
