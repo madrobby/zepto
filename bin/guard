@@ -3,4 +3,4 @@ if [ -z "$BUNDLE_GEMFILE" ]; then
   export BUNDLE_GEMFILE=shutup
 fi
 
-guard --no-notify
+exec guard --no-notify "$@"

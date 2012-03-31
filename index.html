@@ -219,6 +219,13 @@ github_url: https://github.com/madrobby/zepto
 
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
+
+  if (location.hostname == 'zepto.dev' && $.os.ios) {
+    var lr = document.createElement('script')
+    lr.src = 'livereload.js'; lr.async = true
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(lr, s)
+  }
 </script>
 
 <script src="http://platform.twitter.com/widgets.js"></script>
