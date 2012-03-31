@@ -4,15 +4,16 @@
 var apiVersion = '1.6',
     port = 35729,
     uri = 'ws://' + location.hostname + ':' + port + '/websocket',
-    active, socket
+    reconnectTimeout = 2000,
+    socket, intentionalClose
 
-function connect() {
-  socket = new WebSocket(uri)
+function debug(msg, type) {
+  // console.log(msg)
 }
 
-function debug(type, e) {
-  console.log('%s: %o', type, e.data)
-  console.log('readyState: %d', socket.readyState)
+function close() {
+  intentionalClose = true
+  socket.close()
 }
 
 function special(msg) {
@@ -21,11 +22,11 @@ function special(msg) {
     if (ver == apiVersion) {
       socket.send(location.href)
     } else {
-      console.error('unsupported protocol: ' + ver)
-      socket.close()
+      debug('unsupported protocol: ' + ver, 'error')
+      close()
     }
   }
-  else console.error('unknown message: ' + msg)
+  else debug('unknown message: ' + msg, 'error')
 }
 
 function addTimestamp(href) {
@@ -41,6 +42,7 @@ function onStylesheetLoaded(link, fn) {
   setTimeout(fn, 200)
 }
 
+// requires Zepto
 function refreshStylesheet(path) {
   $('link[rel=stylesheet]').each(function() {
     var link = $(this), href = link.attr('href')
@@ -55,7 +57,7 @@ function refreshStylesheet(path) {
 }
 
 function reloadPage() {
-  window.location = location.href
+  window.location = location.href.split('#', 2)[0]
 }
 
 function refresh(path) {
@@ -72,24 +74,33 @@ function refresh(path) {
 function message(e) {
   if ('!!' == e.data.slice(0,2)) special(e.data)
   else {
+    return debug(e.data)
     var data = JSON.parse(e.data),
         action = data[0], options = data[1]
 
     if ('refresh' == action) refresh(options.path, options)
-    else console.error('unknown action: ' + action)
+    else debug('unknown action: ' + action, 'error')
   }
 }
 
-connect()
+function connect(onmessage, reconnect) {
+  socket = new WebSocket(uri)
 
-socket.onopen = function(e){
-  active = true
+  socket.onopen = function(e){
+    debug('open')
+  }
+  socket.onmessage = onmessage
+  socket.onclose = function(e){
+    debug('close')
+    if (!intentionalClose) reconnect()
+    intentionalClose = false
+  }
+  socket.onerror = function(e){ debug('error') }
 }
-socket.onmessage = message
-socket.onclose = function(e){
-  if (!active) setTimeout(connect, 1000)
-  active = false
-}
-socket.onerror = function(e){ debug('error', e) }
+
+connect(message, function(){
+  var self = arguments.callee
+  setTimeout(function(){ connect(message, self) }, reconnectTimeout)
+})
 
 })(Zepto)
