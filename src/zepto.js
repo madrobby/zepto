@@ -22,7 +22,8 @@ var Zepto = (function() {
     readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
-    tagSelectorRE = /^[\w-]+$/
+    tagSelectorRE = /^[\w-]+$/,
+    toString = ({}).toString
 
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }

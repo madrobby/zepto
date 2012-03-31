@@ -287,6 +287,29 @@
 
     Evidence('ZeptoTest', {
 
+      testIsFunction: function(t) {
+        t.assertTrue($.isFunction(function(){}))
+        t.assertTrue($.isFunction(new Function()))
+
+        var f1 = function(){}
+        function f2(){}
+
+        t.assertTrue($.isFunction(f1))
+        t.assertTrue($.isFunction(f2))
+
+        t.assertFalse($.isFunction())
+        t.assertFalse($.isFunction(undefined))
+        t.assertFalse($.isFunction({}))
+        t.assertFalse($.isFunction(new Object()))
+        t.assertFalse($.isFunction(null))
+        t.assertFalse($.isFunction([]))
+        t.assertFalse($.isFunction(1))
+        t.assertFalse($.isFunction('a'))
+        t.assertFalse($.isFunction(new Date()))
+        t.assertFalse($.isFunction(window))
+        t.assertFalse($.isFunction($('body')))
+      },
+
       testIsPlainObject: function(t) {
         t.assertTrue($.isPlainObject(new Object()), 'Object is plain object');
         t.assertTrue($.isPlainObject({}), '{} is plain object');
