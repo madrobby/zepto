@@ -19,9 +19,12 @@ for file in files
   missing << file unless docs
 end
 
-if missing.any?
-  num_documented = files.size - missing.size
-  $stderr.puts "methods documented: %d%%" % (num_documented.to_f / files.size * 100)
+num_documented = files.size - missing.size
+percent_documented = num_documented.to_f / files.size * 100
+
+warn "methods documented: %d%%" % percent_documented
+
+if percent_documented < 100
   puts missing
   exit 1
 else

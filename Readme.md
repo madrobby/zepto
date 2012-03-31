@@ -15,22 +15,26 @@ $ jekyll
 $ open public/index.html
 ~~~
 
-Faster building, rebuilding
----------------------------
+Faster building & rebuilding
+----------------------------
 
 The `jekyll` command to rebuild the site can be slow because of syntax
-highlighting with [Albino][]. There is a `bin/jekyll` executable which uses
-Mislav's fork of Jekyll to use [Pygments.rb][] for syntax highlighting and is
-thus faster.
+highlighting with [Albino][]. There is an executable which uses a fork of Jekyll
+that uses [Pygments.rb][] and is thus faster:
 
-To use `bin/jekyll`, install the prerequisite noted in its comments.
+~~~ sh
+# check if you have necessary gems installed
+$ bin/doctor
 
-Then, for quicker rebuilding of the site, you can start up [Guard][]:
-
+# faster rebuild!
+$ bin/jekyll [<file>, [<file2>, ...]]
 ~~~
-$ gem i guard guard-livereload rb-fsevent
-# note: this has the same prerequisite as `bin/jekyll`
-$ bin/guard
+
+For quicker rebuilding of the site, you can start up [Guard][]:
+
+~~~ sh
+$ bin/doctor    # check dependencies
+$ bin/guard     # live rebuilding of the site!
 ~~~
 
 Guard will use Jekyll to rebuild parts of the site as individual files change.
@@ -44,9 +48,12 @@ $ ln -s `pwd` ~/.pow/zepto
 $ open http://zepto.dev
 ~~~
 
-To have your browser live-reloading the page on changes, install [the browser
-extension][lr], open "zepto.dev" and enable LiveReload in the browser (usually
-via button added by the extension) while Guard is running.
+To have your desktop browser automatically reload after changes, install [the
+LiveReload browser extension][lr], open "zepto.dev" and enable LiveReload in the
+browser (usually via button added by the extension) while Guard is running.
+
+iOS clients are automatically configured with this functionality (no browser
+plugin needed) when running locally.
 
 
   [jekyll]: http://jekyllrb.com/

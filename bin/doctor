@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby -rubygems
+require 'set'
+require 'rbconfig'
+
+$VERBOSE = nil
+missing  = Set.new
+macos    = RbConfig::CONFIG['target_os'] =~ /darwin(9|1\d)/i
+
+def req file
+  begin
+    require file; true
+  rescue LoadError
+    false
+  end
+end
+
+missing << 'rdiscount'        unless req('rdiscount')
+missing << 'guard'            unless req('guard')
+missing << 'guard-livereload' unless req('guard/livereload')
+missing << 'jekyll-reloaded'  unless req('guard/jekyll')
+missing << 'rb-fsevent' if macos and !req('rb-fsevent')
+
+if missing.any?
+  $stderr.puts "missing gems: #{missing.to_a.join(' ')}"
+  exit 1
+else
+  puts "dependencies OK."
+  exit 0
+end
