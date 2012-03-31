@@ -255,9 +255,6 @@ p.compat a {
   article.method pre { margin: 0; white-space: pre-wrap }
   pre { padding: 2px 8px }
 }
-@media only screen and (-webkit-min-device-pixel-ratio: 2) {
-  img[src^=logo] { max-width: 263px }
-}
 
 /* syntax */
 .hll { background-color: #ffffcc }
