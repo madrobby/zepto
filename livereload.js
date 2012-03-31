@@ -74,7 +74,6 @@ function refresh(path) {
 function message(e) {
   if ('!!' == e.data.slice(0,2)) special(e.data)
   else {
-    return debug(e.data)
     var data = JSON.parse(e.data),
         action = data[0], options = data[1]
 
