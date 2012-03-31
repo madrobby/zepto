@@ -65,10 +65,10 @@ p {
   margin: 20px 0;
 }
 a, a:visited {
-  color: #444;
+  color: #724dff;
 }
 a:active, a:hover {
-  color: #000;
+  color: #6180f4;
 }
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -188,6 +188,18 @@ a.download:active {
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,32,0.16)), to(rgba(0,0,32,0.01)));
   background-image: -moz-linear-gradient(rgba(0,0,32,0.16), rgba(0,0,32,0.01));
   box-shadow: inset 0 2px 2px rgba(0,0,0,0.1);
+}
+
+p.compat {
+  padding: 4px 10px;
+  border-left: 2px solid #ff8;
+  background: #ffe;
+  color: #000;
+}
+
+p.compat a {
+  font-weight: bold;
+  color: #000 !important;
 }
 
 @media only screen and (max-width: 480px) {
