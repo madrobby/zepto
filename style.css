@@ -212,7 +212,7 @@ body.ipad .container {
   bottom: 0;
   padding: 20px 30px 20px 0;
   margin: 0;
-  max-width: 480px;
+  width: 480px;
 }
 body.ipad #sidebar {
   font-size: 20px;
@@ -221,6 +221,9 @@ body.ipad #sidebar {
 body.ipad #sidebar .toc_section li {
   font-size: 16px;
   line-height: 22px;
+}
+body.ipad pre.signature {
+  white-space: pre-wrap 
 }
 body.ipad img[src^=logo] { max-width: 460px }  
 
