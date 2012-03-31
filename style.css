@@ -202,30 +202,32 @@ p.compat a {
   color: #000 !important;
 }
 
-/* this solves scrolling issues and taps not being recognized specifically on ipad */
-body.ipad .container { 
-  -webkit-overflow-scrolling: touch;
-  position: fixed;
-  overflow: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  padding: 20px 30px 20px 0;
-  margin: 0;
-  width: 480px;
+@media only screen and (device-width: 768px) {
+  /* this solves scrolling issues and taps not being recognized specifically on ipad */
+  .container {
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    overflow: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px 30px 20px 260px;
+    box-sizing: border-box;
+    margin: 0;
+    max-width: none;
+    width: 100%;
+    z-index: -10;
+  }
+  img[src^=logo] { max-width: 460px }
+  #sidebar {
+    z-index: 10;
+  }
+  #sidebar .toc_section li {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  pre { white-space: pre-wrap }
 }
-body.ipad #sidebar {
-  font-size: 20px;
-  line-height: 22px;
-}
-body.ipad #sidebar .toc_section li {
-  font-size: 16px;
-  line-height: 22px;
-}
-body.ipad pre.signature {
-  white-space: pre-wrap 
-}
-body.ipad img[src^=logo] { max-width: 460px }  
 
 @media only screen and (max-width: 480px) {
   body { margin: 0; padding: 0 }

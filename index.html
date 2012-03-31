@@ -217,9 +217,6 @@ github_url: https://github.com/madrobby/zepto
     return html.replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
   })
 
-  if ($.os.ipad)
-    $(document.body).addClass('ipad')
-
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
 
