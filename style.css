@@ -214,6 +214,14 @@ body.ipad .container {
   margin: 0;
   max-width: 480px;
 }
+body.ipad #sidebar {
+  font-size: 20px;
+  line-height: 22px;
+}
+body.ipad #sidebar .toc_section li {
+  font-size: 16px;
+  line-height: 22px;
+}
 body.ipad img[src^=logo] { max-width: 460px }  
 
 @media only screen and (max-width: 480px) {
