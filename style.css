@@ -81,13 +81,7 @@ h1:first-child {
   font-size: 2.2em;
   font-weight: 200;
 }
-h1:first-child span { display: none }
-h1:first-child small {
-  display: block;
-  font-size: .7em;
-  font-style: italic;
-  font-weight: 100;
-}
+img[src^=logo] { max-width: 100% }
 h2 { 
   font-size: 20px; padding-bottom: .5em 
 }
@@ -116,6 +110,7 @@ pre.signature {
   border-radius: 0;
   background: 0;
   overflow: visible;
+  white-space: pre-wrap;
 }
 pre.signature code {
   background-color: transparent !important;
