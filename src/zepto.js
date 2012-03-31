@@ -24,9 +24,16 @@ var Zepto = (function() {
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/
 
-  function isFunction(value) { return ({}).toString.call(value) == "[object Function]" }
+  function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
-  function isJSObject(value) { return ({}).toString.call(value) == "[object Object]" }
+  function isPlainObject(value) {
+    var key, ctor
+    if (toString.call(value) !== "[object Object]") return false
+    ctor = (typeof value.constructor === 'function' && value.constructor.prototype)
+    if (!ctor || !hasOwnProperty.call(ctor, 'isPrototypeOf')) return false
+    for (key in value);
+    return key === undefined || hasOwnProperty.call(value, key)
+  }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
@@ -87,7 +94,7 @@ var Zepto = (function() {
     else {
       var dom
       if (isArray(selector)) dom = compact(selector)
-      else if (isJSObject(selector)) 
+      else if (isPlainObject(selector))
         dom = [$.extend({}, selector)], selector = null
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null
@@ -131,6 +138,7 @@ var Zepto = (function() {
   $.isFunction = isFunction
   $.isObject = isObject
   $.isArray = isArray
+  $.isPlainObject = isPlainObject
 
   $.inArray = function(elem, array, i){
 		return emptyArray.indexOf.call(array, elem, i)

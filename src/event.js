@@ -164,10 +164,10 @@
     if (typeof event == 'string') event = $.Event(event)
     fix(event)
     event.data = data
-    return this.each(function(){ 
+    return this.each(function(){
       // items in the collection might not be DOM elements
       // (todo: possibly support events on plain old objects)
-      if('dispatchEvent' in this) this.dispatchEvent(event) 
+      if('dispatchEvent' in this) this.dispatchEvent(event)
     })
   }
 
