@@ -225,6 +225,7 @@ p.compat a {
 }
 
 @media only screen and (max-width: 480px) {
+  html { -webkit-text-size-adjust: 100% }
   body { margin: 0; padding: 0 }
   p { margin: .5em 0 }
   h1, h2, h3, h4, h5, h6 { padding-top: .5em }
