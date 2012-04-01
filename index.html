@@ -57,14 +57,15 @@ github_url: https://github.com/madrobby/zepto
   </div>
 
   <p>
-    While 100% jQuery coverage is not a design goal, the APIs provided 
-    match their jQuery counterparts. The ultimate goal is to have a ~5-10k library 
-    that downloads and executes fast, with a familiar and versatile API,
-    so you can concentrate on getting stuff done.
+    While 100% jQuery coverage is not a design goal, the <b>APIs provided 
+    match their jQuery counterparts</b>. The ultimate goal is to have a ~5-10k library 
+    that <b>downloads and executes fast</b>, with a <b>familiar and versatile API</b>,
+    so you can <b>concentrate on getting stuff done</b>.
   </p>
   
   <p>
-    Zepto is released under the developer- and business-friendly
+    Zepto is open source software and released under the 
+    developer- and business-friendly 
     <a href="{{ page.github_url }}/blob/master/MIT-LICENSE">MIT license</a>.
   </p>
   
@@ -79,6 +80,11 @@ github_url: https://github.com/madrobby/zepto
   <p>
     The default build includes the following modules:<br>
     <em>Core, Ajax, Event, Form, Effects, Touch, Polyfill, and Detect</em>.
+  </p>
+
+  <p class=compat>
+    We're working on documenting all of these modules, as well as all the plugins.
+    We're striving to have 100% documentation coverage when we release v1.0.
   </p>
   
   <ul>
@@ -101,8 +107,16 @@ github_url: https://github.com/madrobby/zepto
   
   {% highlight html %}...
 </body>
-<script src="zepto.js"></script>
+<script src=zepto.js></script>
 </html>
+{% endhighlight %}
+
+  <p>
+    If you need to support Internet Explorer, you can fall back on jQuery by using conditional comments:
+  </p>
+
+  {% highlight html %}<!--[if !IE]>--><script src=zepto.js></script><!--<![endif]-->
+<!--[if IE]><script src=jquery.js></script><![endif]-->
 {% endhighlight %}
 
   <h3>Target platforms</h3>
