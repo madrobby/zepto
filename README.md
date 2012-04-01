@@ -411,12 +411,6 @@ in the `test` folder. See https://github.com/tobie/Evidence for more info on Evi
 Simply add your tests (see existing tests as templates) and then view the HTML file in a browser).
 For detailed results, see the JavaScript console in your browser.
 
-_There's experimental support for automatically running tests on the command line and integrating them
-with a continuous integration server, using the `jasmine-headless-webkit` Rubygem, which in turnrequires
-Qt to be installed and a `CI` environment variable set (you can then run `bundle` to install the
-required dependencies and run `rake test` to run the tests). (This is not for the faint of heart and
-right now is experimental only, so don't blame us if you can't get it to work!)_
-
 IRC channel: #zepto on irc.freenode.net — stay updated on http://twitter.com/zeptojs
 
 Remember to have fun!
