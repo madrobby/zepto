@@ -14,9 +14,9 @@ body {
   width: 512px;
   overflow-x: hidden;
   position: relative;
+  -webkit-transform: translateZ(0);
 }
 #tour img {
-  -webkit-transform: translateZ(0);
   max-width: 500%;
 }
 #sidebar {
@@ -223,6 +223,7 @@ p.compat a {
     width: 100%;
     z-index: -10;
   }
+  #tour { -webkit-overflow-scrolling: auto }
   img[src^=logo] { max-width: 460px }
   #sidebar {
     z-index: 10;
