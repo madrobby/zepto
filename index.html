@@ -233,6 +233,10 @@ github_url: https://github.com/madrobby/zepto
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
 
+  // change the title of the page so bookmarks have a better default
+  if ($.os.ios || $.os.android)
+    document.title = 'Zepto Docs'
+
   if (/^localhost|\.(dev|local)$/.test(location.hostname) && $.os.ios)
     injectScript('livereload.js')
 
