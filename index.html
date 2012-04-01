@@ -71,7 +71,7 @@ github_url: https://github.com/madrobby/zepto
   <p>
     <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://zeptojs.com/" data-text="Zepto.js, a jQuery-compatible micro-framework for modern browsers" data-count="horizontal" data-via="zeptojs" data-related="thomasfuchs">Tweet</a>
   </p>
-  
+ 
   </header>
   
   <h3 id=download>Download Zepto</h3>
@@ -246,7 +246,7 @@ github_url: https://github.com/madrobby/zepto
   if ($.os.ios || $.os.android)
   document.title = 'Zepto Docs'
 
-  var tourslide = 0, lasttourslide = ($('#tour_content').width() / $('#tour').width()) - 1
+  var tourslide = 0, lasttourslide = ($('#tour_content').width() / $('#tour').width())
   function nextTourSlide(){
     tourslide = tourslide+1 > lasttourslide ? 0 : tourslide+1
     $('#tour_content').animate({ translateX: (-tourslide * 512) + 'px' }) 
