@@ -10,26 +10,14 @@ body {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
 }
 #tour {
-  width:512px;
-  height:256px;
-  overflow:hidden;
-  position:relative;
+  max-width: 100%;
+  width: 512px;
+  overflow-x: hidden;
+  position: relative;
 }
-#tour * {
+#tour img {
   -webkit-transform: translateZ(0);
-}  
-#tour_content {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2560px;
-  height: 256px;
-}
-#intro {
-  display: block;
-  position: absolute;
-  width: 2560px;
-  height: 256px;
+  max-width: 500%;
 }
 #sidebar {
   background: #f4f4f4;
@@ -239,12 +227,6 @@ p.compat a {
   #sidebar {
     z-index: 10;
   }
-  /* TODO: fix this to be not hacky */
-  #tour {
-    -webkit-transform-origin: 0 0;
-    -webkit-transform: scale(0.93);
-    margin-bottom: -20px;
-  }
   #sidebar .toc_section li {
     font-size: 16px;
     line-height: 22px;
@@ -257,12 +239,6 @@ p.compat a {
   body { margin: 0; padding: 0 }
   p { margin: .5em 0 }
   h1, h2, h3, h4, h5, h6 { padding-top: .5em }
-  /* TODO: fix this to be not hacky */
-  #tour {
-    -webkit-transform-origin: 0 0;
-    -webkit-transform: scale(0.58);
-    margin-bottom: -100px;
-  }
   #sidebar {
     display: none;
     box-sizing: border-box;

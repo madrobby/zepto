@@ -51,9 +51,7 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <div id=tour>
-    <div id=tour_content>
-      <img id=intro src=intro.jpg alt="Why Zepto? Introduction!">
-    </div>
+    <img src=intro.jpg alt="Why Zepto? An introduction">
   </div>
 
   <p>
@@ -260,13 +258,17 @@ github_url: https://github.com/madrobby/zepto
   if ($.os.ios || $.os.android)
   document.title = 'Zepto Docs'
 
-  var tourslide = 0, lasttourslide = ($('#tour_content').width() / $('#tour').width())
-  function nextTourSlide(){
-    tourslide = tourslide+1 > lasttourslide ? 0 : tourslide+1
-    $('#tour_content').animate({ translateX: (-tourslide * 512) + 'px' }) 
+  var tour = $('#tour'), tourSlides = tour.children(),
+      tourSlide = 0, tourSlidesTotal = 5
+
+  function advanceTourSlide(delta){
+    tourSlide = (tourSlide + delta + tourSlidesTotal) % tourSlidesTotal
+    var offset = tourSlide * tour.width()
+    tourSlides.animate({ translateX: -offset + 'px' })
   }
 
-  $('#tour').on('click', nextTourSlide);
+  tour.on('click swipeLeft', function(){ advanceTourSlide(+1) })
+      .on('swipeRight', function(){ advanceTourSlide(-1) })
 
   if (/^localhost|\.(dev|local)$/.test(location.hostname) && $.os.ios)
     injectScript('livereload.js')
