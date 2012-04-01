@@ -249,7 +249,7 @@ github_url: https://github.com/madrobby/zepto
   var tourslide = 0, lasttourslide = ($('#tour_content').width() / $('#tour').width()) - 1
   function nextTourSlide(){
     tourslide = tourslide+1 > lasttourslide ? 0 : tourslide+1
-    $('#tour_content').animate({ translateX: (-tourslide * $('#tour').width()) + 'px' }) 
+    $('#tour_content').animate({ translateX: (-tourslide * 512) + 'px' }) 
   }
 
   $('#tour').on('click', nextTourSlide);

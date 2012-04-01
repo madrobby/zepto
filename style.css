@@ -14,7 +14,6 @@ body {
   height:256px;
   overflow:hidden;
   position:relative;
-  box-shadow: 0px 2px 40px rgba(156, 100, 231, 0.5);
 }
 #tour * {
   -webkit-transform: translateZ(0);
@@ -240,6 +239,12 @@ p.compat a {
   #sidebar {
     z-index: 10;
   }
+  /* TODO: fix this to be not hacky */
+  #tour {
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: scale(0.93);
+    margin-bottom: -20px;
+  }
   #sidebar .toc_section li {
     font-size: 16px;
     line-height: 22px;
@@ -252,6 +257,12 @@ p.compat a {
   body { margin: 0; padding: 0 }
   p { margin: .5em 0 }
   h1, h2, h3, h4, h5, h6 { padding-top: .5em }
+  /* TODO: fix this to be not hacky */
+  #tour {
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: scale(0.58);
+    margin-bottom: -100px;
+  }
   #sidebar {
     display: none;
     box-sizing: border-box;
