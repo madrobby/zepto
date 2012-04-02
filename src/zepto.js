@@ -30,7 +30,7 @@ var Zepto = (function() {
   function isPlainObject(value) {
     var key, ctor
     if (toString.call(value) !== "[object Object]") return false
-    ctor = (typeof value.constructor === 'function' && value.constructor.prototype)
+    ctor = (isFunction(value.constructor) && value.constructor.prototype)
     if (!ctor || !hasOwnProperty.call(ctor, 'isPrototypeOf')) return false
     for (key in value);
     return key === undefined || hasOwnProperty.call(value, key)
