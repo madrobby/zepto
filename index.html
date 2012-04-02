@@ -110,11 +110,16 @@ github_url: https://github.com/madrobby/zepto
 {% endhighlight %}
 
   <p>
-    If you need to support Internet Explorer, you can fall back on jQuery by using conditional comments:
+    If you need to support Internet Explorer, you can fall back on jQuery.
+    Note that conditional comments are no longer supported starting on IE 10, 
+    so we recommend the following <code>document.write</code> approach:
   </p>
 
-  {% highlight html %}<!--[if !IE]>--><script src=zepto.js></script><!--<![endif]-->
-<!--[if IE]><script src=jquery.js></script><![endif]-->
+  {% highlight html %}<script>
+document.write('<script src=' +
+('__proto__' in {} ? 'zepto' : 'jquery') +
+'.js>\x3C/script>')
+</script>
 {% endhighlight %}
 
   <h3>Target platforms</h3>
