@@ -44,7 +44,11 @@
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
 
       Opera_11_51: "Opera/9.80 (Macintosh; Intel Mac OS X 10.7.1; U; en) Presto/2.9.168 Version/11.51",
-      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00"
+      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00",
+
+      Kindle: "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/528.5+) Version/4.0 Kindle/3.0 (screen 600×800; rotate)",
+      Silk_1_0_accel: "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us; Silk/1.0.13.328_10008910) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16 Silk-Accelerated=true",
+      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
     }
 
     function detect(ua, callback){
@@ -138,6 +142,28 @@
           t.assertTrue(os.blackberry)
           t.assertTrue(browser.webkit)
           t.assertEqual("6.0.0.141", os.version)
+        })
+      },
+
+      testKindle: function(t) {
+        detect(UA.Kindle, function(os, browser){
+          t.assertTrue(os.kindle)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("3.0", os.version)
+        })
+
+        detect(UA.Silk_1_0, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("2.3.4", os.version)
+        })
+
+        detect(UA.Silk_1_0_accel, function(os, browser){
+          t.assert(!os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("1.0.13.328_10008910", browser.version)
         })
       },
 

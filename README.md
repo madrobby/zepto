@@ -1,6 +1,6 @@
 # Zepto.js -- a minimalist JavaScript framework
 
-Zepto is a minimalist JavaScript framework for modern browsers with a 
+Zepto is a minimalist JavaScript framework for modern browsers with a
 largely jQuery-compatible API. If you use jQuery, you already know how to use Zepto.
 
 # Documentation
