@@ -103,7 +103,8 @@ github_url: https://github.com/madrobby/zepto
     Include Zepto with a script tag near the end of your page:
   </p>
   
-  {% highlight html %}...
+  {% highlight html %}
+...
 </body>
 <script src=zepto.js></script>
 </html>
@@ -115,7 +116,8 @@ github_url: https://github.com/madrobby/zepto
     so we recommend the following <code>document.write</code> approach:
   </p>
 
-  {% highlight html %}<script>
+  {% highlight html %}
+<script>
 document.write('<script src=' +
 ('__proto__' in {} ? 'zepto' : 'jquery') +
 '.js><\/script>')
@@ -193,7 +195,8 @@ document.write('<script src=' +
     Plugins can be written by adding methods as properties of <code>$.fn</code>:
   </p>
 
-  {% highlight js %};(function($){
+  {% highlight js %}
+;(function($){
   $.extend($.fn, {
     foo: function(){
       // this points to a Zepto collection
