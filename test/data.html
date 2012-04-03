@@ -31,6 +31,11 @@
         t.assertUndefined(el.data('one'))
       },
 
+      testAttributeDoesNotExist: function(t){
+        var el = $('#data_attr')
+        t.assertUndefined(el.data('missing'))
+      },
+
       testReadingAttribute: function(t){
         var el = $('#data_attr')
         t.assertEqual('uno', el.data('one'))
@@ -66,14 +71,19 @@
       },
 
       testFunctionArg: function(t){
-        var items = $('#data_list li')
+        var els = $('#data_attr');
 
-        items.data('category', function(i, val){
-          return i + '_' + val.toUpperCase()
-        })
+        var data = "hello";
 
-        var values = items.map(function(){ return $(this).data('category') })
-        t.assertEqual('0_ARTS, 1_SCIENCE', values.join(', '))
+        els.data("addio", function () {
+          data = "goodbye";
+        });
+
+        t.assertEqual('hello', data);
+
+        els.data("addio")();
+
+        t.assertEqual('goodbye', data);
       },
 
       testAllData: function(t){
