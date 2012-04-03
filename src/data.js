@@ -26,8 +26,7 @@
     return value === undefined ?
       this.length == 0 ? undefined : getData(this[0], name) :
       this.each(function(idx){
-        setData(this, name, $.isFunction(value) ?
-                value.call(this, idx, getData(this, name)) : value)
-      })
-  }
+        setData(this, name, value);
+      });
+  };
 })(Zepto)
