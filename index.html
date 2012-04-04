@@ -13,8 +13,6 @@ github_url: https://github.com/madrobby/zepto
     Zepto.js <span class="version">({{ page.version }})</span>
   </a>
 
-  <a class=toc_title href="#changelog">Change log</a>
-
   <a class=toc_title href="#core">Core</a>
   {% assign posts = site.categories.core %}
   {% include methods_sidebar.html %}
@@ -34,6 +32,10 @@ github_url: https://github.com/madrobby/zepto
   <a class=toc_title href="#fx">Effects</a>
   {% assign posts = site.categories.fx %}
   {% include methods_sidebar.html %}
+
+  <a class=toc_title href="#changelog">Change Log</a>  
+
+  <a class=toc_title href="#thanks">Thanks</a>  
 
 </aside>
 
@@ -204,7 +206,7 @@ document.write('<script src=' +
       return this.html('bar')
     }
   })
-  })(Zepto)
+})(Zepto)
 {% endhighlight %}
 
   <p>
@@ -249,7 +251,7 @@ document.write('<script src=' +
     </article>
     {% endfor %}
     
-    <h2>Acknowledgements &amp; Thanks</h2>
+    <h2 id=thanks>Acknowledgements &amp; Thanks</h2>
     
     <p>
       A big <b>Thank-You</b> goes out to all of our
