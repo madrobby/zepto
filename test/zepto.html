@@ -478,6 +478,13 @@
         // DOM Element
         var domElement = document.getElementById('find1')
         t.assertLength(4, $('span.findme', domElement))
+
+        // Selector with DOM Element Context
+        var domElement = document.getElementById('find1');
+        t.assertLength(4, $('span.findme', domElement));
+
+        // DOM Element with DOM Element Context
+        t.assertLength(1, $(domElement, domElement));
       },
 
       testDollarWithDocument: function(t){

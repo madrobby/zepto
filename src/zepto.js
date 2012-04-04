@@ -115,9 +115,6 @@ var Zepto = (function() {
   zepto.init = function(selector, context) {
     // If nothing given, return an empty Zepto collection
     if (!selector) return zepto.Z()
-    // If there's a context, create a collection on that context first, and select
-    // nodes from there
-    if (context !== undefined) return $(context).find(selector)
     // If a function is given, call it when the DOM is ready
     else if (isFunction(selector)) return $(document).ready(selector)
     // If a Zepto collection is given, juts return it
@@ -139,6 +136,9 @@ var Zepto = (function() {
         dom = zepto.fragment(selector.trim(), RegExp.$1), selector = null
       // If it's a text node, just wrap it
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector]
+      // If there's a context, create a collection on that context first, and select
+      // nodes from there
+      else if (context !== undefined) return $(context).find(selector)
       // And last but no least, if it's a CSS selector, use it to select nodes.
       else dom = $$(document, selector)
       // create a new Zepto collection from the nodes found
