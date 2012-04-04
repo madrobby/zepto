@@ -65,6 +65,8 @@
   // Empty function, used as default callback
   function empty() {}
 
+  // Do not call this directly. To trigger a JSONP request, make a
+  // normal getJOSN request and include "callback=?" in the query string.
   $.ajaxJSONP = function(options){
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
