@@ -217,26 +217,32 @@ document.write('<script src=' +
 
   <section id=documentation>
 
+    <hr>
     <h2 id="core">Core methods</h2>
     {% assign posts = site.categories.core %}
     {% include methods_full.html %}
 
+    <hr>
     <h2 id="event">Event handling</h2>
     {% assign posts = site.categories.event %}
     {% include methods_full.html %}
 
+    <hr>
     <h2 id="ajax">Ajax requests</h2>
     {% assign posts = site.categories.ajax %}
     {% include methods_full.html %}
 
+    <hr>
     <h2 id="form">Form methods</h2>
     {% assign posts = site.categories.form %}
     {% include methods_full.html %}
 
+    <hr>  
     <h2 id="fx">Effects</h2>
     {% assign posts = site.categories.fx %}
     {% include methods_full.html %}
 
+    <hr>
     <h2 id="changelog">Change Log</h2>
 
     {% for change in site.categories.changelog %}
@@ -250,7 +256,8 @@ document.write('<script src=' +
       {{ change.content }}
     </article>
     {% endfor %}
-    
+
+    <hr>
     <h2 id=thanks>Acknowledgements &amp; Thanks</h2>
     
     <p>
