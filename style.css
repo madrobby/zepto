@@ -29,9 +29,9 @@ body {
   -webkit-overflow-scrolling: touch;
   padding: 15px 0 30px 30px;
   border-right: 1px solid #d4b4ff;
-  box-shadow: inset 0 0 20px #ccc; 
-  -webkit-box-shadow: inset 0 0 20px #ccc; 
-  -moz-box-shadow: inset 0 0 20px #ccc;
+  box-shadow: inset 0 0 20px rgba(212, 180, 255, 0.8); 
+  -webkit-box-shadow: inset 0 0 20px rgba(212, 180, 255, 0.8); 
+  -moz-box-shadow: inset 0 0 20px rgba(212, 180, 255, 0.8);
 }
 a.toc_title, a.toc_title:visited {
   display: block;
