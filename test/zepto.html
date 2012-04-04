@@ -366,6 +366,36 @@
         t.assertSame({a:1}, $.extend({a:1}, {b:undefined}))
       },
 
+      testExtensionAPI: function(t) {
+        t.assert('init' in $.zepto)
+        t.assert('fragment' in $.zepto)
+        t.assert('Z' in $.zepto)
+        t.assert('isZ' in $.zepto)
+
+        // redefine Z and log some debug information
+        var oldZ = $.zepto.Z, calls = []
+        $.zepto.Z = function Z(dom, selector) {
+          var value = oldZ(dom, selector)
+          calls.push(dom)
+          return value
+        }
+
+        // now select some stuff
+        var Z1 = $(''), Z2 = $('#find1 .findme')
+
+        // check if $.fn methods are still there
+        t.assert('pluck' in Z1)
+        t.assert('width' in Z2)
+
+        // two calls should be logged
+        t.assertLength(2, calls)
+
+        // restore old Z
+        $.zepto.Z = oldZ
+        var Z3 = $('')
+        t.assertLength(2, calls)
+      },
+
       testDollar: function(t){
         var expectedElement = document.getElementById('some_element')
 

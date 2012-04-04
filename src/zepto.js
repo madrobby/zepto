@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $$, classList, emptyArray = [], slice = emptyArray.slice,
+  var undefined, key, $, $$, classList, emptyArray = [], slice = emptyArray.slice,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -23,7 +23,9 @@ var Zepto = (function() {
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/,
-    toString = ({}).toString
+    toString = ({}).toString,
+    zepto = {},
+    init, fragment, Z
 
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
@@ -72,7 +74,7 @@ var Zepto = (function() {
     return elementDisplay[nodeName]
   }
 
-  function fragment (html, name) {
+  zepto.fragment = fragment = function(html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
     var container = containers[name]
@@ -80,18 +82,22 @@ var Zepto = (function() {
     return slice.call(container.childNodes)
   }
 
-  function Z(dom, selector) {
+  zepto.Z = Z = function(dom, selector) {
     dom = dom || []
     dom.__proto__ = Z.prototype
     dom.selector = selector || ''
     return dom
   }
 
-  function $(selector, context) {
-    if (!selector) return Z()
+  zepto.isZ = function(object) {
+    return object instanceof zepto.Z
+  }
+
+  zepto.init = function(selector, context) {
+    if (!selector) return zepto.Z()
     if (context !== undefined) return $(context).find(selector)
     else if (isFunction(selector)) return $(document).ready(selector)
-    else if (selector instanceof Z) return selector
+    else if (zepto.isZ(selector)) return selector
     else {
       var dom
       if (isArray(selector)) dom = compact(selector)
@@ -100,11 +106,15 @@ var Zepto = (function() {
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null
       else if (fragmentRE.test(selector))
-        dom = fragment(selector.trim(), RegExp.$1), selector = null
+        dom = zepto.fragment(selector.trim(), RegExp.$1), selector = null
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector]
       else dom = $$(document, selector)
-      return Z(dom, selector)
+      return zepto.Z(dom, selector)
     }
+  }
+
+  $ = function(selector, context){
+    return $.zepto.init(selector, context)
   }
 
   $.extend = function(target){
@@ -474,6 +484,7 @@ var Zepto = (function() {
   })
 
   Z.prototype = $.fn
+  $.zepto = zepto
 
   return $
 })()
