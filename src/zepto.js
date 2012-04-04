@@ -10,9 +10,8 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
 
-    // used by `$.zepto.init` to wrap elements, document, and document fragment
-    // node types, see https://developer.mozilla.org/en/nodeType for more information on
-    // the constants used
+    // Used by `$.zepto.init` to wrap elements, document, and document fragment
+    // node types.
     elementTypes = [1, 9, 11],
 
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
@@ -80,7 +79,7 @@ var Zepto = (function() {
   }
 
   // `$.zepto.fragment` takes a html string and an optional tag name
-  // to generate DOM nodes nodes from the given html string
+  // to generate DOM nodes nodes from the given html string.
   // The generated DOM nodes are returned as an array.
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
@@ -148,15 +147,15 @@ var Zepto = (function() {
   }
 
   // `$` will be the base `Zepto` object. When calling this
-  // function just call `$.zepto.init`. This makes the implementation
+  // function just call `$.zepto.init, whichs makes the implementation
   // details of selecting nodes and creating Zepto collections
   // patchable in plugins.
   $ = function(selector, context){
     return $.zepto.init(selector, context)
   }
 
-  // copy all but undefined properties from one or more
-  // objects to the `target` object
+  // Copy all but undefined properties from one or more
+  // objects to the `target` object.
   $.extend = function(target){
     slice.call(arguments, 1).forEach(function(source) {
       for (key in source)
@@ -225,18 +224,26 @@ var Zepto = (function() {
     return elements
   }
 
+  // Define methods that will be available on all
+  // Zepto collections
   $.fn = {
+    // Because a collection acts like an array
+    // copy over these useful array functions.
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
+
+    // `map` and `slice` in the jQuery API work differently
+    // from their array counterparts
     map: function(fn){
       return $.map(this, function(el, i){ return fn.call(el, i, el) })
     },
     slice: function(){
       return $(slice.apply(this, arguments))
     },
+
     ready: function(callback){
       if (readyRE.test(document.readyState)) callback($)
       else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false)
@@ -333,6 +340,7 @@ var Zepto = (function() {
     empty: function(){
       return this.each(function(){ this.innerHTML = '' })
     },
+    // `pluck` is borrowed from Prototype.js
     pluck: function(property){
       return this.map(function(){ return this[property] })
     },
@@ -472,6 +480,7 @@ var Zepto = (function() {
     }
   }
 
+  // Generate the `width` and `height` functions
   ;['width', 'height'].forEach(function(dimension){
     $.fn[dimension] = function(value){
       var offset, Dimension = dimension.replace(/./, function(m){ return m[0].toUpperCase() })
@@ -499,6 +508,8 @@ var Zepto = (function() {
     for (var key in node.childNodes) traverseNode(node.childNodes[key], fun)
   }
 
+  // Generate the `after`, `prepend`, `before`, `append`,
+  // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(html){
       var nodes = isObject(html) ? html : fragment(html)
