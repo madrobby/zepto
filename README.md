@@ -37,6 +37,26 @@ Minified and gzipped: 4.485k, compression factor 4.912
 
 The minified file is saved in "dist/zepto.min.js".
 
+You can do custom build of Zepto by calling `concat` with alist of
+colon-seperated module names to include or leave out (prepend with `-`):
+
+```
+$ rake concat\[-touch:-fx:data\] dist
+(in /Users/thomas/Projects/zepto)
+Building zepto.js by including: polyfill, zepto, event, detect, ajax, form, data
+Minifying /Users/thomas/Projects/zepto/dist/zepto.js with UglifyJS...
+cp /Users/thomas/Projects/zepto/dist/zepto.min.js /Users/thomas/Projects/zepto/dist/temp.js
+rm -rf /Users/thomas/Projects/zepto/dist/temp.js.gz
+Original version: 40.423k
+Minified: 18.776k
+Minified and gzipped: 7.033k, compression factor 5.747
+```
+
+By default, Zepto includes `polyfill`, `zepto`, `event`, `detect`, `fx`, `ajax`, `form`, and
+`touch`.
+
+The `data`, `fx_methods`, `assets`, `gesture`, and `stack` modules are optional.
+
 # Bugs
 
 If you encounter bugs, please follow these steps:
