@@ -1090,6 +1090,13 @@
         var div = $('#get_style_element')
         t.assertEqual('48px', div.css('font-size'))
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
+
+        $('#some_element').css('color', '')
+        t.assertEqual('', el.style.color)
+
+        $('#some_element').css({'margin-top': '', 'marginBottom': ''})
+        t.assertEqual('', el.style.marginTop)
+        t.assertEqual('', el.style.marginBottom)
       },
 
       testCSSOnNonExistElm: function (t) {
