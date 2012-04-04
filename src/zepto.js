@@ -81,7 +81,7 @@ var Zepto = (function() {
   }
 
   function Z(dom, selector) {
-    dom = dom || emptyArray
+    dom = dom || []
     dom.__proto__ = Z.prototype
     dom.selector = selector || ''
     return dom
