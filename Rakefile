@@ -114,7 +114,7 @@ task :dist do
 end
 
 desc "Generate docco documentation from sources."
-task :docs do
+task :docco do
   puts "Generating docs..."
   puts "Note: to work, install node.js first, then install docco with 'sudo npm install docco -g'."
   puts `docco src/*`

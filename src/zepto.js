@@ -9,7 +9,12 @@ var Zepto = (function() {
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+)[^>]*>/,
+
+    // used by `$.zepto.init` to wrap elements, document, and document fragment
+    // node types, see https://developer.mozilla.org/en/nodeType for more information on
+    // the constants used
     elementTypes = [1, 9, 11],
+
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
     tableRow = document.createElement('tr'),
@@ -74,6 +79,11 @@ var Zepto = (function() {
     return elementDisplay[nodeName]
   }
 
+  // `$.zepto.fragment` takes a html string and an optional tag name
+  // to generate DOM nodes nodes from the given html string
+  // The generated DOM nodes are returned as an array.
+  // This function can be overriden in plugins for example to make
+  // it compatible with browsers that don't support the DOM fully.
   zepto.fragment = fragment = function(html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
@@ -82,6 +92,10 @@ var Zepto = (function() {
     return slice.call(container.childNodes)
   }
 
+  // `$.zepto.Z` swaps out the prototype of the given `dom` array
+  // of nodes with `$.fn` and thus supplying all the Zepto functions
+  // to the array. Note that `__proto__` is not supported on Internet
+  // Explorer. This method can be overriden in plugins.
   zepto.Z = Z = function(dom, selector) {
     dom = dom || []
     dom.__proto__ = Z.prototype
@@ -89,34 +103,60 @@ var Zepto = (function() {
     return dom
   }
 
+  // `$.zepto.isZ` should return `true` if the given object is a Zepto
+  // collection. This method can be overriden in plugins.
   zepto.isZ = function(object) {
     return object instanceof zepto.Z
   }
 
+  // `$.zepto.init` is Zepto's counterpart to jQuery's `$.fn.init` and
+  // takes a CSS selector and an optional context (and handles various
+  // special cases).
+  // This method can be overriden in plugins.
   zepto.init = function(selector, context) {
+    // If nothing given, return an empty Zepto collection
     if (!selector) return zepto.Z()
+    // If there's a context, create a collection on that context first, and select
+    // nodes from there
     if (context !== undefined) return $(context).find(selector)
+    // If a function is given, call it when the DOM is ready
     else if (isFunction(selector)) return $(document).ready(selector)
+    // If a Zepto collection is given, juts return it
     else if (zepto.isZ(selector)) return selector
     else {
       var dom
+      // normalize array if an array of nodes is given
       if (isArray(selector)) dom = compact(selector)
+      // if a JavaScript object is given, return a copy of it
+      // this is a somewhat peculiar option, but supported by
+      // jQuery so we'll do it, too
       else if (isPlainObject(selector))
         dom = [$.extend({}, selector)], selector = null
+      // wrap stuff like `document` or `window`
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
         dom = [selector], selector = null
+      // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
         dom = zepto.fragment(selector.trim(), RegExp.$1), selector = null
+      // If it's a text node, just wrap it
       else if (selector.nodeType && selector.nodeType == 3) dom = [selector]
+      // And last but no least, if it's a CSS selector, use it to select nodes.
       else dom = $$(document, selector)
+      // create a new Zepto collection from the nodes found
       return zepto.Z(dom, selector)
     }
   }
 
+  // `$` will be the base `Zepto` object. When calling this
+  // function just call `$.zepto.init`. This makes the implementation
+  // details of selecting nodes and creating Zepto collections
+  // patchable in plugins.
   $ = function(selector, context){
     return $.zepto.init(selector, context)
   }
 
+  // copy all but undefined properties from one or more
+  // objects to the `target` object
   $.extend = function(target){
     slice.call(arguments, 1).forEach(function(source) {
       for (key in source)
@@ -126,7 +166,10 @@ var Zepto = (function() {
     return target
   }
 
-  $.qsa = $$ = function(element, selector){
+  // `$.zepto.qsa` is Zepto's CSS selector implementation which
+  // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
+  // This method can be overriden in plugins.
+  $.zepto.qsa = $$ = function(element, selector){
     var found
     return (element === document && idSelectorRE.test(selector)) ?
       ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
@@ -152,8 +195,8 @@ var Zepto = (function() {
   $.isPlainObject = isPlainObject
 
   $.inArray = function(elem, array, i){
-		return emptyArray.indexOf.call(array, elem, i)
-	}
+    return emptyArray.indexOf.call(array, elem, i)
+  }
 
   $.map = function(elements, callback){
     var value, values = [], i, key
@@ -173,13 +216,12 @@ var Zepto = (function() {
   $.each = function(elements, callback){
     var i, key
     if (likeArray(elements))
-      for (i = 0; i < elements.length; i++) {
+      for (i = 0; i < elements.length; i++)
         if (callback.call(elements[i], i, elements[i]) === false) return elements
-      }
     else
-      for (key in elements) {
+      for (key in elements)
         if (callback.call(elements[key], key, elements[key]) === false) return elements
-      }
+
     return elements
   }
 
@@ -484,10 +526,13 @@ var Zepto = (function() {
   })
 
   Z.prototype = $.fn
+
+  // Export internal API functions in the `$.zepto` namespace
   $.zepto = zepto
 
   return $
 })()
 
+// If `$` is not yet defined, point it to `Zepto`
 window.Zepto = Zepto
 '$' in window || (window.$ = Zepto)
