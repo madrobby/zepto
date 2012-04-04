@@ -20,7 +20,7 @@ body {
   max-width: 500%;
 }
 #sidebar {
-  background: #f4f4f4;
+  background: #f3eaff;
   position: fixed;
   top: 0; left: 0; bottom: 0;
   width: 200px;
@@ -28,8 +28,10 @@ body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: 15px 0 30px 30px;
-  border-right: 1px solid #bbb;
-  box-shadow: 0 0 20px #ccc; -webkit-box-shadow: 0 0 20px #ccc; -moz-box-shadow: 0 0 20px #ccc;
+  border-right: 1px solid #d4b4ff;
+  box-shadow: inset 0 0 20px #ccc; 
+  -webkit-box-shadow: inset 0 0 20px #ccc; 
+  -moz-box-shadow: inset 0 0 20px #ccc;
 }
 a.toc_title, a.toc_title:visited {
   display: block;
@@ -43,6 +45,13 @@ a.toc_title:hover {
 #sidebar .version {
   font-size: 10px;
   font-weight: normal;
+}
+ul.downloads {
+  padding-left: 0;
+  list-style-type: none;
+}
+ul.downloads li {
+  margin: 10px 0;
 }
 ul.toc_section {
   font-size: 11px;
@@ -173,8 +182,8 @@ a.download {
   border: 1px solid #a8a8af;
   text-decoration: none !important;
   text-shadow: 0 1px 1px rgba(255,255,255,0.9);
-  font-size: 13px;
-  line-height: 17px;
+  font-size: 14px;
+  line-height: 19px;
   font-family: helvetica, arial, sans-serif;
   display: inline-block;
   cursor: pointer;
