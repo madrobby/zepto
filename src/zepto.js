@@ -168,7 +168,7 @@ var Zepto = (function() {
   // `$.zepto.qsa` is Zepto's CSS selector implementation which
   // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
   // This method can be overriden in plugins.
-  $.zepto.qsa = $$ = function(element, selector){
+  zepto.qsa = $$ = function(element, selector){
     var found
     return (element === document && idSelectorRE.test(selector)) ?
       ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
@@ -214,12 +214,13 @@ var Zepto = (function() {
 
   $.each = function(elements, callback){
     var i, key
-    if (likeArray(elements))
+    if (likeArray(elements)) {
       for (i = 0; i < elements.length; i++)
         if (callback.call(elements[i], i, elements[i]) === false) return elements
-    else
+    } else {
       for (key in elements)
         if (callback.call(elements[key], key, elements[key]) === false) return elements
+    }
 
     return elements
   }

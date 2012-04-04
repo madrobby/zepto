@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var $$ = $.qsa, handlers = {}, _zid = 1, specialEvents={}
+  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={}
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
 
