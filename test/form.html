@@ -60,32 +60,32 @@
           case 'object':
             if ( !isObjectEquals( obj1[key], obj2[key] ) ) {
               return false
-            };
-            break;
+            }
+            break
 
           case 'function':
             if (
                  typeof( obj2[key] ) == 'undefined' ||
                  ( obj1[key].toString() != obj2[key].toString() )
                ) {
-              return false;
-            };
-            break;
+              return false
+            }
+            break
 
           default:
             if ( obj1[key] != obj2[key] ) {
-              return false;
+              return false
             }
         }
       }
 
       for (key in obj2) {
         if (typeof( obj1[key] ) == 'undefined') {
-          return false;
+          return false
         }
       }
 
-      return true;
+      return true
     }
 
     Evidence.Assertions.assertEqualObject = function(expected, actual, message) {
@@ -93,16 +93,16 @@
         isObjectEquals(expected, actual),
         message || 'Failed assertion.',
         'Expected %o, got %o.', expected, actual
-      );
+      )
     }
 
     Evidence('FormTest', {
 
       testSerializeArray: function (t) {
-        var loginForm = $('#login_form');
+        var loginForm = $('#login_form')
 
-        t.assertEqual(Function, loginForm.serializeArray.constructor);
-        t.assertEqual(6, loginForm.serializeArray().length);
+        t.assertEqual(Function, loginForm.serializeArray.constructor)
+        t.assertEqual(6, loginForm.serializeArray().length)
         t.assertEqualObject(
           [
               { name: 'email', value: 'koss@nocorp.me' },
@@ -114,30 +114,30 @@
 
           ],
           loginForm.serializeArray()
-        );
+        )
       },
 
       testSerialize: function (t) {
-        var loginForm = $('#login_form');
+        var loginForm = $('#login_form')
 
-        t.assertEqual(Function, loginForm.serialize.constructor);
-        t.assertEqual( 'string', typeof loginForm.serialize() );
+        t.assertEqual(Function, loginForm.serialize.constructor)
+        t.assertEqual( 'string', typeof loginForm.serialize() )
 
-        t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() );
+        t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() )
       },
 
       testFormSubmit: function (t) {
-        var eventTriggered = false;
+        var eventTriggered = false
         $('#login_form').submit(function (e) {
-          eventTriggered = true;
-          e.preventDefault();
-        });
-        $('#login_form').submit();
-        t.assert(eventTriggered);
+          eventTriggered = true
+          e.preventDefault()
+        })
+        $('#login_form').submit()
+        t.assert(eventTriggered)
       }
 
-    });
-  })();
+    })
+  })()
   </script>
 </body>
 </html>

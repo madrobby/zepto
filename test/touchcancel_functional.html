@@ -24,35 +24,35 @@
   <div id="browser"> </div>
 
   <script>
-    $('#browser').text(navigator.userAgent);
+    $('#browser').text(navigator.userAgent)
 
     setTimeout(function(){
-      alert("Alert! Now tap again, you should see a tap!, not a double tap!");
-    }, 3000);
+      alert("Alert! Now tap again, you should see a tap!, not a double tap!")
+    }, 3000)
 
-    $('body').bind('touchmove', function (e) {e.preventDefault();} );
+    $('body').bind('touchmove', function(e){ e.preventDefault() })
     $('#touch_test')
       .tap(function(){
-        $(this).append(' | tap!');
+        $(this).append(' | tap!')
       })
       .doubleTap(function(){
-        $(this).append(' | double tap!');
+        $(this).append(' | double tap!')
       })
       .swipe(function(){
-        $(this).append(' | swipe!');
+        $(this).append(' | swipe!')
       })
       .swipeLeft(function(){
-        $(this).append(' | swipe left!');
+        $(this).append(' | swipe left!')
       })
       .swipeRight(function(){
-        $(this).append(' | swipe right!');
+        $(this).append(' | swipe right!')
       })
       .swipeUp(function(){
-        $(this).append(' | swipe up!');
+        $(this).append(' | swipe up!')
       })
       .swipeDown(function(){
-        $(this).append(' | swipe down!');
-      });
+        $(this).append(' | swipe down!')
+      })
 
   </script>
 </body>

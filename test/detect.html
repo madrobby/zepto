@@ -44,118 +44,144 @@
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
 
       Opera_11_51: "Opera/9.80 (Macintosh; Intel Mac OS X 10.7.1; U; en) Presto/2.9.168 Version/11.51",
-      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00"
-    };
+      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00",
+
+      Kindle: "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/528.5+) Version/4.0 Kindle/3.0 (screen 600×800; rotate)",
+      Silk_1_0_accel: "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us; Silk/1.0.13.328_10008910) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16 Silk-Accelerated=true",
+      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+    }
 
     function detect(ua, callback){
-      var obj = {};
-      $.__detect.call(obj, ua);
-      callback.call(null, obj.os, obj.browser);
+      var obj = {}
+      $.__detect.call(obj, ua)
+      callback.call(null, obj.os, obj.browser)
     }
 
     Evidence('ZeptoDetectTest', {
 
       testWebOS: function(t){
         detect(UA.WebOS_1_4_0_Pre, function(os, browser){
-          t.assertTrue(os.webos);
-          t.assert(!os.touchpad);
-          t.assertTrue(browser.webkit);
-          t.assertEqual("1.4.0", os.version);
-        });
+          t.assertTrue(os.webos)
+          t.assert(!os.touchpad)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("1.4.0", os.version)
+        })
         detect(UA.WebOS_1_4_0_Pixi, function(os){
-          t.assertTrue(os.webos);
-          t.assertEqual("1.4.0", os.version);
-        });
+          t.assertTrue(os.webos)
+          t.assertEqual("1.4.0", os.version)
+        })
         detect(UA.WebOS_1_2_9_Pixi, function(os){
-          t.assertTrue(os.webos);
-          t.assertEqual("1.2.9", os.version);
-        });
+          t.assertTrue(os.webos)
+          t.assertEqual("1.2.9", os.version)
+        })
         detect(UA.WebOS_3_0_0_TouchPad, function(os){
-          t.assertTrue(os.webos);
-          t.assertTrue(os.touchpad);
-          t.assertEqual("3.0.0", os.version);
-        });
+          t.assertTrue(os.webos)
+          t.assertTrue(os.touchpad)
+          t.assertEqual("3.0.0", os.version)
+        })
       },
 
       testAndroid: function(t){
         detect(UA.Android_1_5, function(os, browser){
-          t.assertTrue(os.android);
-          t.assertTrue(browser.webkit);
-          t.assertEqual("1.5", os.version);
-        });
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("1.5", os.version)
+        })
         detect(UA.Android_2_1, function(os){
-          t.assertTrue(os.android);
-          t.assertEqual("2.1", os.version);
-        });
+          t.assertTrue(os.android)
+          t.assertEqual("2.1", os.version)
+        })
       },
 
       testIOS: function(t){
         detect(UA.iOS_3_0_iPhone, function(os, browser){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.iphone);
-          t.assertTrue(browser.webkit);
-          t.assertEqual("3.0", os.version);
-          t.assertEqual("420.1", browser.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("3.0", os.version)
+          t.assertEqual("420.1", browser.version)
+        })
         detect(UA.iOS_3_1_1_iPod, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.iphone);
-          t.assertUndefined(os.ipod);
-          t.assertEqual("3.1.1", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertUndefined(os.ipod)
+          t.assertEqual("3.1.1", os.version)
+        })
         detect(UA.iOS_3_2_iPad, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.ipad);
-          t.assert(!os.iphone);
-          t.assertEqual("3.2", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assert(!os.iphone)
+          t.assertEqual("3.2", os.version)
+        })
         detect(UA.iOS_3_2_iPad_2, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.ipad);
-          t.assert(!os.iphone);
-          t.assertEqual("3.2", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assert(!os.iphone)
+          t.assertEqual("3.2", os.version)
+        })
         detect(UA.iOS_4_0_iPhone, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.iphone);
-          t.assert(!os.ipad);
-          t.assertEqual("4.0", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assert(!os.ipad)
+          t.assertEqual("4.0", os.version)
+        })
         detect(UA.iOS_4_2_iPad, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.ipad);
-          t.assertEqual("4.2", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assertEqual("4.2", os.version)
+        })
         detect(UA.iOS_4_3_iPhone_Simulator, function(os){
-          t.assertTrue(os.ios);
-          t.assertTrue(os.iphone);
-          t.assertEqual("4.3", os.version);
-        });
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertEqual("4.3", os.version)
+        })
       },
 
       testBlackBerry: function(t) {
         detect(UA.BlackBerry_6_0_0_141, function(os, browser){
-          t.assertTrue(os.blackberry);
-          t.assertTrue(browser.webkit);
-          t.assertEqual("6.0.0.141", os.version);
-        });
+          t.assertTrue(os.blackberry)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("6.0.0.141", os.version)
+        })
+      },
+
+      testKindle: function(t) {
+        detect(UA.Kindle, function(os, browser){
+          t.assertTrue(os.kindle)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("3.0", os.version)
+        })
+
+        detect(UA.Silk_1_0, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("2.3.4", os.version)
+        })
+
+        detect(UA.Silk_1_0_accel, function(os, browser){
+          t.assert(!os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("1.0.13.328_10008910", browser.version)
+        })
       },
 
       testFirefox: function(t) {
         detect(UA.Firefox_6_0_2, function(os, browser){
-          t.assertFalse(browser.webkit);
-          t.assertUndefined(browser.version);
-        });
+          t.assertFalse(browser.webkit)
+          t.assertUndefined(browser.version)
+        })
       },
 
       testOpera: function(t) {
         detect(UA.Opera_11_51, function(os, browser){
-          t.assertFalse(browser.webkit);
-          t.assertUndefined(browser.version);
-        });
+          t.assertFalse(browser.webkit)
+          t.assertUndefined(browser.version)
+        })
       }
-    });
-  })();
+    })
+  })()
   </script>
 </body>
 </html>

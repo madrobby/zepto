@@ -5,3 +5,6 @@ dist/zepto.js
 pkg
 *.swp
 docs/*
+.jhw-cache
+.rbenv-version
+public/

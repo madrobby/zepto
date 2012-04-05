@@ -4,30 +4,30 @@
 
 // The following code is heavily inspired by jQuery's $.fn.data()
 
-(function($) {
+;(function($) {
   var data = {}, dataAttr = $.fn.data,
     uuid = $.uuid = +new Date(),
-    exp  = $.expando = 'Zepto' + uuid;
+    exp  = $.expando = 'Zepto' + uuid
 
   function getData(node, name) {
-    var id = node[exp], store = id && data[id];
+    var id = node[exp], store = id && data[id]
     return name === undefined ? store || setData(node) :
-      (store && store[name]) || dataAttr.call($(node), name);
+      (store && store[name]) || dataAttr.call($(node), name)
   }
 
   function setData(node, name, value) {
     var id = node[exp] || (node[exp] = ++uuid),
-      store = data[id] || (data[id] = {});
-    if (name !== undefined) store[name] = value;
-    return store;
-  };
+      store = data[id] || (data[id] = {})
+    if (name !== undefined) store[name] = value
+    return store
+  }
 
   $.fn.data = function(name, value) {
     return value === undefined ?
       this.length == 0 ? undefined : getData(this[0], name) :
       this.each(function(idx){
         setData(this, name, $.isFunction(value) ?
-                value.call(this, idx, getData(this, name)) : value);
-      });
-  };
-})(Zepto);
+                value.call(this, idx, getData(this, name)) : value)
+      })
+  }
+})(Zepto)

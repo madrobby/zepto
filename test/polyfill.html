@@ -22,7 +22,7 @@
 
       // test to see if we augment String.prototype.trim if not supported natively
       testTrim: function(t){
-        t.assertEqual("blah", " blah ".trim());
+        t.assertEqual("blah", " blah ".trim())
       },
 
       // test to see if we augment Array.prototype.reduceif not supported natively
@@ -30,23 +30,23 @@
         t.assertEqual(
           10,
           [0,1,2,3,4].reduce(function(p,c){ return p+c })
-        );
+        )
 
         t.assertEqual(
           20,
           [0,1,2,3,4].reduce(function(p,c){ return p+c }, 10)
-        );
+        )
 
         var flattened = [[0,1], [2,3], [4,5]].reduce(function(a,b){
-          return a.concat(b);
-        });
+          return a.concat(b)
+        })
 
-        t.assertEqual(6, flattened.length);
+        t.assertEqual(6, flattened.length)
 
-        for(var i=0;i<6;i++) t.assertEqual(i, flattened[i]);
+        for(var i=0;i<6;i++) t.assertEqual(i, flattened[i])
       }
-    });
-  })();
+    })
+  })()
   </script>
 </body>
 </html>
