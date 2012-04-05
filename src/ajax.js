@@ -8,7 +8,12 @@
       document = window.document,
       key,
       name,
-      rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi
+      rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      scriptTypeRE = /^(?:text|application)\/javascript/i,
+      xmlTypeRE = /^(?:text|application)\/xml/i,
+      jsonType = 'application/json',
+      htmlType = 'text/html',
+      blankRE = /^\s*$/
 
   // trigger a custom event and return false if it was cancelled
   function triggerAndReturn(context, eventName, data) {
@@ -120,15 +125,22 @@
     // MIME types mapping
     accepts: {
       script: 'text/javascript, application/javascript',
-      json:   'application/json',
+      json:   jsonType,
       xml:    'application/xml, text/xml',
-      html:   'text/html',
+      html:   htmlType,
       text:   'text/plain'
     },
     // Whether the request is to another domain
     crossDomain: false,
     // Default timeout
     timeout: 0
+  }
+
+  function mimeToDataType(mime) {
+    return mime && ( mime == htmlType ? 'html' :
+      mime == jsonType ? 'json' :
+      scriptTypeRE.test(mime) ? 'script' :
+      xmlTypeRE.test(mime) && 'xml' ) || 'text'
   }
 
   $.ajax = function(options){
@@ -157,6 +169,7 @@
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
     if (mime) {
       baseHeaders['Accept'] = mime
+      if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
     settings.headers = $.extend(baseHeaders, settings.headers || {})
@@ -166,22 +179,17 @@
         clearTimeout(abortTimeout)
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
-          var ctype = xhr.getResponseHeader('content-type'), dtype = settings.dataType
-          dtype = dtype || (/^(text|application)\/javascript/i.test(ctype) ? 'script' :
-            /^application\/json/i.test(ctype) ? 'json' :
-            /^(application|text)\/xml/i.test(ctype) ? 'xml' :
-            /^text\/html/i.test(ctype) === 'text/html' ? 'html' : 'text')
+          var dataType = settings.dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
+          result = xhr.responseText
 
           try {
-            result = dtype === 'script' ? eval.call(window, xhr.responseText) :
-              dtype === 'xml' ? xhr.responseXML :
-              dtype === 'json' && ! (/^\s*$/.test(xhr.responseText)) ? JSON.parse(xhr.responseText) : xhr.responseText
+            if (dataType == 'script')    (1,eval)(result)
+            else if (dataType == 'xml')  result = xhr.responseXML
+            else if (dataType == 'json') result = blankRE.test(result) ? null : JSON.parse(result)
           } catch (e) { error = e }
 
-          if (error)
-            ajaxError(error, 'parsererror', xhr, settings)
-          else
-            ajaxSuccess(result, xhr, settings)
+          if (error) ajaxError(error, 'parsererror', xhr, settings)
+          else ajaxSuccess(result, xhr, settings)
         } else {
           ajaxError(null, 'error', xhr, settings)
         }

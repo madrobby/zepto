@@ -207,6 +207,7 @@
 
     function MockXHR() {
       this.headers = []
+      this.responseHeaders = {}
       MockXHR.last = this
     }
     MockXHR.prototype = {
@@ -219,6 +220,10 @@
         this.headers.push({ name: name, value: value })
       },
       getResponseHeader: function(name) {
+        return this.responseHeaders[name]
+      },
+      overrideMimeType: function(type) {
+        this.responseHeaders['content-type'] = type
       },
       send: function(data) {
         this.data = data
@@ -226,10 +231,11 @@
       abort: function() {
         this.aborted = true
       },
-      ready: function(readyState, status, responseText) {
+      ready: function(readyState, status, responseText, headers) {
         this.readyState = readyState
         this.status = status
         this.responseText = responseText
+        $.extend(this.responseHeaders, headers)
         this.onreadystatechange()
       },
       onreadystatechange: function() {}
@@ -282,6 +288,8 @@
 
         $.ajax({ dataType: 'json' })
         t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')))
+        // verifies overrideMimeType:
+        t.assertEqual('application/json', MockXHR.last.getResponseHeader('content-type'))
       },
 
       testContentTypeOptionSetsContentTypeHeader: function(t) {
@@ -306,29 +314,34 @@
         t.assert(MockXHR.last.headers.some(matchHeader('X-Awesome', 'true')))
       },
 
-      testJSONResponseBodiesAreParsedWhenDataTypeOptionIsJSON: function(t) {
+      testJSONdataType: function(t) {
         var result = {}
         $.ajax({ dataType: 'json', success: function(json) {result = json } })
         MockXHR.last.ready(4, 200, '{"hello":"world"}')
         t.assertEqual("world", result.hello)
       },
 
-      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+      testJSONcontentType: function(t) {
         var result = {}
-        var success = false
+        $.ajax({ success: function(json) {result = json } })
+        MockXHR.last.ready(4, 200, '{"hello":"world"}', {'content-type': 'application/json'})
+        t.assertEqual("world", result.hello)
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+        var result, success = false
         $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } })
         MockXHR.last.ready(4, 200, '')
         t.assert(success)
-        t.assertEqual('', result)
+        t.assertNull(result)
       },
 
       testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function(t) {
-        var result = {}
-        var success = false
+        var result, success = false
         $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } })
         MockXHR.last.ready(4, 200, ' ')
         t.assert(success)
-        t.assertEqual(' ', result)
+        t.assertNull(result)
       },
 
       testDataOptionIsConvertedToSerializedForm: function(t) {
@@ -355,6 +368,14 @@
 
         $.ajax({ url:'test.html', data:{foo:'bar'} })
         t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+      },
+
+      testScriptResponseIsEvald: function(t) {
+        var result
+        $.ajax({ success: function(text){ result = text } })
+        MockXHR.last.ready(4, 200, 'this.testValue = 42', {'content-type': 'application/javascript'})
+        t.assertEqual('this.testValue = 42', result)
+        t.assertIdentical(42, window.testValue)
       },
 
       testErrorCallback: function(t) {
