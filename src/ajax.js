@@ -146,15 +146,8 @@
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded'
     if (isObject(settings.data)) settings.data = $.param(settings.data)
 
-    if (settings.type.match(/get/i) && settings.data) {
-      var queryString = settings.data
-      if (settings.url.match(/\?.*=/))
-        queryString = '&' + queryString
-      else if (queryString[0] != '?')
-        queryString = '?' + queryString
-
-      settings.url += queryString
-    }
+    if (settings.type.toLowerCase() == 'get' && settings.data)
+      settings.url = (settings.url + '&' + settings.data).replace(/[&?]{1,2}/, '?')
 
     var mime = settings.accepts[settings.dataType],
         baseHeaders = { },

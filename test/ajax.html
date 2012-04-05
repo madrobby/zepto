@@ -344,14 +344,17 @@
         $.ajax({ url:'test.html', data:'?foo=bar' })
         t.assertEqual('test.html?foo=bar', MockXHR.last.url)
 
+        $.ajax({ url:'test.html?', data:'foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?baz', data:'foo=bar' })
+        t.assertEqual('test.html?baz&foo=bar', MockXHR.last.url)
+
         $.ajax({ url:'test.html?bar=baz', data:'foo=bar' })
         t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url)
 
         $.ajax({ url:'test.html', data:{foo:'bar'} })
         t.assertEqual('test.html?foo=bar', MockXHR.last.url)
-
-        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' })
-        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url)
       },
 
       testErrorCallback: function(t) {
