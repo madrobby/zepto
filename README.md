@@ -60,7 +60,7 @@ Zepto modules are individual files in the "src/" directory.
 </tr></thead>
 <tbody>
   <tr>
-    <th>polyfill</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/polyfill.js#files">polyfill</a></th>
     <td>✔</td>
     <td>
       Provides String.prototype.trim and Array.prototype.reduce methods
@@ -68,27 +68,27 @@ Zepto modules are individual files in the "src/" directory.
     </td>
   </tr>
   <tr>
-    <th>zepto</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/zepto.js#files">zepto</a></th>
     <td>✔</td>
     <td>Core module; contains most methods</td>
   </tr>
   <tr>
-    <th>event</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/event.js#files">event</a></th>
     <td>✔</td>
     <td>Event handling via <code>on()</code> &amp; <code>off()</code></td>
   </tr>
   <tr>
-    <th>detect</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/detect.js#files">detect</a></th>
     <td>✔</td>
     <td>Provides <code>$.os</code> and <code>$.browser</code> information</td>
   </tr>
   <tr>
-    <th>fx</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/fx.js#files">fx</a></th>
     <td>✔</td>
     <td>The <code>animate()</code> method</td>
   </tr>
   <tr>
-    <th>fx_methods</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/fx_methods.js#files">fx_methods</a></th>
     <td></td>
     <td>
       Animated <code>show</code>, <code>hide</code>, <code>toggle</code>,
@@ -96,17 +96,19 @@ Zepto modules are individual files in the "src/" directory.
     </td>
   </tr>
   <tr>
-    <th>ajax</th>
+    <th><a
+href="https://github.com/madrobby/zepto/blob/master/src/ajax.js#files">ajax</a></th>
     <td>✔</td>
     <td>XMLHttpRequest and JSONP functionality</td>
   </tr>
   <tr>
-    <th>form</th>
+    <th><a
+href="https://github.com/madrobby/zepto/blob/master/src/form.js#files">form</a></th>
     <td>✔</td>
     <td>Serialize &amp; submit web forms</td>
   </tr>
   <tr>
-    <th>assets</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/assets.js#files">assets</a></th>
     <td></td>
     <td>
       Experimental support for cleaning up iOS memory after removing
@@ -114,7 +116,8 @@ Zepto modules are individual files in the "src/" directory.
     </td>
   </tr>
   <tr>
-    <th>data</th>
+    <th><a
+href="https://github.com/madrobby/zepto/blob/master/src/data.js#files">data</a></th>
     <td></td>
     <td>
       A full-blown <code>data()</code> method, capable of storing arbitrary
@@ -122,17 +125,17 @@ Zepto modules are individual files in the "src/" directory.
     </td>
   </tr>
   <tr>
-    <th>touch</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/touch.js#files">touch</a></th>
     <td>✔</td>
     <td>Fires tap– and swipe–related events on touch devices</td>
   </tr>
   <tr>
-    <th>gesture</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/gesture.js#files">gesture</a></th>
     <td></td>
     <td>Fires pinch gesture events on touch devices</td>
   </tr>
   <tr>
-    <th>stack</th>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/stack.js#files">stack</a></th>
     <td></td>
     <td>Provides <code>andSelf</code> &amp; <code>end()</code> chaining methods</td>
   </tr>
