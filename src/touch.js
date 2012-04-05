@@ -15,10 +15,10 @@
   }
 
   var longTapDelay = 750, longTapTimeout
-  
+
   function longTap(){
     longTapTimeout = null
-    if (touch.last && (Date.now() - touch.last >= longTapDelay)) {
+    if (touch.last) {
       touch.el.trigger('longTap')
       touch = {}
     }
@@ -40,6 +40,8 @@
       touch.x2 = e.touches[0].pageX
       touch.y2 = e.touches[0].pageY
     }).bind('touchend', function(e){
+      if (longTapTimeout) clearTimeout(longTapTimeout)
+      longTapTimeout = null
       if (touch.isDoubleTap) {
         touch.el.trigger('doubleTap')
         touch = {}
