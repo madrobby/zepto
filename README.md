@@ -1,129 +1,183 @@
-# Zepto.js -- a minimalist JavaScript framework
+# Zepto.js – a minimalist JavaScript framework
 
 Zepto is a minimalist JavaScript framework for modern browsers with a
 largely jQuery-compatible API. If you use jQuery, you already know how to use Zepto.
 
-# Documentation
+See [zeptojs.com](http://zeptojs.com) for an extended introduction, downloads
+and documentation.
 
-Please see http://zeptojs.com/ for documentation, features and an introduction.
+Zepto.js is licensed under the terms of the MIT License.
 
-To contribute documentation, please check out the `gh-pages` branch of this repository.
+## Building
 
-# Building
+The official site offers a download of the default distribution of Zepto. This
+is good for starting out. However, at some point you might want to add some
+optional modules and remove some of the default ones you don't need, to keep the
+size at minimum. That's when you need to check out Zepto's source code and use
+the build commands.
 
-Zepto.js can be used as-is. However, for best efficiency, run the included build step that uses UglifyJS to minify Zepto.js and will give you an estimate on the compression that is achievable when Zepto.js is served Gzipped.
+You will need ruby, RubyGems, and rake installed on your system.
 
-For this to work, you need Ruby and Rake installed.
+~~~ sh
+# dependencies:
+$ ruby -v
+$ gem -v
+$ rake -V
 
-First of all, check you have the uglifier gem installed typing
-
-``` sh
+# required to generate the minified version:
 $ gem install uglifier
-```
+~~~
 
-Then build the minified file with
+Build Zepto by running `rake`:
 
-``` sh
+~~~ sh
+# build zepto.js
 $ rake
-```
-
-You'll see an output like:
-
-```
-Original version: 22.034k
-Minified: 11.826k
-Minified and gzipped: 4.485k, compression factor 4.912
-```
-
-The minified file is saved in "dist/zepto.min.js".
-
-You can do custom build of Zepto by calling `concat` with alist of
-colon-seperated module names to include or leave out (prepend with `-`):
-
-```
-$ rake concat\[-touch:-fx:data\] dist
-(in /Users/thomas/Projects/zepto)
-Building zepto.js by including: polyfill, zepto, event, detect, ajax, form, data
-Minifying /Users/thomas/Projects/zepto/dist/zepto.js with UglifyJS...
-cp /Users/thomas/Projects/zepto/dist/zepto.min.js /Users/thomas/Projects/zepto/dist/temp.js
-rm -rf /Users/thomas/Projects/zepto/dist/temp.js.gz
 Original version: 40.423k
 Minified: 18.776k
 Minified and gzipped: 7.033k, compression factor 5.747
-```
+~~~
 
-By default, Zepto includes `polyfill`, `zepto`, `event`, `detect`, `fx`, `ajax`, `form`, and
-`touch`.
+The resulting files are:
 
-The `data`, `fx_methods`, `assets`, `gesture`, and `stack` modules are optional.
+1. dist/zepto.js
+2. dist/zepto.min.js
 
-# Bugs
+To include optional modules and remove default ones, use the `concat` task. In
+this example, "touch" and "fx" are removed, but "data" is added:
 
-If you encounter bugs, please follow these steps:
+~~~
+$ rake concat[-touch:-fx:data] dist
+~~~
 
-1. First, try if the bug is fixed in the latest Zepto.js master branch:
-   Get it from http://github.com/madrobby/zepto.
+## Zepto modules
 
-2. If you don't know it yet, read http://github.github.com/github-flavored-markdown/
+Zepto modules are individual files in the "src/" directory.
 
-3. Submit the bug on our issue tracker:
-   http://github.com/madrobby/zepto/issues
+<table>
+<thead><tr>
+  <th>module</th> <th>default</th> <th>description</th>
+</tr></thead>
+<tbody>
+  <tr>
+    <th>polyfill</th>
+    <td>✔</td>
+    <td>
+      Provides String.prototype.trim and Array.prototype.reduce methods
+      if they are missing (required for iOS 3.x)
+    </td>
+  </tr>
+  <tr>
+    <th>zepto</th>
+    <td>✔</td>
+    <td>Core module; contains most methods</td>
+  </tr>
+  <tr>
+    <th>event</th>
+    <td>✔</td>
+    <td>Event handling via <code>on()</code> &amp; <code>off()</code></td>
+  </tr>
+  <tr>
+    <th>detect</th>
+    <td>✔</td>
+    <td>Provides <code>$.os</code> and <code>$.browser</code> information</td>
+  </tr>
+  <tr>
+    <th>fx</th>
+    <td>✔</td>
+    <td>The <code>animate()</code> method</td>
+  </tr>
+  <tr>
+    <th>fx_methods</th>
+    <td></td>
+    <td>
+      Animated <code>show</code>, <code>hide</code>, <code>toggle</code>,
+      and <code>fade*()</code> methods.
+    </td>
+  </tr>
+  <tr>
+    <th>ajax</th>
+    <td>✔</td>
+    <td>XMLHttpRequest and JSONP functionality</td>
+  </tr>
+  <tr>
+    <th>form</th>
+    <td>✔</td>
+    <td>Serialize &amp; submit web forms</td>
+  </tr>
+  <tr>
+    <th>assets</th>
+    <td></td>
+    <td>
+      Experimental support for cleaning up iOS memory after removing
+      image elements from the DOM.
+    </td>
+  </tr>
+  <tr>
+    <th>data</th>
+    <td></td>
+    <td>
+      A full-blown <code>data()</code> method, capable of storing arbitrary
+      objects in memory.
+    </td>
+  </tr>
+  <tr>
+    <th>touch</th>
+    <td>✔</td>
+    <td>Fires tap– and swipe–related events on touch devices</td>
+  </tr>
+  <tr>
+    <th>gesture</th>
+    <td></td>
+    <td>Fires pinch gesture events on touch devices</td>
+  </tr>
+  <tr>
+    <th>stack</th>
+    <td></td>
+    <td>Provides <code>andSelf</code> &amp; <code>end()</code> chaining methods</td>
+  </tr>
+</tbody>
+</table>
 
-Let us know in detail what is going on, including the exact browser version you're on
-and preferably a test case that can be reached online so we can quickly reproduce the
-error.
+## Contributing
 
-Better, yet, fix the bug and bask in the glory of being a contributor (see below!).
+Get in touch:
 
-# Contributing!
+* IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
+* @[zeptojs](http://twitter.com/zeptojs)
 
-We love help on this, so please feel free to mess around!
+### Report a bug
 
-If you don't know how a method should behave, please use jQuery as a reference. Zepto.js should closely emulate it.
-Note that emulation of all features of jQuery is not a project goal, rather we want the most useful parts while keeping
-to the ~5-10k minified goal.
+1. Check if the bug is already fixed in the [master branch][master] since the
+   last release.
+2. Check [existing issues][issues]. Open a new one, including exact browser &
+   platform information. For better formatting of your report, see
+   [GitHub-flavored Markdown][mkd].
 
-Checklist for submitting patches:
+### Running tests
 
-* If it's an "esoteric" feature, please discuss first!
-* Small bug fixes can go in right away.
-* Always, always, always update the tests. All tests must pass.
-* Write concise code.
-* Please adhere to the Zepto code style guide (see below)
-* Don't add more than one feature or bug fix per pull request.
-* Run `rake whitespace` to clean up whitespace in code & tests
-* Use Github's pull request system to submit patches
+Zepto test suite is in "test/\*.html" files. Open the individual files in a web
+browser to run the tests. Files named with "\_functional" are not automated
+tests, but require interaction. Automated tests are written using
+[Evidence.js][].
 
-# Running tests
+Detailed test output is logged in the JavaScript console of your browser.
 
-If you submit patches, please include tests.
+### Code style guidelines
 
-Zepto tests are written using Evidence.js and can be found
-in the `test` folder. See https://github.com/tobie/Evidence for more info on Evidence.
+* `function name() { }` for named functions
+* `function(){ }` for anonymous functions
+* No curly braces for single-line control flow statements such as `if` & friends
+* Don't write [semicolons that are optional][optional]
+* Put a single semicolon _before_ statements that start with `(` or `[`
+  (see above article as for why it's needed)
+* Use long, descriptive variable and method names
+* Use blank lines to separate "paragraphs" of code for readability
+* Use comments to describe non-obvious code behavior
 
-Simply add your tests (see existing tests as templates) and then view the HTML file in a browser).
-For detailed results, see the JavaScript console in your browser.
 
-IRC channel: #zepto on irc.freenode.net — stay updated on http://twitter.com/zeptojs
-
-Remember to have fun!
-
-# Code style guide
-
-These are the style guidelines:
-
-* Use `function name() { }` for named functions
-* Use `function(){ }` for anonymous functions
-* Don't use curly braces for single-line statements with `if` and friends
-* Don't use semicolons at the end of statements, if the semicolon would be at the end of the line
-* Use a single semicolon before statements that start with `(` or `[`
-* Use full word-length descriptive variable names
-* Use whitespace to indicate blocks of code and make code more readable
-* Use comments to describe unexpected code behavior
-
-For the semicolon-less rules, please refer to http://mislav.uniqpath.com/2010/05/semicolons/ for why
-we're doing this.
-
-# License
-
-Zepto.js is is licensed under the terms of the MIT License, see the included MIT-LICENSE file.
+  [master]: https://github.com/madrobby/zepto/commits/master
+  [issues]: https://github.com/madrobby/zepto/issues
+  [mkd]: http://github.github.com/github-flavored-markdown/
+  [evidence.js]: https://github.com/tobie/Evidence
+  [optional]: http://mislav.uniqpath.com/2010/05/semicolons/
