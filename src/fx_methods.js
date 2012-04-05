@@ -15,8 +15,7 @@
     if (typeof speed == 'function' && !callback) callback = speed, speed = undefined
     var props = { opacity: opacity }
     if (scale) {
-      if ($.fx.transforms3d) props.scale3d = scale + ',1'
-      else props.scale = scale
+      props.scale = scale
       el.css($.fx.cssPrefix + 'transform-origin', '0 0')
     }
     return el.anim(props, translateSpeed(speed) / 1000, null, callback)
@@ -67,32 +66,7 @@
   }
 
   $.extend($.fx, {
-    speeds: speeds,
-    // feature detection for 3D transforms adapted from Modernizr
-    transforms3d: (function(props){
-      var ret = false
-      $.each(props, function(i, prop){
-        if (docElem.style[prop] !== undefined) {
-          ret = i != 1 || webkitTransforms3d()
-          return false
-        }
-      })
-      return ret
-    })('perspectiveProperty WebkitPerspective MozPerspective OPerspective msPerspective'.split(' '))
+    speeds: speeds
   })
 
-  function webkitTransforms3d() {
-    var ret, div = document.createElement('div'),
-      testEl = document.createElement('div'),
-      css = '@media (-webkit-transform-3d){#zeptotest{left:9px;position:absolute}}',
-      style = ['&shy;', '<style>', css, '</style>'].join('')
-
-    div.innerHTML += style
-    testEl.id = 'zeptotest'
-    div.appendChild(testEl)
-    docElem.appendChild(div)
-    ret = testEl.offsetLeft === 9
-    div.parentNode.removeChild(div)
-    return ret
-  }
 })(Zepto)
