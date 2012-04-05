@@ -17,7 +17,7 @@
       return handler
         && (!event.e  || handler.e == event.e)
         && (!event.ns || matcher.test(handler.ns))
-        && (!fn       || handler.fn == fn)
+        && (!fn       || zid(handler.fn) === zid(fn))
         && (!selector || handler.sel == selector)
     })
   }
@@ -61,6 +61,18 @@
   }
 
   $.event = { add: add, remove: remove }
+
+  $.proxy = function(fn, context) {
+    if ($.isFunction(fn)) {
+      var proxyFn = function(){ return fn.apply(context, arguments) }
+      proxyFn._zid = zid(fn)
+      return proxyFn
+    } else if (typeof context == 'string') {
+      return $.proxy(fn[context], fn)
+    } else {
+      throw new TypeError("expected function")
+    }
+  }
 
   $.fn.bind = function(event, callback){
     return this.each(function(){
