@@ -343,7 +343,7 @@ var Zepto = (function() {
     },
     hasClass: function(name){
       if (this.length < 1) return false;
-      else return classRE(name).test(this[0].className);
+      else return classRE(name).test(this[0].className.baseVal === undefined ? this[0].className : this[0].className.baseVal);
     },
     addClass: function(name){
       return this.each(function(idx) {
