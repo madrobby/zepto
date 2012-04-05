@@ -30,9 +30,6 @@
     return value === undefined ?
       this.length == 0 ? undefined :
       $.isPlainObject(name) ? setDataAttributes(this, name) : getData(this[0], name) :
-      this.each(function(idx){
-        setData(this, name, $.isFunction(value) ?
-                value.call(this, idx, getData(this, name)) : value)
-      })
+      this.each(function(idx){ setData(this, name, value) })
   }
 })(Zepto)

@@ -1232,6 +1232,8 @@
 
         t.assertEqual('hello', els.data('fun'))
         t.assertEqual('whatever', els.data('blah'))
+
+        t.assertUndefined($('body').data('does-not-exist'))
       },
 
       testVal: function(t) {
