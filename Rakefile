@@ -1,136 +1,90 @@
-require 'rake/packagetask'
-
 ZEPTO_VERSION  = "0.8"
 
-ZEPTO_ROOT     = File.expand_path(File.dirname(__FILE__))
-ZEPTO_SRC_DIR  = File.join(ZEPTO_ROOT, 'src')
-ZEPTO_DIST_DIR = File.join(ZEPTO_ROOT, 'dist')
-ZEPTO_PKG_DIR  = File.join(ZEPTO_ROOT, 'pkg')
+DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form touch ]
 
-ZEPTO_COMPONENTS = [
-  'polyfill',
-  'zepto',
-  'event',
-  'detect',
-  'fx',
-  # 'fx_methods',
-  'ajax',
-  'form',
-  # 'assets',
-  # 'data',
-  'touch',
-  # 'gesture',
-  # 'stack',
-]
+KILO = 1024   # how many bytes in a "kilobyte"
 
-task :default => [:clean, :concat, :dist]
+task :default => :dist
 
-ZEPTO_TESTS = %w[
-  test/zepto.html
-  test/ajax.html
-  test/data.html
-  test/detect.html
-  test/form.html
-  test/fx.html
-  test/polyfill.html
-  test/stack.html
-]
+# module-aware file task
+class BuildTask < Rake::FileTask
+  def modules
+    prerequisites.map {|f| File.basename(f, '.js') }
+  end
 
-desc "Clean the distribution directory."
-task :clean do
-  rm_rf ZEPTO_DIST_DIR
-  mkdir ZEPTO_DIST_DIR
+  def remove_prerequisites to_remove
+    @prerequisites -= to_remove
+    return self
+  end
+
+  def modules_mismatch?
+    File.open(name, 'r') {|f| f.gets } !~ /modules: ([\w,\s]+)/ or
+      $1.split(/\W+/) != modules
+  end
+
+  def needed?() super or modules_mismatch? end
 end
 
-def normalize_whitespace(filename)
-  contents = File.readlines(filename)
-  contents.each { |line| line.sub!(/\s+$/, "") }
-  File.open(filename, "w") do |file|
-    file.write contents.join("\n").sub(/(\n+)?\Z/m, "\n")
+BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" } do |task|
+  mkdir_p 'dist', :verbose => false
+  File.open(task.name, 'w') do |zepto|
+    zepto.puts "/* Zepto %s - modules: %s */" % [ZEPTO_VERSION, task.modules.join(', ')]
+    task.prerequisites.each {|src| zepto.puts File.read(src) }
   end
 end
 
-desc "Strip trailing whitespace and ensure each file ends with a newline"
-task :whitespace do
-  Dir["*", "src/**/*", "test/**/*", "examples/**/*"].each do |filename|
-    normalize_whitespace(filename) if File.file?(filename)
+file 'dist/zepto.min.js' => 'dist/zepto.js' do |task|
+  begin require 'uglifier'
+  rescue LoadError; fail "Uglifier not available: #{$!}"
+  else
+    File.open(task.name, 'w') do |min|
+      min << Uglifier.new.compile(File.read(task.prerequisites.first))
+    end
+  end
+end
+
+file 'dist/zepto.min.gz' => 'dist/zepto.min.js' do |task|
+  verbose false do
+    tmp_file = task.name.sub('.gz', '')
+    cp task.prerequisites.first, tmp_file
+    sh 'gzip', '--best', tmp_file
   end
 end
 
 desc "Concatenate source files to build zepto.js"
-task :concat, [:addons] => :whitespace do |task, args|
-  # colon-separated arguments such as `concat[foo:bar:-baz]` specify
-  # which components to add or exclude, depending on if it starts with "-"
-  add, exclude = args[:addons].to_s.split(':').partition {|c| c !~ /^-/ }
-  exclude.each {|c| c.sub!('-', '') }
-  components = (ZEPTO_COMPONENTS | add) - exclude
+task :concat, [:modules] do |task, args|
+  modules = args[:modules].to_s.split(':')
+  to_add, to_exclude = modules.partition {|m| m.sub!(/^(-)?(.+)/, 'src/\2.js'); !$1 }
 
-  unless components == ZEPTO_COMPONENTS
-    puts "Building zepto.js by including: #{components.join(', ')}"
+  Rake::Task['dist/zepto.js'].
+    remove_prerequisites(to_exclude).enhance(to_add).
+    invoke
+end
+
+desc "Generate zepto.js distribution files and report size statistics"
+task :dist => ['dist/zepto.js', 'dist/zepto.min.js', 'dist/zepto.min.gz'] do |task|
+  orig_size, min_size, gz_size = task.prerequisites.map {|f| File.size(f) }
+
+  puts "Original version: %.3fk" % (orig_size.to_f / KILO)
+  puts "Minified: %.3fk" % (min_size.to_f / KILO)
+  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [gz_size.to_f / KILO, orig_size.to_f / gz_size]
+
+  rm_f 'dist/zepto.min.gz', :verbose => false
+end
+
+task(:clean) { rm_rf 'dist' }
+
+desc "Strip trailing whitespace and ensure each file ends with a newline"
+task :whitespace do
+  verbose false do
+    files = Dir['{src,test,examples}/**/*.{js,html}']
+    ruby(*%w'-p -i -e $_.sub!(/\s*\Z/,"\n")'.concat(files))
   end
-
-  File.open(File.join(ZEPTO_DIST_DIR, 'zepto.js'), 'w') do |f|
-    f.puts components.map { |component|
-      File.read File.join(ZEPTO_SRC_DIR, "#{component}.js")
-    }
-  end
 end
 
-def uglifyjs(src, target)
-  begin
-    require 'uglifier'
-  rescue LoadError => e
-    if verbose
-      puts "\nYou'll need the 'uglifier' gem for minification. Just run:\n\n"
-      puts "  $ gem install uglifier"
-      puts "\nand you should be all set.\n\n"
-      exit
-    end
-    return false
-  end
-  puts "Minifying #{src} with UglifyJS..."
-  File.open(target, "w"){|f| f.puts Uglifier.new.compile(File.read(src))}
+rule %r{^docs/.+\.html} => 'src/%n.js' do |task|
+  sh 'docco', task.source, :verbose => false
 end
 
-def process_minified(src, target)
-  cp target, File.join(ZEPTO_DIST_DIR,'temp.js')
-  msize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js'))
-  `gzip -9 #{File.join(ZEPTO_DIST_DIR,'temp.js')}`
-
-  osize = File.size(src)
-  dsize = File.size(File.join(ZEPTO_DIST_DIR,'temp.js.gz'))
-  rm_rf File.join(ZEPTO_DIST_DIR,'temp.js.gz')
-
-  puts "Original version: %.3fk" % (osize/1024.0)
-  puts "Minified: %.3fk" % (msize/1024.0)
-  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [dsize/1024.0, osize/dsize.to_f]
-end
-
-desc "Generates a minified version for distribution, using UglifyJS."
-task :dist do
-  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
-  uglifyjs src, target
-  process_minified src, target
-end
-
-desc "Generate docco documentation from sources."
-task :docco do
-  puts "Generating docs..."
-  puts "Note: to work, install node.js first, then install docco with 'sudo npm install docco -g'."
-  puts `docco src/*`
-end
-
-Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
-  package.need_tar_gz = true
-  package.need_zip = true
-  package.package_dir = ZEPTO_PKG_DIR
-  package.package_files.include(
-    'README.md',
-    'MIT-LICENSE',
-    'dist/**/*',
-    'src/**/*',
-    'test/**/*',
-    'vendor/evidence.js',
-    'examples/**/*'
-  ).exclude(*`git ls-files -o test src examples -z`.split("\0"))
-end
+desc "Generate docco documentation from source files"
+task :docco => Dir['src/*.js'].map {|f| 'docs/%s.html' % File.basename(f, '.js') }
