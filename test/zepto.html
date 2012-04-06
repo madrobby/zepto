@@ -504,6 +504,7 @@
         t.assertLength(1, fragment)
         t.assertEqual("<div></div>", outerHTML(fragment.get(0)))
         t.assertEqual('', fragment.selector)
+        t.assertNull(fragment.get(0).parentNode)
 
         fragment = $("<div>hello world</div>")
         t.assertLength(1, fragment)
@@ -865,6 +866,10 @@
         t.assertLength(0, $(document.createElement('div')).parent())
       },
 
+      testParentOnDetached: function(t){
+        t.assertLength(0, $('<ul />').parent())
+      },
+
       testChildren: function(t){
         var el=$("#childrenTest"), lis=$("li.child",el)
 
@@ -978,23 +983,14 @@
       },
 
       testUnwrapFragment: function(t){
-        var fragment = $('<div id="outer"><div id="inner"></div></div>')
-        var innerFragment = fragment.find("#inner")
+        var fragment = $('<div id=outer><div id=inner></div><div id=uninvolved></div></div>'),
+            innerFragment = fragment.find("#inner"),
+            uninvolved = fragment.find("#uninvolved")
+
         innerFragment.unwrap()
-        t.assertEqual(0, fragment.children().length)
-        t.assertEqual("", innerFragment.parent().attr("id"))
-
-        fragment = $('<div id="outer"><div id="inner"></div><div id="uninvolved"></div></div>')
-        innerFragment = fragment.find("#inner")
-        var uninvolved = fragment.find("#uninvolved")
-        innerFragment.unwrap()
-        t.assertEqual(0, fragment.children().length)
-
-        t.assertEqual("", innerFragment.parent().attr("id"))
-        t.assertEqual("", uninvolved.parent().attr("id"))
-
-        t.assertEqual("uninvolved", innerFragment.siblings().attr("id"))
-        t.assertEqual("inner", uninvolved.siblings().attr("id"))
+        t.assertLength(0, innerFragment.parent(), '#inner should be orphan')
+        t.assertLength(0, uninvolved.parent(),    '#uninvolved should be orphan')
+        t.assertLength(0, fragment.children(),    'fragment should be empty')
       },
 
       testFind: function(t){

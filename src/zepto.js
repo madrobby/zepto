@@ -100,9 +100,11 @@ var Zepto = (function() {
   zepto.fragment = fragment = function(html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
-    var container = containers[name]
+    var nodes, container = containers[name]
     container.innerHTML = '' + html
-    return slice.call(container.childNodes)
+    return $.each(slice.call(container.childNodes), function(){
+      container.removeChild(this)
+    })
   }
 
   // `$.zepto.Z` swaps out the prototype of the given `dom` array
@@ -366,9 +368,7 @@ var Zepto = (function() {
       })
     },
     replaceWith: function(newContent){
-      return this.each(function(){
-        $(this).before(newContent).remove()
-      })
+      return this.before(newContent).remove()
     },
     wrap: function(newContent){
       return this.each(function(){
@@ -520,11 +520,12 @@ var Zepto = (function() {
 
   function insert(operator, target, node) {
     var parent = (operator % 2) ? target : target.parentNode
-    parent && parent.insertBefore(node,
+    parent ? parent.insertBefore(node,
       !operator ? target.nextSibling :      // after
       operator == 1 ? parent.firstChild :   // prepend
       operator == 2 ? target :              // before
-      null)                                 // append
+      null) :                               // append
+      $(node).remove()
   }
 
   function traverseNode(node, fun) {
