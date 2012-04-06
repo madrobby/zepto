@@ -92,13 +92,8 @@
       ajaxSuccess(data, xhr, options)
     }
 
-    if (isObject(options.data)) options.data = $.param(options.data)
-
-    url = options.url.replace(/=\?/, '=' + callbackName)
-    if (options.data) url += "&" + options.data
-
-    script.src = url
-
+    serializeData(options)
+    script.src = options.url.replace(/=\?/, '=' + callbackName)
     $('head').append(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
@@ -153,6 +148,13 @@
     return (url + '&' + query).replace(/[&?]{1,2}/, '?')
   }
 
+  // serialize payload and append it to the URL for GET requests
+  function serializeData(options) {
+    if (isObject(options.data)) options.data = $.param(options.data)
+    if (options.data && (!options.type || options.type.toLowerCase() == 'get'))
+      options.url = appendQuery(options.url, options.data)
+  }
+
   $.ajax = function(options){
     var settings = $.extend({}, options || {})
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
@@ -170,10 +172,7 @@
 
     if (!settings.url) settings.url = window.location.toString()
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded'
-    if (isObject(settings.data)) settings.data = $.param(settings.data)
-
-    if (settings.type.toLowerCase() == 'get' && settings.data)
-      settings.url = appendQuery(settings.url, settings.data)
+    serializeData(settings)
 
     var mime = settings.accepts[dataType],
         baseHeaders = { },
