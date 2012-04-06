@@ -4,45 +4,39 @@
 
 // The following code is heavily inspired by jQuery's $.fn.data()
 
-(function($) {
+;(function($) {
   var data = {}, dataAttr = $.fn.data,
     uuid = $.uuid = +new Date(),
-    exp  = $.expando = 'Zepto' + uuid;
+    exp  = $.expando = 'Zepto' + uuid
 
   function getData(node, name) {
-    var id = node[exp], store = id && data[id];
+    var id = node[exp], store = id && data[id]
     return name === undefined ? store || setData(node) :
-      (store && store[name]) || dataAttr.call($(node), name);
+      (store && store[name]) || dataAttr.call($(node), name)
   }
 
   function setData(node, name, value) {
     var id = node[exp] || (node[exp] = ++uuid),
-      store = data[id] || (data[id] = {});
-    if (name !== undefined) store[name] = value;
+      store = data[id] || (data[id] = {})
+    if (name !== undefined) store[name] = value
     else {
-      attr = node.attributes;
-      for (i = 0, l = attr.length; i < l; i++) {
-        name = attr[i].name;
-        if ( name.indexOf( "data-" ) === 0 ) setData(node, name.substring(5), attr[i].value);
+      var i, l, attributes = node.attributes;
+      for (i = 0, l = attributes.length; i < l; i++) {
+        name = attributes[i].name
+        if ( name.indexOf( "data-" ) === 0 ) store[name.substring(5)] = attributes[i].value
       }
     }
-    return store;
-  };
+    return store
+  }
 
-  function setDataAttributes(node,obj) {
-    node.each(function() {
-      for (var k in obj) setData(this, k, obj[k]);
-    });
-  };
+  function setDataAttributes(node, object) {
+    node.each(function(){ for (var key in object) setData(this, key, object[key]) })
+  }
 
   $.fn.data = function(name, value) {
     return value === undefined ?
-      this.length == 0 ?
-        undefined : $.isObject(name) ?
-          setDataAttributes(this, name) : getData(this[0], name) :
-          this.each(function(idx){
-            setData(this, name, $.isFunction(value) ?
-            value.call(this, idx, getData(this, name)) : value);
-          });
-  };
-})(Zepto);
+      this.length == 0 ? undefined :
+      $.isPlainObject(name) ? setDataAttributes(this, name) : getData(this[0], name) :
+      this.each(function(idx){ setData(this, name, value) })
+  }
+})(Zepto)

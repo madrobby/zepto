@@ -19,18 +19,18 @@
   <div id="browser"> </div>
 
   <script>
-    $('#browser').text(navigator.userAgent);
+    $('#browser').text(navigator.userAgent)
 
     $('#gesture_test')
       .pinch(function(){
-        $(this).append(' | pinch!');
+        $(this).append(' | pinch!')
       })
       .pinchIn(function(){
-        $(this).append(' | pinch in!');
+        $(this).append(' | pinch in!')
       })
       .pinchOut(function(){
-        $(this).append(' | pinch out!');
-      });
+        $(this).append(' | pinch out!')
+      })
   </script>
 </body>
 </html>

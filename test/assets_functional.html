@@ -40,21 +40,21 @@
     var prefix = 'http://stuff.vandervossen.net/temporary/zepto_assets_test/sintel-',
         mode = window.location.search.slice(1),
         timeout,
-        i;
+        i
     if (mode === 'with') {
-      document.write('<script src="../src/assets.js"></s'+'cript>');
-      document.write('RUNNING WITH ASSETS PLUGIN');
+      document.write('<script src="../src/assets.js"></s'+'cript>')
+      document.write('RUNNING WITH ASSETS PLUGIN')
     }
     if (mode !== '') {
-      i = 1;
-      (function frame() {
-        $('#image' + (i - 4)).remove();
-        $('#container').prepend('<div>' + i + ': <img id="image' + i + '" src="' + prefix + i + '.jpg"></div>');
-        if (i++ < 51) timeout = setTimeout(frame, 6000);
-      })();
+      i = 1
+      ;(function frame() {
+        $('#image' + (i - 4)).remove()
+        $('#container').prepend('<div>' + i + ': <img id="image' + i + '" src="' + prefix + i + '.jpg"></div>')
+        if (i++ < 51) timeout = setTimeout(frame, 6000)
+      })()
     }
 
-    $('#browser').text(navigator.userAgent);
+    $('#browser').text(navigator.userAgent)
   </script>
 </body>
 </html>

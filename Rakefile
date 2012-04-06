@@ -19,7 +19,8 @@ ZEPTO_COMPONENTS = [
   # 'assets',
   # 'data',
   'touch',
-  # 'gesture'
+  # 'gesture',
+  # 'stack',
 ]
 
 task :default => [:clean, :concat, :dist]
@@ -32,6 +33,7 @@ ZEPTO_TESTS = %w[
   test/form.html
   test/fx.html
   test/polyfill.html
+  test/stack.html
 ]
 
 desc "Clean the distribution directory."
@@ -74,16 +76,6 @@ task :concat, [:addons] => :whitespace do |task, args|
   end
 end
 
-def google_compiler(src, target)
-  puts "Minifying #{src} with Google Closure Compiler..."
-  `java -jar vendor/google-compiler/compiler.jar --js #{src} --summary_detail_level 3 --js_output_file #{target}`
-end
-
-def yui_compressor(src, target)
-  puts "Minifying #{src} with YUI Compressor..."
-  `java -jar vendor/yuicompressor/yuicompressor-2.4.2.jar #{src} -o #{target}`
-end
-
 def uglifyjs(src, target)
   begin
     require 'uglifier'
@@ -121,22 +113,8 @@ task :dist do
   process_minified src, target
 end
 
-desc "Generates a minified version for distribution using the Google Closure compiler."
-task :googledist do
-  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
-  google_compiler src, target
-  process_minified src, target
-end
-
-desc "Generates a minified version for distribution using the YUI compressor."
-task :yuidist do
-  src, target = File.join(ZEPTO_DIST_DIR,'zepto.js'), File.join(ZEPTO_DIST_DIR,'zepto.min.js')
-  yui_compressor src, target
-  process_minified src, target
-end
-
 desc "Generate docco documentation from sources."
-task :docs do
+task :docco do
   puts "Generating docs..."
   puts "Note: to work, install node.js first, then install docco with 'sudo npm install docco -g'."
   puts `docco src/*`
@@ -155,47 +133,4 @@ Rake::PackageTask.new('zepto', ZEPTO_VERSION) do |package|
     'vendor/evidence.js',
     'examples/**/*'
   ).exclude(*`git ls-files -o test src examples -z`.split("\0"))
-end
-
-desc "Run tests in headless WebKit"
-task :test => "jasmine:headless" do
-  require 'rubygems'
-  require 'rubygems/specification'
-
-  # HACK: jasmine-headless-webkit doesn't let us access its compiled specrunner directly
-  if jasmine_gem = Gem::Specification.find_by_name('jasmine-headless-webkit')
-    headless_root = jasmine_gem.full_gem_path
-    runner = File.join(headless_root, 'ext/jasmine-webkit-specrunner/jasmine-webkit-specrunner')
-
-    exec runner, '-c', *ZEPTO_TESTS
-  else
-    abort "Can't find 'jasmine-headless-webkit' gem"
-  end
-end
-
-def silence_warnings
-  require 'stringio'
-  begin
-    old_stderr = $stderr
-    $stderr = StringIO.new
-    yield
-  ensure
-    $stderr = old_stderr
-  end
-end
-
-begin
-  silence_warnings {
-    require 'jasmine'
-    load 'jasmine/tasks/jasmine.rake'
-    require 'jasmine/headless/task'
-  }
-
-  Jasmine::Headless::Task.new do |task|
-    task.colors = true
-  end
-rescue LoadError
-  task :jasmine do
-    abort "Jasmine is not available. In order to run jasmine, you must: (sudo) gem install jasmine"
-  end
 end
