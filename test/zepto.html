@@ -566,6 +566,14 @@
         t.assertEqual('TFOOT', $('<tfoot></tfoot>').pluck('nodeName').join(','))
       },
 
+      testCreateSelectOptgroup: function(t) {
+        t.assertEqual('OPTGROUP', $('<optgroup></optgroup>').pluck('nodeName').join(','))
+      },
+
+      testCreateSelectOption: function(t) {
+        t.assertEqual('OPTION', $('<option></option>').pluck('nodeName').join(','))
+      },
+
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady)
         t.assertEqual('hi!', globalVarSetFromReady2)
