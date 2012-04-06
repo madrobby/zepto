@@ -28,7 +28,7 @@ end
 BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" } do |task|
   mkdir_p 'dist', :verbose => false
   File.open(task.name, 'w') do |zepto|
-    zepto.puts "/* Zepto %s%s - modules: %s - zeptojs.org/license */" %
+    zepto.puts "/* Zepto %s%s - modules: %s - zeptojs.com/license */" %
                 [ZEPTO_VERSION, optional_sha, task.modules.join(', ')]
 
     task.prerequisites.each do |src|
