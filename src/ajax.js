@@ -226,7 +226,8 @@
         ajaxError(null, 'timeout', xhr, settings)
       }, settings.timeout)
 
-    xhr.send(settings.data)
+    // avoid sending empty string (#319)
+    xhr.send(settings.data ? settings.data : null)
     return xhr
   }
 
