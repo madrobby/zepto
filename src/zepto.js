@@ -32,19 +32,16 @@ var Zepto = (function() {
     init, fragment, Z,
     tempParent = document.createElement('div')
 
-  function matches(elem, selector) {
-    if (!elem || elem.nodeType !== 1) return false
-    var matchesSel = elem.mozMatchesSelector || elem.webkitMatchesSelector || elem.oMatchesSelector || elem.matchesSelector
-    if (matchesSel) return matchesSel.call(elem, selector)
-    var temp = !elem.parentNode, parent
-
-    if (temp) {
-      parent = tempParent
-      tempParent.appendChild(elem)
-    }
-    else parent = elem.parentNode
-    var match = ~$$(parent, selector).indexOf(elem)
-    temp && tempParent.removeChild(elem)
+  function matches(element, selector) {
+    if (!element || element.nodeType !== 1) return false
+    var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
+                          element.oMatchesSelector || element.matchesSelector
+    if (matchesSelector) return matchesSelector.call(element, selector)
+    // fall back to performing a selector:
+    var match, parent = element.parentNode, temp = !parent
+    if (temp) (parent = tempParent).appendChild(element)
+    match = ~$$(parent, selector).indexOf(element)
+    temp && tempParent.removeChild(element)
     return match
   }
 

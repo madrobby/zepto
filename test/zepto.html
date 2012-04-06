@@ -1010,9 +1010,6 @@
         t.assertLength(2, found.filter('.filtertest'))
         t.assertLength(0, found.filter('.doesnotexist'))
         t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'))
-
-        var withoutParent = $(document.createElement('div'))
-        t.assert(!withoutParent.is('div'))
       },
 
       testAdd: function(t){
@@ -1051,6 +1048,11 @@
         t.assert(!$('#doesnotexist').is('p'))
 
         t.assert(!$(window).is('p'))
+      },
+
+      testIsWithoutParent: function(t){
+        var elem = $('<div />')
+        t.assert(elem.is('div'))
       },
 
       testCSS: function(t){
