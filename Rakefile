@@ -28,8 +28,17 @@ end
 BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" } do |task|
   mkdir_p 'dist', :verbose => false
   File.open(task.name, 'w') do |zepto|
-    zepto.puts "/* Zepto %s - modules: %s */" % [ZEPTO_VERSION, task.modules.join(', ')]
-    task.prerequisites.each {|src| zepto.puts File.read(src) }
+    zepto.puts "/* Zepto %s%s - modules: %s - zeptojs.org/license */" %
+                [ZEPTO_VERSION, optional_sha, task.modules.join(', ')]
+
+    task.prerequisites.each do |src|
+      # bring in source files one by one, but without copyright info
+      copyright = true
+      File.open(src).each_line do |line|
+        copyright = false if copyright and line !~ %r{^(/|\s*$)}
+        zepto.puts line unless copyright
+      end
+    end
   end
 end
 
@@ -88,3 +97,11 @@ end
 
 desc "Generate docco documentation from source files"
 task :docco => Dir['src/*.js'].map {|f| 'docs/%s.html' % File.basename(f, '.js') }
+
+# display the current sha if HEAD isn't a version tag
+def optional_sha
+  sha = `git rev-parse HEAD`.chomp
+  if $?.success? and `git name-rev #{sha} --name-only --tags` !~ %r{^v[^^]+(\^0)?$}
+    " (%s)" % sha[0, 7]
+  end
+end
