@@ -23,7 +23,7 @@
       var i, l, attributes = node.attributes;
       for (i = 0, l = attributes.length; i < l; i++) {
         name = attributes[i].name
-        if ( name.indexOf( "data-" ) === 0 ) store[name.substring(5)] = attributes[i].value
+        if ( name.indexOf('data-') === 0 ) store[name.substring(5)] = attributes[i].value
       }
     }
     return store
