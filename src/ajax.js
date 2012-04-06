@@ -143,6 +143,10 @@
       xmlTypeRE.test(mime) && 'xml' ) || 'text'
   }
 
+  function appendQuery(url, query) {
+    return (url + '&' + query).replace(/[&?]{1,2}/, '?')
+  }
+
   $.ajax = function(options){
     var settings = $.extend({}, options || {})
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
@@ -152,16 +156,20 @@
     if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
       RegExp.$2 != window.location.host
 
-    if (/=\?/.test(settings.url)) return $.ajaxJSONP(settings)
+    var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
+    if (dataType == 'jsonp' || hasPlaceholder) {
+      if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
+      return $.ajaxJSONP(settings)
+    }
 
     if (!settings.url) settings.url = window.location.toString()
     if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded'
     if (isObject(settings.data)) settings.data = $.param(settings.data)
 
     if (settings.type.toLowerCase() == 'get' && settings.data)
-      settings.url = (settings.url + '&' + settings.data).replace(/[&?]{1,2}/, '?')
+      settings.url = appendQuery(settings.url, settings.data)
 
-    var mime = settings.accepts[settings.dataType],
+    var mime = settings.accepts[dataType],
         baseHeaders = { },
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
         xhr = $.ajaxSettings.xhr(), abortTimeout
@@ -179,7 +187,7 @@
         clearTimeout(abortTimeout)
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
-          var dataType = settings.dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
+          dataType = dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
           result = xhr.responseText
 
           try {

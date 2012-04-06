@@ -111,7 +111,7 @@
         t.pause()
         var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
           deferredResume(t, function(){
-            this.assertEqual(data.items.length, 0)
+            this.assertEqual('world', data.hello)
             this.assertEqual(0, $('script[src^=fixtures]').size())
           })
         })
@@ -120,12 +120,27 @@
       },
 
       testAjaxGetJSONPErrorCallback: function(t){
-        var successFired, errorFired, xhr = $.ajax({
+        t.pause()
+        $.ajax({
           type: 'GET',
-          url: 'fixtures/404.js?callback=?&timestamp='+(+new Date),
+          url: 'fixtures/404.js?timestamp='+(+new Date),
           dataType: 'jsonp',
-          success: function() { t.refute(true); },
-          error: function() { t.assert(true); }
+          success: function() { t.refute(true) },
+          error: function() { t.assert(true) },
+          complete: function() { deferredResume(t) }
+        })
+      },
+
+      testJSONPdataType: function(t){
+        t.pause()
+        $.ajax({
+          dataType: 'jsonp',
+          url: 'fixtures/jsonp.js?timestamp='+(+new Date),
+          success: function(data){
+            deferredResume(t, function(){
+              this.assertEqual('world', data.hello)
+            })
+          }
         })
       },
 
