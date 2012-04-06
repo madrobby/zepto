@@ -833,6 +833,16 @@
         t.assertLength(0, el.closest('form'))
       },
 
+      testClosestOnDetached: function(t){
+        var el = $('<div><p><a></a></p></div>'),
+            para = el.children(),
+            link = para.children()
+
+        t.assertEqualCollection(para, link.closest('p'))
+        t.assertEqualCollection(el, link.closest('div'))
+        t.assertEqualCollection(el, el.closest('div'))
+      },
+
       testParents: function(t){
         var body = document.body, html = body.parentNode, container = $('#parents'),
           wrapper = $('#fixtures').get(0)
