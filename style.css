@@ -105,14 +105,17 @@ h2 {
   font-size: 20px; 
   padding-bottom: .5em;
 }
+#sidebar hr {
+  margin: 25px 0 0 0;
+}
 hr {
   height: 1px;
   border: 0;
   padding: 0;
   margin: 35px 0 0 0;
   background: rgba(0,0,0,0.20);
-  background: -moz-linear-gradient(left center, rgba(165, 69, 243, 0.0) rgba(165, 69, 243, 0.43) 50%, rgba(165, 69, 243, 0.0));
-  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 69, 243, 0.0)), color-stop(0.5, rgba(165, 69, 243, 0.43)), to(rgba(165, 69, 243, 0.0)));
+  background: -moz-linear-gradient(left center, rgba(165, 69, 243, 0.0) rgba(165, 69, 243, 0.33) 50%, rgba(165, 69, 243, 0.0));
+  background: -webkit-gradient(linear, left top, right top, from(rgba(165, 69, 243, 0.0)), color-stop(0.5, rgba(165, 69, 243, 0.33)), to(rgba(165, 69, 243, 0.0)));
 }
 ul {
   list-style-type: circle;
