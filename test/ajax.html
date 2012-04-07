@@ -325,14 +325,19 @@
 
         $.ajax({ contentType: 'text/html' })
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'text/html')))
+
+        $.ajax({ type: 'POST', data: [], contentType: 'application/x-foo' })
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-foo')))
+      },
+
+      testHeadersOptionCanSetContentType: function(t) {
+        $.ajax({ type: 'POST', data: [], headers: { 'Content-Type': 'application/hal+json' }})
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/hal+json')))
       },
 
       testContentTypeDefaultsToUrlEncoded: function(t) {
         $.ajax({ type: 'POST', data: [] })
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
-
-        $.ajax({ type: 'POST', data: [], contentType: 'application/x-foo' })
-        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-foo')))
       },
 
       testCustomHeader: function(t) {
