@@ -8,7 +8,7 @@ var Zepto = (function() {
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
-    fragmentRE = /^\s*<(\w+)[^>]*>/,
+    fragmentRE = /^\s*<(\w+|!)[^>]*>/,
 
     // Used by `$.zepto.init` to wrap elements, document, and document fragment
     // node types.

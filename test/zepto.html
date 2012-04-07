@@ -535,6 +535,16 @@
         t.assertEqual(Node.TEXT_NODE, textNode.get(0).nodeType)
       },
 
+      testDollarWithCommentInFragment: function(t){
+        var comment = $('<!-- -->')
+        t.assertLength(1, comment)
+        t.assertEqual(Node.COMMENT_NODE, comment.get(0).nodeType)
+      },
+
+      testDollarWithDoctypeInFragment: function(t){
+        t.assertLength(0, $('<!DOCTYPE html>'))
+      },
+
       testNodeCreationViaDollar: function (t) {
         t.assertEqual('<div></div>', outerHTML($('<div></div>').get(0)))
         t.assertEqual('<div></div>', outerHTML($('<div/>').get(0)))
