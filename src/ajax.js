@@ -171,7 +171,7 @@
     }
 
     if (!settings.url) settings.url = window.location.toString()
-    if (settings.data && !settings.contentType) settings.contentType = 'application/x-www-form-urlencoded'
+    if (settings.data && !settings.contentType && !(settings.headers && settings.headers['Content-Type'])) settings.contentType = 'application/x-www-form-urlencoded'
     serializeData(settings)
 
     var mime = settings.accepts[dataType],
