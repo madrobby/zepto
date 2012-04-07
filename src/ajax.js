@@ -151,7 +151,7 @@
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
     if (isObject(options.data)) options.data = $.param(options.data)
-    if (options.data && (!options.type || options.type.toLowerCase() == 'get'))
+    if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data)
   }
 
@@ -171,7 +171,6 @@
     }
 
     if (!settings.url) settings.url = window.location.toString()
-    if (settings.data && !settings.contentType && !(settings.headers && settings.headers['Content-Type'])) settings.contentType = 'application/x-www-form-urlencoded'
     serializeData(settings)
 
     var mime = settings.accepts[dataType],
@@ -185,6 +184,8 @@
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
+    if (settings.contentType || (settings.data && settings.type.toUpperCase() != 'GET'))
+      baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
 
     xhr.onreadystatechange = function(){
@@ -212,7 +213,6 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
-    if (settings.contentType) settings.headers['Content-Type'] = settings.contentType
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
 
     if (ajaxBeforeSend(xhr, settings) === false) {

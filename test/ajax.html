@@ -336,7 +336,9 @@
       },
 
       testContentTypeDefaultsToUrlEncoded: function(t) {
-        $.ajax({ type: 'POST', data: [] })
+        $.ajax({ type: 'GET', data: 'x' })
+        t.refute(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
+        $.ajax({ type: 'POST', data: 'x' })
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
       },
 
