@@ -15,6 +15,9 @@ var Zepto = (function() {
     // and document fragment node types.
     elementTypes = [1, 3, 8, 9, 11],
 
+    // special attributes that should be get/set via method calls
+    methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
+
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
     tableRow = document.createElement('tr'),
@@ -93,16 +96,24 @@ var Zepto = (function() {
   // The generated DOM nodes are returned as an array.
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
-  zepto.fragment = function(html, name) {
+  zepto.fragment = function(html, name, properties) {
     if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
 
-    var container = containers[name]
+    var nodes, dom, container = containers[name]
     container.innerHTML = '' + html
-    return $.each(slice.call(container.childNodes), function(){
+    dom = $.each(slice.call(container.childNodes), function(){
       container.removeChild(this)
     })
+    if (isPlainObject(properties)) {
+      nodes = $(dom)
+      $.each(properties, function(key, value) {
+        if (methodAttributes.indexOf(key) > -1) nodes[key](value)
+        else nodes.attr(key, value)
+      })
+    }
+    return dom
   }
 
   // `$.zepto.Z` swaps out the prototype of the given `dom` array
@@ -147,7 +158,7 @@ var Zepto = (function() {
         dom = [selector], selector = null
       // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
-        dom = zepto.fragment(selector.trim(), RegExp.$1), selector = null
+        dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null
       // If there's a context, create a collection on that context first, and select
       // nodes from there
       else if (context !== undefined) return $(context).find(selector)

@@ -536,6 +536,19 @@
         t.assertLength(1, fragment)
       },
 
+      testDollarFragmentAndProperties: function(t){
+        var el = $('<p id=hi />', {
+          id: 'hello', 'class': 'one two',
+          text: 'world', css: {color: 'red'}
+        })
+
+        t.assertEqual('hello', el.attr('id'))
+        t.assert(el.hasClass('one'))
+        t.assert(el.hasClass('two'))
+        t.assertEqual('world', el.text())
+        t.assertEqual('red', el.css('color'))
+      },
+
       testDollarWithTextNode: function(t){
         var textNode = $(document.createTextNode('hi there'))
         t.assertLength(1, textNode)
