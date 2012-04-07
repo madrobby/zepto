@@ -163,7 +163,12 @@
           t.resume(function(){
             t.assert($(context).is('#callbacktest'), "context for callback is wrong")
             t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
-            t.assertStyle(/^(none( 0s ease 0s ?)?)?$/, context, 'transition')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
           })
         })
 
