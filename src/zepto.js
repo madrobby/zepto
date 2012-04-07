@@ -10,9 +10,9 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
 
-    // Used by `$.zepto.init` to wrap elements, document, and document fragment
-    // node types.
-    elementTypes = [1, 9, 11],
+    // Used by `$.zepto.init` to wrap elements, text nodes, document, and
+    // document fragment node types.
+    elementTypes = [1, 3, 9, 11],
 
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
@@ -100,7 +100,7 @@ var Zepto = (function() {
   zepto.fragment = fragment = function(html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
-    var nodes, container = containers[name]
+    var container = containers[name]
     container.innerHTML = '' + html
     return $.each(slice.call(container.childNodes), function(){
       container.removeChild(this)
@@ -150,8 +150,6 @@ var Zepto = (function() {
       // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
         dom = zepto.fragment(selector.trim(), RegExp.$1), selector = null
-      // If it's a text node, just wrap it
-      else if (selector.nodeType && selector.nodeType == 3) dom = [selector]
       // If there's a context, create a collection on that context first, and select
       // nodes from there
       else if (context !== undefined) return $(context).find(selector)
