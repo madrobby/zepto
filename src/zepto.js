@@ -535,6 +535,7 @@ var Zepto = (function() {
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(){
+      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var nodes = $.map(arguments, function(n){ return isObject(n) ? n : fragment(n) })
       if (nodes.length < 1) return this
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2

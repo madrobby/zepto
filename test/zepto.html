@@ -1413,6 +1413,18 @@
         t.assert(fragment.hasClass('fragment'))
       },
 
+      testAppendMultipleArguments: function(t){
+        var el = $('<div><span>original</span></div>')
+        el.append(
+          $('<b>one</b>').get(0),
+          $('<b>two</b><b>three</b>').get(),
+          $('<b>four</b><b>five</b>'),
+          '<b>six</b>'
+        )
+        t.assertEqual('original one two three four five six',
+          el.children().map(function(){ return $(this).text() }).join(' '))
+      },
+
       testAppendToPrependTo: function(t){
         //testing with Zepto object
         function div(contents){
