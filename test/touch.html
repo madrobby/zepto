@@ -82,6 +82,33 @@
         t.assertEqual(1, count)
       },
 
+      testSingleTapDoesNotInterfereWithTappingTwice: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          down(element, 10, 10)
+
+          t.resume(function(){
+            t.pause()
+
+            setTimeout(function(){
+              up(element)
+              t.resume(function(){
+                t.assertEqual(2, count)
+              })
+            }, 200)
+          })
+        }, 200)
+      },
+
       // should be fired if there is one tap within 250ms
       testSingleTap: function(t){
         var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
@@ -129,6 +156,50 @@
         }, 100)
       },
 
+      // should be fired if the finger is down in the same location for >750ms
+      testLongTap: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('longTap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          up(element)
+
+          t.resume(function(){
+            t.assertEqual(1, count)
+          })
+        }, 900)
+      },
+
+      testLongTapDoesNotFireIfFingerIsMoved: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('longTap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          move(element, 50, 10)
+          t.resume(function(){
+            t.pause()
+            setTimeout(function(){
+              up(element)
+              t.resume(function(){
+                t.assertEqual(0, count)
+              })
+            }, 450)
+          })
+        }, 450)
+      },
+
       testSwipe: function(t){
         var swipeCount = 0, element = $('#test').get(0)
 
@@ -150,7 +221,6 @@
       }
 
       // TODO: test swipes in specific directions
-      // TODO: test longTap
     })
 
   })()

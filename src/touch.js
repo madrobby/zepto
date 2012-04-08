@@ -24,9 +24,17 @@
     }
   }
 
+  function cancelLongTap(){
+    if (longTapTimeout) clearTimeout(longTapTimeout)
+    longTapTimeout = null
+  }
+
   $(document).ready(function(){
+    var now, delta
+
     $(document.body).bind('touchstart', function(e){
-      var now = Date.now(), delta = now - (touch.last || now)
+      now = Date.now()
+      delta = now - (touch.last || now)
       touch.el = $(parentIfText(e.touches[0].target))
       touchTimeout && clearTimeout(touchTimeout)
       touch.x1 = e.touches[0].pageX
@@ -35,21 +43,25 @@
       touch.last = now
       longTapTimeout = setTimeout(longTap, longTapDelay)
     }).bind('touchmove', function(e){
-      if (longTapTimeout) clearTimeout(longTapTimeout)
-      longTapTimeout = null
+      cancelLongTap()
       touch.x2 = e.touches[0].pageX
       touch.y2 = e.touches[0].pageY
     }).bind('touchend', function(e){
-      if (longTapTimeout) clearTimeout(longTapTimeout)
-      longTapTimeout = null
+       cancelLongTap()
+
+      // double tap (tapped twice within 250ms)
       if (touch.isDoubleTap) {
         touch.el.trigger('doubleTap')
         touch = {}
+
+      // swipe
       } else if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
                  (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
         touch.el.trigger('swipe') &&
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
-        touch.x1 = touch.x2 = touch.y1 = touch.y2 = touch.last = 0
+        touch = {}
+
+      // normal tap
       } else if ('last' in touch) {
         touch.el.trigger('tap')
 
@@ -59,7 +71,12 @@
           touch = {}
         }, 250)
       }
-    }).bind('touchcancel', function(){ touch = {} })
+    }).bind('touchcancel', function(){
+      if (touchTimeout) clearTimeout(touchTimeout)
+      if (longTapTimeout) clearTimeout(longTapTimeout)
+      longTapTimeout = touchTimeout = null
+      touch = {}
+    })
   })
 
   ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
