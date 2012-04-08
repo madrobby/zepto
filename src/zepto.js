@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $, $$, classList, emptyArray = [], slice = emptyArray.slice,
+  var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -29,10 +29,10 @@ var Zepto = (function() {
     tagSelectorRE = /^[\w-]+$/,
     toString = ({}).toString,
     zepto = {},
-    camelize, fragment, Z,
+    camelize,
     tempParent = document.createElement('div')
 
-  function matches(element, selector) {
+  zepto.matches = function(element, selector) {
     if (!element || element.nodeType !== 1) return false
     var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
                           element.oMatchesSelector || element.matchesSelector
@@ -40,7 +40,7 @@ var Zepto = (function() {
     // fall back to performing a selector:
     var match, parent = element.parentNode, temp = !parent
     if (temp) (parent = tempParent).appendChild(element)
-    match = ~$$(parent, selector).indexOf(element)
+    match = ~zepto.qsa(parent, selector).indexOf(element)
     temp && tempParent.removeChild(element)
     return match
   }
@@ -97,7 +97,7 @@ var Zepto = (function() {
   // The generated DOM nodes are returned as an array.
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
-  zepto.fragment = fragment = function(html, name) {
+  zepto.fragment = function(html, name) {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
     var container = containers[name]
@@ -111,9 +111,9 @@ var Zepto = (function() {
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
-  zepto.Z = Z = function(dom, selector) {
+  zepto.Z = function(dom, selector) {
     dom = dom || []
-    dom.__proto__ = Z.prototype
+    dom.__proto__ = arguments.callee.prototype
     dom.selector = selector || ''
     return dom
   }
@@ -154,7 +154,7 @@ var Zepto = (function() {
       // nodes from there
       else if (context !== undefined) return $(context).find(selector)
       // And last but no least, if it's a CSS selector, use it to select nodes.
-      else dom = $$(document, selector)
+      else dom = zepto.qsa(document, selector)
       // create a new Zepto collection from the nodes found
       return zepto.Z(dom, selector)
     }
@@ -165,7 +165,7 @@ var Zepto = (function() {
   // details of selecting nodes and creating Zepto collections
   // patchable in plugins.
   $ = function(selector, context){
-    return $.zepto.init(selector, context)
+    return zepto.init(selector, context)
   }
 
   // Copy all but undefined properties from one or more
@@ -182,7 +182,7 @@ var Zepto = (function() {
   // `$.zepto.qsa` is Zepto's CSS selector implementation which
   // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
   // This method can be overriden in plugins.
-  zepto.qsa = $$ = function(element, selector){
+  zepto.qsa = function(element, selector){
     var found
     return (element === document && idSelectorRE.test(selector)) ?
       ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
@@ -288,14 +288,14 @@ var Zepto = (function() {
     },
     filter: function(selector){
       return $([].filter.call(this, function(element){
-        return matches(element, selector)
+        return zepto.matches(element, selector)
       }))
     },
     add: function(selector,context){
       return $(uniq(this.concat($(selector,context))))
     },
     is: function(selector){
-      return this.length > 0 && matches(this[0], selector)
+      return this.length > 0 && zepto.matches(this[0], selector)
     },
     not: function(selector){
       var nodes=[]
@@ -325,13 +325,13 @@ var Zepto = (function() {
     },
     find: function(selector){
       var result
-      if (this.length == 1) result = $$(this[0], selector)
-      else result = this.map(function(){ return $$(this, selector) })
+      if (this.length == 1) result = zepto.qsa(this[0], selector)
+      else result = this.map(function(){ return zepto.qsa(this, selector) })
       return $(result)
     },
     closest: function(selector, context){
       var node = this[0]
-      while (node && !matches(node, selector))
+      while (node && !zepto.matches(node, selector))
         node = node !== context && node !== document && node.parentNode
       return $(node)
     },
@@ -549,7 +549,7 @@ var Zepto = (function() {
   adjacencyOperators.forEach(function(key, operator) {
     $.fn[key] = function(){
       // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
-      var nodes = $.map(arguments, function(n){ return isObject(n) ? n : fragment(n) })
+      var nodes = $.map(arguments, function(n){ return isObject(n) ? n : zepto.fragment(n) })
       if (nodes.length < 1) return this
       var size = this.length, copyByClone = size > 1, inReverse = operator < 2
 
@@ -572,7 +572,7 @@ var Zepto = (function() {
     }
   })
 
-  Z.prototype = $.fn
+  zepto.Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
   zepto.camelize = camelize
