@@ -125,6 +125,16 @@ href="https://github.com/madrobby/zepto/blob/master/src/data.js#files">data</a><
     </td>
   </tr>
   <tr>
+    <th><a
+href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selector</a></th>
+    <td></td>
+    <td>
+      Experimental <a href="http://api.jquery.com/category/selectors/jquery-selector-extensions/">jQuery
+      CSS extensions</a> support for functionality such as <code>$('div:first')</code> and
+      <code>el.is(':visible')</code>.
+    </td>
+  </tr>
+  <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/touch.js#files">touch</a></th>
     <td>✔</td>
     <td>Fires tap– and swipe–related events on touch devices</td>
