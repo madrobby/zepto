@@ -423,7 +423,18 @@ var Zepto = (function() {
       return this.each(function(){ this.removeAttribute(name) })
     },
     data: function(name, value){
-      var data = this.attr('data-' + name, value)
+      if (this[0].dataset !== undefined) {
+        if (typeof name == 'string') {
+          if (value === undefined) {
+            return this[0].dataset[camelize(name)];
+          } else {
+            return this[0].dataset[camelize(name)] = value;
+          }
+        }
+      }
+
+      var data = this.attr('data-' + name, value);
+
       return data !== null ? data : undefined
     },
     val: function(value){
