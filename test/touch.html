@@ -84,7 +84,6 @@
 
       // should be fired if there is one tap within 250ms
       testSingleTap: function(t){
-        return
         var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
 
         $('#test').on('singleTap', function(){
@@ -107,7 +106,6 @@
 
       // should be fired if there are two taps within 250ms
       testDoubleTap: function(t){
-        return
         var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
 
         $('#test').on('singleTap', function(){
@@ -132,7 +130,6 @@
       },
 
       testSwipe: function(t){
-        return
         var swipeCount = 0, element = $('#test').get(0)
 
         $('#test').on('swipe', function(){
