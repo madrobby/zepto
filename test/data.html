@@ -117,7 +117,15 @@
         t.assertEqual('ichi', all.one)
         t.assertEqual('ni', all.two)
         t.assertEqual('Kurosawa', all.person.name)
-        t.assertUndefined(all.mode)
+      },
+
+      testInitialDataFromAttributes: function(t){
+        var el = $('<div data-foo=bar data-foo-bar=baz />'),
+            store = el.data()
+
+        t.assertEqual('bar', store.foo)
+        t.assertEqual('baz', store.fooBar)
+        t.assertUndefined(store['foo-bar'])
       },
 
       testGettingBlanks: function(t){

@@ -29,8 +29,18 @@
   // Store value under camelized key on node
   function setData(node, name, value) {
     var id = node[exp] || (node[exp] = ++uuid),
-      store = data[id] || (data[id] = {})
+      store = data[id] || (data[id] = attributeData(node))
     if (name !== undefined) store[camelize(name)] = value
+    return store
+  }
+
+  // Read all "data-*" attributes from a node
+  function attributeData(node) {
+    var store = {}
+    $.each(node.attributes, function(i, attr){
+      if (attr.name.indexOf('data-') == 0)
+        store[camelize(attr.name.replace('data-', ''))] = attr.value
+    })
     return store
   }
 
