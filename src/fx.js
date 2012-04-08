@@ -4,9 +4,10 @@
 
 ;(function($, undefined){
   var prefix = '', eventPrefix, endEventName, endAnimationName,
-    vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
+    vendors = { Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS' },
     document = window.document, testEl = document.createElement('div'),
-    supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i
+    supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
+    clearProperties = {}
 
   function downcase(str) { return str.toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) }
@@ -18,6 +19,12 @@
       return false
     }
   })
+
+  clearProperties[prefix + 'transition-property'] =
+  clearProperties[prefix + 'transition-duration'] =
+  clearProperties[prefix + 'transition-timing-function'] =
+  clearProperties[prefix + 'animation-name'] =
+  clearProperties[prefix + 'animation-duration'] = ''
 
   $.fx = {
     off: (eventPrefix === undefined && testEl.style.transitionProperty === undefined),
@@ -53,7 +60,11 @@
         else cssProperties[key] = properties[key]
 
       if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ')
-      if (!$.fx.off) cssProperties[prefix + 'transition'] = 'all ' + duration + 's ' + (ease || '')
+      if (!$.fx.off && typeof properties === 'object') {
+        cssProperties[prefix + 'transition-property'] = Object.keys(properties).join(', ')
+        cssProperties[prefix + 'transition-duration'] = duration + 's'
+        cssProperties[prefix + 'transition-timing-function'] = (ease || 'linear')
+      }
     }
 
     wrappedCallback = function(event){
@@ -61,9 +72,7 @@
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, arguments.callee)
       }
-      var props = {}
-      props[prefix + 'transition'] = props[prefix + 'animation-name'] = 'none'
-      $(this).css(props)
+      $(this).css(clearProperties)
       callback && callback.call(this)
     }
     if (duration > 0) this.bind(endEvent, wrappedCallback)
