@@ -211,6 +211,11 @@ var Zepto = (function() {
     return emptyArray.indexOf.call(array, elem, i)
   }
 
+  $.trim = function(str) { return str.trim() }
+
+  // plugin compatibility
+  $.uuid = 0
+
   $.map = function(elements, callback){
     var value, values = [], i, key
     if (likeArray(elements))
@@ -267,6 +272,7 @@ var Zepto = (function() {
     get: function(idx){
       return idx === undefined ? slice.call(this) : this[idx]
     },
+    toArray: function(){ return this.get() },
     size: function(){
       return this.length
     },

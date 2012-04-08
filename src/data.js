@@ -6,8 +6,7 @@
 
 ;(function($) {
   var data = {}, dataAttr = $.fn.data, camelize = $.zepto.camelize,
-    uuid = $.uuid = +new Date(),
-    exp  = $.expando = 'Zepto' + uuid
+    exp = $.expando = 'Zepto' + (+new Date())
 
   // Get value from node:
   // 1. first try key as given,
@@ -28,7 +27,7 @@
 
   // Store value under camelized key on node
   function setData(node, name, value) {
-    var id = node[exp] || (node[exp] = ++uuid),
+    var id = node[exp] || (node[exp] = ++$.uuid),
       store = data[id] || (data[id] = attributeData(node))
     if (name !== undefined) store[camelize(name)] = value
     return store
