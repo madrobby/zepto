@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto touch unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/touch.js"></script>
+</head>
+<body>
+  <h1>Touch tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <style>
+    #test {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 50px;
+    }
+  </style>
+
+  <script>
+  (function(){
+    if (!('createTouch' in document))
+      $('#results').html("This browser doesn't support touch events, skipping tests.")
+
+    else {
+
+    function fire(type, element, x, y) {
+      var touch = document.createTouch(window, element, 0, x, y, x, y),
+        touches = document.createTouchList(touch),
+        targetTouches = document.createTouchList(touch),
+        changedTouches = document.createTouchList(touch),
+        event = document.createEvent("TouchEvent")
+
+      event.initTouchEvent('touch'+type, true, true, window, null, 0, 0, 0, 0,
+        false, false, false, false, touches, targetTouches, changedTouches, 1, 0)
+
+      element.dispatchEvent(event);
+    }
+
+    function down(element, x, y) {
+      fire('start', element, x, y)
+    }
+    function move(element, x,y) {
+      fire('move', element, x, y)
+    }
+    function up(element) {
+      fire('end', element)
+    }
+
+    Evidence('TouchTest', {
+      setUp: function(){
+        $('<div id=test>TEST ELEMENT</div>').appendTo('body')
+      },
+
+      tearDown: function(){
+        $('#test').off()
+        $('#test').remove()
+      },
+
+      testTap: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.assertEqual(1, count)
+      },
+
+      // should be fired if there is one tap within 250ms
+      testSingleTap: function(t){
+        var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
+
+        $('#test').on('singleTap', function(){
+          singleCount++
+        }).on('doubleTap', function(){
+          doubleCount++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, singleCount)
+            t.assertEqual(0, doubleCount)
+          })
+        }, 300)
+      },
+
+      // should be fired if there are two taps within 250ms
+      testDoubleTap: function(t){
+        var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
+
+        $('#test').on('singleTap', function(){
+          singleCount++
+        }).on('doubleTap', function(){
+          doubleCount++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          down(element, 12, 12)
+          up(element)
+
+          t.resume(function(){
+            t.assertEqual(0, singleCount)
+            t.assertEqual(1, doubleCount)
+          })
+        }, 100)
+      },
+
+      testSwipe: function(t){
+        var swipeCount = 0, element = $('#test').get(0)
+
+        $('#test').on('swipe', function(){
+          swipeCount++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          move(element, 70, 10)
+          up(element)
+
+          t.resume(function(){
+            t.assertEqual(1, swipeCount)
+          })
+        }, 50)
+      }
+
+      // TODO: test swipes in specific directions
+      // TODO: test longTap
+    })
+
+    }
+  })()
+  </script>
+</body>
+</html>
