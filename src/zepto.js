@@ -419,6 +419,13 @@ var Zepto = (function() {
           else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)))
         })
     },
+    prop: function(name, value){
+      return (value === undefined) ?
+        (this[0] ? this[0][name] : undefined) :
+        this.each(function(idx){
+          this[name] = funcArg(this, value, idx, this[name])
+        })
+    },
     removeAttr: function(name){
       return this.each(function(){ this.removeAttribute(name) })
     },
