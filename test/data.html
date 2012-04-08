@@ -16,7 +16,7 @@
     Running… see browser console for results
   </p>
   <div id="fixtures">
-  <div id="data_attr" data-one="uno" data-two="due"></div>
+  <div id="data_attr" data-one="uno" data-two="due" data-foo-bar="baz"></div>
   <div id="data_full" data-mode="awesome"></div>
   <div id="data_obj" data-mode="awesome"></div>
   <ol id="data_list">
@@ -44,6 +44,20 @@
       testReadingAttribute: function(t){
         var el = $('#data_attr')
         t.assertEqual('uno', el.data('one'))
+      },
+
+      testCamelized: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('baz', el.data('foo-bar'))
+        t.assertEqual('baz', el.data('fooBar'))
+
+        el.data('fooBar', 'bam')
+        t.assertEqual('bam', el.data('foo-bar'))
+        t.assertEqual('bam', el.data('fooBar'))
+
+        el.data('a-b', 'c')
+        t.assertEqual('c', el.data().aB)
+        t.assertUndefined(el.data()['a-b'])
       },
 
       testNotChangingAttribute: function(t){
@@ -104,6 +118,21 @@
         t.assertEqual('ni', all.two)
         t.assertEqual('Kurosawa', all.person.name)
         t.assertUndefined(all.mode)
+      },
+
+      testGettingBlanks: function(t){
+        var el = $('#data_attr'),
+            store = el.data()
+
+        store.nil = null
+        store.undef = undefined
+        store.blank = ''
+        store.bool = false
+
+        t.assertNull(el.data('nil'))
+        t.assertUndefined(el.data('undef'))
+        t.assertIdentical('', el.data('blank'))
+        t.assertFalse(el.data('bool'))
       },
 
       testSettingDataWithObj: function(t){

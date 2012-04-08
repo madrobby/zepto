@@ -29,7 +29,7 @@ var Zepto = (function() {
     tagSelectorRE = /^[\w-]+$/,
     toString = ({}).toString,
     zepto = {},
-    init, fragment, Z,
+    camelize, fragment, Z,
     tempParent = document.createElement('div')
 
   function matches(element, selector) {
@@ -60,7 +60,7 @@ var Zepto = (function() {
 
   function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
   function flatten(array) { return array.length > 0 ? [].concat.apply([], array) : array }
-  function camelize(str)  { return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function dasherize(str) {
     return str.replace(/::/g, '/')
            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
@@ -423,7 +423,7 @@ var Zepto = (function() {
       return this.each(function(){ this.removeAttribute(name) })
     },
     data: function(name, value){
-      var data = this.attr('data-' + name, value)
+      var data = this.attr('data-' + dasherize(name), value)
       return data !== null ? data : undefined
     },
     val: function(value){
@@ -562,6 +562,7 @@ var Zepto = (function() {
   Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
+  zepto.camelize = camelize
   $.zepto = zepto
 
   return $

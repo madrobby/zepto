@@ -49,7 +49,7 @@
   <div id="attr_remove" data-name="boom"></div>
   <form><input id="attr_val" value="Hello World"></form>
 
-  <div id="data_attr" data-blah="whatever" data-empty></div>
+  <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
 
   <form id="attr_with_text_input">
     <input value="Default input">
@@ -1255,14 +1255,25 @@
       },
 
       testData: function(t) {
-        var els = $('#data_attr')
-        els.data('fun', 'hello')
-        t.assertEqual('hello', els.attr('data-fun'))
+        var el = $('#data_attr')
+        // existing attribute
+        t.assertEqual('bar', el.data('foo'))
+        t.assertEqual('baz', el.data('foo-bar'))
+        t.assertEqual('baz', el.data('fooBar'))
 
-        t.assertEqual('hello', els.data('fun'))
-        t.assertEqual('whatever', els.data('blah'))
+        // camelCase
+        el.data('fooBar', 'bam')
+        t.assertEqual('bam', el.data('fooBar'))
+        t.assertEqual('bam', el.data('foo-bar'))
 
-        t.assertUndefined($('body').data('does-not-exist'))
+        // new attribute
+        el.data('fun', 'hello')
+        t.assertEqual('hello', el.attr('data-fun'))
+        t.assertEqual('hello', el.data('fun'))
+
+        // blank values
+        t.assertIdentical('', el.data('empty'))
+        t.assertUndefined(el.data('does-not-exist'))
       },
 
       testVal: function(t) {
