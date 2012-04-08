@@ -19,6 +19,7 @@
   <div id="data_attr" data-one="uno" data-two="due"></div>
   <div id="data_full" data-mode="awesome"></div>
   <div id="data_obj" data-mode="awesome"></div>
+  <div id="data_append"></div>
   <ol id="data_list">
     <li data-category="arts"></li>
     <li data-category="science"></li>
@@ -103,7 +104,7 @@
         t.assertEqual('ichi', all.one)
         t.assertEqual('ni', all.two)
         t.assertEqual('Kurosawa', all.person.name)
-        t.assertUndefined(all.mode)
+        t.assertEqual('awesome', all.mode)
       },
 
       testSettingDataWithObj: function(t){
@@ -141,8 +142,16 @@
 
           var values2 = items.map(function(){ return $(this).data('answer') })
           t.assertEqual('42, 42', values2.join(', '))
-      }
+      },
 
+      testGettingDataAfterAppend: function(t){
+          var el = $('#data_append')
+
+          el.append('<div id="data_appendix" data-mode="awesome"></div>')
+
+          var all = $('#data_appendix').data()
+          t.assertEqual(all.mode, 'awesome')
+      }
     })
   </script>
 </body>
