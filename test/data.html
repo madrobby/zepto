@@ -143,6 +143,33 @@
         t.assertFalse(el.data('bool'))
       },
 
+      testRemoveData: function(t){
+        var el = $('<div data-foo=bar />')
+
+        el.data('foo', 'bam').data('bar', 'baz')
+        el.removeData('foo').removeData('bar')
+        t.assertEqual('bar', el.data('foo'))
+        t.assertUndefined(el.data('bar'))
+
+        el.data('uno', 'one').data('due', 'two')
+        el.removeData('uno due')
+        t.assertUndefined(el.data('uno'))
+        t.assertUndefined(el.data('due'))
+
+        el.data('one', 1).data('twoThree', 23)
+        el.removeData(['one', 'two-three'])
+        t.assertUndefined(el.data('one'))
+        t.assertUndefined(el.data('twoThree'))
+      },
+
+      testRemoveDataNoop: function(t){
+        var empty = $(),
+            vanilla = $('<div />')
+
+        t.assertIdentical(empty, empty.removeData('foo'))
+        t.assertIdentical(vanilla, vanilla.removeData('foo'))
+      },
+
       testSettingDataWithObj: function(t){
           var el = $('#data_obj')
 

@@ -56,4 +56,12 @@
       // set value on all elements
       this.each(function(){ setData(this, name, value) })
   }
+
+  $.fn.removeData = function(names) {
+    if (typeof names == 'string') names = names.split(/\s+/)
+    return this.each(function(){
+      var id = this[exp], store = id && data[id]
+      if (store) $.each(names, function(){ delete store[camelize(this)] })
+    })
+  }
 })(Zepto)
