@@ -25,7 +25,7 @@
     function click(el){
       var event = document.createEvent('MouseEvents')
       event.initMouseEvent('click', true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null)
-      el.dispatchEvent(event)
+      $(el).get(0).dispatchEvent(event)
     }
 
     Evidence('ProxyTest', {
@@ -77,21 +77,49 @@
     })
 
     Evidence('EventTest', {
+      setUp: function(){
+        this.el = $('<div />').appendTo('#fixtures')
+      },
+
       tearDown: function(){
-        $('*').off()
+        this.el.off().remove()
+        $([document, document.body]).off()
       },
 
       testProxiedHandlerCanBeUnbindedWithOriginal: function(t){
-        var obj = {times:0, fn: function(){ this.times++ }},
-            fixtures = $('#fixtures')
+        var obj = {times:0, fn: function(){ this.times++ }}
 
-        fixtures.on('click', $.proxy(obj, 'fn'))
-        click(fixtures.get(0))
+        this.el.on('click', $.proxy(obj, 'fn'))
+        click(this.el)
         t.assertEqual(1, obj.times)
 
-        fixtures.off('click', obj.fn)
-        click(fixtures.get(0))
+        this.el.off('click', obj.fn)
+        click(this.el)
         t.assertEqual(1, obj.times)
+      },
+
+      testOnWithObject: function(t){
+        var log = []
+        this.el.on({ click: function(){ log.push('a') } }).
+                on({ click: function(){ log.push('b') } }, null)
+
+        click(this.el)
+        t.assertEqual('a b', log.sort().join(' '))
+      },
+
+      testOffWithObject: function(t){
+        var log = [],
+            fn = function(){ log.push('a') },
+            fn2 = function(){ log.push('b') },
+            fn3 = function(){ log.push('c') }
+
+        this.el.on('click', fn).on('click', fn2).on('click', fn3)
+        click(this.el)
+        t.assertEqual('a b c', log.sort().join(' '))
+
+        this.el.off({ click: fn }).off({ click: fn2 }, null)
+        click(this.el)
+        t.assertEqual('a b c c', log.sort().join(' '))
       }
     })
   })()
