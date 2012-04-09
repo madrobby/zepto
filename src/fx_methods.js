@@ -42,7 +42,7 @@
 
   $.fn.toggle = function(speed, callback) {
     if (speed === undefined || typeof speed == 'boolean') return origToggle.call(this, speed)
-    else return this[this.css('display') == 'none' ? 'show' : 'hide'](speed, callback)
+    else return this.map(function(){ $(this)[$(this).css('display') == 'none' ? 'show' : 'hide'](speed, callback) })
   }
 
   $.fn.fadeTo = function(speed, opacity, callback) {
