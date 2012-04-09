@@ -292,7 +292,7 @@ p.compat a {
 }
 
 /* syntax */
-.hll { background-color: #ffffcc }
+.hll { background-color: #ffffdd }
 .c { color: #888888 } /* Comment */
 .err { color: #a61717; background-color: #e3d2d2 } /* Error */
 .k { color: #008800; font-weight: bold } /* Keyword */
@@ -352,3 +352,4 @@ p.compat a {
 .vg { color: #dd7700 } /* Name.Variable.Global */
 .vi { color: #3333bb } /* Name.Variable.Instance */
 .il { color: #0000DD; font-weight: bold } /* Literal.Number.Integer.Long */
+.hll *[class^=s] { background-color: inherit }
