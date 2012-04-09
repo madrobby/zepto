@@ -4,17 +4,30 @@ signature: |
   $.ajaxJSONP(options) ⇒ mock XMLHttpRequest
 ---
 
-Make a <a href="http://en.wikipedia.org/wiki/JSONP">JSONP request</a>. JSONP requests use a `<script>` tag instead of a `XMLHttpRequest` and thus are not subject to the same-origin policy that prevents normal Ajax requests to call remote servers. An alternative to this is <a href="http://en.wikipedia.org/wiki/Cross-origin_resource_sharing">cross-origin remote sharing (CORS)</a>, which is also supported by Zepto.
-  
-For valid `options`, see <a href="#$.ajax">$.ajax</a> (the `method` and `async` options are not supported on JSONP requests).
+Perform a [JSONP][] request to another domain. JSONP request are not performed
+with XMLHttpRequest, but by injecting a `<script>` to the document.  Most
+[$.ajax](#$.ajax) options are supported, with the following considerations:
 
-The return value is a mock XMLHttpRequest object that only supports the `abort` method.
+* `type` is always "GET"
+* `url` needs to have the `=?` placeholder
+* `contentType`, `dataType`, `headers`, and `async` are not supported.
 
-{% highlight js %}
+The `?` placeholder in the URL is replaced with the dynamically generated name
+of the callback function for this request. Typically the URL should contain the
+query string such as `callback=?`; most servers expect the parameter to be
+called like that.
+
+The return value is a mock XMLHttpRequest object that only supports the
+`abort()` method.
+
+{% highlight js hl_lines=2 %}
 $.ajaxJSONP({
   url: 'http://example.com/projects?callback=?',
   success: function(data){
-    projects.push(json)
+    // data is a js object, such as Object or Array
   }
 })
 {% endhighlight %}
+
+
+  [jsonp]: http://json-p.org
