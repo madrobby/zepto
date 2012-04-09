@@ -399,7 +399,7 @@ var Zepto = (function() {
       return this.css("display", "none")
     },
     toggle: function(setting){
-      return (setting === undefined ? this.css("display") == "none" : setting) ? this.show() : this.hide()
+      return this.map(function(){ (setting === undefined ? $(this).css("display") == "none" : setting) ? $(this).show() : $(this).hide() })
     },
     prev: function(){ return $(this.pluck('previousElementSibling')) },
     next: function(){ return $(this.pluck('nextElementSibling')) },
