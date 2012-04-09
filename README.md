@@ -31,7 +31,6 @@ $ gem install uglifier
 Build Zepto by running `rake`:
 
 ~~~ sh
-# build zepto.js
 $ rake
 Original version: 40.423k
 Minified: 18.776k
@@ -174,7 +173,22 @@ browser to run the tests. Files named with "\_functional" are not automated
 tests, but require interaction. Automated tests are written using
 [Evidence.js][].
 
-Detailed test output is logged in the JavaScript console of your browser.
+Detailed test information such as specific failures is logged to the JavaScript
+console of your browser.
+
+It's possible to run automated tests from the command-line in headless Webkit
+with [PhantomJS][]:
+
+~~~ sh
+# install on Mac OS
+$ brew install phantomjs
+
+# run all tests
+$ rake test
+
+# run individual files
+$ script/test test/selector.html
+~~~
 
 ### Code style guidelines
 
@@ -194,3 +208,4 @@ Detailed test output is logged in the JavaScript console of your browser.
   [mkd]: http://github.github.com/github-flavored-markdown/
   [evidence.js]: https://github.com/tobie/Evidence
   [optional]: http://mislav.uniqpath.com/2010/05/semicolons/
+  [phantomjs]: http://code.google.com/p/phantomjs/wiki/Installation

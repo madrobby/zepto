@@ -1,0 +1,2 @@
+#!/bin/sh
+phantomjs test/runner.coffee "$@"

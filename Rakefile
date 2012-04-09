@@ -83,6 +83,11 @@ end
 
 task(:clean) { rm_rf 'dist' }
 
+desc "Run tests with PhantomJS"
+task :test do
+  sh 'script/test'
+end
+
 desc "Strip trailing whitespace and ensure each file ends with a newline"
 task :whitespace do
   verbose false do
