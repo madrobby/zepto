@@ -61,8 +61,10 @@
   }
 
   $.fn.fadeToggle = function(speed, callback) {
-    var hidden = this.css('opacity') == 0 || this.css('display') == 'none'
-    return this[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
+    return this.map(function(){ 
+      var hidden = $(this).css('opacity') == 0 || $(this).css('display') == 'none'
+      $(this)[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
+    })
   }
 
   $.extend($.fx, {
