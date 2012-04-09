@@ -452,6 +452,17 @@
         t.refute(errorFired)
       },
 
+      test304ResponseIsSuccess: function(t) {
+        var successFired, errorFired
+        $.ajax({
+          success: function() { successFired = true },
+          error: function() { errorFired = true }
+        })
+
+        MockXHR.last.ready(4, 304, 'Not Modified')
+        t.assert(successFired)
+        t.refute(errorFired)
+      },
       testXHRParameterInSuccessCallback: function(t) {
         var body, status, xhr
         $.ajax({

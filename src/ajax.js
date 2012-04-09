@@ -192,7 +192,7 @@
       if (xhr.readyState == 4) {
         clearTimeout(abortTimeout)
         var result, error = false
-        if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
           dataType = dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
           result = xhr.responseText
 
