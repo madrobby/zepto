@@ -29,7 +29,7 @@ var Zepto = (function() {
     tagSelectorRE = /^[\w-]+$/,
     toString = ({}).toString,
     zepto = {},
-    camelize,
+    camelize, uniq,
     tempParent = document.createElement('div')
 
   zepto.matches = function(element, selector) {
@@ -68,7 +68,7 @@ var Zepto = (function() {
            .replace(/_/g, '-')
            .toLowerCase()
   }
-  function uniq(array) { return array.filter(function(item,index,array){ return array.indexOf(item) == index }) }
+  uniq = function(array){ return array.filter(function(item, idx){ return array.indexOf(item) == idx }) }
 
   function classRE(name) {
     return name in classCache ?
@@ -576,6 +576,7 @@ var Zepto = (function() {
 
   // Export internal API functions in the `$.zepto` namespace
   zepto.camelize = camelize
+  zepto.uniq = uniq
   $.zepto = zepto
 
   return $

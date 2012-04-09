@@ -24,12 +24,22 @@
 
   <script>
   (function(){
-    Evidence('ZeptoTest', {
+    Evidence('SelectorTest', {
       testFirst: function(t) {
         var li = $('#list li:first')
         t.assertEqual(1, li.size())
         t.assertEqual('one', li.text())
         t.assertEqual('two', $('#list li:eq(1)').text())
+      },
+      testLast: function(t) {
+        var li = $('#list li:last')
+        t.assertEqual(1, li.size())
+        t.assertEqual('two', li.text())
+      },
+      testParent: function(t) {
+        var list = $('#list li:parent')
+        t.assertEqual(1, list.size())
+        t.assertEqual('list', list.attr('id'))
       },
       testContains: function(t) {
         t.assertEqual('two', $('#list li:contains("two")').text())
