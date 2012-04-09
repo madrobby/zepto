@@ -181,9 +181,9 @@ document.write('<script src=' +
   <h3>Manually building Zepto</h3>
   
   <p>
-    <code>zepto.js</code> and <code>zepto.min.js</code> can be used as-is.
-    However, for best efficiency and customizability, run the build system
-    that comes with Zepto's source code.
+    <code>zepto.js</code> and <code>zepto.min.js</code> provided above can be
+    used as-is. However, for best efficiency and customizability, run the build
+    system that comes with Zepto's source code.
     It allows you to select modules, run tests,
     use <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a> to
     minify your custom build, and gives you an estimate on the compression 
@@ -191,9 +191,9 @@ document.write('<script src=' +
   </p>
 
   <p>
-    Please refer to <a href="{{ page.github_url }}/blob/master/README.md">
-    the README in the zepto GitHub repository</a> for further instructions on how
-    to build Zepto, including running the tests and contributing patches.
+    Refer to <a href="{{ page.github_url }}#readme">the README</a>
+    for instructions on how to build Zepto, including running the tests and
+    contributing patches.
   </p>
 
   <h3>Creating plug-ins</h3>
@@ -206,8 +206,8 @@ document.write('<script src=' +
 ;(function($){
   $.extend($.fn, {
     foo: function(){
-      // this points to a Zepto collection
-      // always return the collection for chaining
+      // `this` refers to the current Zepto collection.
+      // When possible, return the Zepto collection to allow chaining.
       return this.html('bar')
     }
   })
@@ -217,7 +217,7 @@ document.write('<script src=' +
   <p>
     To get started with plug-in development, take a look at the 
     <a href="{{ page.github_url }}/blob/master/src/zepto.js">source of Zepto's core module</a>,
-    and be sure to read the <a href="{{ page.github_url }}/blob/master/README.md">coding style guidelines</a>.
+    and be sure to read the <a href="{{ page.github_url }}#readme">coding style guidelines</a>.
   </p>
 
   <section id=documentation>
