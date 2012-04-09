@@ -6,6 +6,9 @@
   {% if post.signature %}
   <pre class=signature><code>{{ post.signature | escape }}</code></pre>
   {% endif %}
+  {% if post.version %}
+  <p class=version>added in v{{ post.version }}</p>
+  {% endif %}
   {% if post.deprecated %}
   <p class=warning>Deprecated in favor of <a href="#{{ post.deprecated }}">{{ post.deprecated }}</a></p>
   {% endif %}

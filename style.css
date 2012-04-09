@@ -75,11 +75,6 @@ ul.toc_section {
   max-width: 550px;
   margin: 30px 0 50px 260px;
 }
-.warning {
-  margin-top: 15px;
-  font: bold 11px Arial;
-  color: #770000;
-}
 p {
   margin: 20px 0;
 }
@@ -179,6 +174,12 @@ article.method h3 .emoji { display: none }
   cursor: default;
 }
 article.method p { margin: .5em 0 }
+article.method .warning, article.method .version {
+  margin: 0;
+  font: bold 11px Arial;
+  color: #770000;
+}
+article.method .version { color: darkblue }
 
 article.changelog h3 small { font-weight: normal }
 
