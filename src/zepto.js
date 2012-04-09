@@ -10,9 +10,9 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
 
-    // Used by `$.zepto.init` to wrap elements, text nodes, document, and
-    // document fragment node types.
-    elementTypes = [1, 3, 9, 11],
+    // Used by `$.zepto.init` to wrap elements, text/comment nodes, document,
+    // and document fragment node types.
+    elementTypes = [1, 3, 8, 9, 11],
 
     adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
     table = document.createElement('table'),
@@ -419,11 +419,12 @@ var Zepto = (function() {
     attr: function(name, value){
       var result
       return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 ? undefined :
+        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
           (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
+          if (this.nodeType !== 1) return;
           if (isObject(name)) for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)))
         })
@@ -436,7 +437,7 @@ var Zepto = (function() {
         })
     },
     removeAttr: function(name){
-      return this.each(function(){ this.removeAttribute(name) })
+      return this.each(function(){ if (this.nodeType === 1) this.removeAttribute(name) })
     },
     data: function(name, value){
       var data = this.attr('data-' + dasherize(name), value)
