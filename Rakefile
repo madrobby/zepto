@@ -28,8 +28,8 @@ end
 BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" } do |task|
   mkdir_p 'dist', :verbose => false
   File.open(task.name, 'w') do |zepto|
-    zepto.puts "/* Zepto %s%s - modules: %s - zeptojs.com/license */" %
-                [ZEPTO_VERSION, optional_sha, task.modules.join(', ')]
+    zepto.puts "/* Zepto %s - %s - zeptojs.com/license */" %
+                [version_string, task.modules.join(' ')]
 
     task.prerequisites.each do |src|
       # bring in source files one by one, but without copyright info
@@ -98,10 +98,15 @@ end
 desc "Generate docco documentation from source files"
 task :docco => Dir['src/*.js'].map {|f| 'docs/%s.html' % File.basename(f, '.js') }
 
-# display the current sha if HEAD isn't a version tag
-def optional_sha
-  sha = `git rev-parse HEAD`.chomp
-  if $?.success? and `git name-rev #{sha} --name-only --tags` !~ %r{^v[^^]+(\^0)?$}
-    " (%s)" % sha[0, 7]
+# Zepto version number + git sha if available
+def version_string
+  desc = `git describe --tags HEAD 2>&1`.chomp
+  if $?.success?
+    desc
+  else
+    suffix, dir = '', File.basename(Dir.pwd)
+    # detect git sha from directory name of GitHub zip/tarball
+    suffix = "-g#{$1}" if dir =~ /^madrobby-zepto-([a-f0-9]{7,40})$/
+    ZEPTO_VERSION + suffix
   end
 end
