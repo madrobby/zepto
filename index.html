@@ -256,7 +256,7 @@ document.write('<script src=' +
     <h2 id="changelog">Change Log</h2>
 
     {% for change in site.categories.changelog %}
-    <article class=changelog>
+    <article class=changelog id="changelog-{{ change.title }}">
       <h3>
         {{ change.title }}
         <small>&mdash; <i>{{ change.date | date_to_string }}</i>
