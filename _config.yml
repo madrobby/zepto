@@ -5,6 +5,6 @@ destination: public
 markdown:    rdiscount
 rdiscount:   { extensions: [smart] }
 exclude:
-  - bin
+  - script
   - Guardfile
   - Readme.md

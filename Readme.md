@@ -24,17 +24,17 @@ that uses [Pygments.rb][] and is thus faster:
 
 ~~~ sh
 # check if you have necessary gems installed
-$ bin/doctor
+$ script/doctor
 
 # faster rebuild!
-$ bin/jekyll [<file>, [<file2>, ...]]
+$ script/jekyll [<file>, [<file2>, ...]]
 ~~~
 
 For quicker rebuilding of the site, you can start up [Guard][]:
 
 ~~~ sh
-$ bin/doctor    # check dependencies
-$ bin/guard     # live rebuilding of the site!
+$ script/doctor    # check dependencies
+$ script/guard     # live rebuilding of the site!
 ~~~
 
 Guard will use Jekyll to rebuild parts of the site as individual files change.

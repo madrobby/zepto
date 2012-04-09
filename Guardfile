@@ -1,5 +1,5 @@
 guard 'jekyll' do
-  ignores   = %r{^(?:\.|Guardfile|bin/|public/)}
+  ignores   = %r{^(?:\.|Guardfile|script/|public/)}
   includes  = %r{^_includes/}
   posts     = %r{(?:^|/)_posts/}
   home_page = 'index.html'
