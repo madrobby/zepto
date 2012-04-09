@@ -96,12 +96,12 @@ task :whitespace do
   end
 end
 
-rule %r{^docs/.+\.html} => 'src/%n.js' do |task|
-  sh 'docco', task.source, :verbose => false
-end
-
 desc "Generate docco documentation from source files"
-task :docco => Dir['src/*.js'].map {|f| 'docs/%s.html' % File.basename(f, '.js') }
+task :docco do
+  verbose false do
+    sh 'docco', *Dir['src/*.js']
+  end
+end
 
 # Zepto version number + git sha if available
 def version_string
