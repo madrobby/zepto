@@ -1229,6 +1229,8 @@
         t.assertEqual("0", els.attr("data-id"))
 
         t.assertUndefined($('doesnotexist').attr('yo'))
+        t.assertUndefined($(document.createTextNode()).attr('yo'))
+        t.assertUndefined($(document.createComment()).attr('yo'))
 
         els.attr({ 'data-id': 'id', 'data-name': 'name' })
         t.assertEqual('id', els.attr("data-id"))
