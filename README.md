@@ -40,14 +40,14 @@ Minified and gzipped: 7.033k, compression factor 5.747
 
 The resulting files are:
 
-1. dist/zepto.js
-2. dist/zepto.min.js
+1. `dist/zepto.js`
+2. `dist/zepto.min.js`
 
 To include optional modules and remove default ones, use the `concat` task. In
-this example, "touch" and "fx" are removed, but "data" is added:
+this example, "touch" and "fx" are removed, but "data" and "selector" are added:
 
 ~~~
-$ rake concat[-touch:-fx:data] dist
+$ rake concat[-touch:-fx:data:selector] dist
 ~~~
 
 ## Zepto modules
