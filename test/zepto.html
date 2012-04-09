@@ -1003,6 +1003,18 @@
         t.assertLength(0, fragment.children(),    'fragment should be empty')
       },
 
+      testClone: function(t){
+        var el = $('<div class=sheep><span></span></div>'),
+            el2 = el.clone()
+
+        t.assert(el2.hasClass('sheep'))
+        el2.addClass('black')
+        t.refute(el.hasClass('black'))
+
+        el2.find('span').text('baa')
+        t.assertIdentical('', el.find('span').text())
+      },
+
       testFind: function(t){
         var found = $('p#find1').find('span.findme')
         t.assertLength(4, found)
