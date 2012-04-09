@@ -794,6 +794,12 @@
 
         $('#show_hide_div1').toggle(false)
         t.assertEqual('none', $('#show_hide_div1').get(0).style.display)
+		
+        $('#show_hide_div1').hide()
+        $('#show_hide_div2').show()
+        $('#show_hide_div1, #show_hide_div2').toggle()
+        t.assertEqual('', $('#show_hide_div1').get(0).style.display)
+        t.assertEqual('none', $('#show_hide_div2').get(0).style.display)
       },
 
       testOffset: function(t){
