@@ -1228,10 +1228,6 @@
         els.attr("data-id", 0)
         t.assertEqual("0", els.attr("data-id"))
 
-        t.assertUndefined($('doesnotexist').attr('yo'))
-        t.assertUndefined($(document.createTextNode()).attr('yo'))
-        t.assertUndefined($(document.createComment()).attr('yo'))
-
         els.attr({ 'data-id': 'id', 'data-name': 'name' })
         t.assertEqual('id', els.attr("data-id"))
         t.assertEqual('name', els.attr("data-name"))
@@ -1242,6 +1238,17 @@
         })
         t.assertEqual('0id', els.attr('data-id'))
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
+      },
+
+      testAttrNoElement: function(t){
+        t.assertUndefined($().attr('yo'))
+        t.assertUndefined($(document.createTextNode()).attr('yo'))
+        t.assertUndefined($(document.createComment()).attr('yo'))
+
+        var els = $('<b></b> <i></i>').attr('id', function(i){ return this.nodeName + i })
+        t.assertEqual('B0', els.eq(0).attr('id'))
+        t.assertEqual('I2', els.eq(2).attr('id'))
+        t.assertUndefined(els.eq(1).attr('id'))
       },
 
       testAttrEmpty: function(t){
@@ -1266,6 +1273,17 @@
         t.assertEqual('boom', el.attr('data-name'))
         el.removeAttr('data-name')
         t.assertNull(el.attr('data-name'))
+      },
+
+      testRemoveAttrNoElement: function(t){
+        t.assert($().removeAttr('rel'))
+        t.assert($(document.createTextNode()).removeAttr('rel'))
+
+        var els = $('<b rel=up></b> <i rel=next></i>')
+        t.assertIdentical(els, els.removeAttr('rel'))
+        t.assertNull(els.eq(0).attr('rel'))
+        t.assertUndefined(els.eq(1).attr('rel'))
+        t.assertNull(els.eq(2).attr('rel'))
       },
 
       testData: function(t) {

@@ -424,10 +424,13 @@ var Zepto = (function() {
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
-          if (this.nodeType !== 1) return;
+          if (this.nodeType !== 1) return
           if (isObject(name)) for (key in name) this.setAttribute(key, name[key])
           else this.setAttribute(name, funcArg(this, value, idx, this.getAttribute(name)))
         })
+    },
+    removeAttr: function(name){
+      return this.each(function(){ if (this.nodeType === 1) this.removeAttribute(name) })
     },
     prop: function(name, value){
       return (value === undefined) ?
@@ -435,9 +438,6 @@ var Zepto = (function() {
         this.each(function(idx){
           this[name] = funcArg(this, value, idx, this[name])
         })
-    },
-    removeAttr: function(name){
-      return this.each(function(){ if (this.nodeType === 1) this.removeAttribute(name) })
     },
     data: function(name, value){
       var data = this.attr('data-' + dasherize(name), value)
