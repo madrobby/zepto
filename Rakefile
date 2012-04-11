@@ -1,4 +1,4 @@
-ZEPTO_VERSION  = "0.8"
+ZEPTO_VERSION = '1.0rc1'
 
 DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form touch ]
 
