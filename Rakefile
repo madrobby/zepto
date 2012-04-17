@@ -1,6 +1,6 @@
 ZEPTO_VERSION = '1.0rc1'
 
-DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form touch ]
+DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form ]
 
 KILO = 1024   # how many bytes in a "kilobyte"
 
@@ -79,6 +79,15 @@ task :dist => ['dist/zepto.js', 'dist/zepto.min.js', 'dist/zepto.min.gz'] do |ta
   puts "Minified and gzipped: %.3fk, compression factor %.3f" % [gz_size.to_f / KILO, orig_size.to_f / gz_size]
 
   rm_f 'dist/zepto.min.gz', :verbose => false
+end
+
+desc "List available modules"
+task :modules do
+  Dir['src/**/*.js'].each do |file|
+    name = file.gsub(/^src\//,'').gsub(/.js$/,'')
+    puts name + (DEFAULT_MODULES.include?(name) ? '*' : '')
+  end
+  puts "\n*included in default build"
 end
 
 task(:clean) { rm_rf 'dist' }
