@@ -181,7 +181,17 @@ article.method .warning, article.method .version {
   font: bold 11px Arial;
   color: #770000;
 }
-article.method .version { color: darkblue }
+article.method .warning a {
+  color: #770000;
+}
+article.method .version { 
+  background: #ccf;
+  color: #000;
+  padding: 1px 3px;
+  margin: 0 0 0 5px;
+  font-weight: normal;
+  border-radius: 3px;
+}
 
 article.changelog h3 small { font-weight: normal }
 

@@ -58,19 +58,19 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <div id=tour>
-    <img src=intro.jpg alt="Why Zepto? An introduction">
+    <img src=intro.jpg alt="Why Zepto? An Introduction.">
   </div>
 
   <p>
     While 100% jQuery coverage is not a design goal, the <b>APIs provided 
-    match their jQuery counterparts</b>. The ultimate goal is to have a ~5-10k library 
+    match their jQuery counterparts</b>. The goal is to have a ~5-10k modular library 
     that <b>downloads and executes fast</b>, with a <b>familiar and versatile API</b>,
     so you can <b>concentrate on getting stuff done</b>.
   </p>
   
   <p>
-    Zepto is open source software and released under the 
-    developer- and business-friendly 
+    Zepto is open source software and is released under the
+    developer and business-friendly
     <a href="{{ page.github_url }}/blob/master/MIT-LICENSE">MIT license</a>.
   </p>
   
@@ -84,12 +84,13 @@ github_url: https://github.com/madrobby/zepto
   
   <p>
     The default build includes the following modules:<br>
-    <em>Core, Ajax, Event, Form, Effects, Touch, Polyfill, and Detect</em>.
+    <em>Core, Ajax, Event, Form, Effects, Polyfill, and Detect</em>.
   </p>
 
   <p class=compat>
-    We're working on documenting all of these modules, as well as all the plugins.
-    We're striving to have 100% documentation coverage when we release v1.0.
+    We're working on documenting all the optional modules and 
+    strive for 100% documentation coverage when we release v1.0.
+    A list of all modules is available in the <a href="{{ page.github_url }}#readme">README</a>.
   </p>
   
   <ul class=downloads>
@@ -133,29 +134,24 @@ document.write('<script src=' +
 
   <h3>Target platforms</h3>
 
-  <p>
-    Primarily, Zepto is targeted at these mobile platforms:
-  </p>
-
-  <ul>
-    <li>iOS 4+ Safari</li>
-    <li>Android 2.2+ Browser</li>
-    <li>webOS 1.4.5+ Browser</li>
-    <li>BlackBerry Tablet OS 1.0.7+ Browser</li>
-    <li>Amazon Silk 1.0+</li>
-  </ul>
-  
-  <p>
-    Other supported platforms are:
-  </p>
-
   <ul>
     <li>Safari 5+ (desktop)</li>
     <li>Chrome 5+ (desktop)</li>
-    <li>Other WebKit-based browsers/runtimes</li>
     <li>Mozilla Firefox 4+</li>
+    <li>iOS 4+ Safari</li>
+    <li>Android 2.2+ Browser</li>
+    <li>Other WebKit-based browsers/runtimes</li>
+    <li>webOS 1.4.5+ Browser</li>
+    <li>BlackBerry Tablet OS 1.0.7+ Browser</li>
+    <li>Amazon Silk 1.0+</li>
     <li>Opera 10+</li>
   </ul>
+
+  <p>
+    <em>Note that some optional features of Zepto specifically target 
+    mobile browsers; as the original project goal was to specifically
+    provide a leaner alternative to jQuery on for the mobile web.</em>
+  </p>
 
   <p>
     Zepto will also have full support for upcoming
@@ -175,7 +171,7 @@ document.write('<script src=' +
     
   <p>    
     In short, Zepto is expected to work in every modern browser
-    and browser-like environment; except for Internet Explorer.
+    and browser-like environment, except for Internet Explorer.
   </p>
   
   <h3>Manually building Zepto</h3>
@@ -187,7 +183,7 @@ document.write('<script src=' +
     It allows you to select modules, run tests,
     use <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a> to
     minify your custom build, and gives you an estimate on the compression 
-    that is achievable when  <code>zepto.min.js</code> is served Gzipped.
+    that is achievable when <code>zepto.min.js</code> is served gzipped.
   </p>
 
   <p>

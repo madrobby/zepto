@@ -2,15 +2,15 @@
 <article class=method id="{{post.title }}">
   <h3>{{ post.title }}
   {% if post.deprecated %}<span class=emoji title=deprecated>🐶🔫</span>{% endif %}
+  {% if post.version %}<span class=version>v{{ post.version }}+</span>{% endif %} 
   </h3>
+  {% if post.deprecated %}
+  <p class=warning>
+    Deprecated, use <a href="#{{ post.deprecated }}">{{ post.deprecated }}</a> instead.
+  </p>
+  {% endif %}
   {% if post.signature %}
   <pre class=signature><code>{{ post.signature | escape }}</code></pre>
-  {% endif %}
-  {% if post.version %}
-  <p class=version>added in v{{ post.version }}</p>
-  {% endif %}
-  {% if post.deprecated %}
-  <p class=warning>Deprecated in favor of <a href="#{{ post.deprecated }}">{{ post.deprecated }}</a></p>
   {% endif %}
   {{ post.content }}
 </article>

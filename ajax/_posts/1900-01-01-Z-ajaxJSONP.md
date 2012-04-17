@@ -20,7 +20,7 @@ called like that.
 The return value is a mock XMLHttpRequest object that only supports the
 `abort()` method.
 
-{% highlight js hl_lines=2 %}
+{% highlight js %}
 $.ajaxJSONP({
   url: 'http://example.com/projects?callback=?',
   success: function(data){
