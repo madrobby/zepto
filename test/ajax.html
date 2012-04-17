@@ -32,6 +32,10 @@
 
       tearDown: function() {
         $(document).off()
+
+        ;['jsonp2', 'jsonp3'].forEach(function(prop){
+          if (prop in window) delete window[prop]
+        })
       },
 
       testAjaxBase: function(t){
@@ -186,6 +190,7 @@
         testEl.load('fixtures/ajax_load_selector_javascript.html', function(){
           deferredResume(t, function(){
             this.assertEqual(window.testValue, 1)
+            delete window.testValue
           })
         })
       },
@@ -197,6 +202,7 @@
         testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function() {
           deferredResume(t, function(){
             this.assertEqual(window.testValue, 0)
+            delete window.testValue
           })
         })
       },
@@ -410,6 +416,7 @@
         MockXHR.last.ready(4, 200, 'this.testValue = 42', {'content-type': 'application/javascript'})
         t.assertEqual('this.testValue = 42', result)
         t.assertIdentical(42, window.testValue)
+        delete window.testValue
       },
 
       testErrorCallback: function(t) {
