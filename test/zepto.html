@@ -593,11 +593,19 @@
       testNext: function(t){
         t.assertEqual('P', $('#some_element').next().get(0).tagName)
         t.assertEqual('DIV', $('p').next().get(0).tagName)
+
+        t.assertEqual(0, $('span.yay').next('.nay').size())
+        t.assertEqual(1, $('span.yay').next().size())
+        t.assertEqual(1, $('span.yay').next().next('.nay').size())
       },
 
       testPrev: function(t){
         t.assertEqual('H1', $('p').prev().get(0).tagName)
         t.assertEqual('DIV', $('ul').prev().get(0).tagName)
+
+        t.assertEqual(0, $('span.nay').prev('.yay').size())
+        t.assertEqual(1, $('span.nay').prev().size())
+        t.assertEqual(1, $('span.nay').prev().prev('.yay').size())
       },
 
       testEach: function(t){
