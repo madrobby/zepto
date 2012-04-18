@@ -43,15 +43,16 @@ The resulting files are:
 2. `dist/zepto.min.js`
 
 To include optional modules and remove default ones, use the `concat` task. In
-this example, "touch" and "fx" are removed, but "data" and "selector" are added:
+this example, "fx" is removed, but "data" and "selector" are added:
 
 ~~~
-$ rake concat[-touch:-fx:data:selector] dist
+$ rake concat[-fx:data:selector] dist
 ~~~
 
 ## Zepto modules
 
-Zepto modules are individual files in the "src/" directory.
+Zepto modules are individual files in the "src/" directory. You can also list
+the available modules by running `rake modules`.
 
 <table>
 <thead><tr>
@@ -135,7 +136,7 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
   </tr>
   <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/touch.js#files">touch</a></th>
-    <td>✔</td>
+    <td></td>
     <td>Fires tap– and swipe–related events on touch devices</td>
   </tr>
   <tr>

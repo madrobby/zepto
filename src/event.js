@@ -165,11 +165,11 @@
 
   $.fn.on = function(event, selector, callback){
     return selector == undefined || $.isFunction(selector) ?
-      this.bind(event, selector) : this.delegate(selector, event, callback)
+      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
   }
   $.fn.off = function(event, selector, callback){
     return selector == undefined || $.isFunction(selector) ?
-      this.unbind(event, selector) : this.undelegate(selector, event, callback)
+      this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
   }
 
   $.fn.trigger = function(event, data){

@@ -1,6 +1,6 @@
-ZEPTO_VERSION  = "0.8"
+ZEPTO_VERSION = '1.0rc1'
 
-DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form touch ]
+DEFAULT_MODULES = %w[ polyfill zepto event detect fx ajax form ]
 
 KILO = 1024   # how many bytes in a "kilobyte"
 
@@ -81,11 +81,21 @@ task :dist => ['dist/zepto.js', 'dist/zepto.min.js', 'dist/zepto.min.gz'] do |ta
   rm_f 'dist/zepto.min.gz', :verbose => false
 end
 
+desc "List available modules"
+task :modules do
+  Dir['src/**/*.js'].each do |file|
+    name = file.gsub(/^src\//,'').gsub(/.js$/,'')
+    puts name + (DEFAULT_MODULES.include?(name) ? '*' : '')
+  end
+  puts "\n*included in default build"
+end
+
 task(:clean) { rm_rf 'dist' }
 
 desc "Run tests with PhantomJS"
 task :test do
   sh 'script/test'
+  Rake::Task[:check_whitespace].invoke
 end
 
 desc "Strip trailing whitespace and ensure each file ends with a newline"
@@ -94,6 +104,16 @@ task :whitespace do
     files = Dir['{src,test,examples}/**/*.{js,html}']
     ruby(*%w'-p -i -e $_.sub!(/\s*\Z/,"\n")'.concat(files))
   end
+end
+
+desc "Checks for trailing whitespace in source files and tests"
+task :check_whitespace do
+  flunked = false
+  flunk = lambda {|file, num| flunked = true; puts "#{file}:#{num}" }
+  Dir['{src,test,examples}/**/*.{js,html}'].each do |file|
+    File.open(file, 'r') {|f| f.each_with_index {|ln, num| flunk.call(file, num + 1) if ln.chomp =~ /\s+$/ } }
+  end
+  fail if flunked
 end
 
 desc "Generate docco documentation from source files"
