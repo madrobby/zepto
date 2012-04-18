@@ -150,7 +150,7 @@
 
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
-    if (isObject(options.data)) options.data = $.param(options.data)
+    if (isObject(options.data)) options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data)
   }
