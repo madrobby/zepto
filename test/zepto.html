@@ -525,6 +525,9 @@
         t.assertEqual("<span>world</span>", outerHTML(fragment.get(2)))
         t.assertEqual('', fragment.selector)
 
+        fragment = $("<div /><div />")
+        t.assertLength(2, fragment)
+
         fragment = $("<div>hello</div> ")
         t.assertLength(1, fragment)
       },
