@@ -101,6 +101,12 @@ var Zepto = (function() {
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
     var container = containers[name]
+
+    if(html.replace) {
+      var tagExpander = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig
+      html = html.replace(tagExpander, "<$1></$2>")
+    }
+
     container.innerHTML = '' + html
     return $.each(slice.call(container.childNodes), function(){
       container.removeChild(this)
