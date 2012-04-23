@@ -401,8 +401,8 @@ var Zepto = (function() {
     toggle: function(setting){
       return (setting === undefined ? this.css("display") == "none" : setting) ? this.show() : this.hide()
     },
-    prev: function(){ return $(this.pluck('previousElementSibling')) },
-    next: function(){ return $(this.pluck('nextElementSibling')) },
+    prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
+    next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
     html: function(html){
       return html === undefined ?
         (this.length > 0 ? this[0].innerHTML : null) :
