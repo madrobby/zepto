@@ -63,6 +63,12 @@
 
       // normal tap
       } else if ('last' in touch) {
+        
+        if (Math.abs(touch.x1 - touch.x2) > 10 ||
+            Math.abs(touch.y1 - touch.y2) > 10) {
+          return;
+        }
+        
         touch.el.trigger('tap')
 
         touchTimeout = setTimeout(function(){
