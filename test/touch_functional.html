@@ -21,7 +21,7 @@
   <script>
     $('#browser').text(navigator.userAgent)
 
-    $('body').bind('touchmove', function(e){ e.preventDefault() })
+    $('#touch_test').bind('touchmove', function(e) { e.preventDefault() })
     $('#touch_test')
       .tap(function(){
         $(this).append(' | tap!')
