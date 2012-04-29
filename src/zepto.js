@@ -99,12 +99,11 @@ var Zepto = (function() {
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
   zepto.fragment = function(html, name) {
+    if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
+
     var container = containers[name]
-
-    if(html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
-
     container.innerHTML = '' + html
     return $.each(slice.call(container.childNodes), function(){
       container.removeChild(this)
