@@ -34,7 +34,7 @@
     if (tapTimeout) clearTimeout(tapTimeout)
     if (swipeTimeout) clearTimeout(swipeTimeout)
     if (longTapTimeout) clearTimeout(longTapTimeout)
-    longTapTimeout = touchTimeout = null
+    touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
     touch = {}
   }
 
@@ -75,7 +75,9 @@
       // normal tap
       } else if ('last' in touch) {
         tapTimeout = setTimeout(function() {
-          touch.el.trigger('tap')
+          var event = $.Event('tap');
+          event.cancelTouch = cancelAll;
+          touch.el.trigger(event)
         }, 0);
 
         touchTimeout = setTimeout(function(){
