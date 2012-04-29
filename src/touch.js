@@ -3,7 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var touch = {}, touchTimeout, tapTimeout
+  var touch = {}, touchTimeout;
+  var tapTimeout, swipeTimeout;
   var longTapDelay = 750, longTapTimeout
 
   function parentIfText(node){
@@ -31,6 +32,7 @@
   function cancelAll() {
     if (touchTimeout) clearTimeout(touchTimeout)
     if (tapTimeout) clearTimeout(tapTimeout)
+    if (swipeTimeout) clearTimeout(swipeTimeout)
     if (longTapTimeout) clearTimeout(longTapTimeout)
     longTapTimeout = touchTimeout = null
     touch = {}
@@ -64,9 +66,11 @@
       // swipe
       } else if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
                  (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
-        touch.el.trigger('swipe') &&
+        swipeTimeout = setTimeout(function() {
+          touch.el.trigger('swipe') &&
           touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
-        touch = {}
+          touch = {}
+        }, 0);
 
       // normal tap
       } else if ('last' in touch) {
