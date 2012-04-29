@@ -3,7 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var touch = {}, touchTimeout
+  var touch = {}, touchTimeout, tapTimeout
+  var longTapDelay = 750, longTapTimeout
 
   function parentIfText(node){
     return 'tagName' in node ? node : node.parentNode
@@ -13,8 +14,6 @@
     var xDelta = Math.abs(x1 - x2), yDelta = Math.abs(y1 - y2)
     return xDelta >= yDelta ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
   }
-
-  var longTapDelay = 750, longTapTimeout
 
   function longTap(){
     longTapTimeout = null
@@ -27,6 +26,14 @@
   function cancelLongTap(){
     if (longTapTimeout) clearTimeout(longTapTimeout)
     longTapTimeout = null
+  }
+
+  function cancelAll() {
+    if (touchTimeout) clearTimeout(touchTimeout)
+    if (tapTimeout) clearTimeout(tapTimeout)
+    if (longTapTimeout) clearTimeout(longTapTimeout)
+    longTapTimeout = touchTimeout = null
+    touch = {}
   }
 
   $(document).ready(function(){
@@ -63,7 +70,9 @@
 
       // normal tap
       } else if ('last' in touch) {
-        touch.el.trigger('tap')
+        tapTimeout = setTimeout(function() {
+          touch.el.trigger('tap')
+        }, 0);
 
         touchTimeout = setTimeout(function(){
           touchTimeout = null
@@ -71,12 +80,9 @@
           touch = {}
         }, 250)
       }
-    }).bind('touchcancel', function(){
-      if (touchTimeout) clearTimeout(touchTimeout)
-      if (longTapTimeout) clearTimeout(longTapTimeout)
-      longTapTimeout = touchTimeout = null
-      touch = {}
-    })
+    }).bind('touchcancel', cancelAll)
+
+    $(window).bind('scroll', cancelAll)
   })
 
   ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
