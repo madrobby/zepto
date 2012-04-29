@@ -12,8 +12,12 @@
 <body>
   <h1>Zepto touch functional test</h1>
 
-  <div id="touch_test" style="width: 200px; height: 200px; background: #ddd; -webkit-user-select: none">
+  <div id="touch_test" style="width: 200px; height: 200px; background: #cce; -webkit-user-select: none">
     touch events test
+  </div>
+
+  <div id='touch_test_scrollable' style="width: 200px; height: 200px; background: #cec; -webkit-user-select: none">
+    touch events test (scrollable cancel)
   </div>
 
   <div id="browser"> </div>
@@ -23,6 +27,35 @@
 
     $('#touch_test').bind('touchmove', function(e) { e.preventDefault() })
     $('#touch_test')
+      .tap(function(){
+        $(this).append(' | tap!')
+      })
+      .doubleTap(function(){
+        $(this).append(' | double tap!')
+      })
+      .swipe(function(){
+        $(this).append(' | swipe!')
+      })
+      .swipeLeft(function(){
+        $(this).append(' | swipe left!')
+      })
+      .swipeRight(function(){
+        $(this).append(' | swipe right!')
+      })
+      .swipeUp(function(){
+        $(this).append(' | swipe up!')
+      })
+      .swipeDown(function(){
+        $(this).append(' | swipe down!')
+      })
+      .longTap(function(){
+        $(this).append(' | long tap!')
+      })
+      .singleTap(function(){
+        $(this).append(' | single tap!')
+      })
+
+    $('#touch_test_scrollable')
       .tap(function(){
         $(this).append(' | tap!')
       })
