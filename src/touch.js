@@ -58,13 +58,8 @@
     }).bind('touchend', function(e){
        cancelLongTap()
 
-      // double tap (tapped twice within 250ms)
-      if (touch.isDoubleTap) {
-        touch.el.trigger('doubleTap')
-        touch = {}
-
       // swipe
-      } else if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
+      if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
                  (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
         swipeTimeout = setTimeout(function() {
           touch.el.trigger('swipe') &&
@@ -78,13 +73,21 @@
           var event = $.Event('tap');
           event.cancelTouch = cancelAll;
           touch.el.trigger(event)
+
+          if (touch.isDoubleTap) {
+            touch.el.trigger('doubleTap')
+            touch = {}
+          }
+          else {
+            touchTimeout = setTimeout(function(){
+              touchTimeout = null
+              touch.el.trigger('singleTap')
+              touch = {}
+            }, 250)
+          }
+
         }, 0);
 
-        touchTimeout = setTimeout(function(){
-          touchTimeout = null
-          touch.el.trigger('singleTap')
-          touch = {}
-        }, 250)
       }
     }).bind('touchcancel', cancelAll)
 
