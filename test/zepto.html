@@ -1334,6 +1334,11 @@
         t.assertEqual('Bye again', input.val())
 
         t.assertUndefined($('non-existent').val())
+
+        var multiple =
+          $('<select multiple><option selected>1</option><option value=2 selected="selected">a</option><option>3</option></select>')
+
+        t.assertEqualCollection([1,2], multiple.val())
       },
 
       testChaining: function(t){
