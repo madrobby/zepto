@@ -290,6 +290,7 @@ var Zepto = (function() {
       return this
     },
     filter: function(selector){
+      if (isFunction(selector)) return this.not(this.not(selector))
       return $([].filter.call(this, function(element){
         return zepto.matches(element, selector)
       }))
@@ -449,7 +450,7 @@ var Zepto = (function() {
     val: function(value){
       return (value === undefined) ?
         (this.length > 0 ?
-          (this[0].multiple ? $(this[0]).find('option').not(function(o){ return !this.selected }).pluck('value') : this[0].value) :
+          (this[0].multiple ? $(this[0]).find('option').filter(function(o){ return this.selected }).pluck('value') : this[0].value) :
           undefined) :
         this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value)

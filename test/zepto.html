@@ -1049,6 +1049,13 @@
         t.assertLength(2, found.filter('.filtertest'))
         t.assertLength(0, found.filter('.doesnotexist'))
         t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'))
+
+        var nodes = $('<select><option value=1>test1</option><option value=2>test2</option><option value=1>test1</option></select>')
+        t.assertLength(2, nodes.find('option').filter(function(){ return this.value == '1' }))
+
+        var indexes = []
+        nodes.find('option').filter(function(index){ if (this.value=='1') indexes.push(index) })
+        t.assertEqualCollection([0,2], indexes)
       },
 
       testAdd: function(t){
