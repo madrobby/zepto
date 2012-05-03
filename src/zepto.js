@@ -49,12 +49,7 @@ var Zepto = (function() {
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
   function isPlainObject(value) {
-    var key, ctor
-    if (toString.call(value) !== "[object Object]") return false
-    ctor = (isFunction(value.constructor) && value.constructor.prototype)
-    if (!ctor || !hasOwnProperty.call(ctor, 'isPrototypeOf')) return false
-    for (key in value);
-    return key === undefined || hasOwnProperty.call(value, key)
+    return isObject(value) && value.__proto__ == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
