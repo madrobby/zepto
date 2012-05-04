@@ -525,6 +525,9 @@
         t.assertEqual("<span>world</span>", outerHTML(fragment.get(2)))
         t.assertEqual('', fragment.selector)
 
+        fragment = $("<div /><div />")
+        t.assertLength(2, fragment)
+
         fragment = $("<div>hello</div> ")
         t.assertLength(1, fragment)
       },
@@ -593,11 +596,19 @@
       testNext: function(t){
         t.assertEqual('P', $('#some_element').next().get(0).tagName)
         t.assertEqual('DIV', $('p').next().get(0).tagName)
+
+        t.assertEqual(0, $('span.yay').next('.nay').size())
+        t.assertEqual(1, $('span.yay').next().size())
+        t.assertEqual(1, $('span.yay').next().next('.nay').size())
       },
 
       testPrev: function(t){
         t.assertEqual('H1', $('p').prev().get(0).tagName)
         t.assertEqual('DIV', $('ul').prev().get(0).tagName)
+
+        t.assertEqual(0, $('span.nay').prev('.yay').size())
+        t.assertEqual(1, $('span.nay').prev().size())
+        t.assertEqual(1, $('span.nay').prev().prev('.yay').size())
       },
 
       testEach: function(t){
@@ -1044,6 +1055,13 @@
         t.assertLength(2, found.filter('.filtertest'))
         t.assertLength(0, found.filter('.doesnotexist'))
         t.assertLength(1, found.filter('.filtertest').filter(':nth-child(2n)'))
+
+        var nodes = $('<select><option value=1>test1</option><option value=2>test2</option><option value=1>test1</option></select>')
+        t.assertLength(2, nodes.find('option').filter(function(){ return this.value == '1' }))
+
+        var indexes = []
+        nodes.find('option').filter(function(index){ if (this.value=='1') indexes.push(index) })
+        t.assertEqualCollection([0,2], indexes)
       },
 
       testAdd: function(t){
@@ -1329,6 +1347,13 @@
         t.assertEqual('Bye again', input.val())
 
         t.assertUndefined($('non-existent').val())
+
+        var multiple =
+          $('<select multiple><option selected>1</option><option value=2 selected="selected">a</option><option>3</option></select>')
+        t.assertEqualCollection(['1','2'], multiple.val())
+
+        multiple.find('option')[0].selected = false
+        t.assertEqualCollection(['2'], multiple.val())
       },
 
       testChaining: function(t){

@@ -9,6 +9,7 @@ var Zepto = (function() {
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
+    tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
 
     // Used by `$.zepto.init` to wrap elements, text/comment nodes, document,
     // and document fragment node types.
@@ -27,7 +28,7 @@ var Zepto = (function() {
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]+)$/,
     tagSelectorRE = /^[\w-]+$/,
-    toString = ({}).toString,
+    toString = {}.toString,
     zepto = {},
     camelize, uniq,
     tempParent = document.createElement('div')
@@ -48,12 +49,7 @@ var Zepto = (function() {
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
   function isPlainObject(value) {
-    var key, ctor
-    if (toString.call(value) !== "[object Object]") return false
-    ctor = (isFunction(value.constructor) && value.constructor.prototype)
-    if (!ctor || !hasOwnProperty.call(ctor, 'isPrototypeOf')) return false
-    for (key in value);
-    return key === undefined || hasOwnProperty.call(value, key)
+    return isObject(value) && value.__proto__ == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
@@ -98,8 +94,10 @@ var Zepto = (function() {
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
   zepto.fragment = function(html, name) {
+    if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
+
     var container = containers[name]
     container.innerHTML = '' + html
     return $.each(slice.call(container.childNodes), function(){
@@ -287,6 +285,7 @@ var Zepto = (function() {
       return this
     },
     filter: function(selector){
+      if (isFunction(selector)) return this.not(this.not(selector))
       return $([].filter.call(this, function(element){
         return zepto.matches(element, selector)
       }))
@@ -401,8 +400,8 @@ var Zepto = (function() {
     toggle: function(setting){
       return this.each(function(){ (setting === undefined ? $(this).css("display") == "none" : setting) ? $(this).show() : $(this).hide() })
     },
-    prev: function(){ return $(this.pluck('previousElementSibling')) },
-    next: function(){ return $(this.pluck('nextElementSibling')) },
+    prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
+    next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
     html: function(html){
       return html === undefined ?
         (this.length > 0 ? this[0].innerHTML : null) :
@@ -445,7 +444,9 @@ var Zepto = (function() {
     },
     val: function(value){
       return (value === undefined) ?
-        (this.length > 0 ? this[0].value : undefined) :
+        (this.length > 0 ?
+          (this[0].multiple ? $(this[0]).find('option').filter(function(o){ return this.selected }).pluck('value') : this[0].value) :
+          undefined) :
         this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value)
         })
