@@ -304,7 +304,9 @@ document.write('<script src=' +
   }
 
   $('.signature code').html(function(i, html){
-    return html.replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
+    return html
+      .replace(/\[(.+)\]$/mg, '<span class=version>$1+</span>')
+      .replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
   })
 
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
