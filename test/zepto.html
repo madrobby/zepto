@@ -117,11 +117,7 @@
     <li class="child four"><a class="childOfFour" href="#">gchild4</a></li>
   </ul>
 
-  <ul id="contentsTest">
-    text
-    <span>span</span>
-    <span id="contentsEmptyTest"></span>
-  </ul>
+  <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
 
    <ul id="siblingsTest">
     <li class="child one"><span class="b"></span><em></em><b></b></li>
@@ -185,7 +181,7 @@
 
   <div id="wrap_test_div"><span>hi</span><span>hi</span></div>
 
-  <div id="wrapinner_test"><span>hi</span><span id="wrapinner_empty_test"></span></div>
+  <div id="wrapinner_test">1<span>2</span><span id="wrapinner_empty_test"></span></div>
 
   <div id="unwrap_test">
     <div class="unwrap_one"><b><span></span></b></div>
@@ -915,7 +911,9 @@
       },
 
       testContents: function(t){
-        t.assertLength(5, $("#contentsTest").contents())
+        var $contents = $("#contentsTest").contents()
+        t.assertLength(3, $contents)
+        t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
       },
 
@@ -1001,11 +999,15 @@
       },
 
       testWrapInner: function(t) {
-        $('#wrapinner_test').wrapInner('<div>')
-        t.assertEqual($("#wrapinner_test").children().length, 1)
+        var $el = $('#wrapinner_test')
+        $el.wrapInner('<div>')
+        t.assertLength(1, $el.children())
+        t.assertLength(1, $el.children('div'))
 
-        $('#wrapinner_empty_test').wrapInner('<div>')
-        t.assertEqual($("#wrapinner_empty_test").children().length, 1)
+        $el = $('#wrapinner_empty_test')
+        $el.wrapInner('<div>')
+        t.assertLength(1, $el.children())
+        t.assertLength(1, $el.children('div'))
       },
 
       testUnwrap: function(t){
