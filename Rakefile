@@ -39,6 +39,9 @@ BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" 
         zepto.puts line unless copyright
       end
     end
+    
+    # final semicolon to play nice when concating with other scripts
+    zepto.puts ";"
   end
 end
 
