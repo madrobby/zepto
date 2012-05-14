@@ -105,7 +105,7 @@ var Zepto = (function() {
     }
     args.forEach(function(source) {
       for (key in source) {
-        if ( $.isObject(source[key]) && deep && !source.nodeName ) {
+        if ( $.isPlainObject(source[key]) && deep && !source.nodeName ) {
           target[key] = {};
           $.extend(true, target[key], source[key]);
         } else {
