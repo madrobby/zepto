@@ -1260,8 +1260,8 @@
 
       testAttrNoElement: function(t){
         t.assertUndefined($().attr('yo'))
-        t.assertUndefined($(document.createTextNode()).attr('yo'))
-        t.assertUndefined($(document.createComment()).attr('yo'))
+        t.assertUndefined($(document.createTextNode('')).attr('yo'))
+        t.assertUndefined($(document.createComment('')).attr('yo'))
 
         var els = $('<b></b> <i></i>').attr('id', function(i){ return this.nodeName + i })
         t.assertEqual('B0', els.eq(0).attr('id'))
@@ -1295,7 +1295,7 @@
 
       testRemoveAttrNoElement: function(t){
         t.assert($().removeAttr('rel'))
-        t.assert($(document.createTextNode()).removeAttr('rel'))
+        t.assert($(document.createTextNode('')).removeAttr('rel'))
 
         var els = $('<b rel=up></b> <i rel=next></i>')
         t.assertIdentical(els, els.removeAttr('rel'))
