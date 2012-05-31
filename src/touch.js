@@ -79,7 +79,31 @@
     })
   })
 
-  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.bind(m, callback) }
+  ;['doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
+    $.fn[m] = function(callback){
+      return this.bind(m, callback);
+    }
   })
+  
+  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown'].forEach(function(m){
+    $.fn[m] = function(callback){
+		//fix Android touchmove event bug
+		this.bind("touchstart", function(e){
+			if( navigator.userAgent.match(/Android/i) ) {
+				e.preventDefault();
+			}
+		});
+    	return this.bind(m, callback);
+    }
+  })
+  
+  ;$.fn["swipeListener"]=function(swipedirection,callback){
+  	var direction=swipedirection.toLowerCase();
+  	if(direction==='swipe') return this.swipe(callback);
+  	if(direction==='swipeleft') return this.swipeLeft(callback);
+  	if(direction==='swiperight') return this.swipeRight(callback);
+  	if(direction==='swipeup') return this.swipeUp(callback);
+  	if(direction==='swipedown') return this.swipeDown(callback);
+  }
+  
 })(Zepto)
