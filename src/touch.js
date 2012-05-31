@@ -30,6 +30,14 @@
   }
 
   $(document).ready(function(){
+    
+    //fix Android touchmove event bug
+    document.body.addEventListener( "touchstart", function(e){
+		  if( navigator.userAgent.match(/Android/i) ) {
+			  e.preventDefault();
+		  }
+	  }, false );
+  
     var now, delta
 
     $(document.body).bind('touchstart', function(e){
