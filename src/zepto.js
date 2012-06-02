@@ -2,6 +2,8 @@
 //     (c) 2010-2012 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
+"use strict";
+
 var Zepto = (function() {
   var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice,
     document = window.document,
@@ -109,9 +111,9 @@ var Zepto = (function() {
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
-  zepto.Z = function(dom, selector) {
+  zepto.Z = function Z(dom, selector) {
     dom = dom || []
-    dom.__proto__ = arguments.callee.prototype
+    dom.__proto__ = Z.prototype
     dom.selector = selector || ''
     return dom
   }
