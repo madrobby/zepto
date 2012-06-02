@@ -109,9 +109,9 @@ var Zepto = (function() {
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
-  zepto.Z = function(dom, selector) {
+  zepto.Z = function Z(dom, selector) {
     dom = dom || []
-    dom.__proto__ = arguments.callee.prototype
+    dom.__proto__ = Z.prototype
     dom.selector = selector || ''
     return dom
   }
