@@ -16,11 +16,13 @@
     return xDelta >= yDelta ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
   }
 
+  var longTapDelay = 750, longTapThreshold = 100, longTapTimeout
+
   function longTap() {
     longTapTimeout = null
     if (touch.last) {
       touch.el.trigger('longTap')
-      touch = {}
+      touch.isLongTap = true
     }
   }
 
@@ -54,17 +56,25 @@
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
       .bind('touchmove', function(e){
-        cancelLongTap()
         touch.x2 = e.touches[0].pageX
         touch.y2 = e.touches[0].pageY
-        if (Math.abs(touch.x1 - touch.x2) > 10)
+
+        var dx = (touch.x1 - touch.x2)
+        var dy = (touch.y1 - touch.y2)
+        var dsquared = (dx*dx) + (dy*dy)
+        if (dsquared > longTapThreshold) {
+          cancelLongTap()
           e.preventDefault()
+        }
       })
       .bind('touchend', function(e){
          cancelLongTap()
 
+        if (touch.isLongTap) {
+          touch = {};
+
         // swipe
-        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
+        } else if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
           swipeTimeout = setTimeout(function() {
