@@ -49,7 +49,7 @@ var Zepto = (function() {
   function isFunction(value) { return toString.call(value) == "[object Function]" }
   function isObject(value) { return value instanceof Object }
   function isPlainObject(value) {
-    return isObject(value) && value.__proto__ == Object.prototype
+    return isObject(value) && Object.getPrototypeOf(value) == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
@@ -108,7 +108,9 @@ var Zepto = (function() {
   // `$.zepto.Z` swaps out the prototype of the given `dom` array
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
-  // Explorer. This method can be overriden in plugins.
+  // Explorer. This method can be overriden in plugins but requires a
+  // custom build as it is invoked by plugins calling
+  // `$(document).ready`.
   zepto.Z = function(dom, selector) {
     dom = dom || []
     dom.__proto__ = arguments.callee.prototype
@@ -140,7 +142,7 @@ var Zepto = (function() {
       // if a JavaScript object is given, return a copy of it
       // this is a somewhat peculiar option, but supported by
       // jQuery so we'll do it, too
-      else if (isPlainObject(selector))
+      else if ($.isPlainObject(selector))
         dom = [$.extend({}, selector)], selector = null
       // wrap stuff like `document` or `window`
       else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
