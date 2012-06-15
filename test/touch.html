@@ -81,7 +81,23 @@
 
         t.assertEqual(1, count)
       },
-
+      
+      testScrollDoesNotFireTap: function(t){
+        var element = $('#test').get(0), fired = false
+        
+        $('#test').on('tap', function () {
+          fired = true
+        })
+        
+        down(element, 0, 0)
+        move(element, 0, 20)
+        move(element, 0, 20)
+        
+        up(element)
+        
+        t.assertEqual(fired, false)
+      },
+      
       testSingleTapDoesNotInterfereWithTappingTwice: function(t){
         var count = 0, element = $('#test').get(0)
 
