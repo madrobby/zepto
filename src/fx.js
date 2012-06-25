@@ -73,15 +73,12 @@
         $(event.target).unbind(endEvent, arguments.callee)
       }
       $(this).css(clearProperties)
-	  
-      var t = this;
-      setTimeout(function(){
-		callback && callback.call(t)
-	  }, 0)
+
+      callback && callback.call(t)
     }
-    if (duration > 0) this.bind(endEvent, wrappedCallback)
 
     setTimeout(function() {
+      if (duration > 0) that.bind(endEvent, wrappedCallback)
       that.css(cssProperties)
       if (duration <= 0) setTimeout(function() {
         that.each(function(){ wrappedCallback.call(this) })
