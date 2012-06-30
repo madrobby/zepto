@@ -695,6 +695,10 @@
         t.assertIdentical( 3,  $.inArray(1, [1,2,3,1], 1) )
       },
 
+      testDollarParseJSON: function(t) {
+        t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
+      },
+
       testEq: function(t){
         var $els = $('#eq_test div')
         t.assertLength(1, $els.eq(0))

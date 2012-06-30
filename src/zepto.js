@@ -242,6 +242,8 @@ var Zepto = (function() {
     return elements
   }
 
+  if (window.JSON) $.parseJSON = JSON.parse
+
   // Define methods that will be available on all
   // Zepto collections
   $.fn = {
