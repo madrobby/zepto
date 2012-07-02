@@ -199,6 +199,8 @@ var Zepto = (function() {
   function funcArg(context, arg, idx, payload) {
    return isFunction(arg) ? arg.call(context, idx, payload) : arg
   }
+  
+  $.parseJSON = JSON.parse
 
   $.isFunction = isFunction
   $.isObject = isObject

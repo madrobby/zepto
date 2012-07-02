@@ -3,6 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
+  if (window.Zepto.fn["swipe"]) return
+  
   var touch = {}, touchTimeout
 
   function parentIfText(node){
