@@ -60,7 +60,7 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <div id=tour>
-    <img src=intro.jpg alt="Why Zepto? An Introduction.">
+    <img src=data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs= width=2560 height=256>
   </div>
 
   <p>
@@ -317,6 +317,13 @@ document.write('<script src=' +
   // change the title of the page so bookmarks have a better default
   if ($.os.ios || $.os.android)
   document.title = 'Zepto Docs'
+
+  // For retina screens, use a hi-res version of the tour image.
+  // We're swapping this out on-demand (not an ideal solution)
+  // to avoid rendering bugs on iOS.
+  $('#tour > img')[0].src = 
+    ('devicePixelRatio' in window && devicePixelRatio > 1) ? 
+    'intro2x.jpg' : 'intro.jpg'
 
   var tour = $('#tour'), tourSlides = tour.children(),
       tourSlide = 0, tourSlidesTotal = 5
