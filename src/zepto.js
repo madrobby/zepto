@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice,
+  var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -54,7 +54,7 @@ var Zepto = (function() {
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
-  function compact(array) { return array.filter(function(item){ return item !== undefined && item !== null }) }
+  function compact(array) { return filter.call(array, function(item){ return item !== undefined && item !== null }) }
   function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function dasherize(str) {
@@ -64,7 +64,7 @@ var Zepto = (function() {
            .replace(/_/g, '-')
            .toLowerCase()
   }
-  uniq = function(array){ return array.filter(function(item, idx){ return array.indexOf(item) == idx }) }
+  uniq = function(array){ return filter.call(array, function(item, idx){ return array.indexOf(item) == idx }) }
 
   function classRE(name) {
     return name in classCache ?
@@ -288,7 +288,7 @@ var Zepto = (function() {
     },
     filter: function(selector){
       if (isFunction(selector)) return this.not(this.not(selector))
-      return $([].filter.call(this, function(element){
+      return $(filter.call(this, function(element){
         return zepto.matches(element, selector)
       }))
     },
@@ -358,7 +358,7 @@ var Zepto = (function() {
     },
     siblings: function(selector){
       return filtered(this.map(function(i, el){
-        return slice.call(el.parentNode.children).filter(function(child){ return child!==el })
+        return filter.call(slice.call(el.parentNode.children), function(child){ return child!==el })
       }), selector)
     },
     empty: function(){
