@@ -12,8 +12,16 @@
 <body>
   <h1>Zepto touch functional test</h1>
 
-  <div id="touch_test" style="width: 200px; height: 200px; background: #ddd; -webkit-user-select: none">
+  <div id="touch_test" style="width: 200px; height: 200px; background: #cce; -webkit-user-select: none">
     touch events test
+  </div>
+
+  <div id='touch_test_scrollable' style="width: 200px; height: 200px; background: #cec; -webkit-user-select: none">
+    touch events test (scrollable cancel)
+  </div>
+
+  <div id='touch_test_single' style="width: 200px; height: 200px; background: #ecc; -webkit-user-select: none">
+    touch events test (scrollable cancel, single tap only)
   </div>
 
   <div id="browser"> </div>
@@ -21,9 +29,43 @@
   <script>
     $('#browser').text(navigator.userAgent)
 
-    $('body').bind('touchmove', function(e){ e.preventDefault() })
-    $('#touch_test')
-      .tap(function(){
+    /**
+     * #touch_test
+     * Container that captures all touch events.
+     *
+     * Prevents default on touchmove, disabling scrolling.
+     * Captures swipes in all directions.
+     * Captures tap, singleTap (after delay), doubleTap, longTap
+     */
+    $('#touch_test').bind('touchmove', function(e) { e.preventDefault() })
+    listen_to('#touch_test')
+
+    /**
+     * #touch_test_scrollable
+     * Container that allows scrolling while capturing all events except swipes in the direction of scroll
+     *
+     * Captures swipes in non-scrolling directions
+     * Captures tap, singleTap (after delay), doubleTap, longTap
+     */
+    listen_to('#touch_test_scrollable')
+
+    /**
+     * #touch_test_single
+     * Container that allows scrolling and captures only simple, single taps
+     * eg: a button or a tappable list item
+     *
+     * Cancels touch after tap, disabling other touch events (singleTap, doubleTap)
+     * Captures tap
+     */
+    $('#touch_test_single').bind('tap', function(e) {
+      e.cancelTouch();
+    })
+    listen_to('#touch_test_single');
+
+
+
+    function listen_to(el) {
+      $(el).tap(function(){
         $(this).append(' | tap!')
       })
       .doubleTap(function(){
@@ -50,6 +92,7 @@
       .singleTap(function(){
         $(this).append(' | single tap!')
       })
+    }
   </script>
 </body>
 </html>
