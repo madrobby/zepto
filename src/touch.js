@@ -63,11 +63,7 @@
 
       // normal tap
       } else if ('last' in touch) {
-        tapEvent = $.Event('tap')
-        touch.el.trigger(tapEvent)
-
-        if (tapEvent.defaultPrevented)
-            e.preventDefault()
+        touch.el.trigger('tap')
 
         touchTimeout = setTimeout(function(){
           touchTimeout = null
