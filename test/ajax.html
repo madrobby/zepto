@@ -163,12 +163,15 @@
       testAjaxLoad: function(t) {
         var testEl = $('#ajax_load')
         t.pause()
-        var el = testEl.load('fixtures/ajax_load_simple.html', function(){
+        var el = testEl.load('fixtures/ajax_load_simple.html', function(response, status, xhr){
           var that = this
           deferredResume(t, function(){
             this.assertIdentical(testEl, that)
             this.assertEqual('simple ajax load', testEl.html().trim())
+            this.assert(response)
+            this.assertEqual("success", status)
           })
+          t.assertIn('abort', xhr)
         })
         t.assertIdentical(testEl, el)
       },
