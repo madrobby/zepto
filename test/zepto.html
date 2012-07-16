@@ -1085,6 +1085,14 @@
         t.assertEqualCollection([0,2], indexes)
       },
 
+      testFilterWithNonNativeArrayFilter: function(t){
+        var oldFilter = Array.prototype.filter
+        Array.prototype.filter = function() { return [] }
+        var found = $('div')
+        t.assertLength(2, found.filter('.filtertest'))
+        Array.prototype.filter = oldFilter
+      },
+
       testAdd: function(t){
         var lis=$("li"),spans=$("span"),
         together=lis.add("span"),
