@@ -168,10 +168,10 @@
           deferredResume(t, function(){
             this.assertIdentical(testEl, that)
             this.assertEqual('simple ajax load', testEl.html().trim())
-	    this.assert(response)
-	    this.assertEqual('success', status)
+            this.assert(response)
+            this.assertEqual('success', status)
           })
-	  t.assertIn('abort', xhr)
+          t.assertIn('abort', xhr)
         })
         t.assertIdentical(testEl, el)
       },
