@@ -1089,8 +1089,12 @@
         var oldFilter = Array.prototype.filter
         Array.prototype.filter = function() { return [] }
         var found = $('div')
-        t.assertLength(2, found.filter('.filtertest'))
-        Array.prototype.filter = oldFilter
+
+        try {
+            t.assertLength(2, found.filter('.filtertest'))
+        } finally {
+            Array.prototype.filter = oldFilter
+        }
       },
 
       testAdd: function(t){
