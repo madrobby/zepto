@@ -59,6 +59,12 @@
       .on('touchstart MSPointerDown', function(e){
         if(e.type == 'MSPointerDown' && !isPrimaryTouch(e)) return;
         firstTouch = e.type == 'MSPointerDown' ? e : e.touches[0]
+        if (e.touches && e.touches.length === 1 && touch.x2) {
+          // Clear out touch movement data if we have it sticking around
+          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
+          touch.x2 = undefined
+          touch.y2 = undefined
+        }
         now = Date.now()
         delta = now - (touch.last || now)
         touch.el = $('tagName' in firstTouch.target ?
@@ -113,7 +119,7 @@
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
-                touch.el.trigger('doubleTap')
+                if (touch.el) touch.el.trigger('doubleTap')
                 touch = {}
               }
 
@@ -121,7 +127,7 @@
               else {
                 touchTimeout = setTimeout(function(){
                   touchTimeout = null
-                  touch.el.trigger('singleTap')
+                  if (touch.el) touch.el.trigger('singleTap')
                   touch = {}
                 }, 250)
               }
