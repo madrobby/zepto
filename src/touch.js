@@ -39,7 +39,7 @@
   }
 
   $(document).ready(function(){
-    var now, delta
+    var now, delta, deltaX = 0, deltaY = 0
 
     $(document.body)
       .bind('touchstart', function(e){
@@ -59,6 +59,8 @@
         touch.y2 = e.touches[0].pageY
         if (Math.abs(touch.x1 - touch.x2) > 10)
           e.preventDefault()
+        deltaX += Math.abs(touch.x1 - touch.x2)
+        deltaY += Math.abs(touch.y1 - touch.y2)
       })
       .bind('touchend', function(e){
          cancelLongTap()
@@ -75,33 +77,38 @@
 
         // normal tap
         else if ('last' in touch)
+          // don't fire tap when delta position change by 30
+          // for instance when moving to a point and back to origin
+          if (deltaX < 30 && deltaY < 30) {
+            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
+            // ('tap' fires before 'scroll')
+            tapTimeout = setTimeout(function() {
 
-          // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
-          // ('tap' fires before 'scroll')
-          tapTimeout = setTimeout(function() {
+              // trigger universal 'tap' with the option to cancelTouch()
+              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+              var event = $.Event('tap')
+              event.cancelTouch = cancelAll
+              touch.el.trigger(event)
 
-            // trigger universal 'tap' with the option to cancelTouch()
-            // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-            var event = $.Event('tap')
-            event.cancelTouch = cancelAll
-            touch.el.trigger(event)
-
-            // trigger double tap immediately
-            if (touch.isDoubleTap) {
-              touch.el.trigger('doubleTap')
-              touch = {}
-            }
-
-            // trigger single tap after 250ms of inactivity
-            else {
-              touchTimeout = setTimeout(function(){
-                touchTimeout = null
-                touch.el.trigger('singleTap')
+              // trigger double tap immediately
+              if (touch.isDoubleTap) {
+                touch.el.trigger('doubleTap')
                 touch = {}
-              }, 250)
-            }
+              }
 
-          }, 0)
+              // trigger single tap after 250ms of inactivity
+              else {
+                touchTimeout = setTimeout(function(){
+                  touchTimeout = null
+                  touch.el.trigger('singleTap')
+                  touch = {}
+                }, 250)
+              }
+            }, 0)
+          } else {
+            touch = {}
+          }
+          deltaX = deltaY = 0
 
       })
       .bind('touchcancel', cancelAll)
