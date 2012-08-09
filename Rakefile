@@ -43,6 +43,7 @@ BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" 
 end
 
 file 'dist/zepto.min.js' => 'dist/zepto.js' do |task|
+  require 'rubygems'
   begin require 'uglifier'
   rescue LoadError; fail "Uglifier not available: #{$!}"
   else
