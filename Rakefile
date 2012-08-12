@@ -17,12 +17,19 @@ class BuildTask < Rake::FileTask
     return self
   end
 
+  def needed?() super or modules_mismatch? end
+
   def modules_mismatch?
-    File.open(name, 'r') {|f| f.gets } !~ /modules: ([\w,\s]+)/ or
-      $1.split(/\W+/) != modules
+    previous_modules != modules
   end
 
-  def needed?() super or modules_mismatch? end
+  def previous_modules
+    first_line =~ / - ([\w,\s]+) - / && $1.split(/\W+/)
+  end
+
+  def first_line
+    File.open(name, 'r') {|f| f.gets }
+  end
 end
 
 BuildTask.define_task 'dist/zepto.js' => DEFAULT_MODULES.map {|m| "src/#{m}.js" } do |task|
