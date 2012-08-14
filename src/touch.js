@@ -19,7 +19,7 @@
   function longTap() {
     longTapTimeout = null
     if (touch.last) {
-      touch.el.trigger('longTap')
+      trigger('longTap')
       touch = {}
     }
   }
@@ -36,6 +36,22 @@
     if (longTapTimeout) clearTimeout(longTapTimeout)
     touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
     touch = {}
+  }
+  
+  function trigger(eventName, cancelFunction) {
+    var event, parameters = {
+      position: {
+        startX: touch.x1,
+        startY: touch.y1,
+        endX: touch.x2,
+        endY: touch.y2
+      }
+    }
+    
+    if (cancelFunction) parameters.cancelTouch = cancelFunction
+    
+    event = $.Event(eventName, parameters)
+    touch.el.trigger(event)
   }
 
   $(document).ready(function(){
@@ -66,8 +82,8 @@
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
           swipeTimeout = setTimeout(function() {
-            touch.el.trigger('swipe')
-            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            trigger('swipe')
+            trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
             touch = {}
           }, 0)
 
@@ -80,13 +96,11 @@
 
             // trigger universal 'tap' with the option to cancelTouch()
             // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-            var event = $.Event('tap')
-            event.cancelTouch = cancelAll
-            touch.el.trigger(event)
-
+            trigger('tap', cancelAll)
+            
             // trigger double tap immediately
             if (touch.isDoubleTap) {
-              touch.el.trigger('doubleTap')
+              trigger('doubleTap')
               touch = {}
             }
 
@@ -94,7 +108,7 @@
             else {
               touchTimeout = setTimeout(function(){
                 touchTimeout = null
-                touch.el.trigger('singleTap')
+                trigger('singleTap')
                 touch = {}
               }, 250)
             }
