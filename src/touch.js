@@ -37,7 +37,7 @@
     touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
     touch = {}
   }
-  
+
   function trigger(eventName, cancelFunction) {
     var event, parameters = {
       position: {
@@ -47,9 +47,9 @@
         endY: touch.y2
       }
     }
-    
+
     if (cancelFunction) parameters.cancelTouch = cancelFunction
-    
+
     event = $.Event(eventName, parameters)
     touch.el.trigger(event)
   }
@@ -97,7 +97,7 @@
             // trigger universal 'tap' with the option to cancelTouch()
             // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
             trigger('tap', cancelAll)
-            
+
             // trigger double tap immediately
             if (touch.isDoubleTap) {
               trigger('doubleTap')
