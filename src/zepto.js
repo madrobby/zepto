@@ -204,6 +204,7 @@ var Zepto = (function() {
   $.isObject = isObject
   $.isArray = isArray
   $.isPlainObject = isPlainObject
+  $.camelCase = camelize
 
   $.inArray = function(elem, array, i){
     return emptyArray.indexOf.call(array, elem, i)
