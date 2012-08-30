@@ -49,7 +49,7 @@
         touchTimeout && clearTimeout(touchTimeout)
         touch.x1 = e.touches[0].pageX
         touch.y1 = e.touches[0].pageY
-        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
+        if (delta > 0 && delta <= 250 && e.touches.length === 1) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
