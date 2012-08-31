@@ -1183,6 +1183,9 @@
         $('#some_element').css({'margin-top': '', 'marginBottom': ''})
         t.assertEqual('', el.style.marginTop)
         t.assertEqual('', el.style.marginBottom)
+
+        $('#some_element').css('opacity', 0)
+        t.assertIdentical('0', el.style.opacity)
       },
 
       testCSSOnNonExistElm: function (t) {
