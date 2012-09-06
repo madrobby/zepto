@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto extended data() unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/data.js"></script>
+</head>
+<body>
+  <h1>Zepto data() tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+  <div id="fixtures">
+  <div id="data_attr" data-one="uno" data-two="due" data-foo-bar="baz"></div>
+  <div id="data_full" data-mode="awesome"></div>
+  <div id="data_obj" data-mode="awesome"></div>
+  <ol id="data_list">
+    <li data-category="arts"></li>
+    <li data-category="science"></li>
+  </ol>
+  <ol id="data_list2">
+    <li></li>
+    <li></li>
+  </ol>
+  </div>
+
+  <script>
+    Evidence('ZeptoExtendedDataTest', {
+      testEmptyCollection: function(t){
+        var el = $('#does_not_exist')
+        t.assertUndefined(el.data('one'))
+      },
+
+      testAttributeDoesNotExist: function(t){
+        var el = $('#data_attr')
+        t.assertUndefined(el.data('missing'))
+      },
+
+      testReadingAttribute: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('uno', el.data('one'))
+      },
+
+      testCamelized: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('baz', el.data('foo-bar'))
+        t.assertEqual('baz', el.data('fooBar'))
+
+        el.data('fooBar', 'bam')
+        t.assertEqual('bam', el.data('foo-bar'))
+        t.assertEqual('bam', el.data('fooBar'))
+
+        el.data('a-b', 'c')
+        t.assertEqual('c', el.data().aB)
+        t.assertUndefined(el.data()['a-b'])
+      },
+
+      testNotChangingAttribute: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('due', el.data('two'))
+        el.data('two', 'changed')
+        t.assertEqual('due', el.attr('data-two'))
+      },
+
+      testExtendedData: function(t){
+        var els = $('#data_attr'),
+          els2 = $('#data_attr'),
+          obj  = { a: 'A', b: 'B' }
+
+        els.data('obj', obj)
+        t.assertIdentical(obj, els.data('obj'))
+        t.assertIdentical(obj, els2.data('obj'))
+
+        els2.data('els', els)
+        t.assertIdentical(els, els.data('els'))
+      },
+
+      testMultipleElements: function(t){
+        var items = $('#data_list li')
+
+        items.data('each', 'mark')
+
+        var values = items.map(function(){ return $(this).data('each') })
+        t.assertEqual('mark, mark', values.join(', '))
+      },
+
+      testFunctionArg: function(t){
+        var els = $('#data_attr')
+
+        var data = "hello"
+
+        els.data("addio", function () {
+          data = "goodbye"
+        })
+
+        t.assertEqual('hello', data)
+
+        els.data("addio")()
+
+        t.assertEqual('goodbye', data)
+      },
+
+      testAllData: function(t){
+        var el = $('#data_full')
+
+        el.data().samurai = 7
+        el.data('one', 'ichi').data('two', 'ni')
+        el.data('person', {name: 'Kurosawa'})
+
+        var all = el.data()
+        t.assertEqual(7, all.samurai)
+        t.assertEqual('ichi', all.one)
+        t.assertEqual('ni', all.two)
+        t.assertEqual('Kurosawa', all.person.name)
+      },
+
+      testInitialDataFromAttributes: function(t){
+        var el = $('<div data-foo=bar data-foo-bar=baz />'),
+            store = el.data()
+
+        t.assertEqual('bar', store.foo)
+        t.assertEqual('baz', store.fooBar)
+        t.assertUndefined(store['foo-bar'])
+      },
+
+      testGettingBlanks: function(t){
+        var el = $('#data_attr'),
+            store = el.data()
+
+        store.nil = null
+        store.undef = undefined
+        store.blank = ''
+        store.bool = false
+
+        t.assertNull(el.data('nil'))
+        t.assertUndefined(el.data('undef'))
+        t.assertIdentical('', el.data('blank'))
+        t.assertFalse(el.data('bool'))
+      },
+
+      testRemoveData: function(t){
+        var el = $('<div data-foo=bar />')
+
+        el.data('foo', 'bam').data('bar', 'baz')
+        el.removeData('foo').removeData('bar')
+        t.assertEqual('bar', el.data('foo'))
+        t.assertUndefined(el.data('bar'))
+
+        el.data('uno', 'one').data('due', 'two')
+        el.removeData('uno due')
+        t.assertUndefined(el.data('uno'))
+        t.assertUndefined(el.data('due'))
+
+        el.data('one', 1).data('twoThree', 23)
+        el.removeData(['one', 'two-three'])
+        t.assertUndefined(el.data('one'))
+        t.assertUndefined(el.data('twoThree'))
+      },
+
+      testRemoveDataNoop: function(t){
+        var empty = $(),
+            vanilla = $('<div />')
+
+        t.assertIdentical(empty, empty.removeData('foo'))
+        t.assertIdentical(vanilla, vanilla.removeData('foo'))
+      },
+
+      testSettingDataWithObj: function(t){
+          var el = $('#data_obj')
+
+          el.data({
+              'foo': 'bar',
+              'answer': 42,
+              'color': 'blue'
+          })
+
+          var all = el.data()
+
+          t.assertEqual(all.answer, 42)
+          t.assertEqual(all.color, 'blue')
+          t.assertEqual(all.foo, 'bar')
+
+          el.data('foo', 'baz')
+
+          t.assertEqual(all.foo, 'baz')
+          t.assertEqual(all.answer, 42)
+      },
+
+      testSettingDataWithObjOnManyElements: function(t){
+          var items = $('#data_list2 li')
+
+          items.data({
+              'foo': 'bar',
+              'answer': 42,
+              'color': 'purple'
+          })
+
+          var values = items.map(function(){ return $(this).data('foo') })
+          t.assertEqual('bar, bar', values.join(', '))
+
+          var values2 = items.map(function(){ return $(this).data('answer') })
+          t.assertEqual('42, 42', values2.join(', '))
+      }
+
+    })
+  </script>
+</body>
+</html>

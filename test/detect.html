@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto environment detection unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/detect.js"></script>
+</head>
+<body>
+  <h1>Browser detection</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+  (function(){
+
+    var UA = {
+      WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
+      WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
+      WebOS_1_2_9_Pixi: "Mozilla/5.0 (webOS/Palm webOS 1.2.9; U; en-US) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/1.0 Safari/525.27.1 Pixi/1.0",
+      WebOS_3_0_0_TouchPad: "Mozilla/5.0 (hp-tablet; Linux; hpwOS/3.0.0; U; en-US) AppleWebKit/534.6 (KHTML, like Gecko) wOSBrowser/233.70 Safari/534.6 TouchPad/1.0",
+
+      iOS_3_0_iPhone: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/1A542a Safari/419.3",
+      iOS_4_0_iPhone: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7",
+      iOS_3_1_1_iPod: "Mozilla/5.0 (iPod; U; CPU iPhone OS 3_1_1 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Mobile/7C145",
+      iOS_3_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B367 Safari/531.21.10",
+      iOS_4_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C134 Safari/6533.18.5",
+      iOS_4_3_iPhone_Simulator: "Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5",
+
+      iOS_3_2_iPad_2: "Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10",
+
+      Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
+      Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
+
+      BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+",
+
+      Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+      Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+
+      Opera_11_51: "Opera/9.80 (Macintosh; Intel Mac OS X 10.7.1; U; en) Presto/2.9.168 Version/11.51",
+      Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00",
+
+      Kindle: "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/528.5+) Version/4.0 Kindle/3.0 (screen 600×800; rotate)",
+      Silk_1_0_accel: "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us; Silk/1.0.13.328_10008910) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16 Silk-Accelerated=true",
+      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+    }
+
+    function detect(ua, callback){
+      var obj = {}
+      $.__detect.call(obj, ua)
+      callback.call(null, obj.os, obj.browser)
+    }
+
+    Evidence('ZeptoDetectTest', {
+
+      testWebOS: function(t){
+        detect(UA.WebOS_1_4_0_Pre, function(os, browser){
+          t.assertTrue(os.webos)
+          t.assert(!os.touchpad)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("1.4.0", os.version)
+        })
+        detect(UA.WebOS_1_4_0_Pixi, function(os){
+          t.assertTrue(os.webos)
+          t.assertEqual("1.4.0", os.version)
+        })
+        detect(UA.WebOS_1_2_9_Pixi, function(os){
+          t.assertTrue(os.webos)
+          t.assertEqual("1.2.9", os.version)
+        })
+        detect(UA.WebOS_3_0_0_TouchPad, function(os){
+          t.assertTrue(os.webos)
+          t.assertTrue(os.touchpad)
+          t.assertEqual("3.0.0", os.version)
+        })
+      },
+
+      testAndroid: function(t){
+        detect(UA.Android_1_5, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("1.5", os.version)
+        })
+        detect(UA.Android_2_1, function(os){
+          t.assertTrue(os.android)
+          t.assertEqual("2.1", os.version)
+        })
+      },
+
+      testIOS: function(t){
+        detect(UA.iOS_3_0_iPhone, function(os, browser){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("3.0", os.version)
+          t.assertEqual("420.1", browser.version)
+        })
+        detect(UA.iOS_3_1_1_iPod, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertUndefined(os.ipod)
+          t.assertEqual("3.1.1", os.version)
+        })
+        detect(UA.iOS_3_2_iPad, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assert(!os.iphone)
+          t.assertEqual("3.2", os.version)
+        })
+        detect(UA.iOS_3_2_iPad_2, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assert(!os.iphone)
+          t.assertEqual("3.2", os.version)
+        })
+        detect(UA.iOS_4_0_iPhone, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assert(!os.ipad)
+          t.assertEqual("4.0", os.version)
+        })
+        detect(UA.iOS_4_2_iPad, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assertEqual("4.2", os.version)
+        })
+        detect(UA.iOS_4_3_iPhone_Simulator, function(os){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.iphone)
+          t.assertEqual("4.3", os.version)
+        })
+      },
+
+      testBlackBerry: function(t) {
+        detect(UA.BlackBerry_6_0_0_141, function(os, browser){
+          t.assertTrue(os.blackberry)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("6.0.0.141", os.version)
+        })
+      },
+
+      testKindle: function(t) {
+        detect(UA.Kindle, function(os, browser){
+          t.assertTrue(os.kindle)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("3.0", os.version)
+        })
+
+        detect(UA.Silk_1_0, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("2.3.4", os.version)
+        })
+
+        detect(UA.Silk_1_0_accel, function(os, browser){
+          t.assert(!os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.silk)
+          t.assertEqual("1.0.13.328_10008910", browser.version)
+        })
+      },
+
+      testFirefox: function(t) {
+        detect(UA.Firefox_6_0_2, function(os, browser){
+          t.assertFalse(browser.webkit)
+          t.assertUndefined(browser.version)
+        })
+      },
+
+      testOpera: function(t) {
+        detect(UA.Opera_11_51, function(os, browser){
+          t.assertFalse(browser.webkit)
+          t.assertUndefined(browser.version)
+        })
+      }
+    })
+  })()
+  </script>
+</body>
+</html>

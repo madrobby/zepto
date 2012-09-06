@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Let it snow with Zepto.js</title>
+    <meta name="name" content="content">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <style>
+      body { background: #000; color: #fff; overflow: hidden }
+      div { position: absolute; }
+    </style>
+  </head>
+  <body>
+
+  <script src="../../src/zepto.js"></script>
+  <script src="../../src/event.js"></script>
+  <script src="../../src/fx.js"></script>
+
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://zeptojs.com/let-it-snow" data-text="Let it snow with Zepto.js" data-via="zeptojs" data-lang="en">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs")</script>
+
+  <script>
+    $(document).ready(function(){
+      var i = 100, glyphs = '❄❅❆'.split('')
+
+      function rand(max){ return Math.floor(Math.random()*max) }
+
+      function addFlake(){
+        var el = $('<div><div>' + glyphs[rand(glyphs.length)] + '</div></div>')
+        $('body').append(el)
+        el.css({ left: rand(100)+'%', top: -100-rand(500), fontSize: 20+rand(30) })
+        el.anim(
+          { translateY: 1500+rand(500)+'px', translateX: 50-rand(100)+'px', rotate: (2e3-rand(4e3))+'deg' },
+          6+rand(10),
+          'linear',
+          function(){
+            addFlake()
+            el.remove() // garbage collect
+          }
+        );
+      }
+
+      while(i--) addFlake()
+
+      // enable for extra fun
+      //window.ondeviceorientation = function(event){
+      //  ('alpha' in event) && $('body').css({ '-webkit-transform': 'rotate('+event.alpha+'deg)'})
+      //}
+    })
+  </script>
+  </body>
+</html>

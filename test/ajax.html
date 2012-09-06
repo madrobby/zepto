@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Ajax unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/ajax.js"></script>
+</head>
+<body>
+  <h1>Zepto Ajax unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+  <div id="fixtures">
+    <div id="ajax_load"></div>
+  </div>
+
+  <script>
+  (function(){
+
+    function deferredResume(t, fn) {
+      setTimeout(function() { t.resume(fn || function(){}) }, 5)
+    }
+
+    Evidence('ZeptoAjaxTest', {
+
+      tearDown: function() {
+        $(document).off()
+
+        ;['jsonp2', 'jsonp3'].forEach(function(prop){
+          if (prop in window) delete window[prop]
+        })
+      },
+
+      testAjaxBase: function(t){
+        t.pause()
+        var xhr = $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          complete: function() { deferredResume(t) }
+        })
+        t.assertEqual('function', typeof xhr['getResponseHeader'])
+      },
+
+      testAjaxGet: function(t){
+        t.pause()
+        var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
+          var that = this
+          deferredResume(t, function(){
+            this.assert(response)
+            this.assertIdentical(window, that)
+          })
+        })
+        t.assertIn('abort', xhr)
+      },
+
+      testAjaxPost: function(t){
+        t.pause()
+        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
+          deferredResume(t, function(){
+            this.assert(response)
+          })
+        })
+        t.assertIn('abort', xhr)
+      },
+
+      testNumberOfActiveRequests: function(t) {
+        var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0
+        t.assertIdentical(0, $.active)
+        $(document)
+          .on('ajaxStart', function() { ajaxStarted++ })
+          .on('ajaxEnd', function() { ajaxEnded++ })
+          .on('ajaxSend', function() {
+            if ($.active > maxActive) maxActive = $.active
+          })
+          .on('ajaxComplete', function() {
+            if (++requestsCompleted == 3)
+              deferredResume(t, function() {
+                this.assertEqual(3, maxActive)
+                this.assertIdentical(0, $.active)
+              })
+          })
+
+        t.pause()
+        $.ajax({url: 'fixtures/ajax_load_simple.html'})
+        $.ajax({url: 'fixtures/ajax_load_simple.html'})
+        $.ajax({url: 'fixtures/ajax_load_simple.html'})
+      },
+
+      testAjaxPostWithAcceptType: function(t) {
+        t.pause()
+        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
+          deferredResume(t, function() {
+            this.assert(response)
+          })
+        }, 'text/plain')
+      },
+
+      testAjaxGetJSON: function(t){
+        t.pause()
+        var xhr = $.getJSON('fixtures/zepto.json', function(data){
+          deferredResume(t, function(){
+            this.assertEqual('awesomeness', data.zepto)
+          })
+        })
+        t.assertIn('abort', xhr)
+      },
+
+      testAjaxGetJSONP: function(t){
+        t.pause()
+        var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
+          deferredResume(t, function(){
+            this.assertEqual('world', data.hello)
+            this.assertEqual(0, $('script[src^=fixtures]').size())
+          })
+        })
+        t.assertEqual(1, $('script[src^=fixtures]').size())
+        t.assertIn('abort', xhr)
+      },
+
+      testAjaxGetJSONPErrorCallback: function(t){
+        t.pause()
+        $.ajax({
+          type: 'GET',
+          url: 'fixtures/404.js?timestamp='+(+new Date),
+          dataType: 'jsonp',
+          success: function() { t.refute(true) },
+          error: function() { t.assert(true) },
+          complete: function() { deferredResume(t) }
+        })
+      },
+
+      testJSONPdataType: function(t){
+        t.pause()
+        $.ajax({
+          dataType: 'jsonp',
+          url: 'fixtures/jsonp.js?timestamp='+(+new Date),
+          success: function(data){
+            deferredResume(t, function(){
+              this.assertEqual('world', data.hello)
+            })
+          }
+        })
+      },
+
+      testAjaxJSONPWithDataSupport: function(t) {
+        var xhr = $.ajax({
+          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          data: {
+            param1: 'val1',
+            param2: 'val2'
+          }
+        })
+        t.assert($('script[src^=fixtures]').attr('src').match('param1=val1&param2=val2'))
+        xhr.abort()
+      },
+
+      testAjaxLoad: function(t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        var el = testEl.load('fixtures/ajax_load_simple.html', function(response, status, xhr){
+          var that = this
+          deferredResume(t, function(){
+            this.assertIdentical(testEl, that)
+            this.assertEqual('simple ajax load', testEl.html().trim())
+            this.assert(response)
+            this.assertEqual('success', status)
+          })
+          t.assertIn('abort', xhr)
+        })
+        t.assertIdentical(testEl, el)
+      },
+
+      testAjaxLoadWithSelector: function(t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function(){
+          deferredResume(t, function() {
+            this.assertEqual('ajax load with selector', testEl.html().trim())
+          })
+        })
+      },
+
+      testAjaxLoadWithJavaScript: function (t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        window.testValue = 0
+        testEl.load('fixtures/ajax_load_selector_javascript.html', function(){
+          deferredResume(t, function(){
+            this.assertEqual(window.testValue, 1)
+            delete window.testValue
+          })
+        })
+      },
+
+      testAjaxLoadWithSelectorAndJavaScript: function (t) {
+        var testEl = $('#ajax_load')
+        t.pause()
+        window.testValue = 0
+        testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function() {
+          deferredResume(t, function(){
+            this.assertEqual(window.testValue, 0)
+            delete window.testValue
+          })
+        })
+      },
+
+      testAjaxWithContext: function(t) {
+        t.pause()
+        var body = $('body')
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: body,
+          complete: function(){
+            var that = this
+            deferredResume(t, function(){
+              this.assertIdentical(body, that)
+            })
+          }
+        })
+      },
+
+      testAjaxWithObjectContext: function(t) {
+        t.pause()
+        var context = {}
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          context: context,
+          complete: function(){
+            deferredResume(t)
+          }
+        })
+      }
+
+    })
+
+    var OriginalXHR = $.ajaxSettings.xhr
+
+    function MockXHR() {
+      this.headers = []
+      this.responseHeaders = {}
+      MockXHR.last = this
+    }
+    MockXHR.prototype = {
+      open: function(method, url, async) {
+        this.method = method
+        this.url = url
+        this.async = async
+      },
+      setRequestHeader: function(name, value) {
+        this.headers.push({ name: name, value: value })
+      },
+      getResponseHeader: function(name) {
+        return this.responseHeaders[name]
+      },
+      overrideMimeType: function(type) {
+        this.responseHeaders['content-type'] = type
+      },
+      send: function(data) {
+        this.data = data
+      },
+      abort: function() {
+        this.aborted = true
+      },
+      ready: function(readyState, status, responseText, headers) {
+        this.readyState = readyState
+        this.status = status
+        this.responseText = responseText
+        $.extend(this.responseHeaders, headers)
+        this.onreadystatechange()
+      },
+      onreadystatechange: function() {}
+    }
+
+    function matchHeader(name, value) {
+      return function(header) {
+        return header.name == name && (!value || header.value == value)
+      }
+    }
+
+    Evidence('ZeptoAjaxTest2', {
+      setUp: function() {
+        $.ajaxSettings.xhr = function(){ return new MockXHR }
+      },
+
+      tearDown: function() {
+        $.ajaxSettings.xhr = OriginalXHR
+        $(document).off()
+        $.active = 0
+      },
+
+      testTypeDefaultsToGET: function(t) {
+        $.ajax({
+          url: '/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain)
+          }
+        })
+        t.assertEqual('GET', MockXHR.last.method)
+      },
+
+      testURLDefaultsToWindowLocation: function(t) {
+        $.ajax()
+        t.assertEqual(window.location, MockXHR.last.url)
+      },
+
+      testCrossDomain: function(t) {
+        $.ajax({
+          url: 'http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain)
+          }
+        })
+      },
+
+      testDataTypeOptionSetsAcceptHeader: function(t) {
+        $.ajax()
+        t.assert(!MockXHR.last.headers.some(matchHeader('Accept')))
+
+        $.ajax({ dataType: 'json' })
+        t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')))
+        // verifies overrideMimeType:
+        t.assertEqual('application/json', MockXHR.last.getResponseHeader('content-type'))
+      },
+
+      testContentTypeOptionSetsContentTypeHeader: function(t) {
+        $.ajax()
+        t.assert(!MockXHR.last.headers.some(matchHeader('Content-Type')))
+
+        $.ajax({ contentType: 'text/html' })
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'text/html')))
+
+        $.ajax({ type: 'POST', data: [], contentType: 'application/x-foo' })
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-foo')))
+      },
+
+      testHeadersOptionCanSetContentType: function(t) {
+        $.ajax({ type: 'POST', data: [], headers: { 'Content-Type': 'application/hal+json' }})
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/hal+json')))
+      },
+
+      testContentTypeDefaultsToUrlEncoded: function(t) {
+        $.ajax({ type: 'GET', data: 'x' })
+        t.refute(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
+        $.ajax({ type: 'POST', data: 'x' })
+        t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
+      },
+
+      testCustomHeader: function(t) {
+        $.ajax({ headers: {'X-Awesome': 'true'} })
+        t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')))
+        t.assert(MockXHR.last.headers.some(matchHeader('X-Awesome', 'true')))
+      },
+
+      testJSONdataType: function(t) {
+        var result = {}
+        $.ajax({ dataType: 'json', success: function(json) {result = json } })
+        MockXHR.last.ready(4, 200, '{"hello":"world"}')
+        t.assertEqual("world", result.hello)
+      },
+
+      testJSONcontentType: function(t) {
+        var result = {}
+        $.ajax({ success: function(json) {result = json } })
+        MockXHR.last.ready(4, 200, '{"hello":"world"}', {'content-type': 'application/json'})
+        t.assertEqual("world", result.hello)
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function(t) {
+        var result, success = false
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } })
+        MockXHR.last.ready(4, 200, '')
+        t.assert(success)
+        t.assertNull(result)
+      },
+
+      testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function(t) {
+        var result, success = false
+        $.ajax({ dataType: 'json', success: function(json) {result = json; success = true } })
+        MockXHR.last.ready(4, 200, ' ')
+        t.assert(success)
+        t.assertNull(result)
+      },
+
+      testDataOptionIsConvertedToSerializedForm: function(t) {
+        $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } })
+        MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
+        t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
+      },
+
+      testDataIsAppendedToGETURL: function(t) {
+        $.ajax({ url:'test.html', data:'foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html', data:'?foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?', data:'foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?baz', data:'foo=bar' })
+        t.assertEqual('test.html?baz&foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?bar=baz', data:'foo=bar' })
+        t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html', data:{foo:'bar'} })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+      },
+
+      testScriptResponseIsEvald: function(t) {
+        var result
+        $.ajax({ success: function(text){ result = text } })
+        MockXHR.last.ready(4, 200, 'this.testValue = 42', {'content-type': 'application/javascript'})
+        t.assertEqual('this.testValue = 42', result)
+        t.assertIdentical(42, window.testValue)
+        delete window.testValue
+      },
+
+      testErrorCallback: function(t) {
+        var successFired = false, xhr, status
+        $.ajax({
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        })
+
+        MockXHR.last.ready(4, 500, '500 Internal Server Error')
+        t.assert(!successFired)
+        t.assertEqual(MockXHR.last, xhr)
+        t.assertEqual('error', status)
+      },
+
+      testErrorCallbackWithInvalidJSON: function(t) {
+        var successFired = false, xhr, status, exception
+        $.ajax({
+          dataType: 'json',
+          succes: function() { successFired = true },
+          error: function(x, s, e) { xhr = x, status = s, exception = e }
+        })
+
+        MockXHR.last.ready(4, 200, '{invalid')
+        t.assert(!successFired)
+        t.assertEqual(MockXHR.last, xhr)
+        t.assertEqual('parsererror', status)
+        t.assert(exception.toString().match(/SyntaxError/))
+      },
+
+      test201ResponseIsSuccess: function(t) {
+        var successFired, errorFired
+        $.ajax({
+          success: function() { successFired = true },
+          error: function() { errorFired = true }
+        })
+
+        MockXHR.last.ready(4, 201, 'Created')
+        t.assert(successFired)
+        t.refute(errorFired)
+      },
+
+      test304ResponseIsSuccess: function(t) {
+        var successFired, errorFired
+        $.ajax({
+          success: function() { successFired = true },
+          error: function() { errorFired = true }
+        })
+
+        MockXHR.last.ready(4, 304, 'Not Modified')
+        t.assert(successFired)
+        t.refute(errorFired)
+      },
+      testXHRParameterInSuccessCallback: function(t) {
+        var body, status, xhr
+        $.ajax({
+          success: function(b, s, x) { body = b, status = s, xhr = x }
+        })
+
+        MockXHR.last.ready(4, 200, 'Hello')
+        t.assertEqual('Hello', body)
+        t.assertEqual('success', status)
+        t.assertEqual(MockXHR.last, xhr)
+
+        body = status = xhr = null
+        $.ajax({
+          dataType: 'json',
+          success: function(b, s, x) { body = b, status = s, xhr = x }
+        })
+
+        MockXHR.last.ready(4, 200, '{"message":"Hello"}')
+        t.assertEqual('Hello', body.message)
+        t.assertEqual('success', status)
+        t.assertEqual(MockXHR.last, xhr)
+      },
+
+      testBeforeSendAbortCallback: function(t) {
+        var xhr, beforeFired = false, settings = {}
+        $.ajax({
+          data: "1=2",
+          beforeSend: function(x, s) {
+            beforeFired = true, settings = s, xhr = x
+          }
+        })
+
+        t.assert(beforeFired)
+        t.assertEqual(MockXHR.last, xhr)
+        t.assertEqual("1=2", settings.data)
+      },
+
+      testBeforeSendAbort: function(t) {
+        var xhr
+        $.ajax({ beforeSend: function(x) { xhr = x; return false } })
+
+        t.assert(xhr.aborted)
+      },
+
+      testGlobalBeforeSendAbort: function(t) {
+        var xhr
+        $(document).on('ajaxBeforeSend', function(e, x) { xhr = x; return false })
+        t.assertFalse($.ajax())
+        t.assert(xhr.aborted)
+      },
+
+      testGlobalAjaxSendCantAbort: function(t) {
+        var xhr
+        $(document).on('ajaxSend', function(e, x) { xhr = x; return false })
+        t.assert($.ajax())
+        t.assert(!xhr.aborted)
+      },
+
+      testCompleteCallback: function(t) {
+        var status, xhr
+        $.ajax({ complete: function(x, s) { status = s, xhr = x } })
+
+        MockXHR.last.ready(4, 200, 'OK')
+        t.assertEqual(MockXHR.last, xhr)
+        t.assertEqual('success', status)
+      },
+
+      testCallbackOrder: function(t) {
+        var order = []
+        $.ajax({
+          beforeSend: function() { order.push('beforeSend') },
+          success: function() { order.push('success') },
+          complete: function() { order.push('complete') }
+        })
+
+        MockXHR.last.ready(4, 200, 'OK')
+        t.assertEqual('beforeSend,success,complete', order.join(','))
+      },
+
+      testGlobalCallbacks: function(t) {
+        var fired = []
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type)
+        })
+
+        $.ajax({
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        })
+        t.assertEqual('ajaxStart beforeSend ajaxBeforeSend ajaxSend', fired.join(' '))
+
+        fired = []
+        MockXHR.last.ready(4, 200, 'OK')
+        t.assertEqual('success ajaxSuccess complete ajaxComplete ajaxStop', fired.join(' '))
+      },
+
+      testGlobalCallbacksOff: function(t) {
+        var fired = []
+        $(document).on('ajaxStart ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete ajaxStop', function(e) {
+          fired.push(e.type)
+        })
+
+        $.ajax({
+          global:     false,
+          beforeSend: function() { fired.push('beforeSend') },
+          success:    function() { fired.push('success') },
+          error:      function() { fired.push('error') },
+          complete:   function() { fired.push('complete') }
+        })
+        t.assertEqual('beforeSend', fired.join(' '))
+
+        fired = []
+        MockXHR.last.ready(4, 200, 'OK')
+        t.assertEqual('success complete', fired.join(' '))
+      },
+
+      testTimeout: function(t) {
+        var successFired = false, xhr, status
+        t.pause()
+        $.ajax({
+          timeout: 30,
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        })
+
+        setTimeout(function(){
+          t.assertFalse(successFired)
+          t.assertUndefined(status)
+        }, 20)
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertFalse(successFired)
+            t.assertTrue(xhr.aborted)
+            t.assertEqual('timeout', status)
+          })
+        }, 40)
+      },
+
+      testAsyncDefaultsToTrue: function(t) {
+        $.ajax({ url: '/foo' })
+        t.assertTrue(MockXHR.last.async)
+      },
+
+      testAsyncFalse: function(t) {
+        $.ajax({ url: '/foo', async: false })
+        t.assertFalse(MockXHR.last.async)
+      }
+    })
+
+    Evidence('ZeptoAjaxHelperMethodsTest', {
+
+      testParamMethod: function(t) {
+        var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] })
+        result = decodeURIComponent(result)
+        t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo")
+
+        result = $.param({ jquery: 'Javascript', rails: 'Ruby', django: 'Python' })
+        result = decodeURIComponent(result)
+        t.assertEqual(result, "jquery=Javascript&rails=Ruby&django=Python")
+
+        result = $.param({
+          title: "Some Countries",
+          list: ['Ecuador', 'Austria', 'England'],
+          capitals: { ecuador: 'Quito', austria: 'Vienna', GB: { england: 'London', scotland: 'Edinburgh'} }
+        })
+        result = decodeURIComponent(result)
+        t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
+      },
+
+      testParamEscaping: function(t) {
+        var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' })
+        t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
+      },
+
+      testParamComplex: function(t) {
+        var data = {
+          a: ['b', 'c', { d:'e', f:['g','h'] }]
+        }
+        var result = $.param(data)
+        result = decodeURIComponent(result)
+        t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result)
+      },
+
+      testParamShallow: function(t) {
+        var data = {
+          libs: ['jQuery', 'Prototype', 'Dojo'],
+          nested: { will: 'be ignored' }
+        }
+        var result = $.param(data, true)
+        result = decodeURIComponent(result)
+        t.assertEqual("libs=jQuery&libs=Prototype&libs=Dojo&nested=[object+Object]", result)
+      },
+
+      testParamArray: function(t) {
+        var data = [
+          {name:'country', value:'Ecuador'},
+          {name:'capital', value:'Quito'}
+        ]
+        var result = $.param(data)
+        t.assertEqual(result, "country=Ecuador&capital=Quito")
+      }
+
+    })
+  })()
+  </script>
+</body>
+</html>

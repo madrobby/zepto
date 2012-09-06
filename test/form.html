@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto form unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/form.js"></script>
+</head>
+<body>
+  <h1>Zepto form tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <div id="fixtures">
+  <form id="login_form" target="formtarget" action="./idontexist.html">
+    <input name="email" value="koss@nocorp.me">
+    <input name="password" value="123456">
+    <input name="unchecked_hasValue" value="myValue" type="checkbox">
+    <input name="unchecked_noValue" type="checkbox">
+    <input name="checked_hasValue" checked value="myValue" type="checkbox">
+    <input name="checked_disabled" checked value="ImDisabled" type="checkbox" disabled>
+    <input name="checked_noValue" checked type="checkbox">
+
+    <fieldset>
+      <input type="radio" name="radio1" value="r1">
+      <input type="radio" name="radio1" checked value="r2">
+      <input type="radio" name="radio1" value="r3">
+    </fieldset>
+
+    <select name="selectbox">
+        <option value="selectopt1">select1</option>
+        <option value="selectopt2">select2</option>
+        <option value="selectopt3">select3</option>
+    </select>
+
+    <div class="actions">
+      <input type="submit" name="submit" value="Save">
+      <input type="button" name="preview" value="Preview">
+      <input type="reset" name="clear" value="Clear form">
+      <button name="button">I'm a button</button>
+    </div>
+  </form>
+
+  <iframe name="formtarget"></iframe>
+  </div>
+
+  <script>
+  (function(){
+
+    var isObjectEquals = function (obj1, obj2) {
+      for (var key in obj1) {
+        switch( typeof( obj1[key] ) ) {
+          case 'object':
+            if ( !isObjectEquals( obj1[key], obj2[key] ) ) {
+              return false
+            }
+            break
+
+          case 'function':
+            if (
+                 typeof( obj2[key] ) == 'undefined' ||
+                 ( obj1[key].toString() != obj2[key].toString() )
+               ) {
+              return false
+            }
+            break
+
+          default:
+            if ( obj1[key] != obj2[key] ) {
+              return false
+            }
+        }
+      }
+
+      for (key in obj2) {
+        if (typeof( obj1[key] ) == 'undefined') {
+          return false
+        }
+      }
+
+      return true
+    }
+
+    Evidence.Assertions.assertEqualObject = function(expected, actual, message) {
+      this._assertExpression(
+        isObjectEquals(expected, actual),
+        message || 'Failed assertion.',
+        'Expected %o, got %o.', expected, actual
+      )
+    }
+
+    Evidence('FormTest', {
+
+      testSerializeArray: function (t) {
+        var loginForm = $('#login_form')
+
+        t.assertEqual(Function, loginForm.serializeArray.constructor)
+        t.assertEqual(6, loginForm.serializeArray().length)
+        t.assertEqualObject(
+          [
+              { name: 'email', value: 'koss@nocorp.me' },
+              { name: 'password', value: '123456' },
+              { name: 'checked_hasValue', value: 'myValue' },
+              { name: 'checked_noValue', value: 'on' },
+              { name: 'radio1', value: 'r2' },
+              { name: 'selectbox', value: 'selectopt1' }
+
+          ],
+          loginForm.serializeArray()
+        )
+      },
+
+      testSerialize: function (t) {
+        var loginForm = $('#login_form')
+
+        t.assertEqual(Function, loginForm.serialize.constructor)
+        t.assertEqual( 'string', typeof loginForm.serialize() )
+
+        t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() )
+      },
+
+      testFormSubmit: function (t) {
+        var eventTriggered = false
+        $('#login_form').submit(function (e) {
+          eventTriggered = true
+          e.preventDefault()
+        })
+        $('#login_form').submit()
+        t.assert(eventTriggered)
+      }
+
+    })
+  })()
+  </script>
+</body>
+</html>

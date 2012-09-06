@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto FX unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/fx.js"></script>
+  <style>
+    @-webkit-keyframes animName {
+      0% {
+        -webkit-transform: rotateY(180deg) scale(.8) translate3d(0, 0, 0);
+        opacity: 1;
+      }
+      100% {
+        -webkit-transform: rotateY(0deg) scale(1) translate3d(100px, 100px, 100px);
+        opacity: 0;
+      }
+    }
+    @-moz-keyframes animName {
+      from {
+        -moz-transform: rotateY(180deg) scale(.8) translate(0, 0);
+        opacity: 1;
+      }
+      to {
+        -moz-transform: rotateY(0deg) scale(1) translate(100px, 100px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Zepto effects tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <div id="animtest_1" style="width:40px;height:40px;background:red"></div>
+  <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
+  <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
+  <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
+  <div id="callbacktest" style="width:40px;height:40px;background:red"><div style="width:40px;height:40px;background:blue"></div></div>
+  <div id="keyframetest" style="width:40px;height:40px;background:red;opacity: 0;"></div>
+
+  <div id="anim_zero_duration_callback_test"></div>
+
+  <script>
+  (function(){
+
+    function colorToHex (color) {
+      if (color.substr(0, 1) === '#') {
+        return color
+      }
+
+      var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec( color.toLowerCase() ),
+          red    = parseInt(digits[2]),
+          green  = parseInt(digits[3]),
+          blue   = parseInt(digits[4]),
+          rgb = blue | (green << 8) | (red << 16)
+
+      return digits[1] + '#' + rgb.toString(16)
+    }
+
+    function defer(fn, delay) {
+      setTimeout(fn, delay || 0)
+    }
+
+    function camelize(str) {
+      return str.replace(/-+(.)?/g, function(_, chr){ return chr ? chr.toUpperCase() : '' })
+    }
+
+    var stylePrefix = '', vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
+      testEl = document.createElement('div')
+
+    $.each(vendors, function(vendor, event){
+      if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
+        stylePrefix = '-' + vendor.toLowerCase() + '-'
+        return false
+      }
+    })
+
+    Evidence.Assertions.assertStyle = function(expected, object, property, message) {
+      if (/^(transform|transition|animation)/.test(property)) property = stylePrefix + property
+      if (!('nodeName' in object)) object = object.get(0)
+
+      var actual = object.style[camelize(property)],
+        expression = expected instanceof RegExp ? expected.test(actual) : expected === actual
+
+      this._assertExpression(expression, message || 'Failed assertion.', 'Expected %s, got %s.', expected, actual)
+    }
+
+    Evidence('ZeptoFXTest', {
+
+      testAnimate: function(t){
+        var el = $('#animtest_1'), el2 = $('#animtest_2')
+        t.pause()
+        el.animate({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          scale: '0.8',
+          opacity: 0.5,
+          'background-color': '#BADA55'
+        }, 200, 'ease-out')
+
+        el2.animate({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '-90deg',
+          'background-color': '#BADA55'
+        }, {
+          duration: 180,
+          easing: 'ease-out'
+        })
+
+        t.pause()
+
+        defer(function(){
+          t.resume(function(){
+            t.assertStyle('ease-out', el, 'transition-timing-function')
+            t.assertStyle('0.2s', el, 'transition-duration')
+            t.assertStyle('0.18s', el2, 'transition-duration')
+
+            t.pause()
+            defer(function(){
+              t.resume(function(){
+                t.assertStyle('translate3d(100px, 100px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
+                t.assertStyle('0.5', el, 'opacity')
+                t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
+              })
+            }, 250)
+          })
+        }, 1)
+      },
+
+      testDuration: function(t){
+        var el1 = $('#durationtest_1').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        })
+
+        var el2 = $('#durationtest_2').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, 0)
+
+        t.pause()
+        defer(function(){
+          t.resume(function(){
+            t.assertStyle('0.4s', el1, 'transition-duration')
+            t.assertStyle('0s', el2, 'transition-duration')
+          })
+        }, 1)
+      },
+
+      testCallback: function(t){
+        var duration = 250, start = new Date().getTime()
+        t.pause()
+
+        $('#callbacktest').anim({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, duration / 1000, 'linear',
+        function(){
+          var context = this
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong")
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
+          })
+        })
+      },
+
+      testBubbling: function(t){
+        $('#callbacktest div').anim({ opacity: 0.0 }, 0.1, 'linear')
+
+        var el = $('#anim_zero_duration_callback_test'),
+          callbackCalled = false
+
+        el.anim({ opacity: 0.5 }, 0, 'linear', function () {
+          t.assert($(this).is('#anim_zero_duration_callback_test'), "context for callback is wrong")
+          t.assertStyle('0.5', this, 'opacity')
+          callbackCalled = true
+        })
+
+        t.pause()
+        defer(function(){
+          t.resume(function(){
+            t.assert(callbackCalled)
+          })
+        },30)
+      },
+
+      testKeyFrameAnimation: function(t){
+        t.pause()
+        var el = $('#keyframetest').anim('animName', 2)
+        defer(function(){
+          t.resume(function(){
+            t.assertStyle('animName', el, 'animation-name')
+          })
+        })
+      }
+    })
+  })()
+  </script>
+</body>
+</html>
