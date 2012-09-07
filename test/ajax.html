@@ -71,7 +71,7 @@
 
       testNumberOfActiveRequests: function(t) {
         var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0
-        t.assertIdentical(0, $.active)
+        t.assertIdentical(0, $.active, 'initial count mismatch')
         $(document)
           .on('ajaxStart', function() { ajaxStarted++ })
           .on('ajaxEnd', function() { ajaxEnded++ })
@@ -121,6 +121,17 @@
         })
         t.assertEqual(1, $('script[src^=fixtures]').size())
         t.assertIn('abort', xhr)
+      },
+
+      testAjaxJSONP: function(t){
+        t.pause()
+        var xhr = $.ajaxJSONP({
+          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          complete: function(data){
+            t.assert(true)
+            deferredResume(t)
+          }
+        })
       },
 
       testAjaxGetJSONPErrorCallback: function(t){

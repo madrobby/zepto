@@ -71,6 +71,8 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
+    if (!('type' in options)) return $.ajax(options)
+
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
       abort = function(){
