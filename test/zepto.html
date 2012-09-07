@@ -1176,16 +1176,39 @@
         var div = $('#get_style_element')
         t.assertEqual('48px', div.css('font-size'))
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
+      },
 
-        $('#some_element').css('color', '')
-        t.assertEqual('', el.style.color)
+      testCSSUnset: function (t) {
+        var el = $('#some_element').css({ 'margin-top': '1px', 'margin-bottom': '1px' }),
+            dom = el.get(0)
 
-        $('#some_element').css({'margin-top': '', 'marginBottom': ''})
-        t.assertEqual('', el.style.marginTop)
-        t.assertEqual('', el.style.marginBottom)
+        el.css('color', '#000')
+        el.css('color', '')
+        t.assertIdentical('', dom.style.color)
 
-        $('#some_element').css('opacity', 0)
-        t.assertIdentical('0', el.style.opacity)
+        el.css('color', '#000')
+        el.css('color', undefined)
+        t.assertIdentical('', dom.style.color)
+
+        el.css('color', '#000')
+        el.css('color', null)
+        t.assertIdentical('', dom.style.color)
+
+        el.css('color', '#000')
+        el.css({ color: '', 'margin-top': undefined, 'marginBottom': null })
+        t.assertIdentical('', dom.style.color)
+        t.assertIdentical('', dom.style.marginTop)
+        t.assertIdentical('', dom.style.marginBottom)
+      },
+
+      testCSSZeroValue: function (t) {
+        var el = $('#some_element'), dom = el.get(0)
+        el.css('opacity', 0)
+        t.assertIdentical('0', dom.style.opacity)
+
+        el.css('opacity', 1)
+        el.css({ opacity: 0 })
+        t.assertIdentical('0', dom.style.opacity)
       },
 
       testCSSOnNonExistElm: function (t) {
