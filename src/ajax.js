@@ -71,6 +71,8 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
+    options = (options || {})
+    for (key in $.ajaxSettings) if (options[key] === undefined) options[key] = $.ajaxSettings[key]
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
       abort = function(){
