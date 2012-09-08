@@ -255,6 +255,12 @@
     var globalVarSetFromReady2 = ""
     $(function(){ globalVarSetFromReady2 = 'hi!' })
 
+    var globalVarSetFromReady3 = ""
+    $(document).on('ready', function(){ globalVarSetFromReady3 = 'hi!' })
+
+    var globalVarSetFromReady4 = ""
+    $(document).on('foo ready bar', function(){ globalVarSetFromReady4 = 'hi!' })
+
     Evidence.Assertions.assertSame = function(expected, actual, message) {
       var expectedKeyCount = 0, actualKeyCount = 0, key, passed = true
       for (key in expected) expectedKeyCount++
@@ -595,6 +601,8 @@
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady)
         t.assertEqual('hi!', globalVarSetFromReady2)
+        t.assertEqual('hi!', globalVarSetFromReady3)
+        t.assertEqual('hi!', globalVarSetFromReady4)
       },
 
       testNext: function(t){
@@ -1853,17 +1861,25 @@
 
       testDocumentReady: function (t) {
         // Check that if document is already loaded, ready() immediately executes callback
-        var arg1, arg2, fired = false
+        var arg1, arg2, arg3, arg4, fired = false
         $(function (Z1) {
           arg1 = Z1
           $(document).ready(function (Z2) {
             arg2 = Z2
-            fired = true
+            $(document).on('ready', function (Z3) {
+              arg3 = Z3
+              $(document).on('foo ready bar', function (Z4) {
+                arg4 = Z4
+                fired = true
+              })
+            })
           })
         })
         t.assertTrue(fired)
         t.assertIdentical(Zepto, arg1)
         t.assertIdentical(Zepto, arg2)
+        t.assertIdentical(Zepto, arg3)
+        t.assertIdentical(Zepto, arg4)
       },
 
       testSlice: function (t) {
