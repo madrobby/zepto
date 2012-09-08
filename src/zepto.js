@@ -409,7 +409,10 @@ var Zepto = (function() {
       return this.css("display", "none")
     },
     toggle: function(setting){
-      return this.each(function(){ (setting === undefined ? $(this).css("display") == "none" : setting) ? $(this).show() : $(this).hide() })
+      return this.each(function(){
+        var el = $(this)
+        ;(setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
+      })
     },
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
     next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
