@@ -1,0 +1,7 @@
+{
+  "name": "zepto",
+  "version": "1.0rc1",
+  "main": "./zepto.js",
+  "dependencies: {
+  }
+}
