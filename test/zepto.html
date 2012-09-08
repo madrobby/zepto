@@ -368,6 +368,39 @@
 
         // undefined values are not copied over
         t.assertSame({a:1}, $.extend({a:1}, {b:undefined}))
+
+        // shallow by default
+        obj = $.extend({ a:{b:"c"} }, { a:{d:"e"} })
+        t.assertSame({d:"e"}, obj.a)
+      },
+
+      testExtendDeep: function(t){
+        var obj = { a:{b:"c", x:{y:"z"}} }
+        $.extend(true, obj, { a:{d:"e"} }, { a:{b:"B", f:"g", x:{q:"x"}} })
+
+        t.assertEqual('a', Object.keys(obj).join(','))
+        t.assertEqual('b,d,f,x', Object.keys(obj.a).sort().join(','))
+        t.assertEqual('B', obj.a.b)
+        t.assertEqual('e', obj.a.d)
+        t.assertEqual('g', obj.a.f)
+        t.assertEqual('z', obj.a.x.y)
+        t.assertEqual('x', obj.a.x.q)
+
+        // creates non-existing keys on target object
+        obj = {}
+        $.extend(true, obj, { a:{b:"c"} })
+        t.assertEqual('a', Object.keys(obj).join(','))
+        t.assertEqual('c', obj.a.b)
+
+        // skips iterating over DOM elements
+        obj = {}
+        var dom = $('#some_element').get(0)
+        $.extend(true, obj, { element: dom })
+        t.assertIdentical(dom, obj.element)
+
+        // can override DOM element
+        $.extend(true, obj, { element:{a:'b'} })
+        t.assertEqual('b', obj.element.a)
       },
 
       testExtensionAPI: function(t) {
