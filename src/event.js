@@ -48,6 +48,7 @@
   function add(element, events, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
+      if (event == 'ready') return $(document).ready(fn)
       var handler   = parse(event)
       handler.fn    = fn
       handler.sel   = selector
