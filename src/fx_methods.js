@@ -37,7 +37,7 @@
 
   $.fn.toggle = function(speed, callback) {
     if (speed === undefined || typeof speed == 'boolean') return origToggle.call(this, speed)
-    else return this[this.css('display') == 'none' ? 'show' : 'hide'](speed, callback)
+    else return this.each(function(){ $(this)[$(this).css('display') == 'none' ? 'show' : 'hide'](speed, callback) })
   }
 
   $.fn.fadeTo = function(speed, opacity, callback) {
@@ -56,8 +56,10 @@
   }
 
   $.fn.fadeToggle = function(speed, callback) {
-    var hidden = this.css('opacity') == 0 || this.css('display') == 'none'
-    return this[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
+    return this.each(function(){ 
+      var hidden = $(this).css('opacity') == 0 || $(this).css('display') == 'none'
+      $(this)[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
+    })
   }
 
 })(Zepto)
