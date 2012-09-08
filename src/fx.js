@@ -64,7 +64,7 @@
         else cssProperties[key] = properties[key]
 
       if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ')
-      if (!$.fx.off && typeof properties === 'object') {
+      if (duration > 0 && typeof properties === 'object') {
         cssProperties[prefix + 'transition-property'] = Object.keys(properties).join(', ')
         cssProperties[prefix + 'transition-duration'] = duration + 's'
         cssProperties[prefix + 'transition-timing-function'] = (ease || 'linear')

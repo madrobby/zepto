@@ -152,8 +152,8 @@
         t.pause()
         defer(function(){
           t.resume(function(){
-            t.assertStyle('0.4s', el1, 'transition-duration')
-            t.assertStyle('0s', el2, 'transition-duration')
+            t.assertStyle('0.4s', el1, 'transition-duration', 'expected default duration')
+            t.assertStyle('', el2, 'transition-duration', 'expected no animation')
           })
         }, 1)
       },
