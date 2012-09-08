@@ -793,32 +793,43 @@
       },
 
       testToggle: function(t){
-        $('#show_hide_div1').hide()
-        t.assertEqual('none', $('#show_hide_div1').get(0).style.display)
+        var el = $('#show_hide_div1').hide(),
+            domStyle = el.get(0).style
 
-        $('#show_hide_div1').toggle()
-        t.assertEqual('', $('#show_hide_div1').get(0).style.display)
+        t.assertEqual('none', domStyle.display)
 
-        $('#show_hide_div1').toggle()
-        t.assertEqual('none', $('#show_hide_div1').get(0).style.display)
+        var result = el.toggle()
+        t.assertIdentical(el, result, 'expected toggle() to return self')
+        t.assertIdentical('', domStyle.display)
 
-        $('#show_hide_div1').toggle(true)
-        t.assertEqual('', $('#show_hide_div1').get(0).style.display)
+        el.toggle()
+        t.assertEqual('none', domStyle.display)
 
-        $('#show_hide_div1').toggle(true)
-        t.assertEqual('', $('#show_hide_div1').get(0).style.display)
+        el.toggle(true)
+        t.assertIdentical('', domStyle.display)
 
-        $('#show_hide_div1').toggle(false)
-        t.assertEqual('none', $('#show_hide_div1').get(0).style.display)
+        el.toggle(true)
+        t.assertIdentical('', domStyle.display)
 
-        $('#show_hide_div1').toggle(false)
-        t.assertEqual('none', $('#show_hide_div1').get(0).style.display)
+        el.toggle(false)
+        t.assertEqual('none', domStyle.display)
 
-        $('#show_hide_div1').hide()
-        $('#show_hide_div2').show()
-        $('#show_hide_div1, #show_hide_div2').toggle()
-        t.assertEqual('', $('#show_hide_div1').get(0).style.display)
-        t.assertEqual('none', $('#show_hide_div2').get(0).style.display)
+        el.toggle(false)
+        t.assertEqual('none', domStyle.display)
+      },
+
+      testToggleMultiple: function(t){
+        var el1  = $('#show_hide_div1').hide(),
+            el2  = $('#show_hide_div2').show(),
+            both = $('#show_hide_div1, #show_hide_div2')
+
+        both.toggle()
+        t.assertIdentical('', el1.get(0).style.display)
+        t.assertEqual('none', el2.get(0).style.display)
+
+        both.toggle()
+        t.assertEqual('none', el1.get(0).style.display)
+        t.assertEqual('block', el2.get(0).style.display)
       },
 
       testOffset: function(t){
