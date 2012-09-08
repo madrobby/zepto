@@ -43,6 +43,7 @@
   <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
   <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
+  <div id="durationtest_3" style="width:40px;height:40px;background:red"></div>
   <div id="callbacktest" style="width:40px;height:40px;background:red"><div style="width:40px;height:40px;background:blue"></div></div>
   <div id="keyframetest" style="width:40px;height:40px;background:red;opacity: 0;"></div>
 
@@ -153,6 +154,21 @@
           t.resume(function(){
             t.assertStyle('0.4s', el1, 'transition-duration')
             t.assertStyle('0s', el2, 'transition-duration')
+          })
+        }, 1)
+      },
+
+      testDurationString: function(t){
+        var el = $('#durationtest_3').animate({
+          translate3d: '100px, 100px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, 'fast')
+
+        t.pause()
+        defer(function(){
+          t.resume(function(){
+            t.assertStyle('0.2s', el, 'transition-duration', 'expected fast duration')
           })
         }, 1)
       },

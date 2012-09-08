@@ -4,12 +4,7 @@
 
 ;(function($, undefined){
   var document = window.document, docElem = document.documentElement,
-    origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle,
-    speeds = { _default: 400, fast: 200, slow: 600 }
-
-  function translateSpeed(speed) {
-    return typeof speed == 'number' ? speed : (speeds[speed] || speeds._default)
-  }
+    origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle
 
   function anim(el, speed, opacity, scale, callback) {
     if (typeof speed == 'function' && !callback) callback = speed, speed = undefined
@@ -18,7 +13,7 @@
       props.scale = scale
       el.css($.fx.cssPrefix + 'transform-origin', '0 0')
     }
-    return el.anim(props, translateSpeed(speed) / 1000, null, callback)
+    return el.animate(props, speed, null, callback)
   }
 
   function hide(el, speed, scale, callback) {
@@ -64,9 +59,5 @@
     var hidden = this.css('opacity') == 0 || this.css('display') == 'none'
     return this[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
   }
-
-  $.extend($.fx, {
-    speeds: speeds
-  })
 
 })(Zepto)
