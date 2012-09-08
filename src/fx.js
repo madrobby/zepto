@@ -24,7 +24,8 @@
   clearProperties[prefix + 'transition-duration'] =
   clearProperties[prefix + 'transition-timing-function'] =
   clearProperties[prefix + 'animation-name'] =
-  clearProperties[prefix + 'animation-duration'] = ''
+  clearProperties[prefix + 'animation-duration'] =
+  clearProperties[prefix + 'animation-timing-function'] = ''
 
   $.fx = {
     off: (eventPrefix === undefined && testEl.style.transitionProperty === undefined),

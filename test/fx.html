@@ -203,10 +203,12 @@
 
       testKeyFrameAnimation: function(t){
         t.pause()
-        var el = $('#keyframetest').anim('animName', 2)
+        var el = $('#keyframetest').animate('animName', 200)
         defer(function(){
           t.resume(function(){
             t.assertStyle('animName', el, 'animation-name')
+            t.assertStyle('0.2s',     el, 'animation-duration')
+            t.assertStyle('linear',   el, 'animation-timing-function')
           })
         })
       }
