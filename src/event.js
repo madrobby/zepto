@@ -38,6 +38,7 @@
     capture = !!capture
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
+      if (event == 'ready') return $(document).ready(fn)
       var delegate = getDelegate && getDelegate(fn, event),
         callback = delegate || fn
       var proxyfn = function (event) {
