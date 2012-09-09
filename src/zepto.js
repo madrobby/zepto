@@ -400,10 +400,16 @@ var Zepto = (function() {
       return this.before(newContent).remove()
     },
     wrap: function(structure){
-      if (this[0]) var dom = $(structure).get(0),
-                       clone = dom.parentNode || this.length > 1
-      return this.each(function(){
-        $(this).wrapAll(clone ? dom.cloneNode(true) : dom)
+      var func = isFunction(structure)
+      if (this[0] && !func)
+        var dom   = $(structure).get(0),
+            clone = dom.parentNode || this.length > 1
+
+      return this.each(function(index){
+        $(this).wrapAll(
+          func ? structure.call(this, index) :
+            clone ? dom.cloneNode(true) : dom
+        )
       })
     },
     wrapAll: function(structure){
@@ -417,9 +423,11 @@ var Zepto = (function() {
       return this
     },
     wrapInner: function(structure){
-      return this.each(function(){
-        var self = $(this), contents = self.contents()
-        contents.length ? contents.wrapAll(structure) : self.append(structure)
+      var func = isFunction(structure)
+      return this.each(function(index){
+        var self = $(this), contents = self.contents(),
+            dom  = func ? structure.call(this, index) : structure
+        contents.length ? contents.wrapAll(dom) : self.append(dom)
       })
     },
     unwrap: function(){

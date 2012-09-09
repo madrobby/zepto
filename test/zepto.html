@@ -1059,6 +1059,17 @@
         t.assert(el.find('a').parent().is('span'))
       },
 
+      testWrapFunction: function(t) {
+        var el = $('<div><b>A</b><b>B</b></div>')
+        el.find('b').wrap(function(index){
+          return '<a class=link' + index + $(this).text() + ' />'
+        })
+        t.assertEqual(
+          '<a class="link0A"><b>A</b></a><a class="link1B"><b>B</b></a>',
+          el.html()
+        )
+      },
+
       testWrapAll: function(t) {
         var el = $('#wrapall_test')
         el.find('span').wrapAll('<p><a/></p>')
@@ -1092,6 +1103,17 @@
         t.assertLength(1, $el.children())
         t.assertLength(1, $el.children('div'))
         t.assertLength(0, $el.find('div').contents())
+      },
+
+      testWrapInnerFunction: function(t) {
+        var el = $('<div><b>A</b><b>B</b></div>')
+        el.find('b').wrapInner(function(index){
+          return '<a class=link' + index + $(this).text() + ' />'
+        })
+        t.assertEqual(
+          '<b><a class="link0A">A</a></b><b><a class="link1B">B</a></b>',
+          el.html()
+        )
       },
 
       testUnwrap: function(t){
