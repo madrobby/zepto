@@ -179,7 +179,9 @@
 
   <div class="replace_test_div">test</div>
 
-  <div id="wrap_test_div"><span>hi</span><span>hi</span></div>
+  <div id="wrap_test"><span>hi</span><a></a><span>hello</span></div>
+
+  <div id="wrapall_test"><b></b><span>hi</span><span>hello</span><i></i></div>
 
   <div id="wrapinner_test">1<span>2</span><span id="wrapinner_empty_test"></span></div>
 
@@ -1042,15 +1044,28 @@
       },
 
       testWrap: function(t) {
-        t.assert(document.getElementById("wrap_test_div").nodeType)
+        var el = $('#wrap_test')
+        el.find('span').wrap('<p><i/></p>')
+        t.assertEqual(
+          '<p><i><span>hi</span></i></p><a></a><p><i><span>hello</span></i></p>',
+          el.html()
+        )
 
-        $('#wrap_test_div span').wrapAll('<div id="wrap_test" />')
-        t.assert(document.getElementById("wrap_test").nodeType)
-        t.assertEqual($("#wrap_test").children().length, 2)
+        // avoids unnecessary cloning of dom structure for wrapping
+        el = $('<div><a/></div>')
+        var structure = $('<span/>')
+        el.find('a').wrap(structure)
+        t.assertIdentical(structure.get(0), el.find('span').get(0))
+        t.assert(el.find('a').parent().is('span'))
+      },
 
-        $('#wrap_test_div span').wrap('<div class="wrap_test" />')
-        t.assert(document.getElementsByClassName("wrap_test")[0].nodeType)
-        t.assertEqual($('#wrap_test_div span').length, $('.wrap_test').length)
+      testWrapAll: function(t) {
+        var el = $('#wrapall_test')
+        el.find('span').wrapAll('<p><a/></p>')
+        t.assertEqual(
+          '<b></b><p><a><span>hi</span><span>hello</span></a></p><i></i>',
+          el.html()
+        )
       },
 
       testWrapFragment: function(t) {
@@ -1070,11 +1085,13 @@
         $el.wrapInner('<div>')
         t.assertLength(1, $el.children())
         t.assertLength(1, $el.children('div'))
+        t.assertLength(3, $el.find('div').contents())
 
         $el = $('#wrapinner_empty_test')
         $el.wrapInner('<div>')
         t.assertLength(1, $el.children())
         t.assertLength(1, $el.children('div'))
+        t.assertLength(0, $el.find('div').contents())
       },
 
       testUnwrap: function(t){

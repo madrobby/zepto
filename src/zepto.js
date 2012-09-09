@@ -399,22 +399,27 @@ var Zepto = (function() {
     replaceWith: function(newContent){
       return this.before(newContent).remove()
     },
-    wrap: function(newContent){
+    wrap: function(structure){
+      if (this[0]) var dom = $(structure).get(0),
+                       clone = dom.parentNode || this.length > 1
       return this.each(function(){
-        $(this).wrapAll($(newContent)[0].cloneNode(false))
+        $(this).wrapAll(clone ? dom.cloneNode(true) : dom)
       })
     },
-    wrapAll: function(newContent){
+    wrapAll: function(structure){
       if (this[0]) {
-        $(this[0]).before(newContent = $(newContent))
-        newContent.append(this)
+        $(this[0]).before(structure = $(structure))
+        structure = structure.get(0)
+        // drill down to the inmost element
+        while (structure.children.length) structure = structure.children[0]
+        $(structure).append(this)
       }
       return this
     },
-    wrapInner: function(newContent){
+    wrapInner: function(structure){
       return this.each(function(){
         var self = $(this), contents = self.contents()
-        contents.length ? contents.wrapAll(newContent) : self.append(newContent)
+        contents.length ? contents.wrapAll(structure) : self.append(structure)
       })
     },
     unwrap: function(){
