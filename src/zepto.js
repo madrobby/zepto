@@ -170,7 +170,7 @@ var Zepto = (function() {
   }
 
   // `$` will be the base `Zepto` object. When calling this
-  // function just call `$.zepto.init, whichs makes the implementation
+  // function just call `$.zepto.init, which makes the implementation
   // details of selecting nodes and creating Zepto collections
   // patchable in plugins.
   $ = function(selector, context){
