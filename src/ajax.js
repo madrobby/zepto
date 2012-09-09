@@ -250,7 +250,7 @@
     if (parts.length > 1) url = parts[0], selector = parts[1]
     $.get(url, function(response){
       self.html(selector ?
-        $(document.createElement('div')).html(response.replace(rscript, "")).find(selector).html()
+        $('<div>').html(response.replace(rscript, "")).find(selector)
         : response)
       success && success.apply(self, arguments)
     })
