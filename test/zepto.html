@@ -1441,6 +1441,16 @@
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
       },
 
+      testAttrNullUnset: function(t){
+        var el = $('<div id=hi>')
+        el.attr('id', null)
+        t.assertIdentical('', el.attr('id'))
+
+        el.attr('id', 'hello')
+        el.attr({ id:null })
+        t.assertIdentical('', el.attr('id'))
+      },
+
       testRemoveAttr: function(t) {
         var el = $('#attr_remove')
         t.assertEqual('boom', el.attr('data-name'))
