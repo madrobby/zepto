@@ -7,7 +7,10 @@
     vendors = { Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS' },
     document = window.document, testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
-    clearProperties = {}
+    transform,
+    transitionProperty, transitionDuration, transitionTiming,
+    animationName, animationDuration, animationTiming,
+    cssReset = {}
 
   function dasherize(str) { return downcase(str.replace(/([a-z])([A-Z])/, '$1-$2')) }
   function downcase(str) { return str.toLowerCase() }
@@ -21,12 +24,13 @@
     }
   })
 
-  clearProperties[prefix + 'transition-property'] =
-  clearProperties[prefix + 'transition-duration'] =
-  clearProperties[prefix + 'transition-timing-function'] =
-  clearProperties[prefix + 'animation-name'] =
-  clearProperties[prefix + 'animation-duration'] =
-  clearProperties[prefix + 'animation-timing-function'] = ''
+  transform = prefix + 'transform'
+  cssReset[transitionProperty = prefix + 'transition-property'] =
+  cssReset[transitionDuration = prefix + 'transition-duration'] =
+  cssReset[transitionTiming   = prefix + 'transition-timing-function'] =
+  cssReset[animationName      = prefix + 'animation-name'] =
+  cssReset[animationDuration  = prefix + 'animation-duration'] =
+  cssReset[animationTiming    = prefix + 'animation-timing-function'] = ''
 
   $.fx = {
     off: (eventPrefix === undefined && testEl.style.transitionProperty === undefined),
@@ -45,7 +49,7 @@
   }
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var transforms, cssProperties = {}, key, keys,
+    var key, cssValues = {}, cssProperties, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd
 
     if (duration === undefined) duration = 0.4
@@ -53,25 +57,22 @@
 
     if (typeof properties == 'string') {
       // keyframe animation
-      cssProperties[prefix + 'animation-name'] = properties
-      cssProperties[prefix + 'animation-duration'] = duration + 's'
-      cssProperties[prefix + 'animation-timing-function'] = (ease || 'linear')
+      cssValues[animationName] = properties
+      cssValues[animationDuration] = duration + 's'
+      cssValues[animationTiming] = (ease || 'linear')
       endEvent = $.fx.animationEnd
     } else {
-      keys = []
+      cssProperties = []
       // CSS transitions
       for (key in properties)
-        if (supportedTransforms.test(key)) {
-          transforms || (transforms = [])
-          transforms.push(key + '(' + properties[key] + ')')
-        }
-        else cssProperties[key] = properties[key], keys.push(dasherize(key))
+        if (supportedTransforms.test(key)) transforms += key + '(' + properties[key] + ') '
+        else cssValues[key] = properties[key], cssProperties.push(dasherize(key))
 
-      if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' '), keys.push(prefix + 'transform')
+      if (transforms) cssValues[transform] = transforms, cssProperties.push(transform)
       if (duration > 0 && typeof properties === 'object') {
-        cssProperties[prefix + 'transition-property'] = keys.join(', ')
-        cssProperties[prefix + 'transition-duration'] = duration + 's'
-        cssProperties[prefix + 'transition-timing-function'] = (ease || 'linear')
+        cssValues[transitionProperty] = cssProperties.join(', ')
+        cssValues[transitionDuration] = duration + 's'
+        cssValues[transitionTiming] = (ease || 'linear')
       }
     }
 
@@ -80,13 +81,13 @@
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, arguments.callee)
       }
-      $(this).css(clearProperties)
+      $(this).css(cssReset)
       callback && callback.call(this)
     }
     if (duration > 0) this.bind(endEvent, wrappedCallback)
 
     setTimeout(function() {
-      that.css(cssProperties)
+      that.css(cssValues)
       if (duration <= 0) setTimeout(function() {
         that.each(function(){ wrappedCallback.call(this) })
       }, 0)
