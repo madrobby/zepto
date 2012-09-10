@@ -74,15 +74,7 @@
       return str.replace(/-+(.)?/g, function(_, chr){ return chr ? chr.toUpperCase() : '' })
     }
 
-    var stylePrefix = '', vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
-      testEl = document.createElement('div')
-
-    $.each(vendors, function(vendor, event){
-      if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
-        stylePrefix = '-' + vendor.toLowerCase() + '-'
-        return false
-      }
-    })
+    var stylePrefix = $.fx.cssPrefix
 
     Evidence.Assertions.assertStyle = function(expected, object, property, message) {
       if (/^(transform|transition|animation)/.test(property)) property = stylePrefix + property
