@@ -9,6 +9,7 @@
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
     clearProperties = {}
 
+  function dasherize(str) { return downcase(str.replace(/([a-z])([A-Z])/, '$1-$2')) }
   function downcase(str) { return str.toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) }
 
@@ -44,7 +45,9 @@
   }
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var transforms, cssProperties = {}, key, that = this, wrappedCallback, endEvent = $.fx.transitionEnd
+    var transforms, cssProperties = {}, key, keys,
+        that = this, wrappedCallback, endEvent = $.fx.transitionEnd
+
     if (duration === undefined) duration = 0.4
     if ($.fx.off) duration = 0
 
@@ -55,17 +58,18 @@
       cssProperties[prefix + 'animation-timing-function'] = (ease || 'linear')
       endEvent = $.fx.animationEnd
     } else {
+      keys = []
       // CSS transitions
       for (key in properties)
         if (supportedTransforms.test(key)) {
           transforms || (transforms = [])
           transforms.push(key + '(' + properties[key] + ')')
         }
-        else cssProperties[key] = properties[key]
+        else cssProperties[key] = properties[key], keys.push(dasherize(key))
 
-      if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' ')
+      if (transforms) cssProperties[prefix + 'transform'] = transforms.join(' '), keys.push(prefix + 'transform')
       if (duration > 0 && typeof properties === 'object') {
-        cssProperties[prefix + 'transition-property'] = Object.keys(properties).join(', ')
+        cssProperties[prefix + 'transition-property'] = keys.join(', ')
         cssProperties[prefix + 'transition-duration'] = duration + 's'
         cssProperties[prefix + 'transition-timing-function'] = (ease || 'linear')
       }

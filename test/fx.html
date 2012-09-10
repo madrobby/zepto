@@ -104,13 +104,13 @@
           rotateZ: '90deg',
           scale: '0.8',
           opacity: 0.5,
-          'background-color': '#BADA55'
+          backgroundColor: '#BADA55'
         }, 200, 'ease-out')
 
         el2.animate({
           translate3d: '100px, 100px, 100px',
           rotateZ: '-90deg',
-          'background-color': '#BADA55'
+          backgroundColor: '#BADA55'
         }, {
           duration: 180,
           easing: 'ease-out'
@@ -122,6 +122,8 @@
           t.resume(function(){
             t.assertStyle('ease-out', el, 'transition-timing-function')
             t.assertStyle('0.2s', el, 'transition-duration')
+            t.assertStyle(/\bbackground-color\b/, el, 'transition-property')
+            t.assertStyle(/\btransform\b/, el, 'transition-property')
             t.assertStyle('0.18s', el2, 'transition-duration')
 
             t.pause()
