@@ -78,7 +78,7 @@
       abort = function(){
         $(script).remove()
         if (callbackName in window) window[callbackName] = empty
-        ajaxComplete('abort', xhr, options)
+        ajaxError(null, 'abort', xhr, options)
       },
       xhr = { abort: abort }, abortTimeout
 
@@ -233,18 +233,18 @@
     return xhr
   }
 
-  $.get = function(url, success){ return $.ajax({ url: url, success: success }) }
+  $.get = function(url, complete){ return $.ajax({ url: url, complete: complete }) }
 
-  $.post = function(url, data, success, dataType){
-    if ($.isFunction(data)) dataType = dataType || success, success = data, data = null
-    return $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType })
+  $.post = function(url, data, complete, dataType){
+    if ($.isFunction(data)) dataType = dataType || complete, complete = data, data = null
+    return $.ajax({ type: 'POST', url: url, data: data, complete: complete, dataType: dataType })
   }
 
-  $.getJSON = function(url, success){
-    return $.ajax({ url: url, success: success, dataType: 'json' })
+  $.getJSON = function(url, complete){
+    return $.ajax({ url: url, complete: complete, dataType: 'json' })
   }
 
-  $.fn.load = function(url, success){
+  $.fn.load = function(url, complete){
     if (!this.length) return this
     var self = this, parts = url.split(/\s/), selector
     if (parts.length > 1) url = parts[0], selector = parts[1]
@@ -252,7 +252,7 @@
       self.html(selector ?
         $('<div>').html(response.replace(rscript, "")).find(selector)
         : response)
-      success && success.apply(self, arguments)
+      complete && complete.apply(self, arguments)
     })
     return this
   }
