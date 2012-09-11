@@ -86,11 +86,11 @@
     }
     if (duration > 0) this.bind(endEvent, wrappedCallback)
 
-    setTimeout(function() {
-      that.css(cssValues)
-      if (duration <= 0) setTimeout(function() {
-        that.each(function(){ wrappedCallback.call(this) })
-      }, 0)
+    this.size() && this.get(0).clientLeft
+    this.css(cssValues)
+
+    if (duration <= 0) setTimeout(function() {
+      that.each(function(){ wrappedCallback.call(this) })
     }, 0)
 
     return this
