@@ -205,6 +205,7 @@
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback){ return this.bind(event, callback) }
   })
+  $.fn.hover = function(fnOver, fnOut) { return this.mouseover( fnOver ).mouseout( fnOut || fnOver ) }
 
   ;['focus', 'blur'].forEach(function(name) {
     $.fn[name] = function(callback) {
