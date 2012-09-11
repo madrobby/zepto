@@ -239,6 +239,10 @@
             t.assertStyle('linear',   el, 'animation-timing-function')
           })
         })
+      },
+
+      testEmptyCollection: function(t){
+        t.assert($(null).animate({opacity:0}))
       }
     })
   })()
