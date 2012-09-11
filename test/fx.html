@@ -84,7 +84,7 @@
       return digits[1] + '#' + rgb.toString(16)
     }
 
-    function defer(fn, delay) {
+    function defer(delay, fn) {
       setTimeout(fn, delay || 0)
     }
 
@@ -108,7 +108,7 @@
 
       testAnimate: function(t){
         var el = $('#animtest_1'), el2 = $('#animtest_2')
-        t.pause()
+
         el.animate({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
@@ -126,26 +126,20 @@
           easing: 'ease-out'
         })
 
+        t.assertStyle('ease-out', el, 'transition-timing-function')
+        t.assertStyle('0.2s', el, 'transition-duration')
+        t.assertStyle(/\bbackground-color\b/, el, 'transition-property')
+        t.assertStyle(/\btransform\b/, el, 'transition-property')
+        t.assertStyle('0.18s', el2, 'transition-duration')
+
         t.pause()
-
-        defer(function(){
+        defer(250, function(){
           t.resume(function(){
-            t.assertStyle('ease-out', el, 'transition-timing-function')
-            t.assertStyle('0.2s', el, 'transition-duration')
-            t.assertStyle(/\bbackground-color\b/, el, 'transition-property')
-            t.assertStyle(/\btransform\b/, el, 'transition-property')
-            t.assertStyle('0.18s', el2, 'transition-duration')
-
-            t.pause()
-            defer(function(){
-              t.resume(function(){
-                t.assertStyle('translate3d(80px, 20px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
-                t.assertStyle('0.5', el, 'opacity')
-                t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
-              })
-            }, 250)
+            t.assertStyle('translate3d(80px, 20px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
+            t.assertStyle('0.5', el, 'opacity')
+            t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
           })
-        }, 1)
+        })
       },
 
       testDuration: function(t){
@@ -161,13 +155,8 @@
           opacity: 0.5
         }, 0)
 
-        t.pause()
-        defer(function(){
-          t.resume(function(){
-            t.assertStyle('0.4s', el1, 'transition-duration', 'expected default duration')
-            t.assertStyle('', el2, 'transition-duration', 'expected no animation')
-          })
-        }, 1)
+        t.assertStyle('0.4s', el1, 'transition-duration', 'expected default duration')
+        t.assertStyle('', el2, 'transition-duration', 'expected no animation')
       },
 
       testDurationString: function(t){
@@ -177,18 +166,13 @@
           opacity: 0.5
         }, 'fast')
 
-        t.pause()
-        defer(function(){
-          t.resume(function(){
-            t.assertStyle('0.2s', el, 'transition-duration', 'expected fast duration')
-          })
-        }, 1)
+        t.assertStyle('0.2s', el, 'transition-duration', 'expected fast duration')
       },
 
       testCallback: function(t){
         var duration = 250, start = new Date().getTime()
-        t.pause()
 
+        t.pause()
         $('#callbacktest').anim({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
@@ -222,23 +206,19 @@
         })
 
         t.pause()
-        defer(function(){
+        defer(30, function(){
           t.resume(function(){
             t.assert(callbackCalled)
           })
-        },30)
+        })
       },
 
       testKeyFrameAnimation: function(t){
-        t.pause()
         var el = $('#keyframetest').animate('animName', 200)
-        defer(function(){
-          t.resume(function(){
-            t.assertStyle('animName', el, 'animation-name')
-            t.assertStyle('0.2s',     el, 'animation-duration')
-            t.assertStyle('linear',   el, 'animation-timing-function')
-          })
-        })
+
+        t.assertStyle('animName', el, 'animation-name')
+        t.assertStyle('0.2s',     el, 'animation-duration')
+        t.assertStyle('linear',   el, 'animation-timing-function')
       },
 
       testEmptyCollection: function(t){
