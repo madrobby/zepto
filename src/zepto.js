@@ -27,8 +27,8 @@ var Zepto = (function() {
     },
     readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
-    idSelectorRE = /^#([\w-]*)$/,
-    tagSelectorRE = /^[\w-]+$/,
+    idSelectorRE = /^#([\w-]+)$/,
+    simpleSelectorRE = /^[\w-]+$/,
     class2type = {},
     toString = class2type.toString,
     zepto = {},
@@ -159,14 +159,30 @@ var Zepto = (function() {
   // special cases).
   // This method can be overriden in plugins.
   zepto.init = function(selector, context) {
+    var dom
     // If nothing given, return an empty Zepto collection
     if (!selector) return zepto.Z()
+    // Optimize for string selectors
+    else if (typeof selector == 'string')
+    {
+      selector = selector.trim()
+      // If it's a html fragment, create nodes from it
+      
+      // Sidenote: I noticed that in both Chrome 21 and Firefox 15,
+      // DOM error 12 is thrown if the fragment doesn't begin with <
+      if (selector[0] == '<' && fragmentRE.test(selector))
+        dom = zepto.fragment(selector, RegExp.$1, context), selector = null
+      // If there's a context, create a collection on that context first, and select
+      // nodes from there
+      else if (context !== undefined) return $(context).find(selector)
+      // If it's a CSS selector, use it to select nodes.
+      else dom = zepto.qsa(document, selector)
+    }
     // If a function is given, call it when the DOM is ready
     else if (isFunction(selector)) return $(document).ready(selector)
     // If a Zepto collection is given, juts return it
     else if (zepto.isZ(selector)) return selector
     else {
-      var dom
       // normalize array if an array of nodes is given
       if (isArray(selector)) dom = compact(selector)
       // Wrap DOM nodes. If a plain object is given, duplicate it.
@@ -180,9 +196,9 @@ var Zepto = (function() {
       else if (context !== undefined) return $(context).find(selector)
       // And last but no least, if it's a CSS selector, use it to select nodes.
       else dom = zepto.qsa(document, selector)
-      // create a new Zepto collection from the nodes found
-      return zepto.Z(dom, selector)
     }
+    // create a new Zepto collection from the nodes found
+    return zepto.Z(dom, selector)
   }
 
   // `$` will be the base `Zepto` object. When calling this
@@ -221,14 +237,19 @@ var Zepto = (function() {
   // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
   // This method can be overriden in plugins.
   zepto.qsa = function(element, selector){
-    var found
-    return (isDocument(element) && idSelectorRE.test(selector)) ?
-      ( (found = element.getElementById(RegExp.$1)) ? [found] : [] ) :
+    var found, 
+        maybeID = selector[0] == '#',
+        maybeClass = !maybeID && selector[0] == '.',
+        nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
+        isSimple = simpleSelectorRE.test(nameOnly)
+    return (isDocument(element) && isSimple && maybeID) ?
+      ( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
       (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
       slice.call(
-        classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
-        tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
-        element.querySelectorAll(selector)
+        isSimple && !maybeID ? 
+          maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class 
+          element.getElementsByTagName(selector) : // Or a tag
+          element.querySelectorAll(selector) // Or it's not simple, and we need to query all 
       )
   }
 
