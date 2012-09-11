@@ -12,14 +12,3 @@ $RECYCLE.BIN/
 #SublimeText
 *.sublime-project
 *.sublime-workspace
-
-#zepto
-dist/
-public/
-docs/
-
-#other
-pkg
-*.swp
-.jhw-cache
-.rbenv-version
