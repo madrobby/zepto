@@ -29,8 +29,11 @@ a:link, a:visited { color: darkblue; }
 }
 #nav .current a { background: #ccc; color: black; }
 #nav a:active { background: #555; color: white; }
+
 @media only screen and (max-device-width:480px) {
   body { margin: 7px; font-size: small; }
+  h1 { margin: 0; }
   h1, #results { text-align: center; }
+  #results { min-height: 3em; }
   #nav { font-size: 14px; max-width: auto; }
 }
