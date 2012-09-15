@@ -51,6 +51,9 @@ this example, "fx" is removed, but "data" and "selector" are added:
 $ rake concat[-fx:data:selector] dist
 ~~~
 
+<i>Zsh users may need to prepend `noglob` before that command because of special
+meaning of square brackets in the shell.</i>
+
 ## Zepto modules
 
 Zepto modules are individual files in the "src/" directory. You can also list

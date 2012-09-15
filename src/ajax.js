@@ -71,6 +71,8 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
+    if (!('type' in options)) return $.ajax(options)
+
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
       abort = function(){
@@ -248,7 +250,7 @@
     if (parts.length > 1) url = parts[0], selector = parts[1]
     $.get(url, function(response){
       self.html(selector ?
-        $(document.createElement('div')).html(response.replace(rscript, "")).find(selector).html()
+        $('<div>').html(response.replace(rscript, "")).find(selector)
         : response)
       success && success.apply(self, arguments)
     })
