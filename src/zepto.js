@@ -87,6 +87,12 @@ var Zepto = (function() {
     return elementDisplay[nodeName]
   }
 
+  function children(element) {
+    return 'children' in element ?
+      slice.call(element.children) :
+      $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
+  }
+
   // `$.zepto.fragment` takes a html string and an optional tag name
   // to generate DOM nodes nodes from the given html string.
   // The generated DOM nodes are returned as an array.
@@ -376,14 +382,14 @@ var Zepto = (function() {
       return filtered(uniq(this.pluck('parentNode')), selector)
     },
     children: function(selector){
-      return filtered(this.map(function(){ return slice.call(this.children) }), selector)
+      return filtered(this.map(function(){ return children(this) }), selector)
     },
     contents: function() {
       return $(this.map(function() { return slice.call(this.childNodes) }))
     },
     siblings: function(selector){
       return filtered(this.map(function(i, el){
-        return slice.call(el.parentNode.children).filter(function(child){ return child!==el })
+        return children(el.parentNode).filter(function(child){ return child!==el })
       }), selector)
     },
     empty: function(){
