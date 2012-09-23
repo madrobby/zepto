@@ -664,6 +664,11 @@
         t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
       },
 
+      testParamSpaces: function(t) {
+        var result = $.param({ "foo bar": "baz kuux" })
+        t.assertEqual("foo+bar=baz+kuux", result)
+      },
+
       testParamComplex: function(t) {
         var data = {
           a: ['b', 'c', { d:'e', f:['g','h'] }]

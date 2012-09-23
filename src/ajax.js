@@ -276,6 +276,6 @@
     var params = []
     params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
     serialize(params, obj, traditional)
-    return params.join('&').replace('%20', '+')
+    return params.join('&').replace(/%20/g, '+')
   }
 })(Zepto)
