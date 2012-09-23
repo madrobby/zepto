@@ -650,6 +650,10 @@
         result = decodeURIComponent(result)
         t.assertEqual(result, "jquery=Javascript&rails=Ruby&django=Python")
 
+        result = $.param({ name: 'StuPig', description: 'a stupid guy' })
+        result = decodeURIComponent(result)
+        t.assertEqual(result, "name=StuPig&description=a+stupid+guy")
+
         result = $.param({
           title: "Some Countries",
           list: ['Ecuador', 'Austria', 'England'],
