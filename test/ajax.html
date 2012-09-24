@@ -249,8 +249,22 @@
             deferredResume(t)
           }
         })
-      }
+      },
 
+      testAjaxWithProcessDataOff: function(t) {
+        t.pause()
+        var rawData = { name:'country', value:'Ecuador' }
+        $.ajax({
+          url: 'fixtures/ajax_load_simple.html',
+          processData: false,
+          data: rawData,
+          context: context,
+          type: "POST",
+          beforeSend: function(xhr, settings) {
+            t.assertIdentical(settings.data, rawData);
+          }
+        })
+      }
     })
 
     var OriginalXHR = $.ajaxSettings.xhr
@@ -637,6 +651,7 @@
         $.ajax({ url: '/foo', async: false })
         t.assertFalse(MockXHR.last.async)
       }
+
     })
 
     Evidence('ZeptoAjaxHelperMethodsTest', {
@@ -696,6 +711,7 @@
         var result = $.param(data)
         t.assertEqual(result, "country=Ecuador&capital=Quito")
       }
+      
 
     })
   })()

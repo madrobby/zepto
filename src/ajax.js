@@ -136,7 +136,9 @@
     // Whether the request is to another domain
     crossDomain: false,
     // Default timeout
-    timeout: 0
+    timeout: 0,
+    // Whether the data should be processed into string
+    processData: true
   }
 
   function mimeToDataType(mime) {
@@ -152,7 +154,7 @@
 
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
-    if (isObject(options.data)) options.data = $.param(options.data)
+    if (isObject(options.data) && options.processData ) options.data = $.param(options.data)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data)
   }
