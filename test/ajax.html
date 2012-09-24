@@ -250,7 +250,6 @@
           }
         })
       }
-
     })
 
     var OriginalXHR = $.ajaxSettings.xhr
@@ -411,6 +410,16 @@
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } }, traditional: true })
         MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
         t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', MockXHR.last.data)
+      },
+
+      testProcessDataDisabled: function(t) {
+        var data = { country: 'Ecuador' }
+        $.ajax({
+          data: data,
+          processData: false,
+          type: "POST"
+        })
+        t.assertIdentical(data, MockXHR.last.data)
       },
 
       testDataIsAppendedToGETURL: function(t) {
