@@ -188,7 +188,7 @@
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
-    if (settings.contentType || (settings.data && settings.type.toUpperCase() != 'GET'))
+    if (settings.contentType || (settings.data && settings.type.toUpperCase() != 'GET' && settings.contentType !== false))
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
 
