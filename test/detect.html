@@ -48,7 +48,10 @@
 
       Kindle: "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/528.5+) Version/4.0 Kindle/3.0 (screen 600×800; rotate)",
       Silk_1_0_accel: "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us; Silk/1.0.13.328_10008910) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16 Silk-Accelerated=true",
-      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
+
+      Chrome_Android_18_0: "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19",
+      Chrome_iOS_19_0: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1_1 like Mac OS X; en) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/9B206 Safari/7534.48.3"
     }
 
     function detect(ua, callback){
@@ -178,6 +181,22 @@
         detect(UA.Opera_11_51, function(os, browser){
           t.assertFalse(browser.webkit)
           t.assertUndefined(browser.version)
+        })
+      },
+
+      testChrome: function(t) {
+        detect(UA.Chrome_Android_18_0, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.chrome)
+          t.assertEqual("18.0.1025.133", browser.version)
+        })
+
+        detect(UA.Chrome_iOS_19_0, function(os, browser){
+          t.assertTrue(os.ios)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.chrome)
+          t.assertEqual("19.0.1084.60", browser.version)
         })
       }
     })
