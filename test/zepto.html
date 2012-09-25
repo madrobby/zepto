@@ -2232,6 +2232,29 @@
         t.assertEqual(4, counter)
       },
 
+      testDelegateNamespacedBlurFocus: function(t) {
+        var counter = 0
+        $('#delegate_blur_test').delegate('input', 'blur.namespace_test', function(){ counter++ })
+
+        $('#delegate_blur_test').find('input').focus()
+        $('#delegate_blur_test').find('input').blur()
+        t.assertEqual(1, counter)
+
+        $('#delegate_blur_test').find('input').focus()
+        $('#delegate_blur_test').find('input').blur()
+        t.assertEqual(2, counter)
+
+        $('#delegate_focus_test').delegate('input', 'focus.namespace_test', function(){ counter++ })
+
+        $('#delegate_focus_test').find('input').focus()
+        $('#delegate_focus_test').find('input').blur()
+        t.assertEqual(3, counter)
+
+        $('#delegate_focus_test').find('input').focus()
+        $('#delegate_focus_test').find('input').blur()
+        t.assertEqual(4, counter)
+      },
+
       testDelegateReturnFalse: function(t){
         $(document.body).delegate('#some_element', 'click', function(){ return false })
 
