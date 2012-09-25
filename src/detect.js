@@ -13,7 +13,8 @@
       touchpad = webos && ua.match(/TouchPad/),
       kindle = ua.match(/Kindle\/([\d.]+)/),
       silk = ua.match(/Silk\/([\d._]+)/),
-      blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/)
+      blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/),
+      chrome  = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/)
 
     // todo clean this up with a better OS/browser
     // separation. we need to discern between multiple
@@ -31,6 +32,7 @@
     if (kindle) os.kindle = true, os.version = kindle[1]
     if (silk) browser.silk = true, browser.version = silk[1]
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
+    if (chrome) browser.chrome = true, browser.version = chrome[1]
   }
 
   detect.call($, navigator.userAgent)
