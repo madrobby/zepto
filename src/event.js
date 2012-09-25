@@ -128,13 +128,7 @@
   }
 
   $.fn.delegate = function(selector, event, callback){
-    var capture = false
-    if(event == 'blur' || event == 'focus'){
-      if($.iswebkit)
-        event = event == 'blur' ? 'focusout' : event == 'focus' ? 'focusin' : event
-      else
-        capture = true
-    }
+    var capture = /^(?:blur|focus)(?:\..*)?$/.test(event)
 
     return this.each(function(i, element){
       add(element, event, callback, selector, function(fn){
