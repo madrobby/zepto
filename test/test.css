@@ -52,10 +52,30 @@ li a:visited {
   color: #aaa;
 }
 
+table#results {
+  border-collapse: collapse;
+  min-width: 26em;
+}
+#results caption {
+  text-align: left;
+  font-style: italic;
+}
+#results tr {
+  border: 0 solid silver;
+  border-bottom-width: 1px;
+}
+#results th, #results td {
+  border: none;
+  padding: .5em 1em;
+}
+#results th {
+  text-align: right;
+}
+
 @media only screen and (max-device-width:480px) {
   body { margin: 7px; font-size: small; }
   h1 { margin: 0; }
-  h1, #results { text-align: center; }
-  #results { min-height: 3em; }
+  h1, p#results { text-align: center; }
+  p#results { min-height: 3em; }
   #nav { font-size: 14px; max-width: auto; }
 }

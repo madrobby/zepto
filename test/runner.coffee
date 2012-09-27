@@ -38,13 +38,25 @@ waitFor = (testFn, onReady, timeout=4000) ->
       phantom.exit(1)
   , 100
 
+addParam = (url, name, val) ->
+  hasQuery = url.indexOf('?') > -1
+  url + "#{if hasQuery then '&' else '?'}#{name}=#{val}"
+
 loadNextSuite = ->
   if not suites.length
     phantom.exit()
   else
-    url = suites.shift() + "?verbosity=WARN"
+    url = suites.shift()
+    profiling = url.indexOf('benchmark.html') > -1
     # PhantomJS chokes on the query string on relative paths
     url = prefix + url if not /:\/\//.test url
+
+    if profiling
+      url = addParam url, 'maxTime', 1
+      timeout = 60000
+    else
+      url = addParam url, 'verbosity', 'WARN'
+      timeout = 5000
 
     page.open url, (status) ->
       if status isnt "success"
@@ -59,14 +71,27 @@ loadNextSuite = ->
       , ->
         passed = page.evaluate ->
           res = document.getElementById 'results'
-          paths = location.pathname.split('/')
-          # echo test results to the console
-          console.log "#{paths[paths.length - 1]} - " + res.textContent
+          # print results to the console
+          if res.tagName is 'TABLE'
+            captionText = res.caption.textContent.trim()
+            console.log captionText
+            console.log new Array(captionText.length + 1).join('-')
+            for row in res.rows
+              fields = for cell, i in row.cells
+                cellText = cell.textContent.trim()
+                width = (if i < 2 then 12 else 7) - cellText.length
+                cellText + new Array(width + 1).join(' ')
+              console.log fields.join("")
+          else
+            paths = location.pathname.split('/')
+            console.log "#{paths[paths.length - 1]} - " + res.textContent
+          # check if suite has passed
           /passed/.test res.className
 
         if passed
           loadNextSuite()
         else
           phantom.exit(1)
+      , timeout
 
 loadNextSuite()

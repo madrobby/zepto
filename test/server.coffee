@@ -1,3 +1,6 @@
+fs      = require 'fs'
+exec    = require('child_process').exec
+coffee  = require 'coffee-script'
 express = require 'express'
 app     = express()
 path    = require 'path'
@@ -109,6 +112,30 @@ app.post '/test/log', (req, res) ->
 
 app.all '/test/error', (req, res) ->
   res.send 500, 'BOOM'
+
+app.get /^\/src-git\//, (req, res) ->
+  file = req.path.replace('/src-git/', 'src/')
+  exec "git cat-file blob #{req.query.rev}:#{file}", (error, stdout, stderr) ->
+    res.set 'content-type', 'application/javascript'
+    res.send stdout
+
+app.get /\.js$/, (req, res) ->
+  file = project_root + req.path.replace(/\.js$/, '.coffee')
+  js = coffee.compile fs.readFileSync(file, 'utf-8')
+
+  res.set 'content-type', 'application/javascript'
+  res.send js
+
+app.get '/test/bench', (req, res) ->
+  file = project_root + "/test/performance/#{req.query.name}.coffee"
+  fileContents = fs.readFileSync(file, 'utf-8') + """
+  setup()
+  run(name, bench, plain)
+  """
+
+  js = coffee.compile fileContents
+  res.set 'content-type', 'application/javascript'
+  res.send js
 
 if process.argv[1] is __filename
   port = process.argv[2]

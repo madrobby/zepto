@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto benchmark</title>
+  <script src="http://code.jquery.com/jquery-2.0.3.js"></script>
+  <script src="/src-git/zepto.js?rev=v1.0"></script>
+  <script src="/src-git/event.js?rev=v1.0"></script>
+  <script>ZeptoBase = window.Zepto; delete window.Zepto</script>
+  <script src="/vendor/benchmark.js"></script>
+  <script>
+    loaded = false
+    function load(){
+      var i, src
+      for (i = 0; i < arguments.length; i++) {
+        src = arguments[i]
+        src += (src.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date)
+        if (loaded) {
+          var script = document.createElement('script')
+          script.src = src
+          document.head.appendChild(script)
+        }
+        else document.write('<script src="'+src+'"></scr'+'ipt>')
+      }
+    }
+
+    load('/src/zepto.js', '/src/event.js', '/src/ie.js')
+  </script>
+  <style>
+  </style>
+</head>
+<body>
+  <h1>Zepto benchmark</h1>
+
+  <div id=fixtures>
+  </div>
+
+  <table id=results>
+    <caption>Wait...</caption>
+  </table>
+
+<script src="/test/benchmark.js"></script>
+<script>
+  window.onload = function() {
+    loaded = true
+    load('/test/bench?name=id')
+    load('/test/bench?name=classname')
+    load('/test/bench?name=create_element')
+  }
+</script>
+
+</body>
+</html>
