@@ -2255,6 +2255,30 @@
         t.assertEqual(4, counter)
       },
 
+      testUndelegateNamespacedBlurFocus: function(t) {
+        var el, counter = 0
+
+        el = $('#delegate_blur_test')
+
+        el.delegate('input', 'blur.test', function(){ counter++ })
+        el.find('input').focus().blur()
+        t.assertEqual(1, counter, 'expected handler to be triggered')
+
+        el.undelegate('input', '.test')
+        el.find('input').focus().blur()
+        t.assertEqual(1, counter, 'expected handler to unbind')
+
+        el = $('#delegate_focus_test')
+
+        el.delegate('input', 'focus.test', function(){ counter++ })
+        el.find('input').focus().blur()
+        t.assertEqual(2, counter, 'expected handler to be triggered')
+
+        el.undelegate('input', '.test')
+        el.find('input').focus().blur()
+        t.assertEqual(2, counter, 'expected handler to unbind')
+      },
+
       testDelegateReturnFalse: function(t){
         $(document.body).delegate('#some_element', 'click', function(){ return false })
 

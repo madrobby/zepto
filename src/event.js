@@ -34,8 +34,13 @@
     else events.split(/\s/).forEach(function(type){ iterator(type, fn) })
   }
 
+  function eventCapture(handler, captureSetting) {
+    return handler.del &&
+      (handler.e == 'focus' || handler.e == 'blur') ||
+      !!captureSetting
+  }
+
   function add(element, events, fn, selector, getDelegate, capture){
-    capture = !!capture
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
       var delegate = getDelegate && getDelegate(fn, event),
@@ -47,15 +52,15 @@
       }
       var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length})
       set.push(handler)
-      element.addEventListener(handler.e, proxyfn, capture)
+      element.addEventListener(handler.e, proxyfn, eventCapture(handler, capture))
     })
   }
-  function remove(element, events, fn, selector){
+  function remove(element, events, fn, selector, capture){
     var id = zid(element)
     eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
-        element.removeEventListener(handler.e, handler.proxy, false)
+        element.removeEventListener(handler.e, handler.proxy, eventCapture(handler, capture))
       })
     })
   }
@@ -128,8 +133,6 @@
   }
 
   $.fn.delegate = function(selector, event, callback){
-    var capture = /^(?:blur|focus)(?:\..*)?$/.test(event)
-
     return this.each(function(i, element){
       add(element, event, callback, selector, function(fn){
         return function(e){
@@ -139,7 +142,7 @@
             return fn.apply(match, [evt].concat([].slice.call(arguments, 1)))
           }
         }
-      }, capture)
+      })
     })
   }
   $.fn.undelegate = function(selector, event, callback){
