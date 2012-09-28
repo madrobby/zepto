@@ -224,6 +224,8 @@
     </form>
   </div>
 
+  <svg></svg>
+
   </div><!-- fixtures -->
 
   <script>
@@ -1947,6 +1949,20 @@
           return "yellow"
         },true)
         t.assert($('#toggle_element').hasClass('yellow'))
+      },
+
+      testClassSVG: function(t){
+        var svg = $('svg')
+        t.assert(!svg.hasClass('foo'))
+        svg.addClass('foo bar')
+        t.assert(svg.hasClass('foo'))
+        t.assert(svg.hasClass('bar'))
+        svg.removeClass('foo')
+        t.assert(!svg.hasClass('foo'))
+        t.assert(svg.hasClass('bar'))
+        svg.toggleClass('bar')
+        t.assert(!svg.hasClass('foo'))
+        t.assert(!svg.hasClass('bar'))
       },
 
       testIndex: function(t){

@@ -225,6 +225,15 @@ var Zepto = (function() {
     value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
   }
 
+  // access className property while respecting SVGAnimatedString
+  function className(node, value){
+    var klass = node.className,
+        svg   = klass && klass.baseVal !== undefined
+
+    if (value === undefined) return svg ? klass.baseVal : klass
+    svg ? (klass.baseVal = value) : (node.className = value)
+  }
+
   $.isFunction = isFunction
   $.isObject = isObject
   $.isArray = isArray
@@ -540,32 +549,31 @@ var Zepto = (function() {
     },
     hasClass: function(name){
       if (this.length < 1) return false
-      else return classRE(name).test(this[0].className)
+      else return classRE(name).test(className(this[0]))
     },
     addClass: function(name){
       return this.each(function(idx){
         classList = []
-        var cls = this.className, newName = funcArg(this, name, idx, cls)
+        var cls = className(this), newName = funcArg(this, name, idx, cls)
         newName.split(/\s+/g).forEach(function(klass){
           if (!$(this).hasClass(klass)) classList.push(klass)
         }, this)
-        classList.length && (this.className += (cls ? " " : "") + classList.join(" "))
+        classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
       })
     },
     removeClass: function(name){
       return this.each(function(idx){
-        if (name === undefined)
-          return this.className = ''
-        classList = this.className
+        if (name === undefined) return className(this, '')
+        classList = className(this)
         funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass){
           classList = classList.replace(classRE(klass), " ")
         })
-        this.className = classList.trim()
+        className(this, classList.trim())
       })
     },
     toggleClass: function(name, when){
       return this.each(function(idx){
-        var newName = funcArg(this, name, idx, this.className)
+        var newName = funcArg(this, name, idx, className(this))
         ;(when === undefined ? !$(this).hasClass(newName) : when) ?
           $(this).addClass(newName) : $(this).removeClass(newName)
       })
