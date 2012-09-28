@@ -11,10 +11,6 @@ var Zepto = (function() {
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
 
-    // Used by `$.zepto.init` to wrap elements, text/comment nodes, document,
-    // and document fragment node types.
-    elementTypes = [1, 3, 8, 9, 11],
-
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
 
@@ -148,14 +144,9 @@ var Zepto = (function() {
       var dom
       // normalize array if an array of nodes is given
       if (isArray(selector)) dom = compact(selector)
-      // if a JavaScript object is given, return a copy of it
-      // this is a somewhat peculiar option, but supported by
-      // jQuery so we'll do it, too
-      else if (isPlainObject(selector))
-        dom = [$.extend({}, selector)], selector = null
-      // wrap stuff like `document` or `window`
-      else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
-        dom = [selector], selector = null
+      // Wrap DOM nodes. If a plain object is given, duplicate it.
+      else if (isObject(selector))
+        dom = [isPlainObject(selector) ? $.extend({}, selector) : selector], selector = null
       // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
         dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null

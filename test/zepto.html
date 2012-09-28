@@ -534,6 +534,15 @@
         t.assertEqual('', z.selector)
       },
 
+      testDollarWithAppcache: function(t){
+        if ('applicationCache' in window) {
+          var z = $(window.applicationCache)
+          t.assertLength(1, z)
+          t.assertIdentical(window.applicationCache, z.get(0))
+          t.assertEqual('', z.selector)
+        }
+      },
+
       testDollarWithDocumentFragment: function(t){
         var documentFragment = $(document.createDocumentFragment())
         t.assertLength(1, documentFragment)
