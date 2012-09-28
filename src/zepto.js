@@ -425,9 +425,9 @@ var Zepto = (function() {
     wrapAll: function(structure){
       if (this[0]) {
         $(this[0]).before(structure = $(structure))
-        structure = structure.get(0)
+        var children
         // drill down to the inmost element
-        while (structure.children.length) structure = structure.children[0]
+        while ((children = structure.children()).length) structure = children.first()
         $(structure).append(this)
       }
       return this
