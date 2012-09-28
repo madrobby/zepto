@@ -1783,6 +1783,16 @@
         }
       },
 
+      testNoEvalWithSrc: function (t) {
+        try {
+          window.someGlobalVariable = false
+          $('<\script src="remote.js">window.someGlobalVariable = true<\/script>').appendTo('body')
+          t.assert(!window.someGlobalVariable, 'expected SCRIPT with src not to be evaled')
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testHtmlEval: function (t) {
         try {
           window.someGlobalVariable = false
