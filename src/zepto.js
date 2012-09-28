@@ -14,6 +14,8 @@ var Zepto = (function() {
     // Used by `$.zepto.init` to wrap elements, text/comment nodes, document,
     // and document fragment node types.
     elementTypes = [1, 3, 8, 9, 11],
+    //Used by `$.zepto.init` to wrap non-node elements like window
+    elementNonNodes=[window, window.applicationCache],
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -154,7 +156,7 @@ var Zepto = (function() {
       else if (isPlainObject(selector))
         dom = [$.extend({}, selector)], selector = null
       // wrap stuff like `document` or `window`
-      else if (elementTypes.indexOf(selector.nodeType) >= 0 || selector === window)
+      else if (elementTypes.indexOf(selector.nodeType) >= 0 || elementNonNodes.indexOf(selector) >= 0)
         dom = [selector], selector = null
       // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
