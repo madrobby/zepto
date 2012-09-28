@@ -364,6 +364,11 @@
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
       },
 
+      testDefaultContentTypeDisabled: function(t) {
+        $.ajax({ type: 'POST', data: {a:1}, contentType: false })
+        t.refute(MockXHR.last.headers.some(matchHeader('Content-Type')))
+      },
+
       testCustomHeader: function(t) {
         $.ajax({ headers: {'X-Awesome': 'true'} })
         t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')))
