@@ -46,7 +46,14 @@
       var delegate = getDelegate && getDelegate(fn, event),
         callback = delegate || fn
       var proxyfn = function (event) {
-        var result = callback.apply(element, [event].concat(event.data))
+        var result
+        if ($.onerror) {
+          try {
+            result = callback.apply(element, [event].concat(event.data))
+          } catch(e) { $.onerror(e) }
+        } else {
+          result = callback.apply(element, [event].concat(event.data))
+        }
         if (result === false) event.preventDefault()
         return result
       }
