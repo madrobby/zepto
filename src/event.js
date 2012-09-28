@@ -103,13 +103,17 @@
 
   var returnTrue = function(){return true},
       returnFalse = function(){return false},
+      ignoreProperties = /^([A-Z]|layer[XY]$)/,
       eventMethods = {
         preventDefault: 'isDefaultPrevented',
         stopImmediatePropagation: 'isImmediatePropagationStopped',
         stopPropagation: 'isPropagationStopped'
       }
   function createProxy(event) {
-    var proxy = $.extend({originalEvent: event}, event)
+    var key, proxy = { originalEvent: event }
+    for (key in event)
+      if (!ignoreProperties.test(key) && event[key] !== undefined) proxy[key] = event[key]
+
     $.each(eventMethods, function(name, predicate) {
       proxy[name] = function(){
         this[predicate] = returnTrue

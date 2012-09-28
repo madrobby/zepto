@@ -129,6 +129,17 @@
         this.el.off({ click: fn }).off({ click: fn2 }, null)
         click(this.el)
         t.assertEqual('a b c c', log.sort().join(' '))
+      },
+
+      testDelegateEventProperties: function(t){
+        var type, target
+        $(document).on('click', 'div', function(e){
+          type = e.type
+          target = e.target
+        })
+        click(this.el)
+        t.assertEqual('click', type)
+        t.assertIdentical(this.el.get(0), target)
       }
     })
   })()
