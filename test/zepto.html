@@ -1781,14 +1781,13 @@
       },
 
       testAppendEval: function (t) {
+        window.someGlobalVariable = 0
         try {
-          window.someGlobalVariable = false
-          $('<' + 'script>window.someGlobalVariable = true</script' + '>').appendTo('body')
-          t.assert(window.someGlobalVariable)
-
-          window.someGlobalVariable = false
-          $('<' + 'script>this.someGlobalVariable = true</script' + '>').appendTo('body')
-          t.assert(window.someGlobalVariable)
+          $('#fixtures').append(
+            '<div><b id="newByAppend">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByAppend").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
         } finally {
           delete window.someGlobalVariable
         }
@@ -1805,11 +1804,26 @@
       },
 
       testHtmlEval: function (t) {
+        window.someGlobalVariable = 0
         try {
-          window.someGlobalVariable = false
-          $('<div></div>').appendTo('body')
-            .html('<' + 'script>window.someGlobalVariable = true</script' + '>')
-          t.assert(window.someGlobalVariable)
+          $('<div>').appendTo('#fixtures').html(
+            '<div><b id="newByHtml">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByHtml").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
+      testPrependEval: function (t) {
+        window.someGlobalVariable = 0
+        try {
+          $('<div>').appendTo('#fixtures').prepend(
+            '<b id="newByPrepend">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByPrepend").size()<\/script>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
         } finally {
           delete window.someGlobalVariable
         }

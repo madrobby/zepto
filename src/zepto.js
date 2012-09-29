@@ -591,16 +591,6 @@ var Zepto = (function() {
     }
   })
 
-  function insert(operator, target, node) {
-    var parent = (operator % 2) ? target : target.parentNode
-    parent ? parent.insertBefore(node,
-      !operator ? target.nextSibling :      // after
-      operator == 1 ? parent.firstChild :   // prepend
-      operator == 2 ? target :              // before
-      null) :                               // append
-      $(node).remove()
-  }
-
   function traverseNode(node, fun) {
     fun(node)
     for (var key in node.childNodes) traverseNode(node.childNodes[key], fun)
@@ -608,29 +598,43 @@ var Zepto = (function() {
 
   // Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
-  adjacencyOperators.forEach(function(key, operator) {
-    $.fn[key] = function(){
-      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
-      var nodes = $.map(arguments, function(n){ return isObject(n) ? n : zepto.fragment(n) })
-      if (nodes.length < 1) return this
-      var size = this.length, copyByClone = size > 1, inReverse = operator < 2
+  adjacencyOperators.forEach(function(operator, operatorIndex) {
+    var inside = operatorIndex % 2 //=> prepend, append
 
-      return this.each(function(index, target){
-        for (var i = 0; i < nodes.length; i++) {
-          var node = nodes[inReverse ? nodes.length-i-1 : i]
-          traverseNode(node, function(node){
-            if (node.nodeName != null && node.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!node.type || node.type === 'text/javascript') && !node.src)
-              window['eval'].call(window, node.innerHTML)
+    $.fn[operator] = function(){
+      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
+      var nodes = $.map(arguments, function(n){ return isObject(n) ? n : zepto.fragment(n) }),
+          parent, copyByClone = this.length > 1
+      if (nodes.length < 1) return this
+
+      return this.each(function(_, target){
+        parent = inside ? target : target.parentNode
+
+        // convert all methods to a "before" operation
+        target = operatorIndex == 0 ? target.nextSibling :
+                 operatorIndex == 1 ? target.firstChild :
+                 operatorIndex == 2 ? target :
+                 null
+
+        nodes.forEach(function(node){
+          if (copyByClone) node = node.cloneNode(true)
+          else if (!parent) return $(node).remove()
+
+          traverseNode(parent.insertBefore(node, target), function(el){
+            if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
+               (!el.type || el.type === 'text/javascript') && !el.src)
+              window['eval'].call(window, el.innerHTML)
           })
-          if (copyByClone && index < size - 1) node = node.cloneNode(true)
-          insert(operator, target, node)
-        }
+        })
       })
     }
 
-    $.fn[(operator % 2) ? key+'To' : 'insert'+(operator ? 'Before' : 'After')] = function(html){
-      $(html)[key](this)
+    // after    => insertAfter
+    // prepend  => prependTo
+    // before   => insertBefore
+    // append   => appendTo
+    $.fn[inside ? operator+'To' : 'insert'+(operatorIndex ? 'Before' : 'After')] = function(html){
+      $(html)[operator](this)
       return this
     }
   })
