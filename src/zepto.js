@@ -522,11 +522,11 @@ var Zepto = (function() {
 
       var css = ''
 
-      if(typeof property == 'object') {
+      if (typeof property == 'object') {
         for (key in property)
           if (!property[key] && property[key] !== 0)
             this.each(function(){ this.style.removeProperty(dasherize(key)) })
-          else if (typeof property[key] == 'string')
+          else if (typeof property[key] != 'object')
             css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
       }
 
