@@ -527,11 +527,14 @@ var Zepto = (function() {
             : this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
       var css = ''
-      for (key in property)
-        if (!property[key] && property[key] !== 0)
-          this.each(function(){ this.style.removeProperty(dasherize(key)) })
-        else
-          css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
+
+      if (typeof property == 'object') {
+        for (key in property)
+          if (!property[key] && property[key] !== 0)
+            this.each(function(){ this.style.removeProperty(dasherize(key)) })
+          else if (typeof property[key] != 'object')
+            css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
+      }
 
       if (typeof property == 'string')
         if (!value && value !== 0)
