@@ -690,7 +690,8 @@
           t.assertIdentical(el, this)
           return idx + ':' + this.nodeName.toUpperCase()
         })
-        t.assertEqual('0:SPAN, 1:B, 2:BR', results.join(', '))
+        t.assertEqual(3, results.size())
+        t.assertEqual('0:SPAN, 1:B, 2:BR', results.get().join(', '))
       },
 
       testDollarMap: function(t){
@@ -1454,12 +1455,12 @@
       testAttrOnTextInputField: function(t) {
         var inputs = $('#attr_with_text_input input'), values
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
         inputs.val(function(i, value){ return value.replace('input', 'changed') })
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
       },
 
@@ -1677,7 +1678,7 @@
           '<b>six</b>'
         )
         t.assertEqual('original one two three four five six',
-          el.children().map(function(){ return $(this).text() }).join(' '))
+          $.map(el.children(), function(c){ return $(c).text() }).join(' '))
       },
 
       testAppendToPrependTo: function(t){
