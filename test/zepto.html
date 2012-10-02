@@ -356,6 +356,13 @@
         t.assertEqual("blah", " blah ".trim())
       },
 
+      testCamelCase: function(t){
+        t.assertEqual("hello", $.camelCase("hello"))
+        t.assertEqual("HELLO", $.camelCase("HELLO"))
+        t.assertEqual("helloNiceWorld", $.camelCase("hello-nice-world"))
+        t.assertEqual("helloWorld", $.camelCase("helloWorld"))
+      },
+
       testExtend: function(t){
         t.assertSame({}, $.extend({}))
         t.assertSame(

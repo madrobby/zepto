@@ -240,6 +240,7 @@ var Zepto = (function() {
     return emptyArray.indexOf.call(array, elem, i)
   }
 
+  $.camelCase = camelize
   $.trim = function(str) { return str.trim() }
 
   // plugin compatibility
