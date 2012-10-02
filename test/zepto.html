@@ -2068,6 +2068,14 @@
       testScrollTop: function(t) {
         t.assert($(window).scrollTop() >= 0)
         t.assert($(document.body).scrollTop() >= 0)
+      },
+
+      testSort: function(t){
+        var els = $(['eight', 'nine', 'ten', 'eleven'])
+        var result = els.sort(function(a,b){ return b.length > a.length ? -1 : 1 })
+        t.assertIdentical(els, result)
+        t.assertEqual(4, result.size())
+        t.assertEqualCollection(['ten', 'nine', 'eight', 'eleven'], result)
       }
     })
 

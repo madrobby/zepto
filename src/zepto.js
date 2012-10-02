@@ -289,6 +289,7 @@ var Zepto = (function() {
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
+    sort: emptyArray.sort,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
 
