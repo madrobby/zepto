@@ -2215,9 +2215,12 @@
           e.preventDefault()
         })
         var event = $.Event('custom')
-        t.assert(!event.defaultPrevented)
+        t.refute(event.defaultPrevented)
+        t.refute(event.isDefaultPrevented())
+
         $('#some_element').trigger(event)
         t.assert(event.defaultPrevented)
+        t.assert(event.isDefaultPrevented())
       },
 
       testTriggerHandler: function(t){
