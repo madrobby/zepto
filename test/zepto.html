@@ -453,6 +453,7 @@
         t.assertLength(0, $(undefined))
         t.assertLength(0, $(false))
         t.assertLength(0, $(''))
+        t.assertLength(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)

@@ -25,7 +25,7 @@ var Zepto = (function() {
     },
     readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
-    idSelectorRE = /^#([\w-]+)$/,
+    idSelectorRE = /^#([\w-]*)$/,
     tagSelectorRE = /^[\w-]+$/,
     toString = {}.toString,
     zepto = {},
