@@ -174,7 +174,7 @@
   }
 
   $.fn.trigger = function(event, data){
-    if (typeof event == 'string') event = $.Event(event)
+    if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
     event.data = data
     return this.each(function(){
@@ -219,6 +219,7 @@
   })
 
   $.Event = function(type, props) {
+    if (typeof type != 'string') props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null)

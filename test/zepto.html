@@ -2172,6 +2172,24 @@
 
         var e4 = $.Event('custom', {bubbles: false})
         t.assertFalse(e4.bubbles)
+
+        var e5 = $.Event({ type: 'keyup', keyCode: 40 })
+        t.assertEqual('keyup', e5.type)
+        t.assertEqual(40, e5.keyCode)
+      },
+
+      testTriggerObject: function(t){
+        var el = $('#some_element'),
+            eventType, eventCode
+
+        el.on('keyup', function(e){
+          eventType = e.type
+          eventCode = e.keyCode
+        })
+        el.trigger({ type: 'keyup', keyCode: 40 })
+
+        t.assertEqual('keyup', eventType)
+        t.assertEqual(40, eventCode)
       },
 
       testTriggerEventObject: function(t){
