@@ -204,7 +204,11 @@
   ;('focusin focusout load resize scroll unload click dblclick '+
   'mousedown mouseup mousemove mouseover mouseout '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
-    $.fn[event] = function(callback){ return this.bind(event, callback) }
+    $.fn[event] = function(callback) {
+      return callback ?
+        this.bind(event, callback) :
+        this.trigger(event)
+    }
   })
 
   ;['focus', 'blur'].forEach(function(name) {
