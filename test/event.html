@@ -134,14 +134,16 @@
       },
 
       testDelegateEventProperties: function(t){
-        var type, target
+        var type, target, currentTarget
         $(document).on('click', 'div', function(e){
           type = e.type
           target = e.target
+          currentTarget = e.currentTarget
         })
-        click(this.el)
+        click($('<span>').appendTo(this.el))
         t.assertEqual('click', type)
-        t.assertIdentical(this.el.get(0), target)
+        t.assertIdentical(this.el.find('span').get(0), target)
+        t.assertIdentical(this.el.get(0), currentTarget)
       }
     })
   })()
