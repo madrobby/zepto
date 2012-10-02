@@ -2569,6 +2569,24 @@
         t.assertEqual(2, delegateTriggered, "delegate handlers")
       },
 
+      testOnReturnFalse: function(t){
+        var el = $('#some_element')
+
+        el.on('click', function(){
+          setTimeout(function(){
+            t.resume(function(){})
+          }, 10)
+          t.assert(true, "should have been called")
+          return false
+        })
+        $(document.body).on('click', function(){
+          t.refute(true, "the event should have been stopped")
+        })
+
+        t.pause()
+        click(el.get(0))
+      },
+
       testOff: function(t){
         var el = $('#some_element'), bindTriggered = 0, delegateTriggered = 0,
           handler = function(){ bindTriggered++ }
