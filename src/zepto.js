@@ -275,6 +275,10 @@ var Zepto = (function() {
     return elements
   }
 
+  $.grep = function(elements, callback){
+    return filter.call(elements, callback)
+  }
+
   if (window.JSON) $.parseJSON = JSON.parse
 
   // Define methods that will be available on all

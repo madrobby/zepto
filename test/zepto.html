@@ -724,6 +724,12 @@
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','))
       },
 
+      testDollarGrep: function(t){
+        var fruits = ['apples', 'oranges', 'pineapple', 'peach']
+        var result = $.grep(fruits, function(name){ return /apple/.test(name) })
+        t.assertEqualCollection(['apples', 'pineapple'], result)
+      },
+
       testDollarEach: function(t){
         var array = ['a','b','c'], object = { a: 1, b: 2, c: 3 }, result
 
