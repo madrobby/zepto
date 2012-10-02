@@ -2063,6 +2063,11 @@
         t.assertEqual($els.slice().length, 3)
         t.assertEqual(typeof $els.slice().ready, 'function')
         t.assertEqual($els.slice(-1)[0].className, 'slice3')
+      },
+
+      testScrollTop: function(t) {
+        t.assert($(window).scrollTop() >= 0)
+        t.assert($(document.body).scrollTop() >= 0)
       }
     })
 

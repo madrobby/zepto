@@ -580,6 +580,10 @@ var Zepto = (function() {
         ;(when === undefined ? !$(this).hasClass(newName) : when) ?
           $(this).addClass(newName) : $(this).removeClass(newName)
       })
+    },
+    scrollTop: function(){
+      if (!this.length) return
+      return ('scrollTop' in this[0]) ? this[0].scrollTop : this[0].scrollY
     }
   }
 
