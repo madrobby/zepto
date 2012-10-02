@@ -245,6 +245,7 @@ var Zepto = (function() {
 
   // plugin compatibility
   $.uuid = 0
+  $.support = { }
 
   $.map = function(elements, callback){
     var value, values = [], i, key
