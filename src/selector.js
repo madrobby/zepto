@@ -16,7 +16,6 @@
   //
   // Complex selectors are not supported:
   //   li:has(label:contains("foo")) + li:has(label:contains("bar"))
-  //   "> h2"
   //   ul.inner:first > li
   var filters = zepto.cssFilters = {
     visible:  function(){ if (visible(this)) return this },
@@ -31,10 +30,12 @@
     has:      function(idx, _, sel){ if (zepto.qsa(this, sel).length) return this }
   }
 
-  var re = new RegExp('(.*):(\\w+)(?:\\(([^)]+)\\))?$\\s*')
+  var filterRe = new RegExp('(.*):(\\w+)(?:\\(([^)]+)\\))?$\\s*'),
+      childRe  = /^\s*>/,
+      classTag = 'Zepto' + (+new Date())
 
   function process(sel, fn) {
-    var filter, arg, match = sel.match(re)
+    var filter, arg, match = filterRe.exec(sel)
     if (match && match[2] in filters) {
       var filter = filters[match[2]], arg = match[3]
       sel = match[1]
@@ -50,11 +51,19 @@
   zepto.qsa = function(node, selector) {
     return process(selector, function(sel, filter, arg){
       try {
+        var taggedParent
         if (!sel && filter) sel = '*'
+        else if (childRe.test(sel))
+          // support "> *" child queries by tagging the parent node with a
+          // unique class and prepending that classname onto the selector
+          taggedParent = $(node).addClass(classTag), sel = '.'+classTag+' '+sel
+
         var nodes = oldQsa(node, sel)
       } catch(e) {
         console.error('error performing selector: %o', selector)
         throw e
+      } finally {
+        if (taggedParent) taggedParent.removeClass(classTag)
       }
       return !filter ? nodes :
         zepto.uniq($.map(nodes, function(n, i){ return filter.call(n, i, nodes, arg) }))
