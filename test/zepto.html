@@ -448,6 +448,11 @@
         t.assertLength(1, $('p > span.yay'))
       },
 
+      testDollarUnique: function(t){
+        t.refuteIdentical($('#some_element'), $('#some_element'))
+        t.refuteIdentical($('#nonexistent'), $('#nonexistent'))
+      },
+
       testDollarWithNil: function(t){
         t.assertLength(0, $(null))
         t.assertLength(0, $(undefined))
