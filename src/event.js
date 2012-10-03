@@ -3,7 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={}
+  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
+      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
 
@@ -41,7 +42,7 @@
   }
 
   function realEvent(type) {
-    return type
+    return hover[type] || type
   }
 
   function add(element, events, fn, selector, getDelegate, capture){
@@ -50,6 +51,12 @@
       var handler   = parse(event)
       handler.fn    = fn
       handler.sel   = selector
+      // emulate mouseenter, mouseleave
+      if (handler.e in hover) fn = function(e){
+        var related = e.relatedTarget
+        if (!related || (related !== this && !$.contains(this, related)))
+          return handler.fn.apply(this, arguments)
+      }
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
       handler.proxy = function (e) {
@@ -209,7 +216,7 @@
 
   // shortcut methods for `.bind(event, fn)` for each event type
   ;('focusin focusout load resize scroll unload click dblclick '+
-  'mousedown mouseup mousemove mouseover mouseout '+
+  'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback) {
       return callback ?
