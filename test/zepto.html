@@ -969,6 +969,22 @@
         t.assertEqualCollection(el, el.closest('div'))
       },
 
+      testContains: function(t){
+        var el1 = $('#li1'), el2 = $('#li2')
+
+        t.assertTrue($.contains(el1.get(0), el2.get(0)))
+        t.assertFalse($.contains(el1.get(0), $('#parents').get(0)))
+      },
+
+      testContainsOnDetached: function(t){
+        var el = $('<div><p><a></a></p></div>'),
+            para = el.children(),
+            link = para.children()
+
+        t.assertTrue($.contains(para.get(0), link.get(0)))
+        t.assertFalse($.contains(document.body, el.get(0)))
+      },
+
       testParents: function(t){
         var body = document.body, html = body.parentNode, container = $('#parents'),
           wrapper = $('#fixtures').get(0)

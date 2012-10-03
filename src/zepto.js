@@ -214,6 +214,10 @@ var Zepto = (function() {
     return selector === undefined ? $(nodes) : $(nodes).filter(selector)
   }
 
+  $.contains = function(parent, node) {
+    return parent !== node && parent.contains(node)
+  }
+
   function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
   }
