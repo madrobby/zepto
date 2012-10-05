@@ -287,7 +287,7 @@
       if (typeof expected.get == 'function') expected = expected.get()
       if (typeof actual.get == 'function') actual = actual.get()
 
-      if (passed) for (var i=0; i<expected.length; i++) passed = expected[i] == actual[i]
+      if (passed) for (var i=0; i<expected.length; i++) passed &= expected[i] == actual[i];
 
       this._assertExpression(passed, message || 'Failed assertion.',
         'Expected %o, got %o.', expected, actual)
