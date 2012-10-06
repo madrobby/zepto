@@ -1245,6 +1245,16 @@
         }
       },
 
+      testHas: function(t){
+        var result, el = $('<b id=one><a></a></b><b id=two><i></i></b><b id=three><i></i></b>')
+        result = el.has('a')
+        t.assertEqual('one', result.pluck('id').join(' '))
+        result = el.has('i')
+        t.assertEqual('two three', result.pluck('id').join(' '))
+        result = el.has(el.find('i').get(0))
+        t.assertEqual('two', result.pluck('id').join(' '))
+      },
+
       testAdd: function(t){
         var lis=$("li"),spans=$("span"),
         together=lis.add("span"),
