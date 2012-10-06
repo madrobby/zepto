@@ -78,6 +78,11 @@
             }).get()
 
         t.assertEqual('child2', results.join(' '))
+      },
+      testEmptyHref: function(t) {
+        var result, el = $('<div><a href="#">one</a><a href="#">two</a></div>')
+        result = el.find('a[href=#]')
+        t.assertEqual('one two', result.map(function(){ return $(this).text() }).get().join(' '))
       }
     })
   })()

@@ -35,6 +35,8 @@
       classTag = 'Zepto' + (+new Date())
 
   function process(sel, fn) {
+    // quote the hash in `a[href^=#]` expression
+    sel = sel.replace(/=#\]/g, '="#"]')
     var filter, arg, match = filterRe.exec(sel)
     if (match && match[2] in filters) {
       var filter = filters[match[2]], arg = match[3]
