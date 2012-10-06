@@ -1549,6 +1549,31 @@
         t.assertUndefined(el.data('does-not-exist'))
       },
 
+      testDataNumberType: function(t){
+        var el = $('<div data-num=42 />')
+        t.assertIdentical(42, el.data('num'))
+      },
+
+      testDataBooleanType: function(t){
+        var el = $('<div data-true=true data-false=false />')
+        t.assertTrue(el.data('true'))
+        t.assertFalse(el.data('false'))
+      },
+
+      testDataNullType: function(t){
+        var el = $('<div data-nil=null />')
+        t.assertNull(el.data('nil'))
+      },
+
+      testDataJsonType: function(t){
+        var el = $('<div data-json=\'["one", "two"]\' data-invalid=\'[boom]\' />')
+        var json = el.data('json')
+        t.assertEqual(2, json.length)
+        t.assertEqual("one", json[0])
+        t.assertEqual("two", json[1])
+        t.assertEqual('[boom]', el.data('invalid'))
+      },
+
       testVal: function(t) {
         var input = $('#attr_val')
 

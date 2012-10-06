@@ -120,12 +120,14 @@
       },
 
       testInitialDataFromAttributes: function(t){
-        var el = $('<div data-foo=bar data-foo-bar=baz />'),
+        var el = $('<div data-foo=bar data-foo-bar=baz data-empty data-num=42 />'),
             store = el.data()
 
         t.assertEqual('bar', store.foo)
         t.assertEqual('baz', store.fooBar)
         t.assertUndefined(store['foo-bar'])
+        t.assertIdentical('', store.empty)
+        t.assertIdentical(42, store.num)
       },
 
       testGettingBlanks: function(t){

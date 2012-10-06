@@ -235,6 +235,29 @@ var Zepto = (function() {
     svg ? (klass.baseVal = value) : (node.className = value)
   }
 
+  // "true"  => true
+  // "false" => false
+  // "null"  => null
+  // "42"    => 42
+  // "42.5"  => 42.5
+  // JSON    => parse if valid
+  // String  => self
+  function deserializeValue(value) {
+    var num
+    try {
+      return value ?
+        value == "true" ||
+        ( value == "false" ? false :
+          value == "null" ? null :
+          !isNaN(num = Number(value)) ? num :
+          /^[\[\{]/.test(value) ? $.parseJSON(value) :
+          value )
+        : value
+    } catch(e) {
+      return value
+    }
+  }
+
   $.isFunction = isFunction
   $.isObject = isObject
   $.isArray = isArray
@@ -509,7 +532,7 @@ var Zepto = (function() {
     },
     data: function(name, value){
       var data = this.attr('data-' + dasherize(name), value)
-      return data !== null ? data : undefined
+      return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
       return (value === undefined) ?
@@ -659,6 +682,7 @@ var Zepto = (function() {
   // Export internal API functions in the `$.zepto` namespace
   zepto.camelize = camelize
   zepto.uniq = uniq
+  zepto.deserializeValue = deserializeValue
   $.zepto = zepto
 
   return $
