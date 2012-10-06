@@ -687,7 +687,6 @@ var Zepto = (function() {
   zepto.Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
-  zepto.camelize = camelize
   zepto.uniq = uniq
   zepto.deserializeValue = deserializeValue
   $.zepto = zepto
