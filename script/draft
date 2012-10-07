@@ -1,0 +1,36 @@
+#!/bin/bash
+# Usage:
+#   vim $(version=1.0 script/draft scrollTop $.camelCase event/delegate)
+
+set -e
+
+[[ $1 = -f ]] && force=1 && shift 1
+
+create() {
+  name="$(basename "$1")"
+  module="$(dirname "$1")"
+  [[ $module = . ]] && module=core
+  post="${module}/_posts/1900-01-01-${name/$./Z-}.md"
+
+  if [[ -f $post ]]; then
+    echo "Warning: $post already exists" >&2
+    [[ -z $force ]] && exit 1
+  fi
+
+  { echo '---'
+    echo title: "\"${name}\""
+    [[ -n $version ]] && echo version: $version
+    echo 'signature: |'
+    echo "  ${name}() ⇒ self"
+    echo '---'
+    echo
+    echo '{% highlight js %}'
+    echo '{% endhighlight %}'
+  } > "$post"
+
+  echo "$post"
+}
+
+for method in $*; do
+  create "$method"
+done
