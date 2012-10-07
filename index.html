@@ -305,6 +305,13 @@ document.write('<script src=' +
     $('script').first().before(s)
   }
 
+  // Reflow all elements on the page. <david@14islands.com>
+  function reflowFixedPositions() {
+    var docStyle = document.documentElement.style
+    docStyle.paddingRight = '1px'
+    setTimeout(function(){ docStyle.paddingRight = '' }, 0)
+  }
+
   $('.signature code').html(function(i, html){
     return html
       .replace(/\[([^\[]+)\]$/mg, '<span class=version>$1+</span>')
@@ -313,6 +320,13 @@ document.write('<script src=' +
 
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
+
+  $('#sidebar').on('click', 'a[href]', function(e){
+    setTimeout(function(){
+      // fixes sidebar becoming unscrollable in Safari 6
+      reflowFixedPositions()
+    }, 10)
+  })
 
   // change the title of the page so bookmarks have a better default
   if ($.os.ios || $.os.android)
