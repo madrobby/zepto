@@ -10,6 +10,7 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
+    rootNodeRE = /^(?:body|html)$/i,
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -619,6 +620,40 @@ var Zepto = (function() {
     scrollTop: function(){
       if (!this.length) return
       return ('scrollTop' in this[0]) ? this[0].scrollTop : this[0].scrollY
+    },
+    position: function() {
+      if (!this.length) return
+
+      var elem = this[0],
+        // Get *real* offsetParent
+        offsetParent = this.offsetParent(),
+        // Get correct offsets
+        offset       = this.offset(),
+        parentOffset = rootNodeRE.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset()
+
+      // Subtract element margins
+      // note: when an element has margin: auto the offsetLeft and marginLeft
+      // are the same in Safari causing offset.left to incorrectly be 0
+      offset.top  -= parseFloat( $(elem).css('margin-top') ) || 0
+      offset.left -= parseFloat( $(elem).css('margin-left') ) || 0
+
+      // Add offsetParent borders
+      parentOffset.top  += parseFloat( $(offsetParent[0]).css('border-top-width') ) || 0
+      parentOffset.left += parseFloat( $(offsetParent[0]).css('border-left-width') ) || 0
+
+      // Subtract the two offsets
+      return {
+        top:  offset.top  - parentOffset.top,
+        left: offset.left - parentOffset.left
+      }
+    },
+    offsetParent: function() {
+      return this.map(function(){
+        var parent = this.offsetParent || document.body
+        while (parent && !rootNodeRE.test(parent.nodeName) && $(parent).css("position") == "static")
+          parent = parent.offsetParent
+        return parent
+      })
     }
   }
 
