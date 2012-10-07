@@ -3,7 +3,8 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={}
+  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
+      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
 
@@ -40,19 +41,32 @@
       !!captureSetting
   }
 
+  function realEvent(type) {
+    return hover[type] || type
+  }
+
   function add(element, events, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
-      var delegate = getDelegate && getDelegate(fn, event),
-        callback = delegate || fn
-      var proxyfn = function (event) {
-        var result = callback.apply(element, [event].concat(event.data))
-        if (result === false) event.preventDefault()
+      var handler   = parse(event)
+      handler.fn    = fn
+      handler.sel   = selector
+      // emulate mouseenter, mouseleave
+      if (handler.e in hover) fn = function(e){
+        var related = e.relatedTarget
+        if (!related || (related !== this && !$.contains(this, related)))
+          return handler.fn.apply(this, arguments)
+      }
+      handler.del   = getDelegate && getDelegate(fn, event)
+      var callback  = handler.del || fn
+      handler.proxy = function (e) {
+        var result = callback.apply(element, [e].concat(e.data))
+        if (result === false) e.preventDefault(), e.stopPropagation()
         return result
       }
-      var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length})
+      handler.i = set.length
       set.push(handler)
-      element.addEventListener(handler.e, proxyfn, eventCapture(handler, capture))
+      element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
     })
   }
   function remove(element, events, fn, selector, capture){
@@ -60,7 +74,7 @@
     eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
-        element.removeEventListener(handler.e, handler.proxy, eventCapture(handler, capture))
+        element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
       })
     })
   }
@@ -165,16 +179,16 @@
   }
 
   $.fn.on = function(event, selector, callback){
-    return selector == undefined || $.isFunction(selector) ?
+    return !selector || $.isFunction(selector) ?
       this.bind(event, selector || callback) : this.delegate(selector, event, callback)
   }
   $.fn.off = function(event, selector, callback){
-    return selector == undefined || $.isFunction(selector) ?
+    return !selector || $.isFunction(selector) ?
       this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
   }
 
   $.fn.trigger = function(event, data){
-    if (typeof event == 'string') event = $.Event(event)
+    if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
     event.data = data
     return this.each(function(){
@@ -202,9 +216,13 @@
 
   // shortcut methods for `.bind(event, fn)` for each event type
   ;('focusin focusout load resize scroll unload click dblclick '+
-  'mousedown mouseup mousemove mouseover mouseout '+
+  'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
-    $.fn[event] = function(callback){ return this.bind(event, callback) }
+    $.fn[event] = function(callback) {
+      return callback ?
+        this.bind(event, callback) :
+        this.trigger(event)
+    }
   })
 
   ;['focus', 'blur'].forEach(function(name) {
@@ -219,9 +237,11 @@
   })
 
   $.Event = function(type, props) {
+    if (typeof type != 'string') props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null)
+    event.isDefaultPrevented = function(){ return this.defaultPrevented }
     return event
   }
 

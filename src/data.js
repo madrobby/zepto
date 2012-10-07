@@ -5,7 +5,7 @@
 // The following code is heavily inspired by jQuery's $.fn.data()
 
 ;(function($) {
-  var data = {}, dataAttr = $.fn.data, camelize = $.zepto.camelize,
+  var data = {}, dataAttr = $.fn.data, camelize = $.camelCase,
     exp = $.expando = 'Zepto' + (+new Date())
 
   // Get value from node:
@@ -38,7 +38,8 @@
     var store = {}
     $.each(node.attributes, function(i, attr){
       if (attr.name.indexOf('data-') == 0)
-        store[camelize(attr.name.replace('data-', ''))] = attr.value
+        store[camelize(attr.name.replace('data-', ''))] =
+          $.zepto.deserializeValue(attr.value)
     })
     return store
   }

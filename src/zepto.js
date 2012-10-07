@@ -10,6 +10,7 @@ var Zepto = (function() {
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
+    rootNodeRE = /^(?:body|html)$/i,
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -25,7 +26,7 @@ var Zepto = (function() {
     },
     readyRE = /complete|loaded|interactive/,
     classSelectorRE = /^\.([\w-]+)$/,
-    idSelectorRE = /^#([\w-]+)$/,
+    idSelectorRE = /^#([\w-]*)$/,
     tagSelectorRE = /^[\w-]+$/,
     toString = {}.toString,
     zepto = {},
@@ -201,8 +202,8 @@ var Zepto = (function() {
   zepto.qsa = function(element, selector){
     var found
     return (element === document && idSelectorRE.test(selector)) ?
-      ( (found = element.getElementById(RegExp.$1)) ? [found] : emptyArray ) :
-      (element.nodeType !== 1 && element.nodeType !== 9) ? emptyArray :
+      ( (found = element.getElementById(RegExp.$1)) ? [found] : [] ) :
+      (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
       slice.call(
         classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
         tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
@@ -212,6 +213,10 @@ var Zepto = (function() {
 
   function filtered(nodes, selector) {
     return selector === undefined ? $(nodes) : $(nodes).filter(selector)
+  }
+
+  $.contains = function(parent, node) {
+    return parent !== node && parent.contains(node)
   }
 
   function funcArg(context, arg, idx, payload) {
@@ -231,6 +236,29 @@ var Zepto = (function() {
     svg ? (klass.baseVal = value) : (node.className = value)
   }
 
+  // "true"  => true
+  // "false" => false
+  // "null"  => null
+  // "42"    => 42
+  // "42.5"  => 42.5
+  // JSON    => parse if valid
+  // String  => self
+  function deserializeValue(value) {
+    var num
+    try {
+      return value ?
+        value == "true" ||
+        ( value == "false" ? false :
+          value == "null" ? null :
+          !isNaN(num = Number(value)) ? num :
+          /^[\[\{]/.test(value) ? $.parseJSON(value) :
+          value )
+        : value
+    } catch(e) {
+      return value
+    }
+  }
+
   $.isFunction = isFunction
   $.isObject = isObject
   $.isArray = isArray
@@ -240,10 +268,13 @@ var Zepto = (function() {
     return emptyArray.indexOf.call(array, elem, i)
   }
 
+  $.camelCase = camelize
   $.trim = function(str) { return str.trim() }
 
   // plugin compatibility
   $.uuid = 0
+  $.support = { }
+  $.expr = { }
 
   $.map = function(elements, callback){
     var value, values = [], i, key
@@ -273,6 +304,10 @@ var Zepto = (function() {
     return elements
   }
 
+  $.grep = function(elements, callback){
+    return filter.call(elements, callback)
+  }
+
   if (window.JSON) $.parseJSON = JSON.parse
 
   // Define methods that will be available on all
@@ -283,13 +318,14 @@ var Zepto = (function() {
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
+    sort: emptyArray.sort,
     indexOf: emptyArray.indexOf,
     concat: emptyArray.concat,
 
     // `map` and `slice` in the jQuery API work differently
     // from their array counterparts
     map: function(fn){
-      return $.map(this, function(el, i){ return fn.call(el, i, el) })
+      return $($.map(this, function(el, i){ return fn.call(el, i, el) }))
     },
     slice: function(){
       return $(slice.apply(this, arguments))
@@ -344,6 +380,13 @@ var Zepto = (function() {
       }
       return $(nodes)
     },
+    has: function(selector){
+      return this.filter(function(){
+        return isObject(selector) ?
+          $.contains(this, selector) :
+          $(this).find(selector).size()
+      })
+    },
     eq: function(idx){
       return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1)
     },
@@ -357,9 +400,9 @@ var Zepto = (function() {
     },
     find: function(selector){
       var result
-      if (this.length == 1) result = zepto.qsa(this[0], selector)
+      if (this.length == 1) result = $(zepto.qsa(this[0], selector))
       else result = this.map(function(){ return zepto.qsa(this, selector) })
-      return $(result)
+      return result
     },
     closest: function(selector, context){
       var node = this[0]
@@ -385,7 +428,7 @@ var Zepto = (function() {
       return filtered(this.map(function(){ return children(this) }), selector)
     },
     contents: function() {
-      return $(this.map(function() { return slice.call(this.childNodes) }))
+      return this.map(function() { return slice.call(this.childNodes) })
     },
     siblings: function(selector){
       return filtered(this.map(function(i, el){
@@ -397,7 +440,7 @@ var Zepto = (function() {
     },
     // `pluck` is borrowed from Prototype.js
     pluck: function(property){
-      return this.map(function(){ return this[property] })
+      return $.map(this, function(el){ return el[property] })
     },
     show: function(){
       return this.each(function(){
@@ -447,7 +490,7 @@ var Zepto = (function() {
       return this
     },
     clone: function(){
-      return $(this.map(function(){ return this.cloneNode(true) }))
+      return this.map(function(){ return this.cloneNode(true) })
     },
     hide: function(){
       return this.css("display", "none")
@@ -498,7 +541,7 @@ var Zepto = (function() {
     },
     data: function(name, value){
       var data = this.attr('data-' + dasherize(name), value)
-      return data !== null ? data : undefined
+      return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
       return (value === undefined) ?
@@ -574,6 +617,44 @@ var Zepto = (function() {
         ;(when === undefined ? !$(this).hasClass(newName) : when) ?
           $(this).addClass(newName) : $(this).removeClass(newName)
       })
+    },
+    scrollTop: function(){
+      if (!this.length) return
+      return ('scrollTop' in this[0]) ? this[0].scrollTop : this[0].scrollY
+    },
+    position: function() {
+      if (!this.length) return
+
+      var elem = this[0],
+        // Get *real* offsetParent
+        offsetParent = this.offsetParent(),
+        // Get correct offsets
+        offset       = this.offset(),
+        parentOffset = rootNodeRE.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset()
+
+      // Subtract element margins
+      // note: when an element has margin: auto the offsetLeft and marginLeft
+      // are the same in Safari causing offset.left to incorrectly be 0
+      offset.top  -= parseFloat( $(elem).css('margin-top') ) || 0
+      offset.left -= parseFloat( $(elem).css('margin-left') ) || 0
+
+      // Add offsetParent borders
+      parentOffset.top  += parseFloat( $(offsetParent[0]).css('border-top-width') ) || 0
+      parentOffset.left += parseFloat( $(offsetParent[0]).css('border-left-width') ) || 0
+
+      // Subtract the two offsets
+      return {
+        top:  offset.top  - parentOffset.top,
+        left: offset.left - parentOffset.left
+      }
+    },
+    offsetParent: function() {
+      return this.map(function(){
+        var parent = this.offsetParent || document.body
+        while (parent && !rootNodeRE.test(parent.nodeName) && $(parent).css("position") == "static")
+          parent = parent.offsetParent
+        return parent
+      })
     }
   }
 
@@ -642,8 +723,8 @@ var Zepto = (function() {
   zepto.Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
-  zepto.camelize = camelize
   zepto.uniq = uniq
+  zepto.deserializeValue = deserializeValue
   $.zepto = zepto
 
   return $
