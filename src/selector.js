@@ -17,7 +17,7 @@
   // Complex selectors are not supported:
   //   li:has(label:contains("foo")) + li:has(label:contains("bar"))
   //   ul.inner:first > li
-  var filters = zepto.cssFilters = {
+  var filters = $.expr[':'] = {
     visible:  function(){ if (visible(this)) return this },
     hidden:   function(){ if (!visible(this)) return this },
     selected: function(){ if (this.selected) return this },
