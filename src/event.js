@@ -40,19 +40,26 @@
       !!captureSetting
   }
 
+  function realEvent(type) {
+    return type
+  }
+
   function add(element, events, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
-      var delegate = getDelegate && getDelegate(fn, event),
-        callback = delegate || fn
-      var proxyfn = function (e) {
+      var handler   = parse(event)
+      handler.fn    = fn
+      handler.sel   = selector
+      handler.del   = getDelegate && getDelegate(fn, event)
+      var callback  = handler.del || fn
+      handler.proxy = function (e) {
         var result = callback.apply(element, [e].concat(e.data))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
       }
-      var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length})
+      handler.i = set.length
       set.push(handler)
-      element.addEventListener(handler.e, proxyfn, eventCapture(handler, capture))
+      element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
     })
   }
   function remove(element, events, fn, selector, capture){
@@ -60,7 +67,7 @@
     eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
-        element.removeEventListener(handler.e, handler.proxy, eventCapture(handler, capture))
+        element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
       })
     })
   }
