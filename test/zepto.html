@@ -287,7 +287,7 @@
       if (typeof expected.get == 'function') expected = expected.get()
       if (typeof actual.get == 'function') actual = actual.get()
 
-      if (passed) for (var i=0; i<expected.length; i++) passed &= expected[i] == actual[i];
+      if (passed) for (var i=0; i<expected.length; i++) passed &= expected[i] == actual[i]
 
       this._assertExpression(passed, message || 'Failed assertion.',
         'Expected %o, got %o.', expected, actual)
@@ -354,6 +354,13 @@
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
+      },
+
+      testCamelCase: function(t){
+        t.assertEqual("hello", $.camelCase("hello"))
+        t.assertEqual("HELLO", $.camelCase("HELLO"))
+        t.assertEqual("helloNiceWorld", $.camelCase("hello-nice-world"))
+        t.assertEqual("helloWorld", $.camelCase("helloWorld"))
       },
 
       testExtend: function(t){
@@ -448,11 +455,17 @@
         t.assertLength(1, $('p > span.yay'))
       },
 
+      testDollarUnique: function(t){
+        t.refuteIdentical($('#some_element'), $('#some_element'))
+        t.refuteIdentical($('#nonexistent'), $('#nonexistent'))
+      },
+
       testDollarWithNil: function(t){
         t.assertLength(0, $(null))
         t.assertLength(0, $(undefined))
         t.assertLength(0, $(false))
         t.assertLength(0, $(''))
+        t.assertLength(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)
@@ -690,7 +703,8 @@
           t.assertIdentical(el, this)
           return idx + ':' + this.nodeName.toUpperCase()
         })
-        t.assertEqual('0:SPAN, 1:B, 2:BR', results.join(', '))
+        t.assertEqual(3, results.size())
+        t.assertEqual('0:SPAN, 1:B, 2:BR', results.get().join(', '))
       },
 
       testDollarMap: function(t){
@@ -708,6 +722,12 @@
           return key + '=' + value
         })
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','))
+      },
+
+      testDollarGrep: function(t){
+        var fruits = ['apples', 'oranges', 'pineapple', 'peach']
+        var result = $.grep(fruits, function(name){ return /apple/.test(name) })
+        t.assertEqualCollection(['apples', 'pineapple'], result)
       },
 
       testDollarEach: function(t){
@@ -947,6 +967,22 @@
         t.assertEqualCollection(para, link.closest('p'))
         t.assertEqualCollection(el, link.closest('div'))
         t.assertEqualCollection(el, el.closest('div'))
+      },
+
+      testContains: function(t){
+        var el1 = $('#li1'), el2 = $('#li2')
+
+        t.assertTrue($.contains(el1.get(0), el2.get(0)))
+        t.assertFalse($.contains(el1.get(0), $('#parents').get(0)))
+      },
+
+      testContainsOnDetached: function(t){
+        var el = $('<div><p><a></a></p></div>'),
+            para = el.children(),
+            link = para.children()
+
+        t.assertTrue($.contains(para.get(0), link.get(0)))
+        t.assertFalse($.contains(document.body, el.get(0)))
       },
 
       testParents: function(t){
@@ -1209,6 +1245,16 @@
         }
       },
 
+      testHas: function(t){
+        var result, el = $('<b id=one><a></a></b><b id=two><i></i></b><b id=three><i></i></b>')
+        result = el.has('a')
+        t.assertEqual('one', result.pluck('id').join(' '))
+        result = el.has('i')
+        t.assertEqual('two three', result.pluck('id').join(' '))
+        result = el.has(el.find('i').get(0))
+        t.assertEqual('two', result.pluck('id').join(' '))
+      },
+
       testAdd: function(t){
         var lis=$("li"),spans=$("span"),
         together=lis.add("span"),
@@ -1454,12 +1500,12 @@
       testAttrOnTextInputField: function(t) {
         var inputs = $('#attr_with_text_input input'), values
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
         inputs.val(function(i, value){ return value.replace('input', 'changed') })
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
       },
 
@@ -1511,6 +1557,31 @@
         // blank values
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
+      },
+
+      testDataNumberType: function(t){
+        var el = $('<div data-num=42 />')
+        t.assertIdentical(42, el.data('num'))
+      },
+
+      testDataBooleanType: function(t){
+        var el = $('<div data-true=true data-false=false />')
+        t.assertTrue(el.data('true'))
+        t.assertFalse(el.data('false'))
+      },
+
+      testDataNullType: function(t){
+        var el = $('<div data-nil=null />')
+        t.assertNull(el.data('nil'))
+      },
+
+      testDataJsonType: function(t){
+        var el = $('<div data-json=\'["one", "two"]\' data-invalid=\'[boom]\' />')
+        var json = el.data('json')
+        t.assertEqual(2, json.length)
+        t.assertEqual("one", json[0])
+        t.assertEqual("two", json[1])
+        t.assertEqual('[boom]', el.data('invalid'))
       },
 
       testVal: function(t) {
@@ -1677,7 +1748,7 @@
           '<b>six</b>'
         )
         t.assertEqual('original one two three four five six',
-          el.children().map(function(){ return $(this).text() }).join(' '))
+          $.map(el.children(), function(c){ return $(c).text() }).join(' '))
       },
 
       testAppendToPrependTo: function(t){
@@ -2043,6 +2114,19 @@
         t.assertEqual($els.slice().length, 3)
         t.assertEqual(typeof $els.slice().ready, 'function')
         t.assertEqual($els.slice(-1)[0].className, 'slice3')
+      },
+
+      testScrollTop: function(t) {
+        t.assert($(window).scrollTop() >= 0)
+        t.assert($(document.body).scrollTop() >= 0)
+      },
+
+      testSort: function(t){
+        var els = $(['eight', 'nine', 'ten', 'eleven'])
+        var result = els.sort(function(a,b){ return b.length > a.length ? -1 : 1 })
+        t.assertIdentical(els, result)
+        t.assertEqual(4, result.size())
+        t.assertEqualCollection(['ten', 'nine', 'eight', 'eleven'], result)
       }
     })
 
@@ -2139,6 +2223,24 @@
 
         var e4 = $.Event('custom', {bubbles: false})
         t.assertFalse(e4.bubbles)
+
+        var e5 = $.Event({ type: 'keyup', keyCode: 40 })
+        t.assertEqual('keyup', e5.type)
+        t.assertEqual(40, e5.keyCode)
+      },
+
+      testTriggerObject: function(t){
+        var el = $('#some_element'),
+            eventType, eventCode
+
+        el.on('keyup', function(e){
+          eventType = e.type
+          eventCode = e.keyCode
+        })
+        el.trigger({ type: 'keyup', keyCode: 40 })
+
+        t.assertEqual('keyup', eventType)
+        t.assertEqual(40, eventCode)
       },
 
       testTriggerEventObject: function(t){
@@ -2164,9 +2266,12 @@
           e.preventDefault()
         })
         var event = $.Event('custom')
-        t.assert(!event.defaultPrevented)
+        t.refute(event.defaultPrevented)
+        t.refute(event.isDefaultPrevented())
+
         $('#some_element').trigger(event)
         t.assert(event.defaultPrevented)
+        t.assert(event.isDefaultPrevented())
       },
 
       testTriggerHandler: function(t){
@@ -2513,6 +2618,24 @@
         click(node)
         t.assertEqual(2, bindTriggered, "bind handlers")
         t.assertEqual(2, delegateTriggered, "delegate handlers")
+      },
+
+      testOnReturnFalse: function(t){
+        var el = $('#some_element')
+
+        el.on('click', function(){
+          setTimeout(function(){
+            t.resume(function(){})
+          }, 10)
+          t.assert(true, "should have been called")
+          return false
+        })
+        $(document.body).on('click', function(){
+          t.refute(true, "the event should have been stopped")
+        })
+
+        t.pause()
+        click(el.get(0))
       },
 
       testOff: function(t){
