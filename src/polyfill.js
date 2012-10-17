@@ -3,11 +3,14 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function(undefined){
-  if (String.prototype.trim === undefined) // fix for iOS 3.2
-    String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') }
+  // fix for iOS 3.2
+  // from https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String/Trim
+  String.prototype.trim = 
+    String.prototype.trim ||
+    function () { return this.replace(/^\s+|\s+$/g,'') }
 
   // For iOS 3.x
-  // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
+  // Adapted from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
   if (Array.prototype.reduce === undefined)
     Array.prototype.reduce = function(fun){
       if(this === void 0 || this === null) throw new TypeError()
