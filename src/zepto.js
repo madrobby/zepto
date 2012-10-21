@@ -564,8 +564,7 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (arguments.length < 2 && typeof property == 'string')
-        return (
-          this[0] && this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
+        return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
       var css = ''
       for (key in property)
