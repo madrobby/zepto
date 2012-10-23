@@ -37,15 +37,15 @@
       delta = now - (touch.last || now)
       touch.el = $(parentIfText(e.touches[0].target))
       touchTimeout && clearTimeout(touchTimeout)
-      touch.x1 = e.touches[0].pageX
-      touch.y1 = e.touches[0].pageY
+      touch.x1 = e.touches[0].pageX - document.body.scrollLeft
+      touch.y1 = e.touches[0].pageY - document.body.scrollTop
       if (delta > 0 && delta <= 250) touch.isDoubleTap = true
       touch.last = now
       longTapTimeout = setTimeout(longTap, longTapDelay)
     }).bind('touchmove', function(e){
       cancelLongTap()
-      touch.x2 = e.touches[0].pageX
-      touch.y2 = e.touches[0].pageY
+      touch.x2 = e.touches[0].pageX - document.body.scrollLeft
+      touch.y2 = e.touches[0].pageY - document.body.scrollTop
     }).bind('touchend', function(e){
        cancelLongTap()
 
