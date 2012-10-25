@@ -202,7 +202,9 @@ var Zepto = (function() {
   zepto.qsa = function(element, selector){
     var found
     if (element === document && idSelectorRE.test(selector)) {
-      return ( (found = element.getElementById(RegExp.$1)) ? [found] : [] )
+      if (found = element.getElementById(RegExp.$1))
+        return [found]
+      return []
     }
     return (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
       slice.call(
