@@ -229,7 +229,9 @@ var Zepto = (function() {
   }
 
   function filtered(nodes, selector) {
-    return selector === undefined ? $(nodes) : $(nodes).filter(selector)
+    if (selector === undefined )
+      return $(nodes)
+    return $(nodes).filter(selector)
   }
 
   $.contains = function(parent, node) {
@@ -237,7 +239,9 @@ var Zepto = (function() {
   }
 
   function funcArg(context, arg, idx, payload) {
-    return isFunction(arg) ? arg.call(context, idx, payload) : arg
+    if (isFunction(arg))
+      return arg.call(context, idx, payload)
+    return arg
   }
 
   function setAttribute(node, name, value) {
@@ -371,7 +375,9 @@ var Zepto = (function() {
       return this
     },
     get: function(idx){
-      return idx === undefined ? slice.call(this) : this[idx]
+      if (idx === undefined)
+        return slice.call(this)
+      return this[idx]
     },
     toArray: function(){ return this.get() },
     size: function(){
