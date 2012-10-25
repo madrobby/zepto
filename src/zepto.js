@@ -78,7 +78,9 @@ var Zepto = (function() {
   }
 
   function maybeAddPx(name, value) {
-    return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value
+    if (typeof value == "number" && !cssNumber[dasherize(name)])
+      return value + "px"
+    return value
   }
 
   function defaultDisplay(nodeName) {
