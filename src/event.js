@@ -179,8 +179,14 @@
   }
 
   var onOffMacro = function(isOn, event, selector, callback, context) {
-    var bind = isOn ? context.bind : context.unbind;
-    var delegate = isOn ? context.delegate : context.undelegate;
+    var bind, delegate
+    if (isOn) {
+      bind = context.bind
+      delegate = context.delegate
+    } else {
+      bind = context.unbind
+      delegate = context.delegate
+    }
     return !selector || $.isFunction(selector) ?
       bind.call(context, event, selector || callback) : delegate.call(context, selector, event, callback)
   }
