@@ -185,7 +185,7 @@
       delegate = context.delegate
     } else {
       bind = context.unbind
-      delegate = context.delegate
+      delegate = context.undelegate
     }
     return !selector || $.isFunction(selector) ?
       bind.call(context, event, selector || callback) : delegate.call(context, selector, event, callback)
@@ -250,7 +250,14 @@
   $.Event = function(type, props) {
     if (typeof type != 'string') props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
-    if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
+    if (props)
+      for (var name in props)
+        if (name == 'bubbles')
+          (bubbles = !!props[name])
+        else
+          (event[name] = props[name])
+    // TODO: this isn't the method signature. WTF
+    // https://developer.mozilla.org/en-US/docs/DOM/event.initEvent
     event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null)
     event.isDefaultPrevented = function(){ return this.defaultPrevented }
     return event
