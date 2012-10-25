@@ -201,9 +201,10 @@ var Zepto = (function() {
   // This method can be overriden in plugins.
   zepto.qsa = function(element, selector){
     var found
-    return (element === document && idSelectorRE.test(selector)) ?
-      ( (found = element.getElementById(RegExp.$1)) ? [found] : [] ) :
-      (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+    if (element === document && idSelectorRE.test(selector)) {
+      return ( (found = element.getElementById(RegExp.$1)) ? [found] : [] )
+    }
+    return (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
       slice.call(
         classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
         tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
