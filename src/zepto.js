@@ -55,8 +55,13 @@ var Zepto = (function() {
   function likeArray(obj) { return typeof obj.length == 'number' }
 
   function compact(array) { return filter.call(array, function(item){ return item !== undefined && item !== null }) }
-  function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function flatten(array) {
+    if (array.length > 0) {
+      return $.fn.concat.apply([], array)
+    }
+    return array
+  }
   function dasherize(str) {
     return str.replace(/::/g, '/')
            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
