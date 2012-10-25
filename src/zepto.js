@@ -209,10 +209,10 @@ var Zepto = (function() {
     if (element.nodeType !== 1 && element.nodeType !== 9)
       return []
     return slice.call(
-        classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
-        tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
-        element.querySelectorAll(selector)
-      )
+      classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
+      tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
+      element.querySelectorAll(selector)
+    )
   }
 
   function filtered(nodes, selector) {
