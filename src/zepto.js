@@ -97,9 +97,14 @@ var Zepto = (function() {
   }
 
   function children(element) {
-    return 'children' in element ?
-      slice.call(element.children) :
-      $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
+    if ('children' in element)
+      return slice.call(element.children)
+    return $.map(
+      element.childNodes,
+      function(node){
+        if (node.nodeType == 1)
+          return node
+      })
   }
 
   // `$.zepto.fragment` takes a html string and an optional tag name
