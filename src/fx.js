@@ -46,9 +46,11 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback){
-    if ($.isObject(duration))
-      ease = duration.easing, callback = duration.complete, duration = duration.duration
-    
+    if ($.isObject(duration)) {
+      ease = duration.easing
+      callback = duration.complete
+      duration = duration.duration
+    }
     if (duration && typeof duration != 'number')
       duration = ($.fx.speeds[duration] || $.fx.speeds._default)
     if (duration)
