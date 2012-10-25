@@ -265,14 +265,21 @@ var Zepto = (function() {
   function deserializeValue(value) {
     var num
     try {
-      return value ?
-        value == "true" ||
-        ( value == "false" ? false :
-          value == "null" ? null :
-          !isNaN(num = Number(value)) ? num :
-          /^[\[\{]/.test(value) ? $.parseJSON(value) :
-          value )
-        : value
+      if (value)
+        if (value == "true")
+          return true
+        else if (value == "false")
+          return false
+        else if (value == "null")
+          return null
+        else if (!isNaN(num = Number(value)))
+          return num
+        else if (/^[\[\{]/.test(value))
+          return $.parseJSON(value)
+        else
+          return value
+      else
+          return value
     } catch(e) {
       return value
     }
