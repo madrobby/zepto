@@ -14,7 +14,12 @@
 
   function dasherize(str) { return downcase(str.replace(/([a-z])([A-Z])/, '$1-$2')) }
   function downcase(str) { return str.toLowerCase() }
-  function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) }
+  function normalizeEvent(name) {
+    if (eventPrefix) {
+      return eventPrefix + name
+    }
+    return downcase(name)
+  }
 
   $.each(vendors, function(vendor, event){
     if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
