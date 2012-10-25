@@ -244,8 +244,15 @@ var Zepto = (function() {
     var klass = node.className,
         svg   = klass && klass.baseVal !== undefined
 
-    if (value === undefined) return svg ? klass.baseVal : klass
-    svg ? (klass.baseVal = value) : (node.className = value)
+    if (value === undefined) {
+      if (svg)
+        return klass.baseVal
+      return klass
+    }
+    if (svg)
+      klass.baseVal = value
+    else
+      node.className = value
   }
 
   // "true"  => true
