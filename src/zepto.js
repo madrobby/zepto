@@ -233,7 +233,10 @@ var Zepto = (function() {
   }
 
   function setAttribute(node, name, value) {
-    value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
+    if (value == null)
+      node.removeAttribute(name)
+    else
+      node.setAttribute(name, value)
   }
 
   // access className property while respecting SVGAnimatedString
