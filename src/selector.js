@@ -67,8 +67,9 @@
       } finally {
         if (taggedParent) taggedParent.removeClass(classTag)
       }
-      return !filter ? nodes :
-        zepto.uniq($.map(nodes, function(n, i){ return filter.call(n, i, nodes, arg) }))
+      if (!filter)
+        return nodes
+      return zepto.uniq($.map(nodes, function(n, i){ return filter.call(n, i, nodes, arg) }))
     })
   }
 
