@@ -206,8 +206,9 @@ var Zepto = (function() {
         return [found]
       return []
     }
-    return (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-      slice.call(
+    if (element.nodeType !== 1 && element.nodeType !== 9)
+      return []
+    return slice.call(
         classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
         tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
         element.querySelectorAll(selector)
