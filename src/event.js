@@ -178,13 +178,18 @@
     return this
   }
 
-  $.fn.on = function(event, selector, callback){
+  var onOffMacro = function(isOn, event, selector, callback, context) {
+    var bind = isOn ? context.bind : context.unbind;
+    var delegate = isOn ? context.delegate : context.undelegate;
     return !selector || $.isFunction(selector) ?
-      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
+      bind.call(context, event, selector || callback) : delegate.call(context, selector, event, callback)
+  }
+
+  $.fn.on = function(event, selector, callback) {
+    return onOffMacro(true, event, selector, callback, this)
   }
   $.fn.off = function(event, selector, callback){
-    return !selector || $.isFunction(selector) ?
-      this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
+    return onOffMacro(false, event, selector, callback, this)
   }
 
   $.fn.trigger = function(event, data){
