@@ -142,10 +142,15 @@
   }
 
   function mimeToDataType(mime) {
-    return mime && ( mime == htmlType ? 'html' :
-      mime == jsonType ? 'json' :
-      scriptTypeRE.test(mime) ? 'script' :
-      xmlTypeRE.test(mime) && 'xml' ) || 'text'
+    if (mime == htmlType)
+      return 'html'
+    else if (mime == jsonType)
+      return 'json'
+    else if (scriptTypeRE.test(mime))
+      return 'script'
+    else if (xmlTypeRE.test(mime))
+      return 'xml'
+    return mime || 'text'
   }
 
   function appendQuery(url, query) {
