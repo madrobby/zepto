@@ -8,12 +8,20 @@
     longTapDelay = 750, longTapTimeout
 
   function parentIfText(node) {
-    return 'tagName' in node ? node : node.parentNode
+    if ('tagName' in node)
+      return node
+    return node.parentNode
   }
 
   function swipeDirection(x1, x2, y1, y2) {
     var xDelta = Math.abs(x1 - x2), yDelta = Math.abs(y1 - y2)
-    return xDelta >= yDelta ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+    if (xDelta >= yDelta)
+      if (x1 - x2) > 0
+        return 'Left'
+      return 'Right'
+    if (y1 - y2) > 0
+      return 'Up'
+    return 'Down'
   }
 
   function longTap() {

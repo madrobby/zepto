@@ -45,16 +45,24 @@
   }
 
   $.fn.data = function(name, value) {
-    return value === undefined ?
+    if (value === undefined) {
       // set multiple values via object
-      $.isPlainObject(name) ?
-        this.each(function(i, node){
-          $.each(name, function(key, value){ setData(node, key, value) })
-        }) :
-        // get value from first element
-        this.length == 0 ? undefined : getData(this[0], name) :
-      // set value on all elements
-      this.each(function(){ setData(this, name, value) })
+      if ($.isPlainObject(name)) {
+        return this.each(function(i, node){
+          $.each(
+            name,
+            function(key, value){
+              setData(node, key, value)
+            })
+        })
+      }
+      // get value from first element
+      if (this.length == 0) {
+        return undefined
+      }
+      return getData(this[0], name)
+    }
+    return this.each(function(){ setData(this, name, value) })
   }
 
   $.fn.removeData = function(names) {

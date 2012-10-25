@@ -14,7 +14,12 @@
 
   function dasherize(str) { return downcase(str.replace(/([a-z])([A-Z])/, '$1-$2')) }
   function downcase(str) { return str.toLowerCase() }
-  function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : downcase(name) }
+  function normalizeEvent(name) {
+    if (eventPrefix) {
+      return eventPrefix + name
+    }
+    return downcase(name)
+  }
 
   $.each(vendors, function(vendor, event){
     if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
@@ -41,10 +46,15 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback){
-    if ($.isObject(duration))
-      ease = duration.easing, callback = duration.complete, duration = duration.duration
-    if (duration) duration = (typeof duration == 'number' ? duration :
-                    ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000
+    if ($.isObject(duration)) {
+      ease = duration.easing
+      callback = duration.complete
+      duration = duration.duration
+    }
+    if (duration && typeof duration != 'number')
+      duration = ($.fx.speeds[duration] || $.fx.speeds._default)
+    if (duration)
+      duration /= 1000
     return this.anim(properties, duration, ease, callback)
   }
 

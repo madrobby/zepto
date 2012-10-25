@@ -55,8 +55,13 @@ var Zepto = (function() {
   function likeArray(obj) { return typeof obj.length == 'number' }
 
   function compact(array) { return filter.call(array, function(item){ return item !== undefined && item !== null }) }
-  function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  function flatten(array) {
+    if (array.length > 0) {
+      return $.fn.concat.apply([], array)
+    }
+    return array
+  }
   function dasherize(str) {
     return str.replace(/::/g, '/')
            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
@@ -67,12 +72,15 @@ var Zepto = (function() {
   uniq = function(array){ return filter.call(array, function(item, idx){ return array.indexOf(item) == idx }) }
 
   function classRE(name) {
-    return name in classCache ?
-      classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
+    if (name in classCache)
+      return classCache[name]
+    return (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
   }
 
   function maybeAddPx(name, value) {
-    return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value
+    if (typeof value == "number" && !cssNumber[dasherize(name)])
+      return value + "px"
+    return value
   }
 
   function defaultDisplay(nodeName) {
@@ -89,9 +97,14 @@ var Zepto = (function() {
   }
 
   function children(element) {
-    return 'children' in element ?
-      slice.call(element.children) :
-      $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
+    if ('children' in element)
+      return slice.call(element.children)
+    return $.map(
+      element.childNodes,
+      function(node){
+        if (node.nodeType == 1)
+          return node
+      })
   }
 
   // `$.zepto.fragment` takes a html string and an optional tag name
@@ -201,18 +214,24 @@ var Zepto = (function() {
   // This method can be overriden in plugins.
   zepto.qsa = function(element, selector){
     var found
-    return (element === document && idSelectorRE.test(selector)) ?
-      ( (found = element.getElementById(RegExp.$1)) ? [found] : [] ) :
-      (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-      slice.call(
-        classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
-        tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
-        element.querySelectorAll(selector)
-      )
+    if (element === document && idSelectorRE.test(selector)) {
+      if (found = element.getElementById(RegExp.$1))
+        return [found]
+      return []
+    }
+    if (element.nodeType !== 1 && element.nodeType !== 9)
+      return []
+    return slice.call(
+      classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
+      tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
+      element.querySelectorAll(selector)
+    )
   }
 
   function filtered(nodes, selector) {
-    return selector === undefined ? $(nodes) : $(nodes).filter(selector)
+    if (selector === undefined )
+      return $(nodes)
+    return $(nodes).filter(selector)
   }
 
   $.contains = function(parent, node) {
@@ -220,11 +239,16 @@ var Zepto = (function() {
   }
 
   function funcArg(context, arg, idx, payload) {
-    return isFunction(arg) ? arg.call(context, idx, payload) : arg
+    if (isFunction(arg))
+      return arg.call(context, idx, payload)
+    return arg
   }
 
   function setAttribute(node, name, value) {
-    value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
+    if (value == null)
+      node.removeAttribute(name)
+    else
+      node.setAttribute(name, value)
   }
 
   // access className property while respecting SVGAnimatedString
@@ -232,8 +256,15 @@ var Zepto = (function() {
     var klass = node.className,
         svg   = klass && klass.baseVal !== undefined
 
-    if (value === undefined) return svg ? klass.baseVal : klass
-    svg ? (klass.baseVal = value) : (node.className = value)
+    if (value === undefined) {
+      if (svg)
+        return klass.baseVal
+      return klass
+    }
+    if (svg)
+      klass.baseVal = value
+    else
+      node.className = value
   }
 
   // "true"  => true
@@ -246,14 +277,21 @@ var Zepto = (function() {
   function deserializeValue(value) {
     var num
     try {
-      return value ?
-        value == "true" ||
-        ( value == "false" ? false :
-          value == "null" ? null :
-          !isNaN(num = Number(value)) ? num :
-          /^[\[\{]/.test(value) ? $.parseJSON(value) :
-          value )
-        : value
+      if (value)
+        if (value == "true")
+          return true
+        else if (value == "false")
+          return false
+        else if (value == "null")
+          return null
+        else if (!isNaN(num = Number(value)))
+          return num
+        else if (/^[\[\{]/.test(value))
+          return $.parseJSON(value)
+        else
+          return value
+      else
+          return value
     } catch(e) {
       return value
     }
@@ -337,7 +375,9 @@ var Zepto = (function() {
       return this
     },
     get: function(idx){
-      return idx === undefined ? slice.call(this) : this[idx]
+      if (idx === undefined)
+        return slice.call(this)
+      return this[idx]
     },
     toArray: function(){ return this.get() },
     size: function(){
@@ -372,10 +412,16 @@ var Zepto = (function() {
           if (!selector.call(this,idx)) nodes.push(this)
         })
       else {
-        var excludes = typeof selector == 'string' ? this.filter(selector) :
-          (likeArray(selector) && isFunction(selector.item)) ? slice.call(selector) : $(selector)
+        var excludes;
+        if (typeof selector == 'string')
+          excludes = this.filter(selector)
+        else if (likeArray(selector) && isFunction(selector.item))
+          excludes =  slice.call(selector)
+        else 
+          excludes = $(selector)
         this.forEach(function(el){
-          if (excludes.indexOf(el) < 0) nodes.push(el)
+          if (excludes.indexOf(el) < 0)
+            nodes.push(el)
         })
       }
       return $(nodes)

@@ -7,7 +7,9 @@
     var gesture = {}, gestureTimeout
 
     function parentIfText(node){
-      return 'tagName' in node ? node : node.parentNode
+      if ('tagName' in node)
+        return node
+      return node.parentNode
     }
 
     $(document).bind('gesturestart', function(e){

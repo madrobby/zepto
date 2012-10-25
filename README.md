@@ -200,6 +200,7 @@ $ script/test test/selector.html
 
 * `function name() { }` for named functions
 * `function(){ }` for anonymous functions
+* Ternary operators should only be used inside return statements, and shouldn't be nested.
 * No curly braces for single-line control flow statements such as `if` & friends
 * Don't write [semicolons that are optional][optional]
 * Put a single semicolon _before_ statements that start with `(` or `[`
