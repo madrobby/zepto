@@ -68,6 +68,34 @@ file 'dist/zepto.min.gz' => 'dist/zepto.min.js' do |task|
   end
 end
 
+file 'dist/zepto.closure.min.js' => 'dist/zepto.js' do |task|
+  verbose false do
+    sh 'java -jar compiler/compiler.jar --js dist/zepto.js --js_output_file dist/zepto.closure.min.js'
+  end
+end
+
+file 'dist/zepto.closure.min.gz' => 'dist/zepto.closure.min.js' do |task|
+  verbose false do
+    tmp_file = task.name.sub('.gz', '')
+    cp task.prerequisites.first, tmp_file
+    sh 'gzip', '--best', tmp_file
+  end
+end
+
+file 'dist/zepto.closure.advanced.min.js' => 'dist/zepto.js' do |task|
+  verbose false do
+    sh 'java -jar compiler/compiler.jar --js dist/zepto.js --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file dist/zepto.closure.advanced.min.js'
+  end
+end
+
+file 'dist/zepto.closure.advanced.min.gz' => 'dist/zepto.closure.advanced.min.js' do |task|
+  verbose false do
+    tmp_file = task.name.sub('.gz', '')
+    cp task.prerequisites.first, tmp_file
+    sh 'gzip', '--best', tmp_file
+  end
+end
+
 desc "Concatenate source files to build zepto.js"
 task :concat, [:modules] do |task, args|
   modules = args[:modules].to_s.split(':')
@@ -79,14 +107,23 @@ task :concat, [:modules] do |task, args|
 end
 
 desc "Generate zepto.js distribution files and report size statistics"
-task :dist => ['dist/zepto.js', 'dist/zepto.min.js', 'dist/zepto.min.gz'] do |task|
-  orig_size, min_size, gz_size = task.prerequisites.map {|f| File.size(f) }
+task :dist => ['dist/zepto.js', 'dist/zepto.min.js', 'dist/zepto.min.gz', 'dist/zepto.closure.min.js', 'dist/zepto.closure.min.gz', 'dist/zepto.closure.advanced.min.js', 'dist/zepto.closure.advanced.min.gz'] do |task|
+  orig_size, uglified_size, uglified_gz_size, closured_size, closured_gz_size, advanced_size, advanced_gz_size = task.prerequisites.map {|f| File.size(f) }
 
   puts "Original version: %.3fk" % (orig_size.to_f / KILO)
-  puts "Minified: %.3fk" % (min_size.to_f / KILO)
-  puts "Minified and gzipped: %.3fk, compression factor %.3f" % [gz_size.to_f / KILO, orig_size.to_f / gz_size]
+  
+  puts "Uglified: %.3fk" % (uglified_size.to_f / KILO)
+  puts "Uglified then gzipped: %.3fk, compression factor %.3f" % [uglified_gz_size.to_f / KILO, orig_size.to_f / uglified_gz_size]
+
+  puts "Closured: %.3fk" % (closured_size.to_f / KILO)
+  puts "Closured then gzipped: %.3fk, compression factor %.3f" % [closured_gz_size.to_f / KILO, orig_size.to_f / closured_gz_size]
+
+  puts "AClosure: %.3fk [unstable]" % (advanced_size.to_f / KILO)
+  puts "AClosure then gzipped: %.3fk, compression factor %.3f [unstable]" % [advanced_gz_size.to_f / KILO, orig_size.to_f / advanced_gz_size]
 
   rm_f 'dist/zepto.min.gz', :verbose => false
+  rm_f 'dist/zepto.closure.min.gz', :verbose => false
+  rm_f 'dist/zepto.closure.advanced.min.gz', :verbose => false
 end
 
 desc "List available modules"
