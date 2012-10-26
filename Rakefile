@@ -55,7 +55,7 @@ file 'dist/zepto.min.js' => 'dist/zepto.js' do |task|
   rescue LoadError; fail "Uglifier not available: #{$!}"
   else
     File.open(task.name, 'w') do |min|
-      min << Uglifier.new.compile(File.read(task.prerequisites.first))
+      min << Uglifier.new(:lift_vars => true).compile(File.read(task.prerequisites.first))
     end
   end
 end
