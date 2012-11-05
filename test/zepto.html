@@ -698,6 +698,18 @@
         t.assertEqual(2, index)
       },
 
+      testEachBreak: function(t){
+        var index, tagnames = []
+        $('#eachtest > *').each(function(idx, el){
+          index = idx
+          t.assertIdentical(el, this)
+          tagnames.push(el.tagName.toUpperCase())
+          if (idx == 1) return false
+        })
+        t.assertEqual('SPAN, B', tagnames.join(', '))
+        t.assertEqual(1, index)
+      },
+
       testMap: function(t){
         var results = $('#eachtest > *').map(function(idx, el) {
           t.assertIdentical(el, this)
