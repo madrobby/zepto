@@ -350,10 +350,7 @@ var Zepto = (function() {
       })
     },
     each: function(callback){
-      emptyArray.every.call(this, function(el, idx){
-        if (callback.call(el, idx, el) === false) return false
-        else return true
-      })
+      emptyArray.every.call(this, function(el, idx){ return callback.call(el, idx, el) !== false })
       return this
     },
     filter: function(selector){
