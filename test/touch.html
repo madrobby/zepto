@@ -213,10 +213,11 @@
       },
 
       testSwipe: function(t){
-        var swipeCount = 0, element = $('#test').get(0)
+        var swipeCount = 0, element = $('#test').get(0), touchObject = {};
 
-        $('#test').on('swipe', function(){
+        $('#test').on('swipe', function(e, touch){
           swipeCount++
+          touchObject = touch
         })
 
         down(element, 10, 10)
@@ -232,6 +233,9 @@
             setTimeout(function(){
               t.resume(function(){
                 t.assertEqual(1, swipeCount)
+                t.assertEqual(
+                  [10, 10, 70, 10].join(','),
+                  [touchObject.x1, touchObject.y1, touchObject.x2, touchObject.y2].join(','))
               })
             }, 50)
           })
