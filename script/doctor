@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -rubygems
+#!/usr/bin/env ruby
 require 'set'
 require 'rbconfig'
 
@@ -13,6 +13,8 @@ def req file
     false
   end
 end
+
+req 'rubygems'
 
 missing << 'rdiscount'        unless req('rdiscount')
 missing << 'guard'            unless req('guard')

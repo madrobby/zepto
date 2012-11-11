@@ -1,5 +1,12 @@
-#!/usr/bin/env ruby -rubygems
-require 'jekyll/live_site'
+#!/usr/bin/env ruby
+begin
+  require 'jekyll/live_site'
+rescue LoadError
+  unless defined? Gem
+    require 'rubygems'
+    retry
+  end
+end
 
 options = Jekyll.configuration('safe' => true)
 site = Jekyll::LiveSite.new(options)
