@@ -486,6 +486,13 @@
         t.assertEqual('Hello', zepto.attr('text'))
       },
 
+      testDollarWithAttributesAndExistingText: function(t){
+        var zepto = $('<a>link text</a>', { href: "http://zeptojs.com" })
+        t.assertLength(1, zepto)
+        t.assertEqual('http://zeptojs.com', zepto.attr('href'))
+        t.assertEqual('link text', zepto.attr('text'))
+      },
+
       testGetWithoutIndex: function(t){
         var zepto = $('#find1 .findme')
         var array = zepto.get()
