@@ -3,7 +3,7 @@
 Zepto is a minimalist JavaScript library for modern browsers with a
 largely jQuery-compatible API. If you use jQuery, you already know how to use Zepto.
 
-See [zeptojs.com](http://zeptojs.com) for an extended introduction, downloads
+See [zeptojs.com][] for an extended introduction, downloads
 and documentation.
 
 Zepto.js is licensed under the terms of the MIT License.
@@ -164,6 +164,16 @@ Get in touch:
 * IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
 * @[zeptojs](http://twitter.com/zeptojs)
 
+### Write documentation
+
+Zepto docs are written in Markdown and live in the ["gh-pages" branch][docs].
+They are published on [zeptojs.com][].
+
+You can use GitHub's web interface to make quick changes to documentation for
+specific Zepto features
+([example: ajaxSettings](https://github.com/madrobby/zepto/blob/gh-pages/ajax/_posts/1900-01-01-Z-ajaxSettings.md)).
+This will submit a pull request to us that we can review.
+
 ### Report a bug
 
 1. Check if the bug is already fixed in the [master branch][master] since the
@@ -209,8 +219,10 @@ $ script/test test/selector.html
 * Use comments to describe non-obvious code behavior
 
 
+  [zeptojs.com]: http://zeptojs.com
   [master]: https://github.com/madrobby/zepto/commits/master
   [issues]: https://github.com/madrobby/zepto/issues
+  [docs]: https://github.com/madrobby/zepto/tree/gh-pages#readme
   [mkd]: http://github.github.com/github-flavored-markdown/
   [evidence.js]: https://github.com/tobie/Evidence
   [optional]: http://mislav.uniqpath.com/2010/05/semicolons/
