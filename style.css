@@ -191,6 +191,7 @@ article.method .version {
   margin: 0 0 0 5px;
   font-weight: normal;
   border-radius: 3px;
+  cursor: default;
 }
 
 article.changelog h3 small { font-weight: normal }

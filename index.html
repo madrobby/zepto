@@ -318,6 +318,12 @@ document.write('<script src=' +
       .replace(/\)([^()]+)$/mg, ') <span class=return>$1</span>')
   })
 
+  $(document).on('mouseover', 'span.version', function(){
+    var el = $(this)
+    if (!el.attr('title'))
+      el.attr('title', "This feature is only available in Zepto " + el.text())
+  })
+
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
 
