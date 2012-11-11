@@ -480,6 +480,12 @@
         t.assertTrue($({ a:true })[0].a)
       },
 
+      testDollarWithAttributes: function(t){
+        var zepto = $('<p>', { text: "Hello" })
+        t.assertLength(1, zepto)
+        t.assertEqual('hello', zepto.attr('text'))
+      },
+
       testGetWithoutIndex: function(t){
         var zepto = $('#find1 .findme')
         var array = zepto.get()
