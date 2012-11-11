@@ -163,6 +163,7 @@ Get in touch:
 
 * IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
 * @[zeptojs](http://twitter.com/zeptojs)
+* Submit documentation patches on the [gh-pages branch](tree/gh-pages)
 
 ### Report a bug
 
@@ -174,8 +175,8 @@ Get in touch:
 
 ### Running tests
 
-Zepto test suite is in "test/\*.html" files. Open the individual files in a web
-browser to run the tests. Files named with "\_functional" are not automated
+Zepto's test suite is in `test/\*.html` files. Open the individual files in a web
+browser to run the tests. Files named with `\_functional` are not automated
 tests, but require interaction. Automated tests are written using
 [Evidence.js][].
 
