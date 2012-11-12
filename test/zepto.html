@@ -608,6 +608,13 @@
         t.assertEqual('red', el.css('color'))
       },
 
+      testDollarAFragmentWithProperties: function(t){
+        var zepto = $('<a>Goodbye</a>', { text: "Hello", href: "http://zepto.com" })
+        t.assertLength(1, zepto)
+        t.assertEqual('Hello', zepto.text())
+        t.assertEqual('http://zepto.com', zepto.attr("href"))
+      },
+
       testDollarWithTextNode: function(t){
         var textNode = $(document.createTextNode('hi there'))
         t.assertLength(1, textNode)
