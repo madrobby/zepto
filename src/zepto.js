@@ -552,7 +552,19 @@ var Zepto = (function() {
           this.value = funcArg(this, value, idx, this.value)
         })
     },
-    offset: function(){
+    offset: function(coordinates){
+      if (coordinates) return this.each(function(index){
+        var $this = $(this),
+            coords = funcArg(this, coordinates, index, $this.offset()),
+            parentOffset = $this.offsetParent().offset(),
+            props = {
+              top:  coords.top  - parentOffset.top,
+              left: coords.left - parentOffset.left
+            }
+
+        if ($this.css('position') == 'static') props['position'] = 'relative'
+        $this.css(props)
+      })
       if (this.length==0) return null
       var obj = this[0].getBoundingClientRect()
       return {
