@@ -670,6 +670,9 @@ var Zepto = (function() {
     }
   }
 
+  // for now
+  $.fn.detach = $.fn.remove
+
   // Generate the `width` and `height` functions
   ;['width', 'height'].forEach(function(dimension){
     $.fn[dimension] = function(value){
