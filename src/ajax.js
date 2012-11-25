@@ -211,7 +211,7 @@
           if (error) ajaxError(error, 'parsererror', xhr, settings)
           else ajaxSuccess(result, xhr, settings)
         } else {
-          ajaxError(null, 'error', xhr, settings)
+          ajaxError(null, xhr.status ? 'error' : 'abort', xhr, settings)
         }
       }
     }
