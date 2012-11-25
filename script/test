@@ -1,2 +1,2 @@
 #!/bin/sh
-phantomjs test/runner.coffee "$@"
+exec phantomjs test/runner.coffee "$@"
