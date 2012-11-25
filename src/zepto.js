@@ -54,7 +54,7 @@ var Zepto = (function() {
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
-  function compact(array) { return filter.call(array, function(item){ return item !== undefined && item !== null }) }
+  function compact(array) { return filter.call(array, function(item){ return item != null }) } /* Note: null and undefined are == equal */
   function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
   camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
   function dasherize(str) {
@@ -534,7 +534,7 @@ var Zepto = (function() {
     },
     prop: function(name, value){
       return (value === undefined) ?
-        (this[0] ? this[0][name] : undefined) :
+        (this[0] && this[0][name]) :
         this.each(function(idx){
           this[name] = funcArg(this, value, idx, this[name])
         })
@@ -576,10 +576,7 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (arguments.length < 2 && typeof property == 'string')
-        return (
-          this.length == 0
-            ? undefined
-            : this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
+        return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
       var css = ''
       for (key in property)
