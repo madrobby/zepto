@@ -933,6 +933,8 @@
       testOffset: function(t){
         // TODO
         t.assertNull($('#doesnotexist').offset())
+        var el = $('#some_element')
+        t.assertIdentical(el, el.offset({}))
       },
 
       testWidth: function(t){
@@ -1412,7 +1414,7 @@
 
       testHtml: function(t){
         var div = $('div.htmltest')
-        div.html('yowza')
+        t.assertIdentical(div, div.html('yowza'))
 
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
         t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML)
@@ -1944,31 +1946,12 @@
         }
       },
 
-      testRemove: function (t) {
-        var newElement1 = $('<div id="some_new_element_1" />')
-
-        newElement1
-          .appendTo('body')
-          .remove()
-
-        t.assertEqual( $('#some_new_element_1').length, 0 )
-
-        //
-
-        var newElement2 = $('<div id="some_new_element_2" />'),
-            errorRaised = false
-
-        newElement2.appendTo('body')
-
-        $('#some_new_element_2').remove()
-
-        try {
-          newElement2.remove()
-        } catch (e) {
-          errorRaised = true
-        }
-
-        t.assert(!errorRaised)
+      testRemove: function(t) {
+        var el = $('<div>').appendTo(document.body)
+        t.assertLength(1, el.parent())
+        t.assertIdentical(el, el.remove())
+        t.assertLength(0, el.parent())
+        t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
       },
 
       testAddRemoveClass: function(t){
