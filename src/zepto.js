@@ -600,8 +600,9 @@ var Zepto = (function() {
       return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0])
     },
     hasClass: function(name){
-      if (this.length < 1) return false
-      else return classRE(name).test(className(this[0]))
+      return emptyArray.some.call(this, function(el){
+        return this.test(className(el))
+      }, classRE(name))
     },
     addClass: function(name){
       return this.each(function(idx){

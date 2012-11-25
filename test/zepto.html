@@ -2003,15 +2003,20 @@
       },
 
       testHasClass: function(t){
-        var el = $('#some_element').get(0)
-        $('#some_element').addClass('green')
+        var el = $('#some_element')
+        el.addClass('green')
 
-        t.assert($('#some_element').hasClass('green'))
-        t.assert(!$('#some_element').hasClass('orange'))
+        t.assert(el.hasClass('green'))
+        t.assert(!el.hasClass('orange'))
 
-        $('#some_element').addClass('orange')
-        t.assert($('#some_element').hasClass('green'))
-        t.assert($('#some_element').hasClass('orange'))
+        el.addClass('orange')
+        t.assert(el.hasClass('green'))
+        t.assert(el.hasClass('orange'))
+
+        el = $(document.body)
+        t.assert(!el.hasClass('orange'), "body shouldn't have the class")
+        el = el.add('#some_element')
+        t.assert(el.hasClass('orange'), "an element in collection has the class")
       },
 
       testHasClassEmpty: function(t){
