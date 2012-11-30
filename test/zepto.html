@@ -2040,6 +2040,16 @@
         t.assert(!$('#toggle_element').hasClass('green'))
         t.assert(!$('#toggle_element').hasClass('orange'))
 
+        el.className = ''
+        $(el).toggleClass('orange green')
+        t.assert($(el).hasClass('orange'))
+        t.assert($(el).hasClass('green'))
+        $(el).toggleClass('orange green blue')
+        t.assert(!$(el).hasClass('orange'))
+        t.assert(!$(el).hasClass('green'))
+        t.assert($(el).hasClass('blue'))
+        el.className = ''
+
         $('#toggle_element').toggleClass('orange', false)
         t.assert(!$('#toggle_element').hasClass('orange'))
 
