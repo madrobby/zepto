@@ -626,9 +626,11 @@ var Zepto = (function() {
     },
     toggleClass: function(name, when){
       return this.each(function(idx){
-        var newName = funcArg(this, name, idx, className(this))
-        ;(when === undefined ? !$(this).hasClass(newName) : when) ?
-          $(this).addClass(newName) : $(this).removeClass(newName)
+        var newName = funcArg(this, name, idx, className(this));
+        newName.split(/\s+/g).forEach(function(klass){
+          (when === undefined ? !$(this).hasClass(klass) : when) ?
+            $(this).addClass(klass) : $(this).removeClass(klass)
+        }, this)
       })
     },
     scrollTop: function(){
