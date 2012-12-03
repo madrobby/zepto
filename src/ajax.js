@@ -181,7 +181,7 @@
     var mime = settings.accepts[dataType],
         baseHeaders = { },
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
-        xhr = $.ajaxSettings.xhr(), abortTimeout
+        xhr = settings.xhr(), abortTimeout
 
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
     if (mime) {
