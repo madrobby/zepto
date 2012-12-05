@@ -492,7 +492,9 @@
         var zepto = $('#find1 .findme')
         var outofbounds = zepto.get(zepto.size())
         t.assertEqual(zepto.get(0), zepto[0])
+        t.assertEqual(zepto.get(-1), zepto[zepto.length - 1])
         t.assertUndefined(outofbounds)
+
       },
 
       testSize: function(t){
