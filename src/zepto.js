@@ -337,7 +337,7 @@ var Zepto = (function() {
       return this
     },
     get: function(idx){
-      return idx === undefined ? slice.call(this) : this[idx]
+      return idx === undefined ? slice.call(this) : this[idx >= 0 ? idx : idx + this.length]
     },
     toArray: function(){ return this.get() },
     size: function(){
