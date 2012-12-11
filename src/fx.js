@@ -49,7 +49,7 @@
   }
 
   $.fn.anim = function(properties, duration, ease, callback){
-    var key, cssValues = {}, cssProperties, transforms = '',
+    var key, cssValues = {}, cssProperties, noTransitionEnd = false, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd
 
     if (duration === undefined) duration = 0.4
@@ -65,10 +65,22 @@
       cssProperties = []
       // CSS transitions
       for (key in properties)
-        if (supportedTransforms.test(key)) transforms += key + '(' + properties[key] + ') '
-        else cssValues[key] = properties[key], cssProperties.push(dasherize(key))
+        if (supportedTransforms.test(key)) {
+          transforms += key + '(' + properties[key] + ') '
+        }else {
+          cssValues[key] = properties[key], cssProperties.push(dasherize(key))
+          if (properties[key] == this.css(key) && !noTransitionEnd) {
+              noTransitionEnd = true
+          }
+        }
 
-      if (transforms) cssValues[transform] = transforms, cssProperties.push(transform)
+      if (transforms) {
+        cssValues[transform] = transforms, cssProperties.push(transform)
+        if (properties[key] == this.css(key) && !noTransitionEnd) {
+            noTransitionEnd = true
+        }
+      }
+
       if (duration > 0 && typeof properties === 'object') {
         cssValues[transitionProperty] = cssProperties.join(', ')
         cssValues[transitionDuration] = duration + 's'
@@ -84,19 +96,23 @@
       $(this).css(cssReset)
       callback && callback.call(this)
     }
-    if (duration > 0) this.bind(endEvent, wrappedCallback)
+    if (duration > 0 && !noTransitionEnd) {
+      this.bind(endEvent, wrappedCallback)
+    }else {
+      setTimeout(function() {
+        that.each(function(){ wrappedCallback.call(this) })
+      }, 0)
+    }
 
     // trigger page reflow so new elements can animate
     this.size() && this.get(0).clientLeft
 
     this.css(cssValues)
 
-    if (duration <= 0) setTimeout(function() {
-      that.each(function(){ wrappedCallback.call(this) })
-    }, 0)
 
     return this
   }
 
   testEl = null
 })(Zepto)
+
