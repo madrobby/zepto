@@ -2021,66 +2021,63 @@
       },
 
       testToggleClass: function(t){
-        var el = $('#toggle_element').get(0)
-        $('#toggle_element').toggleClass('green')
+        var el = $('#toggle_element').removeClass()
 
-        t.assert($('#toggle_element').hasClass('green'))
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        t.assertIdentical(el, el.toggleClass('green'))
+        t.assertTrue(el.hasClass('green'))
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange')
-        t.assert($('#toggle_element').hasClass('green'))
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange')
+        t.assertTrue(el.hasClass('green'))
+        t.assertTrue(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('green')
+        el.toggleClass('green')
+        t.assertFalse(el.hasClass('green'))
+        t.assertTrue(el.hasClass('orange'))
 
-        t.assert(!$('#toggle_element').hasClass('green'))
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange')
+        t.assertFalse(el.hasClass('green'))
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange')
-        t.assert(!$('#toggle_element').hasClass('green'))
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange green')
+        t.assertTrue(el.hasClass('orange'))
+        t.assertTrue(el.hasClass('green'))
 
-        el.className = ''
-        $(el).toggleClass('orange green')
-        t.assert($(el).hasClass('orange'))
-        t.assert($(el).hasClass('green'))
-        $(el).toggleClass('orange green blue')
-        t.assert(!$(el).hasClass('orange'))
-        t.assert(!$(el).hasClass('green'))
-        t.assert($(el).hasClass('blue'))
-        el.className = ''
+        el.toggleClass('orange green blue')
+        t.assertFalse(el.hasClass('orange'))
+        t.assertFalse(el.hasClass('green'))
+        t.assertTrue(el.hasClass('blue'))
 
-        $('#toggle_element').toggleClass('orange', false)
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.removeClass()
 
-        $('#toggle_element').toggleClass('orange', false)
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange', false)
+        t.assertFalse(el.hasClass('orange'))
+        el.toggleClass('orange', false)
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange', true)
-        t.assert($('#toggle_element').hasClass('orange'))
-
-        $('#toggle_element').toggleClass('orange', true)
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange', true)
+        t.assertTrue(el.hasClass('orange'))
+        el.toggleClass('orange', true)
+        t.assertTrue(el.hasClass('orange'))
 
         //function argument
-        $('#toggle_element').toggleClass(function(idx,classes){
-          //test the value of "this"
-          t.assertEqualCollection($('#toggle_element'), $(this))
+        el.toggleClass(function(idx,classes){
+          t.assertIdentical(el.get(0), this)
           //test original classes are being passed
           t.assertEqual('orange', this.className)
           return "brown"
         })
-        t.assert($('#toggle_element').hasClass('brown'))
+        t.assertTrue(el.hasClass('brown'))
 
-        $('#toggle_element').toggleClass(function(idx,classes){
+        el.toggleClass(function(idx,classes){
           return "yellow"
-        },false)
-        t.assert(!$('#toggle_element').hasClass('yellow'))
+        }, false)
+        t.assertFalse(el.hasClass('yellow'))
 
-        $('#toggle_element').toggleClass(function(idx,classes){
+        el.toggleClass(function(idx,classes){
           return "yellow"
-        },true)
-        t.assert($('#toggle_element').hasClass('yellow'))
+        }, true)
+        t.assert(el.hasClass('yellow'))
       },
 
       testClassSVG: function(t){
