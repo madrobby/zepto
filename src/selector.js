@@ -52,15 +52,15 @@
 
   zepto.qsa = function(node, selector) {
     return process(selector, function(sel, filter, arg){
+      var taggedParent, nodes
       try {
-        var taggedParent
         if (!sel && filter) sel = '*'
         else if (childRe.test(sel))
           // support "> *" child queries by tagging the parent node with a
           // unique class and prepending that classname onto the selector
           taggedParent = $(node).addClass(classTag), sel = '.'+classTag+' '+sel
 
-        var nodes = oldQsa(node, sel)
+        nodes = oldQsa(node, sel)
       } catch(e) {
         console.error('error performing selector: %o', selector)
         throw e
