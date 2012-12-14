@@ -79,7 +79,7 @@
     wrappedCallback = function(event){
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
-        $(event.target).unbind(endEvent, arguments.callee)
+        $(event.target).unbind(endEvent, wrappedCallback)
       }
       $(this).css(cssReset)
       callback && callback.call(this)
