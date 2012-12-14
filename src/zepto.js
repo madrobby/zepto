@@ -413,14 +413,14 @@ var Zepto = (function() {
       return $(node)
     },
     parents: function(selector){
-      var ancestors = [], nodes = this
+      var ancestors = [], nodes = this, parentsHelper = function(node){
+        if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
+          ancestors.push(node)
+          return node
+        }
+      }
       while (nodes.length > 0)
-        nodes = $.map(nodes, function(node){
-          if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
-            ancestors.push(node)
-            return node
-          }
-        })
+        nodes = $.map(nodes, parentsHelper)
       return filtered(ancestors, selector)
     },
     parent: function(selector){
@@ -581,10 +581,10 @@ var Zepto = (function() {
       if (arguments.length < 2 && typeof property == 'string')
         return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
-      var css = ''
+      var css = '', remHelper = function(){ this.style.removeProperty(dasherize(key)) }
       for (var key in property)
         if (!property[key] && property[key] !== 0)
-          this.each(function(){ this.style.removeProperty(dasherize(key)) })
+          this.each(remHelper)
         else
           css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
 
