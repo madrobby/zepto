@@ -6,7 +6,7 @@
   if ($.os.ios) {
     var gesture = {}, gestureTimeout
 
-    function parentIfText(node){
+    var parentIfText = function(node){
       return 'tagName' in node ? node : node.parentNode
     }
 
