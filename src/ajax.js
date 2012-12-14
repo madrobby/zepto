@@ -6,8 +6,6 @@
   var jsonpID = 0,
       isObject = $.isObject,
       document = window.document,
-      key,
-      name,
       rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
       scriptTypeRE = /^(?:text|application)\/javascript/i,
       xmlTypeRE = /^(?:text|application)\/xml/i,
@@ -162,7 +160,7 @@
 
   $.ajax = function(options){
     var settings = $.extend({}, options || {})
-    for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
+    for (var key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
 
@@ -220,7 +218,7 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
+    for (var name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
 
     if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort()
