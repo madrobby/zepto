@@ -521,7 +521,7 @@ var Zepto = (function() {
     attr: function(name, value){
       var result
       return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
+        (this.length === 0 || this[0].nodeType !== 1 ? undefined :
           (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
@@ -568,7 +568,7 @@ var Zepto = (function() {
         if ($this.css('position') == 'static') props['position'] = 'relative'
         $this.css(props)
       })
-      if (this.length==0) return null
+      if (this.length === 0) return null
       var obj = this[0].getBoundingClientRect()
       return {
         left: obj.left + window.pageXOffset,
@@ -710,7 +710,7 @@ var Zepto = (function() {
         parent = inside ? target : target.parentNode
 
         // convert all methods to a "before" operation
-        target = operatorIndex == 0 ? target.nextSibling :
+        target = operatorIndex === 0 ? target.nextSibling :
                  operatorIndex == 1 ? target.firstChild :
                  operatorIndex == 2 ? target :
                  null
