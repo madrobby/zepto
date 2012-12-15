@@ -6,7 +6,7 @@
   if ($.os.ios) {
     var gesture = {}, gestureTimeout
 
-    function parentIfText(node){
+    var parentIfText = function(node){
       return 'tagName' in node ? node : node.parentNode
     }
 
@@ -20,7 +20,7 @@
       gesture.e2 = e.scale
     }).bind('gestureend', function(e){
       if (gesture.e2 > 0) {
-        Math.abs(gesture.e1 - gesture.e2) != 0 && $(gesture.target).trigger('pinch') &&
+        Math.abs(gesture.e1 - gesture.e2) !== 0 && $(gesture.target).trigger('pinch') &&
           $(gesture.target).trigger('pinch' + (gesture.e1 - gesture.e2 > 0 ? 'In' : 'Out'))
         gesture.e1 = gesture.e2 = gesture.last = 0
       } else if ('last' in gesture) {

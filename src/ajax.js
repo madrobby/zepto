@@ -6,8 +6,6 @@
   var jsonpID = 0,
       isObject = $.isObject,
       document = window.document,
-      key,
-      name,
       rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
       scriptTypeRE = /^(?:text|application)\/javascript/i,
       xmlTypeRE = /^(?:text|application)\/xml/i,
@@ -162,7 +160,7 @@
 
   $.ajax = function(options){
     var settings = $.extend({}, options || {})
-    for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
+    for (var key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
 
@@ -198,11 +196,12 @@
         xhr.onreadystatechange = empty;
         clearTimeout(abortTimeout)
         var result, error = false
-        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status === 0 && protocol == 'file:')) {
           dataType = dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
           result = xhr.responseText
 
           try {
+            // http://perfectionkills.com/global-eval-what-are-the-options/
             if (dataType == 'script')    (1,eval)(result)
             else if (dataType == 'xml')  result = xhr.responseXML
             else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
@@ -219,7 +218,7 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
+    for (var name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
 
     if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort()

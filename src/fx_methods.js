@@ -63,7 +63,7 @@
     return this.each(function(){
       var el = $(this)
       el[
-        (el.css('opacity') == 0 || el.css('display') == 'none') ? 'fadeIn' : 'fadeOut'
+        (el.css('opacity') === 0 || el.css('display') == 'none') ? 'fadeIn' : 'fadeOut'
       ](speed, callback)
     })
   }

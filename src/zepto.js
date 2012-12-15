@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
+  var undefined, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
     document = window.document,
     elementDisplay = {}, classCache = {},
     getComputedStyle = document.defaultView.getComputedStyle,
@@ -125,7 +125,7 @@ var Zepto = (function() {
   // Explorer. This method can be overriden in plugins.
   zepto.Z = function(dom, selector) {
     dom = dom || []
-    dom.__proto__ = arguments.callee.prototype
+    dom.__proto__ = $.fn
     dom.selector = selector || ''
     return dom
   }
@@ -176,7 +176,7 @@ var Zepto = (function() {
   }
 
   function extend(target, source, deep) {
-    for (key in source)
+    for (var key in source)
       if (deep && isPlainObject(source[key])) {
         if (!isPlainObject(target[key])) target[key] = {}
         extend(target[key], source[key], deep)
@@ -413,14 +413,14 @@ var Zepto = (function() {
       return $(node)
     },
     parents: function(selector){
-      var ancestors = [], nodes = this
+      var ancestors = [], nodes = this, parentsHelper = function(node){
+        if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
+          ancestors.push(node)
+          return node
+        }
+      }
       while (nodes.length > 0)
-        nodes = $.map(nodes, function(node){
-          if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
-            ancestors.push(node)
-            return node
-          }
-        })
+        nodes = $.map(nodes, parentsHelper)
       return filtered(ancestors, selector)
     },
     parent: function(selector){
@@ -521,13 +521,13 @@ var Zepto = (function() {
     attr: function(name, value){
       var result
       return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
+        (this.length === 0 || this[0].nodeType !== 1 ? undefined :
           (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
           if (this.nodeType !== 1) return
-          if (isObject(name)) for (key in name) setAttribute(this, key, name[key])
+          if (isObject(name)) for (var key in name) setAttribute(this, key, name[key])
           else setAttribute(this, name, funcArg(this, value, idx, this.getAttribute(name)))
         })
     },
@@ -568,7 +568,7 @@ var Zepto = (function() {
         if ($this.css('position') == 'static') props['position'] = 'relative'
         $this.css(props)
       })
-      if (this.length==0) return null
+      if (this.length === 0) return null
       var obj = this[0].getBoundingClientRect()
       return {
         left: obj.left + window.pageXOffset,
@@ -581,10 +581,10 @@ var Zepto = (function() {
       if (arguments.length < 2 && typeof property == 'string')
         return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
-      var css = ''
-      for (key in property)
+      var css = '', remHelper = function(){ this.style.removeProperty(dasherize(key)) }
+      for (var key in property)
         if (!property[key] && property[key] !== 0)
-          this.each(function(){ this.style.removeProperty(dasherize(key)) })
+          this.each(remHelper)
         else
           css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
 
@@ -710,7 +710,7 @@ var Zepto = (function() {
         parent = inside ? target : target.parentNode
 
         // convert all methods to a "before" operation
-        target = operatorIndex == 0 ? target.nextSibling :
+        target = operatorIndex === 0 ? target.nextSibling :
                  operatorIndex == 1 ? target.firstChild :
                  operatorIndex == 2 ? target :
                  null
