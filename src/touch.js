@@ -43,6 +43,7 @@
 
     $(document.body)
       .bind('touchstart', function(e){
+        e = e.originalEvent || e
         now = Date.now()
         delta = now - (touch.last || now)
         touch.el = $(parentIfText(e.touches[0].target))
@@ -54,6 +55,7 @@
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
       .bind('touchmove', function(e){
+        e = e.originalEvent || e
         cancelLongTap()
         touch.x2 = e.touches[0].pageX
         touch.y2 = e.touches[0].pageY
