@@ -4,7 +4,6 @@
 
 ;(function($){
   var jsonpID = 0,
-      isObject = $.isObject,
       document = window.document,
       key,
       name,
@@ -154,7 +153,7 @@
 
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
-    if (options.processData && isObject(options.data))
+    if (options.processData && options.data && $.type(options.data) != "string")
       options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data)
@@ -264,13 +263,14 @@
   var escape = encodeURIComponent
 
   function serialize(params, obj, traditional, scope){
-    var array = $.isArray(obj)
+    var type, array = $.isArray(obj)
     $.each(obj, function(key, value) {
+      type = $.type(value)
       if (scope) key = traditional ? scope : scope + '[' + (array ? '' : key) + ']'
       // handle data in serializeArray() format
       if (!scope && array) params.add(value.name, value.value)
       // recurse into nested objects
-      else if (traditional ? $.isArray(value) : isObject(value))
+      else if (type == "array" || (!traditional && type == "object"))
         serialize(params, value, traditional, key)
       else params.add(key, value)
     })

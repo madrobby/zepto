@@ -41,7 +41,7 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback){
-    if ($.isObject(duration))
+    if ($.isPlainObject(duration))
       ease = duration.easing, callback = duration.complete, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
                     ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000

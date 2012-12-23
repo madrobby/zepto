@@ -269,7 +269,6 @@ var Zepto = (function() {
 
   $.type = type
   $.isFunction = isFunction
-  $.isObject = isObject
   $.isArray = isArray
   $.isPlainObject = isPlainObject
 
