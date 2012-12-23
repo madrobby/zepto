@@ -353,6 +353,14 @@
         t.assertFalse($.isPlainObject(obj), 'function with prototype is not a plain object')
       },
 
+      testIsWindow: function(t){
+        t.assertFalse($.isWindow())
+        t.assertFalse($.isWindow({}))
+        t.assertFalse($.isWindow(document.body))
+        t.assertTrue($.isWindow(window))
+        t.assertTrue($.isWindow($('iframe').get(0).contentWindow))
+      },
+
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
