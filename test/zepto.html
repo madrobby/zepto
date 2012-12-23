@@ -226,6 +226,8 @@
 
   <svg></svg>
 
+  <iframe src="fixtures/iframe_document.html"></iframe>
+
   </div><!-- fixtures -->
 
   <script>
@@ -560,6 +562,20 @@
         var documentFragment = $(document.createDocumentFragment())
         t.assertLength(1, documentFragment)
         t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType)
+      },
+
+      testDollarWithElementInIframe: function(t){
+        var iframe = $('#fixtures iframe').get(0),
+            iframeWin = iframe.contentWindow,
+            iframeDoc = iframe.contentDocument,
+            iframeBody = iframeDoc.body,
+            iframeEl = $(iframeBody).find('b')
+
+        t.assertIdentical(iframeWin, $(iframeWin).get(0))
+        t.assertIdentical(iframeDoc, $(iframeDoc).get(0))
+        t.assertIdentical(iframeBody, $(iframeBody).get(0))
+        t.assertEqual('B', iframeEl.pluck('tagName').join(','))
+        t.assertEqual('Hello from iframe!', iframeEl.text())
       },
 
       testDollarWithFragment: function(t){
@@ -1019,6 +1035,14 @@
 
         expected = [$('#nested').get(0), $('#parents').get(0)]
         t.assertEqualCollection($(expected), $('#li2').parents('ul'))
+      },
+
+      testParentsIframe: function(t){
+        var iframeBody = $('iframe').get(0).contentDocument.body
+        t.assertEqualCollection(
+          [iframeBody, iframeBody.parentNode],
+          $(iframeBody).find('b').first().parents()
+        )
       },
 
       testParent: function(t){
