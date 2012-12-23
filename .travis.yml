@@ -1,3 +1,4 @@
-language: ruby
-rvm: 1.9.3
-script: rake test
+language: node_js
+node_js:
+  - 0.6
+script: script/test
