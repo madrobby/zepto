@@ -1,0 +1,20 @@
+{
+    "name": "zepto"
+  , "version": "1.0.0"
+  , "homepage": "http://zeptojs.com"
+  , "scripts": { "test": "script/test" }
+  , "repository": {
+      "type": "git"
+    , "url": "https://github.com/madrobby/zepto.git"
+  }
+  , "licenses": [
+    {
+        "type": "MIT"
+      , "url": "http://zeptojs.com/license/"
+    }
+  ]
+  , "devDependencies": {
+      "uglify-js": "1.2.6"
+    , "connect": "2.7.1"
+  }
+}

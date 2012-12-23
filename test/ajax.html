@@ -61,9 +61,9 @@
 
       testAjaxPost: function(t){
         t.pause()
-        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
+        var xhr = $.post('echo', function(response){
           deferredResume(t, function(){
-            this.assert(response)
+            this.assert(response.match(/^POST/))
           })
         })
         t.assertIn('abort', xhr)
@@ -94,11 +94,13 @@
 
       testAjaxPostWithAcceptType: function(t) {
         t.pause()
-        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
+        $.post('echo', { sample: 'data' }, function(response) {
           deferredResume(t, function() {
-            this.assert(response)
+            this.assert(response.match(/^content-type: application\/x-www-form-urlencoded$/m))
+            this.assert(response.match(/^accept: text\/plain$/m))
+            this.assert(response.match(/^\{"sample":"data"\}\s*$/m))
           })
-        }, 'text/plain')
+        }, 'text')
       },
 
       testAjaxGetJSON: function(t){

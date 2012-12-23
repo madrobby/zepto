@@ -184,26 +184,36 @@ This will submit a pull request to us that we can review.
 
 ### Running tests
 
+~~~ sh
+# run all tests
+$ script/test
+
+# test individual files
+$ script/test test/zepto.html
+~~~
+
+You will need <b>node</b> and [PhantomJS][]:
+
+~~~ sh
+# install on Mac OS
+$ brew install node phantomjs
+
+# install test prerequisites
+$ npm install
+~~~
+
 Zepto test suite is in "test/\*.html" files. Open the individual files in a web
 browser to run the tests. Files named with "\_functional" are not automated
 tests, but require interaction. Automated tests are written using
 [Evidence.js][].
 
-Detailed test information such as specific failures is logged to the JavaScript
-console of your browser.
-
-It's possible to run automated tests from the command-line in headless Webkit
-with [PhantomJS][]:
+Ajax tests require a running test server. This is handled automatically through
+`script/test`. Alternatively, you can start the server manually:
 
 ~~~ sh
-# install on Mac OS
-$ brew install phantomjs
-
-# run all tests
-$ rake test
-
-# run individual files
-$ script/test test/selector.html
+$ node test/server.js [PORT]
+# Now you can open http://localhost:3000/test/ajax.html in the browser.
+# Terminate the test server with Ctrl-C
 ~~~
 
 

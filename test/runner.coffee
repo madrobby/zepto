@@ -1,15 +1,18 @@
 # Test runner for PhantomJS <phantomjs.org>
 # Usage:
-#   $ phantomjs test/runner.coffee [<page1>, <page2>, ...]
+#   $ phantomjs test/runner.coffee <url-prefix> [<page1>, <page2>, ...]
 #
 # When no test pages specified, runs all automated tests.
 
 system = require('system')
 fs = require('fs')
 
-if system.args.length > 1
+args = system.args.slice(1)
+prefix = args.shift() || "file://#{fs.workingDirectory}/"
+
+if args.length > 0
   # list of test pages to run
-  suites = system.args.slice(1)
+  suites = args
 else
   # by default, run all test/*.html pages
   modules = 'zepto ajax data detect event form fx selector stack'.split /\s+/
@@ -41,7 +44,7 @@ loadNextSuite = ->
   else
     url = suites.shift() + "?verbosity=WARN"
     # PhantomJS chokes on the query string on relative paths
-    url = "file://#{fs.workingDirectory}/#{url}" if not /:\/\//.test url
+    url = prefix + url if not /:\/\//.test url
 
     page.open url, (status) ->
       if status isnt "success"
