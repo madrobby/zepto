@@ -134,6 +134,17 @@
         })
       },
 
+      testAjaxGetJSONPBeforeSendCallback: function(t){
+        t.pause()
+        var xhr = $.ajaxJSONP({
+          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          beforeSend: function() {
+            t.assert(true)
+            deferredResume(t)
+          }
+        })
+      },
+
       testAjaxGetJSONPErrorCallback: function(t){
         t.pause()
         $.ajax({
@@ -143,6 +154,19 @@
           success: function() { t.refute(true) },
           error: function() { t.assert(true) },
           complete: function() { deferredResume(t) }
+        })
+      },
+
+      testAjaxGetJSONPErrorWithoutErrorCallback: function(t){
+        t.pause()
+        $.ajax({
+          type: 'GET',
+          url: 'fixtures/404.js?timestamp='+(+new Date),
+          dataType: 'jsonp',
+          complete: function() {
+            t.assert(true)
+            deferredResume(t)
+          }
         })
       },
 

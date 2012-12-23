@@ -74,32 +74,40 @@
 
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
-      abort = function(){
+      cleanup = function() {
+        clearTimeout(abortTimeout)
         $(script).remove()
-        if (callbackName in window) window[callbackName] = empty
+        delete window[callbackName]
+      },
+      abort = function(){
+        cleanup()
         ajaxComplete('abort', xhr, options)
       },
       xhr = { abort: abort }, abortTimeout
 
-    if (options.error) script.onerror = function() {
-      xhr.abort()
-      options.error()
+    serializeData(options)
+
+    if (ajaxBeforeSend(xhr, options) === false) {
+      ajaxError(null, 'abort', xhr, options)
+      return false
     }
 
     window[callbackName] = function(data){
-      clearTimeout(abortTimeout)
-      $(script).remove()
-      delete window[callbackName]
+      cleanup()
       ajaxSuccess(data, xhr, options)
     }
 
-    serializeData(options)
+    script.onerror = function() {
+      cleanup()
+      ajaxError(null, 'error', xhr, options)
+    }
+
     script.src = options.url.replace(/=\?/, '=' + callbackName)
     $('head').append(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
-        xhr.abort()
-        ajaxComplete('timeout', xhr, options)
+        cleanup()
+        ajaxError(null, 'timeout', xhr, options)
       }, options.timeout)
 
     return xhr
