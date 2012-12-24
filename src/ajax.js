@@ -79,16 +79,19 @@
         $(script).remove()
         delete window[callbackName]
       },
-      abort = function(){
+      abort = function(type){
         cleanup()
-        ajaxComplete('abort', xhr, options)
+        // In case of manual abort or timeout, keep an empty function as callback
+        // so that the SCRIPT tag that eventually loads won't result in an error.
+        if (!type || type == 'timeout') window[callbackName] = empty
+        ajaxError(null, type || 'abort', xhr, options)
       },
       xhr = { abort: abort }, abortTimeout
 
     serializeData(options)
 
     if (ajaxBeforeSend(xhr, options) === false) {
-      ajaxError(null, 'abort', xhr, options)
+      abort('abort')
       return false
     }
 
@@ -97,18 +100,14 @@
       ajaxSuccess(data, xhr, options)
     }
 
-    script.onerror = function() {
-      cleanup()
-      ajaxError(null, 'error', xhr, options)
-    }
+    script.onerror = function() { abort('error') }
 
     script.src = options.url.replace(/=\?/, '=' + callbackName)
     $('head').append(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
-        cleanup()
-        ajaxError(null, 'timeout', xhr, options)
-      }, options.timeout)
+      abort('timeout')
+    }, options.timeout)
 
     return xhr
   }
