@@ -34,12 +34,12 @@
     }
 
     Evidence.Assertions.assertEqualList = function(expected, actual, message) {
-      var expectedList = toArray(expected).join(' '),
-          actualList   = toArray(actual).join(' ')
+      var expectedList = toArray(expected),
+          actualList   = toArray(actual)
 
       this._assertExpression(
-        expectedList == actualList,
-        message || 'Failed assertion.',
+        expectedList.join(' ') == actualList.join(' '),
+        message || "Lists don't match.",
         'Expected %o, got %o.', expectedList, actualList
       )
     }
