@@ -1,5 +1,6 @@
 var connect = require('connect')
   , parse = connect.utils.parseUrl
+  , pause = connect.utils.pause
   , mime  = connect.utils.mime
   , http = require('http')
   , fs   = require('fs')
@@ -23,6 +24,29 @@ var connect = require('connect')
           if (typeof req.body == "string") body += "\n" + req.body
           else if (req.body) body += "\n" + JSON.stringify(req.body)
           res.end(body)
+        }
+        else if (url.pathname == "/test/jsonp") {
+          var name = req.query.callback
+          if (name) {
+            delete req.query.callback
+            var payload = { query: req.query, hello: "world" }
+            res.setHeader('content-type', 'application/javascript')
+            res.end(name + '(' + JSON.stringify(payload) + ')')
+          } else {
+            res.statusCode = 400
+            res.end("FAIL")
+          }
+        }
+        else if (url.pathname == "/test/slow") {
+          var stopped = pause(req)
+          setTimeout(function(){
+            stopped.resume()
+            res.end("DONE")
+          }, 200)
+        }
+        else if (url.pathname == "/test/error") {
+          res.statusCode = 500
+          res.end("BOOM")
         }
         else next()
       })
