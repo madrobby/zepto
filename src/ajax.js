@@ -244,27 +244,44 @@
     return xhr
   }
 
-  $.get = function(url, success){ return $.ajax({ url: url, success: success }) }
+  // handle optional data/success arguments
+  function parseArguments(url, data, success, dataType) {
+    var hasData = !$.isFunction(data)
+    return {
+      url:      url,
+      data:     hasData  ? data : undefined,
+      success:  !hasData ? data : $.isFunction(success) ? success : undefined,
+      dataType: hasData  ? dataType || success : success
+    }
+  }
+
+  $.get = function(url, data, success, dataType){
+    return $.ajax(parseArguments.apply(null, arguments))
+  }
 
   $.post = function(url, data, success, dataType){
-    if ($.isFunction(data)) dataType = dataType || success, success = data, data = null
-    return $.ajax({ type: 'POST', url: url, data: data, success: success, dataType: dataType })
+    var options = parseArguments.apply(null, arguments)
+    options.type = 'POST'
+    return $.ajax(options)
   }
 
-  $.getJSON = function(url, success){
-    return $.ajax({ url: url, success: success, dataType: 'json' })
+  $.getJSON = function(url, data, success){
+    return $.ajax(parseArguments(url, data, success, 'json'))
   }
 
-  $.fn.load = function(url, success){
+  $.fn.load = function(url, data, success){
     if (!this.length) return this
-    var self = this, parts = url.split(/\s/), selector
-    if (parts.length > 1) url = parts[0], selector = parts[1]
-    $.get(url, function(response){
+    var self = this, parts = url.split(/\s/), selector,
+        options = parseArguments(url, data, success),
+        callback = options.success
+    if (parts.length > 1) options.url = parts[0], selector = parts[1]
+    options.success = function(response){
       self.html(selector ?
         $('<div>').html(response.replace(rscript, "")).find(selector)
         : response)
-      success && success.apply(self, arguments)
-    })
+      callback && callback.apply(self, arguments)
+    }
+    $.ajax(options)
     return this
   }
 

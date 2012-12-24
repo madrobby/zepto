@@ -44,6 +44,16 @@
       )
     }
 
+    Evidence.Assertions.assertLine = function(line, string, message) {
+      var lines = string.split("\n")
+
+      this._assertExpression(
+        $.inArray(line, lines) >= 0,
+        message || "Line not found.",
+        'Expected line %s in %s.', line, string
+      )
+    }
+
     var slice = [].slice
 
     function CallbackRegistry(t) {
@@ -128,38 +138,66 @@
             t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess complete ajaxComplete', t.reg.events())
           })
         })
-        t.assertEqual('function', typeof xhr['getResponseHeader'])
+        t.assert($.isFunction(xhr.getResponseHeader))
       },
 
       testAjaxGet: function(t){
         t.pause()
-        var xhr = $.get('fixtures/ajax_load_simple.html', t.reg.resumeHandler('success', function(response){
-          t.assertIdentical(window, t.reg.context('success'))
-          t.assertEqual("simple ajax load\n", response)
+        var xhr = $.get('echo', t.reg.resumeHandler('success', function(response){
+          t.assertIdentical(window, this)
+          t.assertLine("GET ?{}", response)
           t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
         }))
         t.assertIn('abort', xhr)
+      },
+
+      testAjaxGetWithParams: function(t){
+        t.pause()
+        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
+          t.assertLine('GET ?{"sample":"data"}', response)
+          t.assertLine("accept: */*", response)
+        }))
+      },
+
+      testAjaxGetWithParamsAndType: function(t){
+        t.pause()
+        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
+          t.assertLine('GET ?{"sample":"data"}', response)
+          t.assertLine("accept: text/plain", response)
+        }), 'text')
+      },
+
+      testAjaxGetWithParamsAndTypeNoCallback: function(t){
+        t.pause()
+        $(document).on('ajaxSuccess', function(e, xhr, settings, response){
+          deferredResume(t, function(){
+            t.assertLine('GET ?{"sample":"data"}', response)
+            t.assertLine("accept: text/plain", response)
+            t.assertEqualList('ajaxBeforeSend ajaxSend ajaxSuccess ajaxComplete', t.reg.events())
+          })
+        })
+        $.get('echo', { sample: 'data' }, 'text')
       },
 
       testAjaxPost: function(t){
         t.pause()
         var xhr = $.post('echo', t.reg.resumeHandler('success', function(response){
           t.assertIdentical(window, this)
-          t.assert(response.match(/^POST/))
+          t.assertLine("POST ?{}", response)
+          t.assertLine("accept: */*", response)
+          t.assertLine('{}', response)
           t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
         }))
         t.assertIn('abort', xhr)
       },
 
-      testAjaxPostWithAcceptType: function(t) {
+      testAjaxPostWithPayloadAndType: function(t) {
         t.pause()
         var payload = { sample: 'data' }
-        var xhr = $.post('echo', payload, t.reg.resumeHandler('success', function(response){
-          t.assertIdentical(window, this)
-          t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
-          t.assert(response.match(/^content-type: application\/x-www-form-urlencoded$/m))
-          t.assert(response.match(/^accept: text\/plain$/m))
-          t.assert(response.match(/^\{"sample":"data"\}\s*$/m))
+        $.post('echo', payload, t.reg.resumeHandler('success', function(response){
+          t.assertLine("content-type: application/x-www-form-urlencoded", response)
+          t.assertLine("accept: text/plain", response)
+          t.assertLine('{"sample":"data"}', response)
         }), 'text')
       },
 
@@ -181,26 +219,38 @@
           })
 
         t.pause()
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
+        $.ajax({ url: 'echo' })
+        $.ajax({ url: 'echo' })
+        $.ajax({ url: 'echo' })
       },
 
       testAjaxGetJSON: function(t){
         t.pause()
         var xhr = $.getJSON(
-          'fixtures/zepto.json',
+          'json',
           t.reg.resumeHandler('success', function(data){
-            t.assertEqual('awesomeness', data.zepto)
+            t.assertEqual('world', data.hello)
+            t.assert($.isEmptyObject(data.query))
             t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
           })
         )
         t.assertIn('abort', xhr)
       },
 
+      testAjaxGetJSONWithParams: function(t){
+        t.pause()
+        $.getJSON(
+          'json', { sample: 'data' },
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('data', data.query.sample)
+          }),
+          'text' // ignored
+        )
+      },
+
       testAjaxGetJSONP: function(t){
         t.pause()
-        var xhr = $.getJSON(
+        $.getJSON(
           'jsonp?callback=?&timestamp='+(+new Date),
           t.reg.resumeHandler('success', function(data){
             t.assertEqual('world', data.hello)
@@ -209,6 +259,17 @@
           })
         )
         t.assertEqual(1, $('script[src^=jsonp]').size())
+      },
+
+      testAjaxGetJSONPWithParams: function(t){
+        t.pause()
+        $.getJSON(
+          'jsonp?callback=?&timestamp='+(+new Date),
+          { sample: 'data' },
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('data', data.query.sample)
+          })
+        )
       },
 
       testAjaxJSONP: function(t){
@@ -230,7 +291,7 @@
         t.pause()
         $(document).on('ajaxBeforeSend', function(){ return false })
 
-        $.ajaxJSONP({
+        $.ajax({
           url: 'jsonp?callback=?&timestamp='+(+new Date),
           beforeSend: t.reg.resumeHandler('beforeSend', function(){
             t.assertEqualList('beforeSend ajaxBeforeSend ajaxError complete ajaxComplete', t.reg.events())

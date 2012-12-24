@@ -37,6 +37,17 @@ var connect = require('connect')
             res.end("FAIL")
           }
         }
+        else if (url.pathname == "/test/json") {
+          var accepts = String(req.headers['accept'])
+          if (accepts.match(/json/) || accepts == "*/*") {
+            var payload = { query: req.query, hello: "world" }
+            res.setHeader('content-type', 'application/json')
+            res.end(JSON.stringify(payload))
+          } else {
+            res.statusCode = 400
+            res.end("FAIL")
+          }
+        }
         else if (url.pathname == "/test/slow") {
           var stopped = pause(req)
           setTimeout(function(){
