@@ -8,3 +8,4 @@ docs/*
 .jhw-cache
 .rbenv-version
 public/
+node_modules
