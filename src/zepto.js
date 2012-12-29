@@ -108,12 +108,13 @@ var Zepto = (function() {
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
   zepto.fragment = function(html, name, properties) {
+    html+=''
     if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
     if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
     if (!(name in containers)) name = '*'
 
     var nodes, dom, container = containers[name]
-    container.innerHTML = '' + html
+    container.innerHTML = html
     dom = $.each(slice.call(container.childNodes), function(){
       container.removeChild(this)
     })
