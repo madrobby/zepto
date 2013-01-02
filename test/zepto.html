@@ -1785,6 +1785,11 @@
         t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','))
       },
 
+      testAppendNull: function(t){
+        var el = $(document.body)
+        t.assertIdentical(el, el.append(null))
+      },
+
       testBeforeAfterFragment: function(t){
         var fragment = $('<div class=fragment />')
         fragment.before('before').after('after')
