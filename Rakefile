@@ -76,6 +76,7 @@ task :concat, [:modules] do |task, args|
   Rake::Task['dist/zepto.js'].
     remove_prerequisites(to_exclude).enhance(to_add).
     invoke
+  Rake::Task['dist/zepto.min.gz'].invoke
 end
 
 desc "Generate zepto.js distribution files and report size statistics"
