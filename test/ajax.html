@@ -28,6 +28,14 @@
       setTimeout(function() { t.resume(fn || function(){}) }, 5)
     }
 
+    function resumeOnAjaxError(t) {
+      $(document).on('ajaxError', function(e, xhr){
+        deferredResume(t, function(){
+          t.assert(false, "request errored out: " + xhr.responseText)
+        })
+      })
+    }
+
     function toArray(list) {
       if ($.type(list) == "string") return list.split(/(?:\s*,\s*|\s+)/)
       else return list
@@ -226,6 +234,8 @@
 
       testAjaxGetJSON: function(t){
         t.pause()
+        resumeOnAjaxError(t)
+
         var xhr = $.getJSON(
           'json',
           t.reg.resumeHandler('success', function(data){
@@ -239,6 +249,8 @@
 
       testAjaxGetJSONWithParams: function(t){
         t.pause()
+        resumeOnAjaxError(t)
+
         $.getJSON(
           'json', { sample: 'data' },
           t.reg.resumeHandler('success', function(data){

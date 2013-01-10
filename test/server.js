@@ -39,13 +39,13 @@ var connect = require('connect')
         }
         else if (url.pathname == "/test/json") {
           var accepts = String(req.headers['accept'])
-          if (accepts.match(/json/) || accepts == "*/*") {
+          if (accepts.match(/json/)) {
             var payload = { query: req.query, hello: "world" }
             res.setHeader('content-type', 'application/json')
             res.end(JSON.stringify(payload))
           } else {
             res.statusCode = 400
-            res.end("FAIL")
+            res.end("invalid accept type: " + accepts)
           }
         }
         else if (url.pathname == "/test/slow") {

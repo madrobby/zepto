@@ -266,7 +266,9 @@
   }
 
   $.getJSON = function(url, data, success){
-    return $.ajax(parseArguments(url, data, success, 'json'))
+    var options = parseArguments.apply(null, arguments)
+    options.dataType = 'json'
+    return $.ajax(options)
   }
 
   $.fn.load = function(url, data, success){
