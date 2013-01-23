@@ -28,6 +28,8 @@ var Zepto = (function() {
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]*)$/,
     tagSelectorRE = /^[\w-]+$/,
+    scopeSelectorRE = /(^\s*[:>]|\S\s+\S)/,
+    zeptoScopeId = 'zeptoScopeSelectorId',
     class2type = {},
     toString = class2type.toString,
     zepto = {},
@@ -208,15 +210,23 @@ var Zepto = (function() {
   // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
   // This method can be overriden in plugins.
   zepto.qsa = function(element, selector){
-    var found
-    return (isDocument(element) && idSelectorRE.test(selector)) ?
-      ( (found = element.getElementById(RegExp.$1)) ? [found] : [] ) :
-      (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-      slice.call(
-        classSelectorRE.test(selector) ? element.getElementsByClassName(RegExp.$1) :
-        tagSelectorRE.test(selector) ? element.getElementsByTagName(selector) :
-        element.querySelectorAll(selector)
-      )
+    var found;
+  	if( isDocument(element) && idSelectorRE.test(selector) )
+  		return (found = element.getElementById(RegExp.$1)) ? [found] : [] 
+  	else if( element.nodeType !== 1 && element.nodeType !== 9 )
+  		return []
+  	else if(classSelectorRE.test(selector))
+  		found = element.getElementsByClassName(RegExp.$1)
+  	else if( tagSelectorRE.test(selector) )
+  		found = element.getElementsByTagName(selector)
+  	else if( !( element.nodeType === 1 && scopeSelectorRE.test(selector)) )
+  		found = element.querySelectorAll(selector)
+  	else{
+  		selector = '#'+(element.id || (element.id = zeptoScopeId))+' '+selector
+  		found = element.querySelectorAll(selector)
+  		element.id === zeptoScopeId && (element.id = null)
+  	}
+  	return slice.call(found)
   }
 
   function filtered(nodes, selector) {
