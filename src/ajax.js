@@ -206,9 +206,9 @@
           rcache = /([?&])_=[^&]*/,
           tcache = /\?/,
           // replace no-cache param if it exists
-          rUrl = settings.url.replace(rcache, '$1_=' + now);
+          rUrl = settings.url.replace(rcache, '$1_=' + now)
       // if nothing was replaced, add no-cache param (timestamp) on the end
-      settings.url = rUrl + ((rUrl === settings.url) ? ((tcache.test(settings.url) ? '&' : '?') + '_=' + now) : '');
+      settings.url = rUrl + ((rUrl === settings.url) ? ((tcache.test(settings.url) ? '&' : '?') + '_=' + now) : '')
     }
 
     xhr.onreadystatechange = function(){
