@@ -574,6 +574,90 @@
         t.assertEqual(window.location, MockXHR.last.url)
       },
 
+      testNoCacheURLWithNoParameter: function(t) {
+        $.ajax({
+          url: 'foo',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
+      testNoCacheURLWithOneParameter: function(t) {
+        $.ajax({
+          url: 'foo?zepto=true',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
+      testNoCacheURLWithNoParameterAndNoCachePresent: function(t) {
+        $.ajax({
+          url: 'foo?_=no-cache-parameter',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
+      testNoCacheURLWithOneParameterAndNoCachePresent: function(t) {
+        $.ajax({
+          url: 'foo?zepto=true&_=no-cache-parameter',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
+      testNoCacheURLWithNoCachePresentAndOneParameter: function(t) {
+        $.ajax({
+          url: 'foo?_=no-cache-parameter&zepto=true',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
+      testNoCacheURLWithOneParameterAndNoCachePresentAndOneParameter: function(t) {
+        $.ajax({
+          url: 'foo?zepto=true&_=no-cache-parameter&jquery=false',
+          cache: false
+        })
+
+        var parameter, tmp, re = new RegExp(/_=(.*?)(&|$)/g);
+        while((tmp = re.exec(MockXHR.last.url)) !== null) {
+          t.assertUndefined(parameter, 'more than one no-cache parameter')
+          parameter = tmp[1]
+          t.refuteEqual(parameter, 'no-cache-parameter', 'no-cache parameter (if it was there) was replaced')
+        }
+      },
+
       testCrossDomain: function(t) {
         $.ajax({
           url: 'http://example.com/foo',
