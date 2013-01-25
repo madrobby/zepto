@@ -37,18 +37,31 @@
 
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
+      Android_4_1_1: "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03O) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19",
+      Android_4_1_1_Tablet: "Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03S) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
 
       BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+",
-
-      Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
-      Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+      PlayBook_1_0_0: "Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.8+ (KHTML, like Gecko) Version/0.0.1 Safari/534.8+",
+      PlayBook_2_1_0: "Mozilla/5.0 (PlayBook; U; RIM Tablet OS 2.1.0; en-US) AppleWebKit/536.2+ (KHTML, like Gecko) Version/7.2.1.0 Safari/536.2+",
+      BB10: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.1+ (KHTML, like Gecko) Version/10.0.0.1337 Mobile Safari/537.1+",
 
       Opera_11_51: "Opera/9.80 (Macintosh; Intel Mac OS X 10.7.1; U; en) Presto/2.9.168 Version/11.51",
       Opera_Mobile_Simulator: "Opera/9.80 (Macintosh; Intel Mac OS X; Opera Mobi/[BUILD_NR]; U; en) Presto/2.7.81 Version/11.00",
 
       Kindle: "Mozilla/5.0 (Linux; U; en-US) AppleWebKit/528.5+ (KHTML, like Gecko, Safari/528.5+) Version/4.0 Kindle/3.0 (screen 600×800; rotate)",
       Silk_1_0_accel: "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-us; Silk/1.0.13.328_10008910) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16 Silk-Accelerated=true",
-      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+      Silk_1_0: "Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Kindle Fire Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
+
+      Chrome_Android_18_0: "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19",
+      Chrome_iOS_19_0: "Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1_1 like Mac OS X; en) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/9B206 Safari/7534.48.3",
+
+      Firefox_13_Tablet: "Mozilla/5.0 (Android; Tablet; rv:13.0) Gecko/13.0 Firefox/13.0",
+      Firefox_13_Phone: "Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0",
+      Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+      Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+
+      Windows_RT_Surface: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch)",
+      Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
 
     function detect(ua, callback){
@@ -86,10 +99,29 @@
           t.assertTrue(os.android)
           t.assertTrue(browser.webkit)
           t.assertEqual("1.5", os.version)
+          t.assertTrue(os.phone)
         })
-        detect(UA.Android_2_1, function(os){
+        detect(UA.Android_2_1, function(os, browser){
           t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
           t.assertEqual("2.1", os.version)
+          t.assertTrue(os.phone)
+        })
+        detect(UA.Android_4_1_1, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertFalse(!!os.ios)
+          t.assertEqual("4.1.1", os.version)
+          t.assertTrue(os.phone)
+          t.assertFalse(!!os.iphone)
+          t.assertTrue(browser.chrome)
+        })
+        detect(UA.Android_4_1_1_Tablet, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertEqual("4.1.1", os.version)
+          t.assertTrue(os.tablet)
+          t.assertTrue(browser.chrome)
         })
       },
 
@@ -100,40 +132,47 @@
           t.assertTrue(browser.webkit)
           t.assertEqual("3.0", os.version)
           t.assertEqual("420.1", browser.version)
+          t.assertTrue(os.phone)
         })
         detect(UA.iOS_3_1_1_iPod, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.iphone)
           t.assertUndefined(os.ipod)
           t.assertEqual("3.1.1", os.version)
+          t.assertTrue(os.phone)
         })
         detect(UA.iOS_3_2_iPad, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
           t.assert(!os.iphone)
           t.assertEqual("3.2", os.version)
+          t.assertTrue(os.tablet)
         })
         detect(UA.iOS_3_2_iPad_2, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
           t.assert(!os.iphone)
           t.assertEqual("3.2", os.version)
+          t.assertTrue(os.tablet)
         })
         detect(UA.iOS_4_0_iPhone, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.iphone)
           t.assert(!os.ipad)
           t.assertEqual("4.0", os.version)
+          t.assertTrue(os.phone)
         })
         detect(UA.iOS_4_2_iPad, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
           t.assertEqual("4.2", os.version)
+          t.assertTrue(os.tablet)
         })
         detect(UA.iOS_4_3_iPhone_Simulator, function(os){
           t.assertTrue(os.ios)
           t.assertTrue(os.iphone)
           t.assertEqual("4.3", os.version)
+          t.assertTrue(os.phone)
         })
       },
 
@@ -142,6 +181,24 @@
           t.assertTrue(os.blackberry)
           t.assertTrue(browser.webkit)
           t.assertEqual("6.0.0.141", os.version)
+        }),
+        detect(UA.PlayBook_1_0_0, function(os, browser){
+          t.assertTrue(os.rimtabletos)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(os.tablet)
+          t.assertEqual("1.0.0", os.version)
+        })
+        detect(UA.PlayBook_2_1_0, function(os, browser){
+          t.assertTrue(os.rimtabletos)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(os.tablet)
+          t.assertEqual("2.1.0", os.version)
+        })
+        detect(UA.BB10, function(os, browser){
+          t.assertTrue(os.bb10)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(os.phone)
+          t.assertEqual("10.0.0.1337", os.version)
         })
       },
 
@@ -170,7 +227,23 @@
       testFirefox: function(t) {
         detect(UA.Firefox_6_0_2, function(os, browser){
           t.assertFalse(browser.webkit)
-          t.assertUndefined(browser.version)
+          t.assertEqual('6.0.2', browser.version)
+
+          t.assertTrue(browser.firefox)
+        })
+
+        detect(UA.Firefox_13_Tablet, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertFalse(os.phone)
+          t.assertTrue(os.tablet)
+        })
+
+        detect(UA.Firefox_13_Phone, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
         })
       },
 
@@ -178,6 +251,22 @@
         detect(UA.Opera_11_51, function(os, browser){
           t.assertFalse(browser.webkit)
           t.assertUndefined(browser.version)
+        })
+      },
+
+      testChrome: function(t) {
+        detect(UA.Chrome_Android_18_0, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.chrome)
+          t.assertEqual("18.0.1025.133", browser.version)
+        })
+
+        detect(UA.Chrome_iOS_19_0, function(os, browser){
+          t.assertTrue(os.ios)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.chrome)
+          t.assertEqual("19.0.1084.60", browser.version)
         })
       }
     })

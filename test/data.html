@@ -85,7 +85,7 @@
 
         items.data('each', 'mark')
 
-        var values = items.map(function(){ return $(this).data('each') })
+        var values = items.map(function(){ return $(this).data('each') }).get()
         t.assertEqual('mark, mark', values.join(', '))
       },
 
@@ -120,12 +120,14 @@
       },
 
       testInitialDataFromAttributes: function(t){
-        var el = $('<div data-foo=bar data-foo-bar=baz />'),
+        var el = $('<div data-foo=bar data-foo-bar=baz data-empty data-num=42 />'),
             store = el.data()
 
         t.assertEqual('bar', store.foo)
         t.assertEqual('baz', store.fooBar)
         t.assertUndefined(store['foo-bar'])
+        t.assertIdentical('', store.empty)
+        t.assertIdentical(42, store.num)
       },
 
       testGettingBlanks: function(t){
@@ -200,10 +202,10 @@
               'color': 'purple'
           })
 
-          var values = items.map(function(){ return $(this).data('foo') })
+          var values = items.map(function(){ return $(this).data('foo') }).get()
           t.assertEqual('bar, bar', values.join(', '))
 
-          var values2 = items.map(function(){ return $(this).data('answer') })
+          var values2 = items.map(function(){ return $(this).data('answer') }).get()
           t.assertEqual('42, 42', values2.join(', '))
       }
 

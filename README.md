@@ -3,7 +3,7 @@
 Zepto is a minimalist JavaScript library for modern browsers with a
 largely jQuery-compatible API. If you use jQuery, you already know how to use Zepto.
 
-See [zeptojs.com](http://zeptojs.com) for an extended introduction, downloads
+See [zeptojs.com][] for an extended introduction, downloads
 and documentation.
 
 Zepto.js is licensed under the terms of the MIT License.
@@ -164,6 +164,16 @@ Get in touch:
 * IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
 * @[zeptojs](http://twitter.com/zeptojs)
 
+### Write documentation
+
+Zepto docs are written in Markdown and live in the ["gh-pages" branch][docs].
+They are published on [zeptojs.com][].
+
+You can use GitHub's web interface to make quick changes to documentation for
+specific Zepto features
+([example: ajaxSettings](https://github.com/madrobby/zepto/blob/gh-pages/ajax/_posts/1900-01-01-Z-ajaxSettings.md)).
+This will submit a pull request to us that we can review.
+
 ### Report a bug
 
 1. Check if the bug is already fixed in the [master branch][master] since the
@@ -174,44 +184,43 @@ Get in touch:
 
 ### Running tests
 
+~~~ sh
+# run all tests
+$ script/test
+
+# test individual files
+$ script/test test/zepto.html
+~~~
+
+You will need <b>node</b> and [PhantomJS][]:
+
+~~~ sh
+# install on Mac OS
+$ brew install node phantomjs
+
+# install test prerequisites
+$ npm install
+~~~
+
 Zepto test suite is in "test/\*.html" files. Open the individual files in a web
 browser to run the tests. Files named with "\_functional" are not automated
 tests, but require interaction. Automated tests are written using
 [Evidence.js][].
 
-Detailed test information such as specific failures is logged to the JavaScript
-console of your browser.
-
-It's possible to run automated tests from the command-line in headless Webkit
-with [PhantomJS][]:
+Ajax tests require a running test server. This is handled automatically through
+`script/test`. Alternatively, you can start the server manually:
 
 ~~~ sh
-# install on Mac OS
-$ brew install phantomjs
-
-# run all tests
-$ rake test
-
-# run individual files
-$ script/test test/selector.html
+$ node test/server.js [PORT]
+# Now you can open http://localhost:3000/test/ajax.html in the browser.
+# Terminate the test server with Ctrl-C
 ~~~
 
-### Code style guidelines
 
-* `function name() { }` for named functions
-* `function(){ }` for anonymous functions
-* No curly braces for single-line control flow statements such as `if` & friends
-* Don't write [semicolons that are optional][optional]
-* Put a single semicolon _before_ statements that start with `(` or `[`
-  (see above article as for why it's needed)
-* Use long, descriptive variable and method names
-* Use blank lines to separate "paragraphs" of code for readability
-* Use comments to describe non-obvious code behavior
-
-
+  [zeptojs.com]: http://zeptojs.com
   [master]: https://github.com/madrobby/zepto/commits/master
   [issues]: https://github.com/madrobby/zepto/issues
+  [docs]: https://github.com/madrobby/zepto/tree/gh-pages#readme
   [mkd]: http://github.github.com/github-flavored-markdown/
   [evidence.js]: https://github.com/tobie/Evidence
-  [optional]: http://mislav.uniqpath.com/2010/05/semicolons/
   [phantomjs]: http://code.google.com/p/phantomjs/wiki/Installation

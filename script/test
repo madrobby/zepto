@@ -1,2 +1,14 @@
-#!/bin/sh
-phantomjs test/runner.coffee "$@"
+#!/usr/bin/env bash
+port=3999
+pidfile=test/server.pid
+
+node test/server.js $port &
+pid=$!
+
+terminate_test_server() {
+  kill $pid
+}
+trap terminate_test_server EXIT
+
+phantomjs test/runner.coffee "http://localhost:${port}/" "$@"
+exit $?

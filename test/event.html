@@ -110,10 +110,12 @@
       testOnWithNullSelector: function(t){
         var log = []
         this.el.on('click', null, function(){ log.push('a') }).
-                on('click', undefined, function(){ log.push('b') })
+                on('click', undefined, function(){ log.push('b') }).
+                on('click', false, function(){ log.push('c') }).
+                on('click', '', function(){ log.push('d') })
 
         click(this.el)
-        t.assertEqual('a b', log.sort().join(' '))
+        t.assertEqual('a b c d', log.sort().join(' '))
       },
 
       testOffWithObject: function(t){
@@ -129,6 +131,19 @@
         this.el.off({ click: fn }).off({ click: fn2 }, null)
         click(this.el)
         t.assertEqual('a b c c', log.sort().join(' '))
+      },
+
+      testDelegateEventProperties: function(t){
+        var type, target, currentTarget
+        $(document).on('click', 'div', function(e){
+          type = e.type
+          target = e.target
+          currentTarget = e.currentTarget
+        })
+        click($('<span>').appendTo(this.el))
+        t.assertEqual('click', type)
+        t.assertIdentical(this.el.find('span').get(0), target)
+        t.assertIdentical(this.el.get(0), currentTarget)
       }
     })
   })()

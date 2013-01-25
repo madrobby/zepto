@@ -224,6 +224,10 @@
     </form>
   </div>
 
+  <svg></svg>
+
+  <iframe src="fixtures/iframe_document.html"></iframe>
+
   </div><!-- fixtures -->
 
   <script>
@@ -285,7 +289,7 @@
       if (typeof expected.get == 'function') expected = expected.get()
       if (typeof actual.get == 'function') actual = actual.get()
 
-      if (passed) for (var i=0; i<expected.length; i++) passed = expected[i] == actual[i]
+      if (passed) for (var i=0; i<expected.length; i++) passed &= expected[i] == actual[i]
 
       this._assertExpression(passed, message || 'Failed assertion.',
         'Expected %o, got %o.', expected, actual)
@@ -349,9 +353,24 @@
         t.assertFalse($.isPlainObject(obj), 'function with prototype is not a plain object')
       },
 
+      testIsWindow: function(t){
+        t.assertFalse($.isWindow())
+        t.assertFalse($.isWindow({}))
+        t.assertFalse($.isWindow(document.body))
+        t.assertTrue($.isWindow(window))
+        t.assertTrue($.isWindow($('iframe').get(0).contentWindow))
+      },
+
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
+      },
+
+      testCamelCase: function(t){
+        t.assertEqual("hello", $.camelCase("hello"))
+        t.assertEqual("HELLO", $.camelCase("HELLO"))
+        t.assertEqual("helloNiceWorld", $.camelCase("hello-nice-world"))
+        t.assertEqual("helloWorld", $.camelCase("helloWorld"))
       },
 
       testExtend: function(t){
@@ -446,11 +465,17 @@
         t.assertLength(1, $('p > span.yay'))
       },
 
+      testDollarUnique: function(t){
+        t.refuteIdentical($('#some_element'), $('#some_element'))
+        t.refuteIdentical($('#nonexistent'), $('#nonexistent'))
+      },
+
       testDollarWithNil: function(t){
         t.assertLength(0, $(null))
         t.assertLength(0, $(undefined))
         t.assertLength(0, $(false))
         t.assertLength(0, $(''))
+        t.assertLength(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)
@@ -475,9 +500,9 @@
 
       testGetWithIndex: function(t){
         var zepto = $('#find1 .findme')
-        var outofbounds = zepto.get(zepto.size())
-        t.assertEqual(zepto.get(0), zepto[0])
-        t.assertUndefined(outofbounds)
+        t.assertEqual(zepto[0], zepto.get(0))
+        t.assertEqual(zepto[zepto.length - 1], zepto.get(-1))
+        t.assertUndefined(zepto.get(zepto.length))
       },
 
       testSize: function(t){
@@ -532,10 +557,33 @@
         t.assertEqual('', z.selector)
       },
 
+      testDollarWithAppcache: function(t){
+        if ('applicationCache' in window) {
+          var z = $(window.applicationCache)
+          t.assertLength(1, z)
+          t.assertIdentical(window.applicationCache, z.get(0))
+          t.assertEqual('', z.selector)
+        }
+      },
+
       testDollarWithDocumentFragment: function(t){
         var documentFragment = $(document.createDocumentFragment())
         t.assertLength(1, documentFragment)
         t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType)
+      },
+
+      testDollarWithElementInIframe: function(t){
+        var iframe = $('#fixtures iframe').get(0),
+            iframeWin = iframe.contentWindow,
+            iframeDoc = iframe.contentDocument,
+            iframeBody = iframeDoc.body,
+            iframeEl = $(iframeBody).find('b')
+
+        t.assertIdentical(iframeWin, $(iframeWin).get(0))
+        t.assertIdentical(iframeDoc, $(iframeDoc).get(0))
+        t.assertIdentical(iframeBody, $(iframeBody).get(0))
+        t.assertEqual('B', iframeEl.pluck('tagName').join(','))
+        t.assertEqual('Hello from iframe!', iframeEl.text())
       },
 
       testDollarWithFragment: function(t){
@@ -582,6 +630,13 @@
         t.assert(el.hasClass('two'))
         t.assertEqual('world', el.text())
         t.assertEqual('red', el.css('color'))
+      },
+
+      testDollarNonemptyFragmentAndProperties: function(t){
+        var zepto = $('<a>Goodbye</a>', { text: "Hello", href: "http://zeptojs.com" })
+        t.assertLength(1, zepto)
+        t.assertEqual('Hello', zepto.text())
+        t.assertEqual('http://zeptojs.com', zepto.attr("href"))
       },
 
       testDollarWithTextNode: function(t){
@@ -674,12 +729,25 @@
         t.assertEqual(2, index)
       },
 
+      testEachBreak: function(t){
+        var index, tagnames = []
+        $('#eachtest > *').each(function(idx, el){
+          index = idx
+          t.assertIdentical(el, this)
+          tagnames.push(el.tagName.toUpperCase())
+          if (idx == 1) return false
+        })
+        t.assertEqual('SPAN, B', tagnames.join(', '))
+        t.assertEqual(1, index)
+      },
+
       testMap: function(t){
         var results = $('#eachtest > *').map(function(idx, el) {
           t.assertIdentical(el, this)
           return idx + ':' + this.nodeName.toUpperCase()
         })
-        t.assertEqual('0:SPAN, 1:B, 2:BR', results.join(', '))
+        t.assertEqual(3, results.size())
+        t.assertEqual('0:SPAN, 1:B, 2:BR', results.get().join(', '))
       },
 
       testDollarMap: function(t){
@@ -697,6 +765,12 @@
           return key + '=' + value
         })
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','))
+      },
+
+      testDollarGrep: function(t){
+        var fruits = ['apples', 'oranges', 'pineapple', 'peach']
+        var result = $.grep(fruits, function(name){ return /apple/.test(name) })
+        t.assertEqualCollection(['apples', 'pineapple'], result)
       },
 
       testDollarEach: function(t){
@@ -883,6 +957,8 @@
       testOffset: function(t){
         // TODO
         t.assertNull($('#doesnotexist').offset())
+        var el = $('#some_element')
+        t.assertIdentical(el, el.offset({}))
       },
 
       testWidth: function(t){
@@ -938,6 +1014,22 @@
         t.assertEqualCollection(el, el.closest('div'))
       },
 
+      testContains: function(t){
+        var el1 = $('#li1'), el2 = $('#li2')
+
+        t.assertTrue($.contains(el1.get(0), el2.get(0)))
+        t.assertFalse($.contains(el1.get(0), $('#parents').get(0)))
+      },
+
+      testContainsOnDetached: function(t){
+        var el = $('<div><p><a></a></p></div>'),
+            para = el.children(),
+            link = para.children()
+
+        t.assertTrue($.contains(para.get(0), link.get(0)))
+        t.assertFalse($.contains(document.body, el.get(0)))
+      },
+
       testParents: function(t){
         var body = document.body, html = body.parentNode, container = $('#parents'),
           wrapper = $('#fixtures').get(0)
@@ -951,6 +1043,14 @@
 
         expected = [$('#nested').get(0), $('#parents').get(0)]
         t.assertEqualCollection($(expected), $('#li2').parents('ul'))
+      },
+
+      testParentsIframe: function(t){
+        var iframeBody = $('iframe').get(0).contentDocument.body
+        t.assertEqualCollection(
+          [iframeBody, iframeBody.parentNode],
+          $(iframeBody).find('b').first().parents()
+        )
       },
 
       testParent: function(t){
@@ -1187,6 +1287,27 @@
         t.assertEqualCollection([0,2], indexes)
       },
 
+      testFilterWithNonNativeArrayFilter: function(t){
+        var nativeFilter = Array.prototype.filter
+        try {
+          // apply broken filter
+          Array.prototype.filter = function(){ return [] }
+          t.assertLength(2, $('div').filter('.filtertest'))
+        } finally {
+          Array.prototype.filter = nativeFilter
+        }
+      },
+
+      testHas: function(t){
+        var result, el = $('<b id=one><a></a></b><b id=two><i></i></b><b id=three><i></i></b>')
+        result = el.has('a')
+        t.assertEqual('one', result.pluck('id').join(' '))
+        result = el.has('i')
+        t.assertEqual('two three', result.pluck('id').join(' '))
+        result = el.has(el.find('i').get(0))
+        t.assertEqual('two', result.pluck('id').join(' '))
+      },
+
       testAdd: function(t){
         var lis=$("li"),spans=$("span"),
         together=lis.add("span"),
@@ -1325,7 +1446,7 @@
 
       testHtml: function(t){
         var div = $('div.htmltest')
-        div.html('yowza')
+        t.assertIdentical(div, div.html('yowza'))
 
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
         t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML)
@@ -1432,12 +1553,12 @@
       testAttrOnTextInputField: function(t) {
         var inputs = $('#attr_with_text_input input'), values
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
         inputs.val(function(i, value){ return value.replace('input', 'changed') })
 
-        values = inputs.map(function(){ return $(this).attr('value') })
+        values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
       },
 
@@ -1489,6 +1610,31 @@
         // blank values
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
+      },
+
+      testDataNumberType: function(t){
+        var el = $('<div data-num=42 />')
+        t.assertIdentical(42, el.data('num'))
+      },
+
+      testDataBooleanType: function(t){
+        var el = $('<div data-true=true data-false=false />')
+        t.assertTrue(el.data('true'))
+        t.assertFalse(el.data('false'))
+      },
+
+      testDataNullType: function(t){
+        var el = $('<div data-nil=null />')
+        t.assertNull(el.data('nil'))
+      },
+
+      testDataJsonType: function(t){
+        var el = $('<div data-json=\'["one", "two"]\' data-invalid=\'[boom]\' />')
+        var json = el.data('json')
+        t.assertEqual(2, json.length)
+        t.assertEqual("one", json[0])
+        t.assertEqual("two", json[1])
+        t.assertEqual('[boom]', el.data('invalid'))
       },
 
       testVal: function(t) {
@@ -1639,6 +1785,11 @@
         t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','))
       },
 
+      testAppendNull: function(t){
+        var el = $(document.body)
+        t.assertIdentical(el, el.append(null))
+      },
+
       testBeforeAfterFragment: function(t){
         var fragment = $('<div class=fragment />')
         fragment.before('before').after('after')
@@ -1655,7 +1806,7 @@
           '<b>six</b>'
         )
         t.assertEqual('original one two three four five six',
-          el.children().map(function(){ return $(this).text() }).join(' '))
+          $.map(el.children(), function(c){ return $(c).text() }).join(' '))
       },
 
       testAppendToPrependTo: function(t){
@@ -1759,25 +1910,49 @@
       },
 
       testAppendEval: function (t) {
+        window.someGlobalVariable = 0
+        try {
+          $('#fixtures').append(
+            '<div><b id="newByAppend">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByAppend").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
+      testNoEvalWithSrc: function (t) {
         try {
           window.someGlobalVariable = false
-          $('<' + 'script>window.someGlobalVariable = true</script' + '>').appendTo('body')
-          t.assert(window.someGlobalVariable)
-
-          window.someGlobalVariable = false
-          $('<' + 'script>this.someGlobalVariable = true</script' + '>').appendTo('body')
-          t.assert(window.someGlobalVariable)
+          $('<\script src="remote.js">window.someGlobalVariable = true<\/script>').appendTo('body')
+          t.assert(!window.someGlobalVariable, 'expected SCRIPT with src not to be evaled')
         } finally {
           delete window.someGlobalVariable
         }
       },
 
       testHtmlEval: function (t) {
+        window.someGlobalVariable = 0
         try {
-          window.someGlobalVariable = false
-          $('<div></div>').appendTo('body')
-            .html('<' + 'script>window.someGlobalVariable = true</script' + '>')
-          t.assert(window.someGlobalVariable)
+          $('<div>').appendTo('#fixtures').html(
+            '<div><b id="newByHtml">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByHtml").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
+      testPrependEval: function (t) {
+        window.someGlobalVariable = 0
+        try {
+          $('<div>').appendTo('#fixtures').prepend(
+            '<b id="newByPrepend">Hi</b>' +
+            '<\script>this.someGlobalVariable += $("#newByPrepend").size()<\/script>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
         } finally {
           delete window.someGlobalVariable
         }
@@ -1808,31 +1983,12 @@
         }
       },
 
-      testRemove: function (t) {
-        var newElement1 = $('<div id="some_new_element_1" />')
-
-        newElement1
-          .appendTo('body')
-          .remove()
-
-        t.assertEqual( $('#some_new_element_1').length, 0 )
-
-        //
-
-        var newElement2 = $('<div id="some_new_element_2" />'),
-            errorRaised = false
-
-        newElement2.appendTo('body')
-
-        $('#some_new_element_2').remove()
-
-        try {
-          newElement2.remove()
-        } catch (e) {
-          errorRaised = true
-        }
-
-        t.assert(!errorRaised)
+      testRemove: function(t) {
+        var el = $('<div>').appendTo(document.body)
+        t.assertLength(1, el.parent())
+        t.assertIdentical(el, el.remove())
+        t.assertLength(0, el.parent())
+        t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
       },
 
       testAddRemoveClass: function(t){
@@ -1879,15 +2035,20 @@
       },
 
       testHasClass: function(t){
-        var el = $('#some_element').get(0)
-        $('#some_element').addClass('green')
+        var el = $('#some_element')
+        el.addClass('green')
 
-        t.assert($('#some_element').hasClass('green'))
-        t.assert(!$('#some_element').hasClass('orange'))
+        t.assert(el.hasClass('green'))
+        t.assert(!el.hasClass('orange'))
 
-        $('#some_element').addClass('orange')
-        t.assert($('#some_element').hasClass('green'))
-        t.assert($('#some_element').hasClass('orange'))
+        el.addClass('orange')
+        t.assert(el.hasClass('green'))
+        t.assert(el.hasClass('orange'))
+
+        el = $(document.body)
+        t.assert(!el.hasClass('orange'), "body shouldn't have the class")
+        el = el.add('#some_element')
+        t.assert(el.hasClass('orange'), "an element in collection has the class")
       },
 
       testHasClassEmpty: function(t){
@@ -1897,56 +2058,77 @@
       },
 
       testToggleClass: function(t){
-        var el = $('#toggle_element').get(0)
-        $('#toggle_element').toggleClass('green')
+        var el = $('#toggle_element').removeClass()
 
-        t.assert($('#toggle_element').hasClass('green'))
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        t.assertIdentical(el, el.toggleClass('green'))
+        t.assertTrue(el.hasClass('green'))
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange')
-        t.assert($('#toggle_element').hasClass('green'))
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange')
+        t.assertTrue(el.hasClass('green'))
+        t.assertTrue(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('green')
+        el.toggleClass('green')
+        t.assertFalse(el.hasClass('green'))
+        t.assertTrue(el.hasClass('orange'))
 
-        t.assert(!$('#toggle_element').hasClass('green'))
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange')
+        t.assertFalse(el.hasClass('green'))
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange')
-        t.assert(!$('#toggle_element').hasClass('green'))
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange green')
+        t.assertTrue(el.hasClass('orange'))
+        t.assertTrue(el.hasClass('green'))
 
-        $('#toggle_element').toggleClass('orange', false)
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange green blue')
+        t.assertFalse(el.hasClass('orange'))
+        t.assertFalse(el.hasClass('green'))
+        t.assertTrue(el.hasClass('blue'))
 
-        $('#toggle_element').toggleClass('orange', false)
-        t.assert(!$('#toggle_element').hasClass('orange'))
+        el.removeClass()
 
-        $('#toggle_element').toggleClass('orange', true)
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange', false)
+        t.assertFalse(el.hasClass('orange'))
+        el.toggleClass('orange', false)
+        t.assertFalse(el.hasClass('orange'))
 
-        $('#toggle_element').toggleClass('orange', true)
-        t.assert($('#toggle_element').hasClass('orange'))
+        el.toggleClass('orange', true)
+        t.assertTrue(el.hasClass('orange'))
+        el.toggleClass('orange', true)
+        t.assertTrue(el.hasClass('orange'))
 
         //function argument
-        $('#toggle_element').toggleClass(function(idx,classes){
-          //test the value of "this"
-          t.assertEqualCollection($('#toggle_element'), $(this))
+        el.toggleClass(function(idx,classes){
+          t.assertIdentical(el.get(0), this)
           //test original classes are being passed
           t.assertEqual('orange', this.className)
           return "brown"
         })
-        t.assert($('#toggle_element').hasClass('brown'))
+        t.assertTrue(el.hasClass('brown'))
 
-        $('#toggle_element').toggleClass(function(idx,classes){
+        el.toggleClass(function(idx,classes){
           return "yellow"
-        },false)
-        t.assert(!$('#toggle_element').hasClass('yellow'))
+        }, false)
+        t.assertFalse(el.hasClass('yellow'))
 
-        $('#toggle_element').toggleClass(function(idx,classes){
+        el.toggleClass(function(idx,classes){
           return "yellow"
-        },true)
-        t.assert($('#toggle_element').hasClass('yellow'))
+        }, true)
+        t.assert(el.hasClass('yellow'))
+      },
+
+      testClassSVG: function(t){
+        var svg = $('svg')
+        t.assert(!svg.hasClass('foo'))
+        svg.addClass('foo bar')
+        t.assert(svg.hasClass('foo'))
+        t.assert(svg.hasClass('bar'))
+        svg.removeClass('foo')
+        t.assert(!svg.hasClass('foo'))
+        t.assert(svg.hasClass('bar'))
+        svg.toggleClass('bar')
+        t.assert(!svg.hasClass('foo'))
+        t.assert(!svg.hasClass('bar'))
       },
 
       testIndex: function(t){
@@ -1983,6 +2165,19 @@
         t.assertEqual($els.slice().length, 3)
         t.assertEqual(typeof $els.slice().ready, 'function')
         t.assertEqual($els.slice(-1)[0].className, 'slice3')
+      },
+
+      testScrollTop: function(t) {
+        t.assert($(window).scrollTop() >= 0)
+        t.assert($(document.body).scrollTop() >= 0)
+      },
+
+      testSort: function(t){
+        var els = $(['eight', 'nine', 'ten', 'eleven'])
+        var result = els.sort(function(a,b){ return b.length > a.length ? -1 : 1 })
+        t.assertIdentical(els, result)
+        t.assertEqual(4, result.size())
+        t.assertEqualCollection(['ten', 'nine', 'eight', 'eleven'], result)
       }
     })
 
@@ -2079,6 +2274,24 @@
 
         var e4 = $.Event('custom', {bubbles: false})
         t.assertFalse(e4.bubbles)
+
+        var e5 = $.Event({ type: 'keyup', keyCode: 40 })
+        t.assertEqual('keyup', e5.type)
+        t.assertEqual(40, e5.keyCode)
+      },
+
+      testTriggerObject: function(t){
+        var el = $('#some_element'),
+            eventType, eventCode
+
+        el.on('keyup', function(e){
+          eventType = e.type
+          eventCode = e.keyCode
+        })
+        el.trigger({ type: 'keyup', keyCode: 40 })
+
+        t.assertEqual('keyup', eventType)
+        t.assertEqual(40, eventCode)
       },
 
       testTriggerEventObject: function(t){
@@ -2104,9 +2317,12 @@
           e.preventDefault()
         })
         var event = $.Event('custom')
-        t.assert(!event.defaultPrevented)
+        t.refute(event.defaultPrevented)
+        t.refute(event.isDefaultPrevented())
+
         $('#some_element').trigger(event)
         t.assert(event.defaultPrevented)
+        t.assert(event.isDefaultPrevented())
       },
 
       testTriggerHandler: function(t){
@@ -2230,6 +2446,53 @@
         $('#delegate_focus_test').find('input').focus()
         $('#delegate_focus_test').find('input').blur()
         t.assertEqual(4, counter)
+      },
+
+      testDelegateNamespacedBlurFocus: function(t) {
+        var counter = 0
+        $('#delegate_blur_test').delegate('input', 'blur.namespace_test', function(){ counter++ })
+
+        $('#delegate_blur_test').find('input').focus()
+        $('#delegate_blur_test').find('input').blur()
+        t.assertEqual(1, counter)
+
+        $('#delegate_blur_test').find('input').focus()
+        $('#delegate_blur_test').find('input').blur()
+        t.assertEqual(2, counter)
+
+        $('#delegate_focus_test').delegate('input', 'focus.namespace_test', function(){ counter++ })
+
+        $('#delegate_focus_test').find('input').focus()
+        $('#delegate_focus_test').find('input').blur()
+        t.assertEqual(3, counter)
+
+        $('#delegate_focus_test').find('input').focus()
+        $('#delegate_focus_test').find('input').blur()
+        t.assertEqual(4, counter)
+      },
+
+      testUndelegateNamespacedBlurFocus: function(t) {
+        var el, counter = 0
+
+        el = $('#delegate_blur_test')
+
+        el.delegate('input', 'blur.test', function(){ counter++ })
+        el.find('input').focus().blur()
+        t.assertEqual(1, counter, 'expected handler to be triggered')
+
+        el.undelegate('input', '.test')
+        el.find('input').focus().blur()
+        t.assertEqual(1, counter, 'expected handler to unbind')
+
+        el = $('#delegate_focus_test')
+
+        el.delegate('input', 'focus.test', function(){ counter++ })
+        el.find('input').focus().blur()
+        t.assertEqual(2, counter, 'expected handler to be triggered')
+
+        el.undelegate('input', '.test')
+        el.find('input').focus().blur()
+        t.assertEqual(2, counter, 'expected handler to unbind')
       },
 
       testDelegateReturnFalse: function(t){
@@ -2406,6 +2669,24 @@
         click(node)
         t.assertEqual(2, bindTriggered, "bind handlers")
         t.assertEqual(2, delegateTriggered, "delegate handlers")
+      },
+
+      testOnReturnFalse: function(t){
+        var el = $('#some_element')
+
+        el.on('click', function(){
+          setTimeout(function(){
+            t.resume(function(){})
+          }, 10)
+          t.assert(true, "should have been called")
+          return false
+        })
+        $(document.body).on('click', function(){
+          t.refute(true, "the event should have been stopped")
+        })
+
+        t.pause()
+        click(el.get(0))
       },
 
       testOff: function(t){

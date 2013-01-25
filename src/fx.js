@@ -41,7 +41,7 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback){
-    if ($.isObject(duration))
+    if ($.isPlainObject(duration))
       ease = duration.easing, callback = duration.complete, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
                     ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000
@@ -79,7 +79,7 @@
     wrappedCallback = function(event){
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
-        $(event.target).unbind(endEvent, arguments.callee)
+        $(event.target).unbind(endEvent, wrappedCallback)
       }
       $(this).css(cssReset)
       callback && callback.call(this)
