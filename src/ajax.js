@@ -144,7 +144,9 @@
     // Default timeout
     timeout: 0,
     // Whether data should be serialized to string
-    processData: true
+    processData: true,
+    // Whether data caching should be disabled (cache: false will append unique string to url)
+    cache: null,
   }
 
   function mimeToDataType(mime) {
@@ -198,6 +200,16 @@
     if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
+
+    if (settings.cache === false) {
+      var now = Date.now(),
+          rcache = /([?&])_=[^&]*/,
+          tcache = /\?/,
+          // replace no-cache param if it exists
+          rUrl = settings.url.replace(rcache, '$1_=' + now);
+      // if nothing was replaced, add no-cache param (timestamp) on the end
+      settings.url = rUrl + ((rUrl === settings.url) ? ((tcache.test(settings.url) ? '&' : '?') + '_=' + now) : '');
+    }
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
