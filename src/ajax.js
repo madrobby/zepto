@@ -201,15 +201,7 @@
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
 
-    if (settings.cache === false) {
-      var now = Date.now(),
-          rcache = /([?&])_=[^&]*/,
-          tcache = /\?/,
-          // replace no-cache param if it exists
-          rUrl = settings.url.replace(rcache, '$1_=' + now)
-      // if nothing was replaced, add no-cache param (timestamp) on the end
-      settings.url = rUrl + ((rUrl === settings.url) ? ((tcache.test(settings.url) ? '&' : '?') + '_=' + now) : '')
-    }
+    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
