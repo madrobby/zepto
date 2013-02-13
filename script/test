@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 port=3999
 pidfile=test/server.pid
+PATH="$(npm bin):$PATH"
 
-node test/server.js $port &
+coffee test/server.coffee $port &
 pid=$!
 
 terminate_test_server() {
