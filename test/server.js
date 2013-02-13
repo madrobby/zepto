@@ -42,7 +42,11 @@ var connect = require('connect')
           if (accepts.match(/json/)) {
             var payload = { query: req.query, hello: "world" }
             res.setHeader('content-type', 'application/json')
-            res.end(JSON.stringify(payload))
+            var response = JSON.stringify(payload)
+            if (req.query.invalid) {
+              response += 'invalid'
+            }
+            res.end(response)
           } else {
             res.statusCode = 400
             res.end("invalid accept type: " + accepts)
