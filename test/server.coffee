@@ -1,24 +1,25 @@
 fs      = require 'fs'
 connect = require 'connect'
 pause   = connect.utils.pause
+mime    = connect.utils.mime
 coffee  = require 'coffee-script'
 express = require 'express'
 app     = express()
 port    = process.argv[2] || 3000
 
 app.use express.static(__dirname + '/../')
-app.use express.static('vendor')
+app.use express.static('node_modules/mocha')
+app.use express.static('node_modules/chai')
 
 app.use express.bodyParser()
-
-mime = (req) ->
-  type = req.headers['content-type'] or ''
-  type.split(';')[0]
 
 dump = (obj) ->
   obj = '' unless obj
   obj = JSON.stringify(obj) if obj and typeof obj isnt "string"
   obj
+
+app.get '/', (req, res) ->
+  res.sendfile "test/mocha.html"
 
 app.all '/test/echo', (req, res) ->
   res.send """
@@ -51,7 +52,8 @@ app.all '/test/slow', (req, res) ->
 app.all '/test/error', (req, res) ->
   res.send 500, 'BOOM'
 
-# GET /compile.js?group=core  =>  `test/core/*.coffee` to JS
+# GET /compile.js?group=core
+# compiles all "test/core/*.coffee" files and serves as JS
 app.get '/compile.js', (req, res) ->
   test_dir = "#{__dirname}/#{req.query.group}"
 

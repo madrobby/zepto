@@ -19,6 +19,9 @@
   </script>
 
   <script src="/compile.js?group=core"></script>
-  <script>mocha.run()</script>
+  <script>
+    if (window.mochaPhantomJS) mochaPhantomJS.run()
+    else mocha.run()
+  </script>
 </body>
 </html>
