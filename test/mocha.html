@@ -1,0 +1,24 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="/mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+
+  <script src="/src/zepto.js"></script>
+  <script src="/src/event.js"></script>
+  <script src="/src/ajax.js"></script>
+
+  <script src="/mocha.js"></script>
+  <script src="/chai.js"></script>
+  <script>
+    mocha.setup('bdd')
+    expect = chai.expect
+  </script>
+
+  <script src="/compile.js?group=core"></script>
+  <script>mocha.run()</script>
+</body>
+</html>

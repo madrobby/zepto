@@ -1,12 +1,15 @@
+fs      = require 'fs'
 connect = require 'connect'
 pause   = connect.utils.pause
+coffee  = require 'coffee-script'
 express = require 'express'
 app     = express()
 port    = process.argv[2] || 3000
 
-app.use express.bodyParser()
-
 app.use express.static(__dirname + '/../')
+app.use express.static('vendor')
+
+app.use express.bodyParser()
 
 mime = (req) ->
   type = req.headers['content-type'] or ''
@@ -47,6 +50,20 @@ app.all '/test/slow', (req, res) ->
 
 app.all '/test/error', (req, res) ->
   res.send 500, 'BOOM'
+
+# GET /compile.js?group=core  =>  `test/core/*.coffee` to JS
+app.get '/compile.js', (req, res) ->
+  test_dir = "#{__dirname}/#{req.query.group}"
+
+  fs.readdir test_dir, (err, files) ->
+    if err
+      res.send 500, err.message
+    else
+      compiled = for file in files
+        coffee.compile fs.readFileSync("#{test_dir}/#{file}", "utf-8")
+
+      res.set 'content-type', 'application/javascript'
+      res.send compiled.join("\n")
 
 app.listen port
 console.log "Listening on port #{port}"
