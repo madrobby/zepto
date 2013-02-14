@@ -1,7 +1,6 @@
 fs      = require 'fs'
 coffee  = require 'coffee-script'
 express = require 'express'
-mime    = express.mime
 app     = express()
 port    = process.argv[2] || 3000
 
@@ -10,6 +9,10 @@ app.use express.static('node_modules/mocha')
 app.use express.static('node_modules/chai')
 
 app.use express.bodyParser()
+
+mime = (req) ->
+  type = req.headers['content-type'] or ''
+  type.split(';')[0]
 
 dump = (obj) ->
   obj = '' unless obj
@@ -64,4 +67,4 @@ app.get '/compile.js', (req, res) ->
       res.send compiled.join("\n")
 
 app.listen port
-console.log "Listening on port #{port}"
+console.log "Listening on port #{port}" if port is 3000
