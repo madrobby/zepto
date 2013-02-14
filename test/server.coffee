@@ -1,9 +1,7 @@
 fs      = require 'fs'
-connect = require 'connect'
-pause   = connect.utils.pause
-mime    = connect.utils.mime
 coffee  = require 'coffee-script'
 express = require 'express'
+mime    = express.mime
 app     = express()
 port    = process.argv[2] || 3000
 
@@ -43,9 +41,7 @@ app.get '/test/json', (req, res) ->
     res.send 400, 'FAIL'
 
 app.all '/test/slow', (req, res) ->
-  stopped = pause(req)
   setTimeout ->
-    stopped.resume()
     res.send 'DONE'
   , 200
 
