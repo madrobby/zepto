@@ -136,45 +136,6 @@
         $(document).off()
       },
 
-      testAjaxBase: function(t){
-        t.pause()
-        var xhr = $.ajax({
-          url: 'fixtures/ajax_load_simple.html',
-          success:  t.reg.handler('success'),
-          error:    t.reg.handler('error'),
-          complete: t.reg.resumeHandler('complete', function(){
-            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess complete ajaxComplete', t.reg.events())
-          })
-        })
-        t.assert($.isFunction(xhr.getResponseHeader))
-      },
-
-      testAjaxGet: function(t){
-        t.pause()
-        var xhr = $.get('echo', t.reg.resumeHandler('success', function(response){
-          t.assertIdentical(window, this)
-          t.assertLine("GET ?{}", response)
-          t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
-        }))
-        t.assertIn('abort', xhr)
-      },
-
-      testAjaxGetWithParams: function(t){
-        t.pause()
-        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
-          t.assertLine('GET ?{"sample":"data"}', response)
-          t.assertLine("accept: */*", response)
-        }))
-      },
-
-      testAjaxGetWithParamsAndType: function(t){
-        t.pause()
-        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
-          t.assertLine('GET ?{"sample":"data"}', response)
-          t.assertLine("accept: text/plain", response)
-        }), 'text')
-      },
-
       testAjaxGetWithParamsAndTypeNoCallback: function(t){
         t.pause()
         $(document).on('ajaxSuccess', function(e, xhr, settings, response){

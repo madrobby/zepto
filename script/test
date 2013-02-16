@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 port=3999
 pidfile=test/server.pid
 PATH="$(npm bin):$PATH"
@@ -11,5 +13,4 @@ terminate_test_server() {
 }
 trap terminate_test_server EXIT
 
-phantomjs test/runner.coffee "http://localhost:${port}/" "$@"
-exit $?
+mocha-phantomjs -R dot "http://localhost:${port}"

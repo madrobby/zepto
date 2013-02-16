@@ -1,5 +1,12 @@
 describe "Ajax", ->
 
+  before ->
+    $(document).on 'ajaxError', (e, xhr) ->
+      throw "server returned #{xhr.status}"
+
+  after ->
+    $(document).off()
+
   describe "$.get", ->
 
     it "fetches", (done) ->
