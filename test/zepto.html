@@ -422,6 +422,18 @@
         // can override DOM element
         $.extend(true, obj, { element:{a:'b'} })
         t.assertEqual('b', obj.element.a)
+
+        // deep copy with array
+        obj = {}
+        var initial = { array: [1,2,3,4], object:{a:{b:["c","d"]}} }
+        $.extend(true, obj, initial)
+        t.assertTrue($.isArray(obj.array))
+        t.assertEqual(JSON.stringify(obj), JSON.stringify(initial))
+        t.refuteIdentical(obj, initial)
+        t.refuteIdentical(obj.array, initial.array)
+        t.refuteIdentical(obj.object, initial.object)
+        t.refuteIdentical(obj.object.a, initial.object.a)
+        t.refuteIdentical(obj.object.a.b, initial.object.a.b)
       },
 
       testExtensionAPI: function(t) {
