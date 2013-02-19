@@ -27,7 +27,7 @@ $ gem -v
 $ rake -V
 
 # required to generate the minified version:
-$ gem install uglifier
+$ bundle
 ~~~
 
 Build Zepto by running `rake`:

@@ -54,9 +54,9 @@ file 'dist/zepto.min.js' => 'dist/zepto.js' do |task|
   begin require 'uglifier'
   rescue LoadError; fail "Uglifier not available: #{$!}"
   else
-    File.open(task.name, 'w') do |min|
-      min << Uglifier.new.compile(File.read(task.prerequisites.first))
-    end
+    uglified, source_map = Uglifier.new.compile_with_map(File.read(task.prerequisites.first))
+    File.open(task.name, 'w'){ |min| min << uglified }
+    File.open(task.name+'.map.json', 'w'){ |map| map << source_map }
   end
 end
 

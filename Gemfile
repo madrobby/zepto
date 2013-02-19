@@ -1,4 +1,4 @@
 source :rubygems
 
 gem 'rake'
-gem 'uglifier'
+gem 'uglifier', :git => 'https://github.com/lautis/uglifier'
