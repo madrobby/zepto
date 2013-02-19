@@ -30,10 +30,10 @@ $ rake -V
 $ bundle
 ~~~
 
-Build Zepto by running `rake`:
+Build Zepto by running `bundle exec rake`:
 
 ~~~ sh
-$ rake
+$ bundle exec rake
 Original version: 40.423k
 Minified: 18.776k
 Minified and gzipped: 7.033k, compression factor 5.747
@@ -48,7 +48,7 @@ To include optional modules and remove default ones, use the `concat` task. In
 this example, "fx" is removed, but "data" and "selector" are added:
 
 ~~~
-$ rake concat[-fx:data:selector] dist
+$ bundle exec rake concat[-fx:data:selector] dist
 ~~~
 
 <i>Zsh users may need to prepend `noglob` before that command because of special
@@ -202,7 +202,7 @@ $ brew install node phantomjs
 $ npm install
 ~~~
 
-Zepto test suite is in "test/\*.html" files. Open the individual files in a web
+Zepto's test suite is in "test/\*.html" files. Open the individual files in a web
 browser to run the tests. Files named with "\_functional" are not automated
 tests, but require interaction. Automated tests are written using
 [Evidence.js][].
