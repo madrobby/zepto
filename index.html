@@ -311,6 +311,8 @@ document.write('<script src=' +
 
 <script src="zepto.js"></script>
 <script>
+  var reflowTimeout;
+  
   function injectScript(src) {
     var s = document.createElement('script')
     s.src = src; s.async = true
@@ -353,6 +355,11 @@ document.write('<script src=' +
       reflowFixedPositions()
     }, 10)    
     return false
+  })
+  
+  $(window).on('scroll', function(){
+    if(reflowTimeout) clearTimeout(reflowTimeout)
+    reflowTimeout = setTimeout(reflowFixedPositions, 200)
   })
   
   function closeMenu(){
