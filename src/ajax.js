@@ -88,8 +88,6 @@
       },
       xhr = { abort: abort }, abortTimeout
 
-    serializeData(options)
-
     if (ajaxBeforeSend(xhr, options) === false) {
       abort('abort')
       return false
@@ -177,14 +175,15 @@
     if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
       RegExp.$2 != window.location.host
 
+    if (!settings.url) settings.url = window.location.toString()
+    serializeData(settings)
+    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
+
     var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
       if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
       return $.ajaxJSONP(settings)
     }
-
-    if (!settings.url) settings.url = window.location.toString()
-    serializeData(settings)
 
     var mime = settings.accepts[dataType],
         baseHeaders = { },
@@ -200,8 +199,6 @@
     if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
-
-    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
