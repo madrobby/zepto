@@ -265,7 +265,7 @@ p.compat a {
   #sidebar {
     z-index: 10;
   }
-  #sidebar .toc_section li {
+  ul.toc_section li {
     font-size: 16px;
     line-height: 22px;
   }
@@ -355,6 +355,26 @@ p.compat a {
   .container {
     max-width: 568px;
     margin: 30px 10px 50px 175px;
+  }
+  ul.toc_section li { 
+    font-size: 15px; 
+    line-height: 20px 
+  }
+}
+
+@media only screen and (min-width: 569px) and (max-width: 767px) {
+  html { -webkit-text-size-adjust: 100% }
+  #sidebar {
+    width: 135px;
+    padding: 0 15px;
+  }
+  .container {
+    max-width: 100%;
+    margin: 0px 10px 50px 175px;
+  }
+  ul.toc_section li { 
+    font-size: 15px; 
+    line-height: 20px 
   }
 }
 
