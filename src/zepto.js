@@ -596,8 +596,8 @@ var Zepto = (function() {
       return {
         left: obj.left + window.pageXOffset,
         top: obj.top + window.pageYOffset,
-        width: obj.width,
-        height: obj.height
+        width: Math.round(obj.width),
+        height: Math.round(obj.height)
       }
     },
     css: function(property, value){
