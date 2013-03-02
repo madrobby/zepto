@@ -144,7 +144,9 @@
     // Default timeout
     timeout: 0,
     // Whether data should be serialized to string
-    processData: true
+    processData: true,
+    // Whether data caching should be disabled (cache: false will append unique string to url)
+    cache: null,
   }
 
   function mimeToDataType(mime) {
@@ -198,6 +200,8 @@
     if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
+
+    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {

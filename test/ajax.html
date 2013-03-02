@@ -62,6 +62,26 @@
       )
     }
 
+    Evidence.Assertions.assertLinePattern = function(pattern, string, message) {
+      var lines = string.split("\n")
+
+      var i, match = false
+      if (lines.length) {
+        for (i = 0; i < lines.length; i++) {
+          if (lines[i].search(pattern) !== -1) {
+            match = true
+            break
+          }
+        }
+      }
+
+      this._assertExpression(
+        match === true,
+        message || "Pattern not found.",
+        'Expected pattern %s in %s.', pattern, string
+      )
+    }
+
     var slice = [].slice
 
     function CallbackRegistry(t) {
@@ -408,6 +428,57 @@
           success: t.reg.resumeHandler('success', function(data){
             t.assertEqual('val1', data.query.param1)
             t.assertEqual('val2', data.query.param2)
+          })
+        })
+      },
+
+      testNoCacheParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterWithParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ data: 'sample' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterAlreadyPresent: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ _: 'test' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterAlreadyPresentWithParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ _: 'test', data: 'sample' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
           })
         })
       },
