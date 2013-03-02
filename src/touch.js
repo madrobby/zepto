@@ -57,6 +57,8 @@
         cancelLongTap()
         touch.x2 = e.touches[0].pageX
         touch.y2 = e.touches[0].pageY
+        if (Math.abs(touch.x1 - touch.x2) > 10)
+          e.preventDefault()
       })
       .bind('touchend', function(e){
          cancelLongTap()
