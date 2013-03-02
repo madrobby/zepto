@@ -15,6 +15,7 @@
   ]
   , "devDependencies": {
       "uglify-js": "1.2.6"
-    , "connect": "2.7.1"
+    , "express": "3.1.x"
+    , "coffee-script": "1.4.x"
   }
 }
