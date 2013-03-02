@@ -30,15 +30,12 @@ body {
   padding: 15px 0 30px 30px;
   border-right: 1px solid #d4b4ff;
   background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(0.92, transparent), color-stop(0.9201, rgba(212, 180, 255, 0.0)), to(rgba(212, 180, 255, 0.3))), #f3eaff;
-
 }
 a.toc_title, a.toc_title:visited {
   display: block;
   color: black;
   font-weight: bold;
   margin-top: 15px;
-}
-a.toc_title:hover {
   text-decoration: underline;
 }
 #sidebar .version {
@@ -62,13 +59,13 @@ ul.toc_section {
 .toc_section li {
   margin: 0 0 3px 0;
 }
-.toc_section li:before { content: "- "; }
-.toc_section li a {
-  text-decoration: none;
-  color: black;
+.toc_section li:before { 
+  content: "▹ ";
+  color: #b01df9;
 }
-.toc_section li a:hover {
+.toc_section li a {
   text-decoration: underline;
+  color: black;
 }
 .container {
   max-width: 690px;
@@ -125,13 +122,13 @@ code, pre, tt {
   font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace; 
 }
 pre {
-background: #f8f8ff;
-border: 2px solid #eee;
-padding: 10px;
--webkit-border-radius: 5px;
--moz-border-radius: 5px;
-border-radius: 5px;
-overflow: auto;
+  background: #f8f8ff;
+  border: 2px solid #eee;
+  padding: 10px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  overflow: auto;
 }
 pre.signature {
   border: 0;
@@ -144,15 +141,19 @@ pre.signature {
 pre.signature code {
   background-color: transparent !important;
 }
-pre.signature .return { color: gray }
-code {
-background-color: #f8f8ff;
-padding: 1px 3px;
--webkit-border-radius: 2px;
--moz-border-radius: 2px;
-border-radius: 2px;
+pre.signature .return { 
+  color: gray;
 }
-pre code { padding: 0 }
+code {
+  background-color: #f8f8ff;
+  padding: 1px 3px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+pre code {
+  padding: 0;
+}
 p > code, li > code {
   border: 1px solid #eee;
 }
@@ -283,25 +284,78 @@ p.compat a {
     width: 140px;
     height: 100%;
     font-family: helvetica, sans-serif;
-    -webkit-transform: translateX(-140px);
-    -webkit-transition: -webkit-transform 0.3s ease-out;
+    left: auto;
+    right: 0px;
+    -webkit-transform: translateX(140px);
+    -webkit-transition: -webkit-transform 0.2s ease-out;
+    z-index: 1000;
+    border-right: none;
+    border-left: 1px solid #d4b4ff;
+    background: -webkit-gradient(linear, right top, left top, from(transparent), color-stop(0.92, transparent), color-stop(0.9201, rgba(212, 180, 255, 0.0)), to(rgba(212, 180, 255, 0.3))), #f3eaff;
   }
   .navigating #sidebar {
-    display: block;
     -webkit-transform: translateX(0);
   }
+  #menu_icon {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    font-size: 25px;
+    line-height: 25px;
+    text-align: center;
+    border-radius: 3px;
+    background: #b01df9;
+    color: #fff;
+    text-shadow: 0px -1px rgba(0,0,0,0.5);
+    padding: 3px 4px;
+    width: 34px;
+    height: 34px;
+    box-sizing: border-box;
+    z-index: 10000;
+    -webkit-transform: translateX(0px);
+    -webkit-transition: -webkit-transform 0.2s ease-out;
+  }
+  .navigating #menu_icon {
+    -webkit-transform: translateX(-140px);
+  }
   a.toc_title { margin-top: .2em }
-  ul.toc_section { font-size: 12px; line-height: 16px }
+  ul.toc_section { 
+    font-size: 13px; line-height: 18px 
+  }
   .container {
     margin: 12px;
     max-width: none;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -webkit-transform: translateX(0px);
+    -webkit-transition: -webkit-transform 0.2s ease-out;
   }
-  img[src^=logo] { max-width: 263px }
-  article { margin-bottom: 12px }
-  article.method h3 { padding-top: 0 }
+  .navigating .container {
+    -webkit-transform: translateX(-140px);
+  }
+  img[src^=logo] { max-width: 250px }
+  article { 
+    margin-bottom: 12px;
+  }
+  article.method h3 { padding-top: 10px }
   article.method p { margin: .2em 0 }
   article.method pre { margin: 0; white-space: pre-wrap }
   pre { padding: 2px 8px }
+}
+
+@media only screen and (max-width: 568px) and (orientation: landscape) {
+  html { -webkit-text-size-adjust: 100% }
+  #menu_icon {
+    display: none;
+  }  
+  #sidebar {
+    width: 135px;
+    padding: 0 15px;
+  }
+  .container {
+    max-width: 568px;
+    margin: 30px 10px 50px 175px;
+  }
 }
 
 /* syntax */

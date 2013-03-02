@@ -7,11 +7,14 @@ version: 1.0
 github_url: https://github.com/madrobby/zepto
 ---
 
+<div id="menu_icon">≣</div>
+
 <aside id="sidebar" class="interface">
 
   <a class="toc_title" href="#">
     Zepto.js <span class="version">({{ page.version }})</span>
   </a>
+
   <ul class=toc_section>
     <li><a href="#download">Download</a></li>
     <li><a href="#platforms">Target Platforms</a></li>
@@ -335,12 +338,42 @@ document.write('<script src=' +
 
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
+    
+  // don't follow links when the sidebar is tap-enabled
+  $('#sidebar').on('click', 'a', function(e){
+    return !$('body').hasClass('navigating')
+  })
 
-  $('#sidebar').on('click', 'a[href]', function(e){
+  $('#sidebar').on('tap', 'a', function(e){
+    location.href = this.href;
+
+    closeMenu()
     setTimeout(function(){
       // fixes sidebar becoming unscrollable in Safari 6
       reflowFixedPositions()
-    }, 10)
+    }, 10)    
+    return false
+  })
+  
+  function closeMenu(){
+    if ($('body').hasClass('navigating')) {
+      $('body').removeClass('navigating')
+      setTimeout(function(){
+        $('#sidebar').css('display','none')
+      }, 350)
+    }
+  }
+  
+  // show/hide menu on mobile
+  $('#menu_icon').on('tap', function(){
+    if ($('body').hasClass('navigating')) {
+      closeMenu()
+    } else {
+      $('#sidebar').css('display','block')
+      $('#sidebar')[0].offsetLeft // force render
+      $('body').addClass('navigating')
+    }
+    return false
   })
 
   // change the title of the page so bookmarks have a better default
