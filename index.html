@@ -3,7 +3,7 @@ title: "Zepto.js: the aerogel-weight jQuery-compatible JavaScript library"
 layout: default
 description: >
   The aerogel-weight jQuery-compatible JavaScript library
-version: 1.0rc1
+version: 1.0
 github_url: https://github.com/madrobby/zepto
 ---
 
@@ -14,7 +14,7 @@ github_url: https://github.com/madrobby/zepto
   </a>
   <ul class=toc_section>
     <li><a href="#download">Download</a></li>
-    <li><a href="#platforms">Target Platforms</a></li>    
+    <li><a href="#platforms">Target Platforms</a></li>
     <li><a href="#changelog">Change Log</a></li>
     <li><a href="#thanks">Acknowledgements</a></li>
   </ul>
@@ -23,6 +23,10 @@ github_url: https://github.com/madrobby/zepto
 
   <a class=toc_title href="#core">Core</a>
   {% assign posts = site.categories.core %}
+  {% include methods_sidebar.html %}
+  
+  <a class=toc_title href="#detect">Detect</a>
+  {% assign posts = site.categories.detect %}
   {% include methods_sidebar.html %}
 
   <a class=toc_title href="#event">Event</a>
@@ -50,7 +54,7 @@ github_url: https://github.com/madrobby/zepto
 
   <header>
   <h1><img src=logo.png alt=Zepto.js></h1>
-  
+
   <p>
     <b>Zepto</b> is a minimalist <b>JavaScript library
     for modern browsers</b> with a largely
@@ -64,55 +68,54 @@ github_url: https://github.com/madrobby/zepto
   </div>
 
   <p>
-    While 100% jQuery coverage is not a design goal, the <b>APIs provided 
-    match their jQuery counterparts</b>. The goal is to have a ~5-10k modular library 
+    While 100% jQuery coverage is not a design goal, the <b>APIs provided
+    match their jQuery counterparts</b>. The goal is to have a ~5-10k modular library
     that <b>downloads and executes fast</b>, with a <b>familiar and versatile API</b>,
     so you can <b>concentrate on getting stuff done</b>.
   </p>
-  
+
   <p>
     Zepto is open source software and is released under the
     developer and business-friendly
     <a href="{{ page.github_url }}/blob/master/MIT-LICENSE">MIT license</a>.
   </p>
-  
+
   <p>
     <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://zeptojs.com/" data-text="Zepto.js, a jQuery-compatible micro-library for modern browsers" data-count="horizontal" data-via="zeptojs" data-related="thomasfuchs">Tweet</a>
   </p>
- 
+
   </header>
-  
+
   <h3 id=download>Download Zepto</h3>
-  
+
   <p>
     The default build includes the following modules:<br>
     <em>Core, Ajax, Event, Form, Effects, Polyfill, and Detect</em>.
   </p>
 
   <p class=compat>
-    We're working on documenting all the optional modules and 
-    strive for 100% documentation coverage when we release v1.0.
-    A list of all modules is available in the <a href="{{ page.github_url }}#readme">README</a>.
+    There are more modules; a list of all modules
+    is available in the <a href="{{ page.github_url }}#readme">README</a>.
   </p>
-  
+
   <ul class=downloads>
     <li>
       <a href="zepto.js" class="download">zepto.js v{{ page.version }} (for development)</a>
-      – <i>47k uncompressed, lots of comments</i>
+      – <i>54k uncompressed, lots of comments</i>
     </li>
     <li>
       <a href="zepto.min.js" class="download">zepto.min.js v{{ page.version }} (for production)</a>
-      – <i>8.4k when gzipped</i>
+      – <i>9.26k when gzipped</i>
     </li>
     <li>
       <a href="{{ page.github_url }}">Source code on Github</a>
     </li>
   </ul>
-  
+
   <p>
     Include Zepto with a script tag near the end of your page:
   </p>
-  
+
 {% highlight html %}
 ...
 </body>
@@ -122,7 +125,7 @@ github_url: https://github.com/madrobby/zepto
 
   <p>
     If you need to support Internet Explorer, you can fall back on jQuery.
-    Note that conditional comments are no longer supported starting on IE 10, 
+    Note that conditional comments are no longer supported starting on IE 10,
     so we recommend the following <code>document.write</code> approach:
   </p>
 
@@ -136,55 +139,54 @@ document.write('<script src=' +
 
   <h3 id=platforms>Target platforms</h3>
 
+  <h4>Desktop browsers</h4>
   <ul>
-    <li>Safari 5+ (desktop)</li>
-    <li>Chrome 5+ (desktop)</li>
-    <li>Mozilla Firefox 4+</li>
+    <li>Safari 5+ (Mac, Win)</li>
+    <li>Chrome 5+ (Win, Mac, Linux, Chrome OS)</li>
+    <li>Mozilla Firefox 4+ (Win, Mac, Linux)</li>
+    <li>Opera 10+ (Win, Mac, Linux)</li>
+  </ul>
+
+  <h4>Mobile browsers</h4>  
+  <ul>
     <li>iOS 4+ Safari</li>
+    <li>Chrome for Android</li>
+    <li>Chrome for iOS</li>
     <li>Android 2.2+ Browser</li>
-    <li>Other WebKit-based browsers/runtimes</li>
     <li>webOS 1.4.5+ Browser</li>
     <li>BlackBerry Tablet OS 1.0.7+ Browser</li>
     <li>Amazon Silk 1.0+</li>
-    <li>Opera 10+</li>
+    <li>Firefox for Android</li>
+    <li>Firefox OS Browser</li>
+    <li>Practically any WebKit-based browsers/runtimes</li>
   </ul>
 
   <p>
-    <em>Note that some optional features of Zepto specifically target 
+    <em>Note that some optional features of Zepto specifically target
     mobile browsers; as the original project goal was to specifically
     provide a leaner alternative to jQuery for the mobile web.</em>
   </p>
 
   <p>
-    Zepto will also have full support for upcoming
-    mobile browsers that are currently in beta,
-    like <a href="http://www.google.com/intl/en/chrome/android/">Chrome for Android</a>
-    and <a href="http://www.mozilla.org/en-US/b2g/">Boot to Gecko</a>.
-    We may add support for Internet Explorer 10 and 
-    Windows Phone 8 depending on the final feature set
-    of these browsers.
-  </p>
-  
-  <p>
     Zepto is a good choice for browser extensions (for Safari and Chrome) and
     to develop HTML-based views within native app frameworks, such as
     <a href="http://phonegap.com/">PhoneGap</a>.
   <p>
-    
-  <p>    
+
+  <p>
     In short, Zepto is expected to work in every modern browser
     and browser-like environment, except for Internet Explorer.
   </p>
-  
+
   <h3>Manually building Zepto</h3>
-  
+
   <p>
     <code>zepto.js</code> and <code>zepto.min.js</code> provided above can be
     used as-is. However, for best efficiency and customizability, run the build
     system that comes with Zepto's source code.
     It allows you to select modules, run tests,
     use <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a> to
-    minify your custom build, and gives you an estimate on the compression 
+    minify your custom build, and gives you an estimate on the compression
     that is achievable when <code>zepto.min.js</code> is served gzipped.
   </p>
 
@@ -214,7 +216,7 @@ document.write('<script src=' +
 {% endhighlight %}
 
   <p>
-    To get started with plug-in development, take a look at the 
+    To get started with plug-in development, take a look at the
     <a href="{{ page.github_url }}/blob/master/src/zepto.js">source of Zepto's core module</a>,
     and be sure to read the
     <a href="{{ page.github_url }}#code-style-guidelines">coding style guidelines</a>.
@@ -225,6 +227,11 @@ document.write('<script src=' +
     <hr>
     <h2 id="core">Core methods</h2>
     {% assign posts = site.categories.core %}
+    {% include methods_full.html %}
+    
+    <hr>
+    <h2 id="detect">Detect methods</h2>
+    {% assign posts = site.categories.detect %}
     {% include methods_full.html %}
 
     <hr>
@@ -242,12 +249,12 @@ document.write('<script src=' +
     {% assign posts = site.categories.form %}
     {% include methods_full.html %}
 
-    <hr>  
+    <hr>
     <h2 id="fx">Effects</h2>
     {% assign posts = site.categories.fx %}
     {% include methods_full.html %}
 
-    <hr>  
+    <hr>
     <h2 id="touch">Touch</h2>
     {% assign posts = site.categories.touch %}
     {% include methods_full.html %}
@@ -269,22 +276,22 @@ document.write('<script src=' +
 
     <hr>
     <h2 id=thanks>Acknowledgements &amp; Thanks</h2>
-    
+
     <p>
       A big <b>Thank-You</b> goes out to all of our
       <a href="https://github.com/madrobby/zepto/contributors">awesome Zepto.js contributors</a>.
       May you all forever bask in glory.
     </p>
-    
+
     <p>
       The Zepto API is based on <a href="http://jquery.com/">jQuery's Core API</a>, which
       is released under the <a href="https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt">MIT license</a>.
     </p>
-    
+
     <p>
       This documentation is based on the layout of the
-      <a href="https://github.com/documentcloud/backbone/">Backbone.js</a> 
-      documentation, which is released under the 
+      <a href="https://github.com/documentcloud/backbone/">Backbone.js</a>
+      documentation, which is released under the
       <a href="https://github.com/documentcloud/backbone/blob/master/LICENSE">MIT license</a>.
     </p>
 
@@ -343,8 +350,8 @@ document.write('<script src=' +
   // For retina screens, use a hi-res version of the tour image.
   // We're swapping this out on-demand (not an ideal solution)
   // to avoid rendering bugs on iOS.
-  $('#tour > img')[0].src = 
-    ('devicePixelRatio' in window && devicePixelRatio > 1) ? 
+  $('#tour > img')[0].src =
+    ('devicePixelRatio' in window && devicePixelRatio > 1) ?
     'intro2x.jpg' : 'intro.jpg'
 
   var tour = $('#tour'), tourSlides = tour.children(),
