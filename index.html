@@ -104,11 +104,11 @@ github_url: https://github.com/madrobby/zepto
   <ul class=downloads>
     <li>
       <a href="zepto.js" class="download">zepto.js v{{ page.version }} (for development)</a>
-      – <i>54k uncompressed, lots of comments</i>
+      – <i>54.6k uncompressed, lots of comments</i>
     </li>
     <li>
       <a href="zepto.min.js" class="download">zepto.min.js v{{ page.version }} (for production)</a>
-      – <i>9.26k when gzipped</i>
+      – <i>9.7k when gzipped</i>
     </li>
     <li>
       <a href="{{ page.github_url }}">Source code on Github</a>
@@ -122,7 +122,7 @@ github_url: https://github.com/madrobby/zepto
 {% highlight html %}
 ...
 </body>
-<script src=zepto.js></script>
+<script src=zepto.min.js></script>
 </html>
 {% endhighlight %}
 
@@ -309,7 +309,9 @@ document.write('<script src=' +
 
 </div>
 
-<script src="zepto.js"></script>
+<script src="zepto.min.js"></script>
+<script src="touch.js"></script>
+
 <script>
   var reflowTimeout;
   
