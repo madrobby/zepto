@@ -4,7 +4,7 @@
 
 ;(function(undefined){
   if (String.prototype.trim === undefined) // fix for iOS 3.2
-    String.prototype.trim = function(){ return this.replace(/^\s+/, '').replace(/\s+$/, '') }
+    String.prototype.trim = function(){ return this.replace(/^\s+|\s+$/g, '') }
 
   // For iOS 3.x
   // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
