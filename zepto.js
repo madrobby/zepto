@@ -1,4 +1,5 @@
-/* Zepto v1.0 - polyfill zepto detect event ajax form fx - zeptojs.com/license */
+/* Zepto v1.0-1-ga3cab6c - polyfill zepto detect event ajax form fx - zeptojs.com/license */
+
 
 ;(function(undefined){
   if (String.prototype.trim === undefined) // fix for iOS 3.2
@@ -32,10 +33,6 @@
     }
 
 })()
-
-
-
-
 
 var Zepto = (function() {
   var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
@@ -820,13 +817,8 @@ var Zepto = (function() {
   return $
 })()
 
-
 window.Zepto = Zepto
 '$' in window || (window.$ = Zepto)
-
-
-
-
 
 ;(function($){
   function detect(ua){
@@ -879,10 +871,6 @@ window.Zepto = Zepto
   $.__detect = detect
 
 })(Zepto)
-
-
-
-
 
 ;(function($){
   var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
@@ -1128,10 +1116,6 @@ window.Zepto = Zepto
   }
 
 })(Zepto)
-
-
-
-
 
 ;(function($){
   var jsonpID = 0,
@@ -1444,10 +1428,6 @@ window.Zepto = Zepto
   }
 })(Zepto)
 
-
-
-
-
 ;(function ($) {
   $.fn.serializeArray = function () {
     var result = [], el
@@ -1484,10 +1464,6 @@ window.Zepto = Zepto
   }
 
 })(Zepto)
-
-
-
-
 
 ;(function($, undefined){
   var prefix = '', eventPrefix, endEventName, endAnimationName,
