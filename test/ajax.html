@@ -252,6 +252,19 @@
         $.ajax({ url: 'echo' })
       },
 
+      testAjaxJSON: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+
+        $.ajax({
+          url: 'json',
+          headers: { accept: 'application/json' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
+          })
+        })
+      },
+
       testAjaxGetJSON: function(t){
         t.pause()
         resumeOnAjaxError(t)
