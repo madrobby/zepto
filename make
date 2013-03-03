@@ -42,7 +42,7 @@ target.build = ->
   modules = (env['MODULES'] || 'polyfill zepto detect event ajax form fx').split(' ')
   module_files = ( "src/#{module}.js" for module in modules )
   intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
-  dist = intro + cat(module_files).replace(/^\/[\/*].*$/mg, '').replace(/\n{2,}/, "\n")
+  dist = intro + cat(module_files).replace(/^\/[\/*].*$/mg, '').replace(/\n{3,}/g, "\n\n")
   dist.to(zepto_js)
   report_size(zepto_js)
 
