@@ -424,14 +424,22 @@ var Zepto = (function() {
       return el && !isObject(el) ? el : $(el)
     },
     find: function(selector){
-      var result
-      if (this.length == 1) result = $(zepto.qsa(this[0], selector))
+      var result, $this = this
+      if (typeof selector == 'object')
+        result = $(selector).filter(function(){
+          var node = this
+          return emptyArray.some.call($this, function(parent){
+            return $.contains(parent, node)
+          })
+        })
+      else if (this.length == 1) result = $(zepto.qsa(this[0], selector))
       else result = this.map(function(){ return zepto.qsa(this, selector) })
       return result
     },
     closest: function(selector, context){
-      var node = this[0]
-      while (node && !zepto.matches(node, selector))
+      var node = this[0], collection = false
+      if (typeof selector == 'object') collection = $(selector)
+      while (node && !(collection ? collection.indexOf(node) >= 0 : zepto.matches(node, selector)))
         node = node !== context && !isDocument(node) && node.parentNode
       return $(node)
     },
