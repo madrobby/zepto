@@ -2354,6 +2354,10 @@
         $(form).bind('submit', function(e) {
           executed.push("2")
           t.assertEqual(form, e.target)
+          // TODO
+          // Android 2.3 doesn't support stopImmediatePropagation,
+          // so the tests throws an error. Ideally Zepto should emulate
+          // stopImmediatePropagation on browsers that don't support it.
           e.stopImmediatePropagation()
           return 2
         })
