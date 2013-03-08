@@ -28,50 +28,210 @@
       setTimeout(function() { t.resume(fn || function(){}) }, 5)
     }
 
+    function resumeOnAjaxError(t) {
+      $(document).on('ajaxError', function(e, xhr){
+        deferredResume(t, function(){
+          t.assert(false, "request errored out: " + xhr.responseText)
+        })
+      })
+    }
+
+    function toArray(list) {
+      if ($.type(list) == "string") return list.split(/(?:\s*,\s*|\s+)/)
+      else return list
+    }
+
+    Evidence.Assertions.assertEqualList = function(expected, actual, message) {
+      var expectedList = toArray(expected),
+          actualList   = toArray(actual)
+
+      this._assertExpression(
+        expectedList.join(' ') == actualList.join(' '),
+        message || "Lists don't match.",
+        'Expected %o, got %o.', expectedList, actualList
+      )
+    }
+
+    Evidence.Assertions.assertLine = function(line, string, message) {
+      var lines = string.split("\n")
+
+      this._assertExpression(
+        $.inArray(line, lines) >= 0,
+        message || "Line not found.",
+        'Expected line %s in %s.', line, string
+      )
+    }
+
+    Evidence.Assertions.assertLinePattern = function(pattern, string, message) {
+      var lines = string.split("\n")
+
+      var i, match = false
+      if (lines.length) {
+        for (i = 0; i < lines.length; i++) {
+          if (lines[i].search(pattern) !== -1) {
+            match = true
+            break
+          }
+        }
+      }
+
+      this._assertExpression(
+        match === true,
+        message || "Pattern not found.",
+        'Expected pattern %s in %s.', pattern, string
+      )
+    }
+
+    var slice = [].slice
+
+    function CallbackRegistry(t) {
+      this.testCase = t
+      this.called = []
+    }
+    $.extend(CallbackRegistry.prototype, {
+      register: function(name, context, args){
+        this.called.push([name, context, args])
+      },
+      handler: function(name, fn){
+        var that = this
+        return function(){
+          that.register(name, this, slice.call(arguments))
+          if (fn) return fn.apply(this, arguments)
+        }
+      },
+      resumeHandler: function(name, fn){
+        var that = this
+        return this.handler(name, function(){
+          var context = this, args = arguments
+          setTimeout(function(){
+            that.testCase.resume(function(){
+              if (fn) fn.apply(context, args)
+            })
+          }, 5)
+        })
+      },
+      handlers: function(){
+        var that = this, hash = {}
+        $.each(arguments, function(i, name){
+          hash[name] = that.handler(name)
+        })
+        return hash
+      },
+      events: function(){
+        return $.map(this.called, function(item){ return item[0] })
+      },
+      context: function(name){
+        return this.find(name, function(item){ return item[1] })
+      },
+      args: function(name){
+        return this.find(name, function(item){ return item[2] })
+      },
+      target: function(name){
+        var args = this.args(name)
+        return args && args[0].target
+      },
+      find: function(name, fn){
+        var obj
+        $.each(this.called, function(i, item){
+          if (item[0] == name) {
+            obj = fn(item)
+            return false
+          }
+        })
+        return obj
+      }
+    })
+
     Evidence('ZeptoAjaxTest', {
+
+      setUp: function() {
+        var reg = new CallbackRegistry(this),
+            globals = toArray('ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete')
+
+        $(document).on(reg.handlers.apply(reg, globals))
+        this.reg = reg
+      },
 
       tearDown: function() {
         $(document).off()
-
-        ;['jsonp2', 'jsonp3'].forEach(function(prop){
-          if (prop in window) delete window[prop]
-        })
       },
 
       testAjaxBase: function(t){
         t.pause()
         var xhr = $.ajax({
           url: 'fixtures/ajax_load_simple.html',
-          complete: function() { deferredResume(t) }
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess complete ajaxComplete', t.reg.events())
+          })
         })
-        t.assertEqual('function', typeof xhr['getResponseHeader'])
+        t.assert($.isFunction(xhr.getResponseHeader))
       },
 
       testAjaxGet: function(t){
         t.pause()
-        var xhr = $.get('fixtures/ajax_load_simple.html', function(response){
-          var that = this
+        var xhr = $.get('echo', t.reg.resumeHandler('success', function(response){
+          t.assertIdentical(window, this)
+          t.assertLine("GET ?{}", response)
+          t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+        }))
+        t.assertIn('abort', xhr)
+      },
+
+      testAjaxGetWithParams: function(t){
+        t.pause()
+        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
+          t.assertLine('GET ?{"sample":"data"}', response)
+          t.assertLine("accept: */*", response)
+        }))
+      },
+
+      testAjaxGetWithParamsAndType: function(t){
+        t.pause()
+        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
+          t.assertLine('GET ?{"sample":"data"}', response)
+          t.assertLine("accept: text/plain", response)
+        }), 'text')
+      },
+
+      testAjaxGetWithParamsAndTypeNoCallback: function(t){
+        t.pause()
+        $(document).on('ajaxSuccess', function(e, xhr, settings, response){
           deferredResume(t, function(){
-            this.assert(response)
-            this.assertIdentical(window, that)
+            t.assertLine('GET ?{"sample":"data"}', response)
+            t.assertLine("accept: text/plain", response)
+            t.assertEqualList('ajaxBeforeSend ajaxSend ajaxSuccess ajaxComplete', t.reg.events())
           })
         })
-        t.assertIn('abort', xhr)
+        $.get('echo', { sample: 'data' }, 'text')
       },
 
       testAjaxPost: function(t){
         t.pause()
-        var xhr = $.post('fixtures/ajax_load_simple.html', function(response){
-          deferredResume(t, function(){
-            this.assert(response)
-          })
-        })
+        var xhr = $.post('echo', t.reg.resumeHandler('success', function(response){
+          t.assertIdentical(window, this)
+          t.assertLine("POST ?{}", response)
+          t.assertLine("accept: */*", response)
+          t.assertLine('{}', response)
+          t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+        }))
         t.assertIn('abort', xhr)
+      },
+
+      testAjaxPostWithPayloadAndType: function(t) {
+        t.pause()
+        var payload = { sample: 'data' }
+        $.post('echo', payload, t.reg.resumeHandler('success', function(response){
+          t.assertLine("content-type: application/x-www-form-urlencoded", response)
+          t.assertLine("accept: text/plain", response)
+          t.assertLine('{"sample":"data"}', response)
+        }), 'text')
       },
 
       testNumberOfActiveRequests: function(t) {
         var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0
-        t.assertIdentical(0, $.active)
+        t.assertIdentical(0, $.active, 'initial count mismatch')
         $(document)
           .on('ajaxStart', function() { ajaxStarted++ })
           .on('ajaxEnd', function() { ajaxEnded++ })
@@ -87,103 +247,284 @@
           })
 
         t.pause()
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
-        $.ajax({url: 'fixtures/ajax_load_simple.html'})
+        $.ajax({ url: 'echo' })
+        $.ajax({ url: 'echo' })
+        $.ajax({ url: 'echo' })
       },
 
-      testAjaxPostWithAcceptType: function(t) {
+      testAjaxJSON: function(t){
         t.pause()
-        $.post('fixtures/ajax_load_simple.html', { sample: 'data' }, function(response) {
-          deferredResume(t, function() {
-            this.assert(response)
+        resumeOnAjaxError(t)
+
+        $.ajax({
+          url: 'json',
+          headers: { accept: 'application/json' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
           })
-        }, 'text/plain')
+        })
       },
 
       testAjaxGetJSON: function(t){
         t.pause()
-        var xhr = $.getJSON('fixtures/zepto.json', function(data){
-          deferredResume(t, function(){
-            this.assertEqual('awesomeness', data.zepto)
+        resumeOnAjaxError(t)
+
+        var xhr = $.getJSON(
+          'json',
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
+            t.assert($.isEmptyObject(data.query))
+            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+          })
+        )
+        t.assertIn('abort', xhr)
+      },
+
+      testAjaxGetJSONWithParams: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+
+        $.getJSON(
+          'json', { sample: 'data' },
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('data', data.query.sample)
+          }),
+          'text' // ignored
+        )
+      },
+
+      testAjaxGetJSONP: function(t){
+        t.pause()
+        $.getJSON(
+          'jsonp?callback=?&timestamp='+(+new Date),
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
+            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+            t.assertEqual(0, $('script[src^=jsonp]').size())
+          })
+        )
+        t.assertEqual(1, $('script[src^=jsonp]').size())
+      },
+
+      testAjaxGetJSONPWithParams: function(t){
+        t.pause()
+        $.getJSON(
+          'jsonp?callback=?&timestamp='+(+new Date),
+          { sample: 'data' },
+          t.reg.resumeHandler('success', function(data){
+            t.assertEqual('data', data.query.sample)
+          })
+        )
+      },
+
+      testAjaxJSONP: function(t){
+        t.pause()
+        var xhr = $.ajaxJSONP({
+          url: 'jsonp?callback=?&timestamp='+(+new Date),
+          success:  t.reg.handler('success'),
+          complete: t.reg.resumeHandler('complete', function(data){
+            var successArgs = t.reg.args('success')
+            t.assertEqual('world', successArgs[0].hello)
+            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess complete ajaxComplete', t.reg.events())
+            t.assertEqual(0, $('script[src^=jsonp]').size())
           })
         })
         t.assertIn('abort', xhr)
       },
 
-      testAjaxGetJSONP: function(t){
+      testAjaxJSONPBeforeSend: function(t){
         t.pause()
-        var xhr = $.getJSON('fixtures/jsonp.js?callback=?&timestamp='+(+new Date), function(data){
-          deferredResume(t, function(){
-            this.assertEqual('world', data.hello)
-            this.assertEqual(0, $('script[src^=fixtures]').size())
-          })
+        $(document).on('ajaxBeforeSend', function(){ return false })
+
+        $.ajax({
+          url: 'jsonp?callback=?&timestamp='+(+new Date),
+          beforeSend: t.reg.resumeHandler('beforeSend', function(){
+            t.assertEqualList('beforeSend ajaxBeforeSend ajaxError complete ajaxComplete', t.reg.events())
+          }),
+          success:  t.reg.handler('success'),
+          complete: t.reg.handler('complete')
         })
-        t.assertEqual(1, $('script[src^=fixtures]').size())
-        t.assertIn('abort', xhr)
       },
 
       testAjaxGetJSONPErrorCallback: function(t){
         t.pause()
         $.ajax({
-          type: 'GET',
-          url: 'fixtures/404.js?timestamp='+(+new Date),
+          type:     'GET',
+          url:      'fixtures/404.js?timestamp='+(+new Date),
           dataType: 'jsonp',
-          success: function() { t.refute(true) },
-          error: function() { t.assert(true) },
-          complete: function() { deferredResume(t) }
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
+            t.assertEqual(0, $('script[src^=fixtures]').size())
+          })
         })
       },
 
-      testJSONPdataType: function(t){
+      testAjaxGetJSONPErrorWithoutCallback: function(t){
         t.pause()
         $.ajax({
+          type:     'GET',
+          url:      'fixtures/404.js?timestamp='+(+new Date),
           dataType: 'jsonp',
-          url: 'fixtures/jsonp.js?timestamp='+(+new Date),
-          success: function(data){
-            deferredResume(t, function(){
-              this.assertEqual('world', data.hello)
-            })
-          }
+          success:  t.reg.handler('success'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend ajaxError complete ajaxComplete', t.reg.events())
+            t.assertEqual(0, $('script[src^=fixtures]').size())
+          })
+        })
+      },
+
+      testAjaxJSONPTimeout: function(t){
+        t.pause()
+        $.ajax({
+          url:      'slow?timestamp='+(+new Date),
+          dataType: 'jsonp',
+          timeout:  20,
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
+            var errorArgs = t.reg.args('error')
+            t.assertEqual('timeout', errorArgs[1])
+            t.assertEqual(0, $('script[src^=slow]').size())
+          })
+        })
+      },
+
+      testAjaxJSONPAbort: function(t){
+        t.pause()
+        var xhr = $.ajax({
+          url:      'slow?timestamp='+(+new Date),
+          dataType: 'jsonp',
+          timeout:  30,
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.handler('complete')
+        })
+        setTimeout(function(){ xhr.abort() }, 10)
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
+            var errorArgs = t.reg.args('error')
+            t.assertEqual('abort', errorArgs[1])
+            t.assertEqual(0, $('script[src^=slow]').size())
+          })
+        }, 50)
+      },
+
+      testAjaxJSONPError: function(t){
+        t.pause()
+        var xhr = $.ajax({
+          url:      'error?timestamp='+(+new Date),
+          dataType: 'jsonp',
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
+            var errorArgs = t.reg.args('error')
+            t.assertEqual('error', errorArgs[1])
+            t.assertEqual(0, $('script[src^=error]').size())
+          })
         })
       },
 
       testAjaxJSONPWithDataSupport: function(t) {
+        t.pause()
         var xhr = $.ajax({
-          url: 'fixtures/jsonp.js?callback=?&timestamp='+(+new Date),
+          url: 'jsonp?callback=?&timestamp='+(+new Date),
           data: {
             param1: 'val1',
             param2: 'val2'
-          }
+          },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('val1', data.query.param1)
+            t.assertEqual('val2', data.query.param2)
+          })
         })
-        t.assert($('script[src^=fixtures]').attr('src').match('param1=val1&param2=val2'))
-        xhr.abort()
+      },
+
+      testNoCacheParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterWithParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ data: 'sample' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterAlreadyPresent: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ _: 'test' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
+      },
+
+      testNoCacheParameterAlreadyPresentWithParam: function(t) {
+        t.pause()
+        var xhr = $.ajax({
+          url:'echo',
+          data:{ _: 'test', data: 'sample' },
+          cache: false,
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the no-cache param (or an element of it) looks like a timestamp
+            t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+          })
+        })
       },
 
       testAjaxLoad: function(t) {
-        var testEl = $('#ajax_load')
         t.pause()
-        var el = testEl.load('fixtures/ajax_load_simple.html', function(response, status, xhr){
-          var that = this
-          deferredResume(t, function(){
-            this.assertIdentical(testEl, that)
-            this.assertEqual('simple ajax load', testEl.html().trim())
-            this.assert(response)
-            this.assertEqual('success', status)
+        var testEl = $('#ajax_load')
+        var el = testEl.load(
+          'fixtures/ajax_load_simple.html',
+          t.reg.resumeHandler('success', function(response, status, xhr){
+            t.assertIdentical(testEl, this)
+            t.assertEqual("simple ajax load\n", response)
+            t.assertEqual('simple ajax load', testEl.html().trim())
+            t.assertEqual('success', status)
+            t.assertIn('abort', xhr)
+            t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
           })
-          t.assertIn('abort', xhr)
-        })
+        )
         t.assertIdentical(testEl, el)
       },
 
       testAjaxLoadWithSelector: function(t) {
-        var testEl = $('#ajax_load')
         t.pause()
-        testEl.load('fixtures/ajax_load_selector.html #ajax_load_test_div', function(){
-          deferredResume(t, function() {
-            this.assertEqual('ajax load with selector', testEl.html().trim())
+        var testEl = $('#ajax_load')
+        testEl.load(
+          'fixtures/ajax_load_selector.html #ajax_load_test_div',
+          t.reg.resumeHandler('success', function(){
+            t.assertEqual(
+              '<div id="ajax_load_test_div">ajax load with selector</div>',
+              testEl.html().trim()
+            )
           })
-        })
+        )
       },
 
       testAjaxLoadWithJavaScript: function (t) {
@@ -214,29 +555,37 @@
         t.pause()
         var body = $('body')
         $.ajax({
-          url: 'fixtures/ajax_load_simple.html',
-          context: body,
-          complete: function(){
-            var that = this
-            deferredResume(t, function(){
-              this.assertIdentical(body, that)
-            })
-          }
+          url:        'fixtures/ajax_load_simple.html',
+          context:    body,
+          beforeSend: t.reg.handler('beforeSend'),
+          success:    t.reg.handler('success'),
+          complete:   t.reg.resumeHandler('complete', function(){
+            t.assertIdentical(body, this)
+            t.assertIdentical(body, t.reg.context('beforeSend'))
+            t.assertIdentical(body, t.reg.context('success'))
+            t.assertIdentical(document.body, t.reg.target('ajaxBeforeSend'))
+            t.assertIdentical(document.body, t.reg.target('ajaxSuccess'))
+          })
         })
       },
 
-      testAjaxWithObjectContext: function(t) {
+      testAjaxWithContextPlainObject: function(t) {
         t.pause()
-        var context = {}
+        var obj = {}
         $.ajax({
-          url: 'fixtures/ajax_load_simple.html',
-          context: context,
-          complete: function(){
-            deferredResume(t)
-          }
+          url:        'fixtures/ajax_load_simple.html',
+          context:    obj,
+          beforeSend: t.reg.handler('beforeSend'),
+          success:    t.reg.handler('success'),
+          complete:   t.reg.resumeHandler('complete', function(){
+            t.assertIdentical(obj, this)
+            t.assertIdentical(obj, t.reg.context('beforeSend'))
+            t.assertIdentical(obj, t.reg.context('success'))
+            t.assertUndefined(t.reg.target('ajaxBeforeSend'))
+            t.assertUndefined(t.reg.target('ajaxSuccess'))
+          })
         })
       }
-
     })
 
     var OriginalXHR = $.ajaxSettings.xhr
@@ -351,6 +700,11 @@
         t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/x-www-form-urlencoded')))
       },
 
+      testDefaultContentTypeDisabled: function(t) {
+        $.ajax({ type: 'POST', data: {a:1}, contentType: false })
+        t.refute(MockXHR.last.headers.some(matchHeader('Content-Type')))
+      },
+
       testCustomHeader: function(t) {
         $.ajax({ headers: {'X-Awesome': 'true'} })
         t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')))
@@ -391,6 +745,22 @@
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } })
         MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
         t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
+      },
+
+      testDataOptionIsConvertedToSerializedTraditionalForm: function(t) {
+        $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } }, traditional: true })
+        MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
+        t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', MockXHR.last.data)
+      },
+
+      testProcessDataDisabled: function(t) {
+        var data = { country: 'Ecuador' }
+        $.ajax({
+          data: data,
+          processData: false,
+          type: "POST"
+        })
+        t.assertIdentical(data, MockXHR.last.data)
       },
 
       testDataIsAppendedToGETURL: function(t) {
@@ -648,6 +1018,11 @@
       testParamEscaping: function(t) {
         var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' })
         t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
+      },
+
+      testParamSpaces: function(t) {
+        var result = $.param({ "foo bar": "baz kuux" })
+        t.assertEqual("foo+bar=baz+kuux", result)
       },
 
       testParamComplex: function(t) {

@@ -13,23 +13,37 @@
   <style>
     @-webkit-keyframes animName {
       0% {
-        -webkit-transform: rotateY(180deg) scale(.8) translate3d(0, 0, 0);
+        -webkit-transform: rotate(180deg) scale(.8);
         opacity: 1;
       }
       100% {
-        -webkit-transform: rotateY(0deg) scale(1) translate3d(100px, 100px, 100px);
-        opacity: 0;
+        -webkit-transform: rotate(0deg) scale(1) translate3d(80px, 20px, 0);
+        opacity: 0.5;
       }
     }
     @-moz-keyframes animName {
       from {
-        -moz-transform: rotateY(180deg) scale(.8) translate(0, 0);
+        -moz-transform: rotate(180deg) scale(.8) translate(0, 0);
         opacity: 1;
       }
       to {
-        -moz-transform: rotateY(0deg) scale(1) translate(100px, 100px);
-        opacity: 0;
+        -moz-transform: rotate(0deg) scale(1) translate(80px, 20px);
+        opacity: 0.5;
       }
+    }
+
+    #keyframetest {
+      opacity: 0.5;
+      -webkit-transform: translate3d(80px, 20px, 0);
+      -moz-transform: translate3d(80px, 20px, 0);
+    }
+
+    .fixtures-left {
+      width: 120px;
+      float: left;
+    }
+    .fixtures-right {
+      margin-left: 120px;
     }
   </style>
 </head>
@@ -39,12 +53,17 @@
     Running… see browser console for results
   </p>
 
-  <div id="animtest_1" style="width:40px;height:40px;background:red"></div>
-  <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
-  <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
-  <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
-  <div id="callbacktest" style="width:40px;height:40px;background:red"><div style="width:40px;height:40px;background:blue"></div></div>
-  <div id="keyframetest" style="width:40px;height:40px;background:red;opacity: 0;"></div>
+  <div class=fixtures-left>
+    <div id="animtest_1" style="width:40px;height:40px;background:red"></div>
+    <div id="animtest_2" style="width:40px;height:40px;background:red"></div>
+    <div id="durationtest_1" style="width:40px;height:40px;background:red"></div>
+    <div id="durationtest_2" style="width:40px;height:40px;background:red"></div>
+  </div>
+  <div class=fixtures-right>
+    <div id="durationtest_3" style="width:40px;height:40px;background:red"></div>
+    <div id="callbacktest" style="width:40px;height:40px;background:red"><div style="width:40px;height:40px;background:blue"></div></div>
+    <div id="keyframetest" style="width:40px;height:40px;background:red;"></div>
+  </div>
 
   <div id="anim_zero_duration_callback_test"></div>
 
@@ -65,7 +84,7 @@
       return digits[1] + '#' + rgb.toString(16)
     }
 
-    function defer(fn, delay) {
+    function defer(delay, fn) {
       setTimeout(fn, delay || 0)
     }
 
@@ -73,15 +92,7 @@
       return str.replace(/-+(.)?/g, function(_, chr){ return chr ? chr.toUpperCase() : '' })
     }
 
-    var stylePrefix = '', vendors = {Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS'},
-      testEl = document.createElement('div')
-
-    $.each(vendors, function(vendor, event){
-      if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
-        stylePrefix = '-' + vendor.toLowerCase() + '-'
-        return false
-      }
-    })
+    var stylePrefix = $.fx.cssPrefix
 
     Evidence.Assertions.assertStyle = function(expected, object, property, message) {
       if (/^(transform|transition|animation)/.test(property)) property = stylePrefix + property
@@ -97,72 +108,73 @@
 
       testAnimate: function(t){
         var el = $('#animtest_1'), el2 = $('#animtest_2')
-        t.pause()
+
         el.animate({
-          translate3d: '100px, 100px, 100px',
+          translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           scale: '0.8',
           opacity: 0.5,
-          'background-color': '#BADA55'
+          backgroundColor: '#BADA55'
         }, 200, 'ease-out')
 
         el2.animate({
-          translate3d: '100px, 100px, 100px',
+          translate3d: '80px, 20px, 100px',
           rotateZ: '-90deg',
-          'background-color': '#BADA55'
+          backgroundColor: '#BADA55'
         }, {
           duration: 180,
           easing: 'ease-out'
         })
 
+        t.assertStyle('ease-out', el, 'transition-timing-function')
+        t.assertStyle('0.2s', el, 'transition-duration')
+        t.assertStyle(/\bbackground-color\b/, el, 'transition-property')
+        t.assertStyle(/\btransform\b/, el, 'transition-property')
+        t.assertStyle('0.18s', el2, 'transition-duration')
+
         t.pause()
-
-        defer(function(){
+        defer(250, function(){
           t.resume(function(){
-            t.assertStyle('ease-out', el, 'transition-timing-function')
-            t.assertStyle('0.2s', el, 'transition-duration')
-            t.assertStyle('0.18s', el2, 'transition-duration')
-
-            t.pause()
-            defer(function(){
-              t.resume(function(){
-                t.assertStyle('translate3d(100px, 100px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
-                t.assertStyle('0.5', el, 'opacity')
-                t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
-              })
-            }, 250)
+            t.assertStyle('translate3d(80px, 20px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
+            t.assertStyle('0.5', el, 'opacity')
+            t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
           })
-        }, 1)
+        })
       },
 
       testDuration: function(t){
         var el1 = $('#durationtest_1').anim({
-          translate3d: '100px, 100px, 100px',
+          translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
         })
 
         var el2 = $('#durationtest_2').anim({
-          translate3d: '100px, 100px, 100px',
+          translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
         }, 0)
 
-        t.pause()
-        defer(function(){
-          t.resume(function(){
-            t.assertStyle('0.4s', el1, 'transition-duration')
-            t.assertStyle('0s', el2, 'transition-duration')
-          })
-        }, 1)
+        t.assertStyle('0.4s', el1, 'transition-duration', 'expected default duration')
+        t.assertStyle('', el2, 'transition-duration', 'expected no animation')
+      },
+
+      testDurationString: function(t){
+        var el = $('#durationtest_3').animate({
+          translate3d: '80px, 20px, 100px',
+          rotateZ: '90deg',
+          opacity: 0.5
+        }, 'fast')
+
+        t.assertStyle('0.2s', el, 'transition-duration', 'expected fast duration')
       },
 
       testCallback: function(t){
         var duration = 250, start = new Date().getTime()
-        t.pause()
 
+        t.pause()
         $('#callbacktest').anim({
-          translate3d: '100px, 100px, 100px',
+          translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
         }, duration / 1000, 'linear',
@@ -194,21 +206,23 @@
         })
 
         t.pause()
-        defer(function(){
+        defer(30, function(){
           t.resume(function(){
             t.assert(callbackCalled)
           })
-        },30)
+        })
       },
 
       testKeyFrameAnimation: function(t){
-        t.pause()
-        var el = $('#keyframetest').anim('animName', 2)
-        defer(function(){
-          t.resume(function(){
-            t.assertStyle('animName', el, 'animation-name')
-          })
-        })
+        var el = $('#keyframetest').animate('animName', 200)
+
+        t.assertStyle('animName', el, 'animation-name')
+        t.assertStyle('0.2s',     el, 'animation-duration')
+        t.assertStyle('linear',   el, 'animation-timing-function')
+      },
+
+      testEmptyCollection: function(t){
+        t.assert($(null).animate({opacity:0}))
       }
     })
   })()

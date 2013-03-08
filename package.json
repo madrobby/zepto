@@ -1,0 +1,26 @@
+{
+    "name": "zepto"
+  , "version": "1.0.0"
+  , "homepage": "http://zeptojs.com"
+  , "scripts": {
+      "test": "coffee make test"
+    , "dist": "coffee make dist"
+    , "start": "coffee test/server.coffee"
+  }
+  , "repository": {
+      "type": "git"
+    , "url": "https://github.com/madrobby/zepto.git"
+  }
+  , "licenses": [
+    {
+        "type": "MIT"
+      , "url": "http://zeptojs.com/license/"
+    }
+  ]
+  , "devDependencies": {
+      "uglify-js": "1.2.6"
+    , "express": "3.1.x"
+    , "coffee-script": "1.4.x"
+    , "shelljs": "0.1.x"
+  }
+}

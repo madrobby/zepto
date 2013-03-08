@@ -4,12 +4,7 @@
 
 ;(function($, undefined){
   var document = window.document, docElem = document.documentElement,
-    origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle,
-    speeds = { _default: 400, fast: 200, slow: 600 }
-
-  function translateSpeed(speed) {
-    return typeof speed == 'number' ? speed : (speeds[speed] || speeds._default)
-  }
+    origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle
 
   function anim(el, speed, opacity, scale, callback) {
     if (typeof speed == 'function' && !callback) callback = speed, speed = undefined
@@ -18,7 +13,7 @@
       props.scale = scale
       el.css($.fx.cssPrefix + 'transform-origin', '0 0')
     }
-    return el.anim(props, translateSpeed(speed) / 1000, null, callback)
+    return el.animate(props, speed, null, callback)
   }
 
   function hide(el, speed, scale, callback) {
@@ -41,8 +36,12 @@
   }
 
   $.fn.toggle = function(speed, callback) {
-    if (speed === undefined || typeof speed == 'boolean') return origToggle.call(this, speed)
-    else return this[this.css('display') == 'none' ? 'show' : 'hide'](speed, callback)
+    if (speed === undefined || typeof speed == 'boolean')
+      return origToggle.call(this, speed)
+    else return this.each(function(){
+      var el = $(this)
+      el[el.css('display') == 'none' ? 'show' : 'hide'](speed, callback)
+    })
   }
 
   $.fn.fadeTo = function(speed, opacity, callback) {
@@ -61,12 +60,12 @@
   }
 
   $.fn.fadeToggle = function(speed, callback) {
-    var hidden = this.css('opacity') == 0 || this.css('display') == 'none'
-    return this[hidden ? 'fadeIn' : 'fadeOut'](speed, callback)
+    return this.each(function(){
+      var el = $(this)
+      el[
+        (el.css('opacity') == 0 || el.css('display') == 'none') ? 'fadeIn' : 'fadeOut'
+      ](speed, callback)
+    })
   }
-
-  $.extend($.fx, {
-    speeds: speeds
-  })
 
 })(Zepto)

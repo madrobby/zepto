@@ -23,6 +23,7 @@
       // test to see if we augment String.prototype.trim if not supported natively
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
+        t.assertEqual("bl \n ah", " bl \n ah ".trim())
       },
 
       // test to see if we augment Array.prototype.reduceif not supported natively
