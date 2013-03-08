@@ -113,7 +113,7 @@ github_url: https://github.com/madrobby/zepto
   </ul>
   
   <p>
-    Or <b><a href="{{ page.github_url }}">grab the latest version on Github</a><b>.
+    Or <b><a href="{{ page.github_url }}">grab the latest version on Github</a></b>.
   </p>
   
   <ul class=downloads>
@@ -136,8 +136,13 @@ github_url: https://github.com/madrobby/zepto
 </html>
 {% endhighlight %}
 
+  <p class=compat>
+    Zepto will only set the <code>$</code> global to itself if it is 
+    not yet defined. There is no <code>Zepto.noConflict</code> method.
+  </p>
+
   <p>
-    If you need to support Internet Explorer, you can fall back on jQuery.
+    <b>If you need to support Internet Explorer, you can fall back on jQuery.</b>
     Note that conditional comments are no longer supported starting on IE 10,
     so we recommend the following <code>document.write</code> approach:
   </p>

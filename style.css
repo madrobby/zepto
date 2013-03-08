@@ -234,9 +234,12 @@ a.download:active {
 
 p.compat {
   padding: 4px 10px;
-  border-left: 2px solid #ff8;
-  background: #ffe;
+  background: #ffd;
   color: #000;
+}
+
+p.compat::before {
+  content: '💔';
 }
 
 p.compat a {
