@@ -144,7 +144,7 @@
     // Whether data should be serialized to string
     processData: true,
     // Whether the browser should be allowed to cache GET responses
-    cache: true,
+    cache: true
   }
 
   function mimeToDataType(mime) {
