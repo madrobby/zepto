@@ -609,8 +609,18 @@ var Zepto = (function() {
       }
     },
     css: function(property, value){
-      if (arguments.length < 2 && typeof property == 'string')
-        return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
+      if (arguments.length < 2) {
+        var el = this[0], cCSS = getComputedStyle(el, '')
+        if (typeof property == 'string')
+          return el && (el.style[camelize(property)] || cCSS.getPropertyValue(property))  
+        else if (isArray(property)) {
+          var props = {}
+          $.each(isArray(property) ? property: [property], function(i, prop){
+            props[prop] = (el.style[camelize(prop)] || cCSS.getPropertyValue(prop))
+          })
+          return el && props
+        }
+      }
 
       var css = ''
       if (type(property) == 'string') {
