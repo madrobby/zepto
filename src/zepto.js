@@ -51,13 +51,18 @@ var Zepto = (function() {
     return obj == null ? String(obj) :
       class2type[toString.call(obj)] || "object"
   }
-
+  function getPrototype(obj) {
+    if (Object.getPrototypeOf) { return Object.getPrototypeOf(obj); }
+    else if ('__proto__' in obj) { return obj.__proto__; }
+    else if ('constructor' in obj) { return obj.constructor.prototype; }
+    else { return null; }
+  }
   function isFunction(value) { return type(value) == "function" }
   function isWindow(obj)     { return obj != null && obj == obj.window }
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
-    return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
+      return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
