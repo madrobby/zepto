@@ -62,7 +62,7 @@ var Zepto = (function() {
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
-      return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
+    return isObject(obj) && !isWindow(obj) && getPrototype(obj) == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
