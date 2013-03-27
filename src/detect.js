@@ -18,7 +18,8 @@
       rimtabletos = ua.match(/(RIM\sTablet\sOS)\s([\d.]+)/),
       playbook = ua.match(/PlayBook/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
-      firefox = ua.match(/Firefox\/([\d.]+)/)
+      firefox = ua.match(/Firefox\/([\d.]+)/),
+      msie = ua.match(/MSIE\s([\d\.]+)/)
 
     // Todo: clean this up with a better OS/browser seperation:
     // - discern (more) between multiple browsers on android
@@ -42,6 +43,7 @@
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
+    if (msie) browser.msie = true, browser.version = msie[1]
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) || (firefox && ua.match(/Tablet/)))
     os.phone  = !!(!os.tablet && (android || iphone || webos || blackberry || bb10 ||
