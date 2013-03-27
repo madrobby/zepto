@@ -24,7 +24,7 @@ var Zepto = (function() {
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     },
-    readyRE = /complete|loaded|interactive/,
+    readyRE = /complete/,
     classSelectorRE = /^\.([\w-]+)$/,
     idSelectorRE = /^#([\w-]*)$/,
     tagSelectorRE = /^[\w-]+$/,
@@ -57,7 +57,7 @@ var Zepto = (function() {
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
-    return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
+    return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
@@ -133,7 +133,8 @@ var Zepto = (function() {
   // Explorer. This method can be overriden in plugins.
   zepto.Z = function(dom, selector) {
     dom = dom || []
-    dom.__proto__ = $.fn
+    if (dom.__proto__) dom.__proto__ = $.fn
+    else extend(dom.constructor.prototype, $.fn, true)
     dom.selector = selector || ''
     return dom
   }
@@ -667,7 +668,7 @@ var Zepto = (function() {
     },
     scrollTop: function(){
       if (!this.length) return
-      return ('scrollTop' in this[0]) ? this[0].scrollTop : this[0].scrollY
+      return ('scrollTop' in this[0]) ? this[0].scrollTop : ('scrollY' in this[0] ? this[0].scrollY : this[0].pageYOffset)
     },
     position: function() {
       if (!this.length) return
