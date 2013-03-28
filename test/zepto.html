@@ -90,6 +90,15 @@
     <span>3<span>4</span></span>
     <span>5<span>6</span></span>
   </p>
+  
+  <div id="find3">
+    <span id="find3child">
+      <span>1</span>
+      <span>2
+        <b title="yes, this title has a comma">3</b>
+      </span>
+    </span>
+  </div>
 
   <div id="eachtest">
     <span></span><b></b><br>
@@ -1295,6 +1304,26 @@
 
         var found = $('p#find1, #find2').find('span')
         t.assertLength(11, found)
+        
+        var found = $('#find3child').find('div span')
+        t.assertLength(0, found)
+        
+        var found = $('#find3child').find('p span')
+        t.assertLength(0, found)
+        
+        var found = $('#find3child').find('div span, p span')
+        t.assertLength(0, found)
+        
+        var found = $('#find3child').find('span, b[title="yes, this title has a comma"]')
+        t.assertLength(3, found)
+        
+        var fragment = $("<div><p><span>1</span><span>2</span>")
+        var p = fragment.find('p')
+        var spans = p.find('div span')
+        t.assertLength(0, spans)
+        
+        var spans = fragment.find('p span')
+        t.assertLength(2, spans)
       },
 
       testFindWithCollection: function(t){
