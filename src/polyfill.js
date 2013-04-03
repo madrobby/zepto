@@ -3,6 +3,12 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function(undefined){
+  if (Object.getPrototypeOf === undefined) // fix for some old Android
+    Object.getPrototypeOf = function(o){ return o.__proto__ }
+
+  if (Object.setPrototypeOf === undefined) // a better future for ES6
+    Object.setPrototypeOf = function(o,p){ o.__proto__ = p; return o }
+
   if (String.prototype.trim === undefined) // fix for iOS 3.2
     String.prototype.trim = function(){ return this.replace(/^\s+|\s+$/g, '') }
 
