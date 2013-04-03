@@ -32,6 +32,8 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
+    getPrototypeOf = Object.getPrototypeOf || function(o){ return o.__proto__ },
+    setPrototypeOf = Object.setPrototypeOf || function(o,p){ o.__proto__ = p; return o },
     tempParent = document.createElement('div')
 
   zepto.matches = function(element, selector) {
@@ -57,7 +59,7 @@ var Zepto = (function() {
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
-    return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
+    return isObject(obj) && !isWindow(obj) && getPrototypeOf(obj) == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
@@ -130,10 +132,11 @@ var Zepto = (function() {
   // `$.zepto.Z` swaps out the prototype of the given `dom` array
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
-  // Explorer. This method can be overriden in plugins.
+  // Explorer, neither Object.setPrototypeOf().
+  // This method can be overriden in plugins.
   zepto.Z = function(dom, selector) {
     dom = dom || []
-    dom.__proto__ = $.fn
+    setPrototypeOf(dom, $.fn)
     dom.selector = selector || ''
     return dom
   }
