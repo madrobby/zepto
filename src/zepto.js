@@ -32,8 +32,8 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
-    getPrototypeOf = Object.getPrototypeOf,
-    setPrototypeOf = Object.setPrototypeOf,
+    getPrototypeOf = Object.getPrototypeOf || function(o){ return o.__proto__ },
+    setPrototypeOf = Object.setPrototypeOf || function(o,p){ o.__proto__ = p; return o },
     tempParent = document.createElement('div')
 
   zepto.matches = function(element, selector) {
