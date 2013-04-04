@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto touch unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/touch.js"></script>
+</head>
+<body>
+  <h1>Manual Touch tests - hit the red area.</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <style>
+    #test, .test {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 50px;
+    }
+    .test {
+      background-color: #FF0000;
+      font-size: 1.4em;
+  </style>
+
+  <script>
+  (function(){
+
+    Evidence('TouchTest', {
+      setUp: function(){
+        $('<div id=test>TEST ELEMENT</div>').appendTo('body')
+        $('<div id=testTop class="test">Please tap me</div>').appendTo('body')
+      },
+
+      tearDown: function(){
+        $('#test').off()
+        $('#test').remove()
+        $('#testTop').off()
+        $('#testTop').remove()
+      },
+
+      // Test tap with 2 stacked elements, hiding the top one in touch event
+      testStackedTap: function(t){
+        var topCount = 0, bottomCount = 0, element = $('#testTop').get(0)
+
+        $('#testTop').on('tap', function(){
+          topCount++
+          $('#testTop').hide()
+        }).on('click', function(){
+          topCount++
+          $('#testTop').hide()
+        })
+
+        $('#test').on('click', function(){
+          bottomCount++
+        })
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, topCount)
+            t.assertEqual(0, bottomCount)
+            $('#testTop').off()
+            $('#testTop').remove()
+          })
+        }, 5000)
+      }
+
+    })
+
+  })()
+  </script>
+</body>
+</html>
