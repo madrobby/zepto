@@ -55,6 +55,8 @@
           topCount++
           $('#testTop').hide()
         }).on('click', function(){
+	  // The Click handler is not required as it doesn't get fired, but is left
+	  // here to show it doesn't get fired.
           topCount++
           $('#testTop').hide()
         })
@@ -71,7 +73,7 @@
             $('#testTop').off()
             $('#testTop').remove()
           })
-        }, 5000)
+        }, 3000)
       }
 
     })
