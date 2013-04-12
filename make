@@ -18,8 +18,9 @@ target.all = ->
 
 target.test = ->
   test_app = require './test/server'
+  phantom  = require 'phantomjs'
   server = test_app.listen port
-  exec "phantomjs test/runner.coffee 'http://localhost:#{port}/'", (code) ->
+  exec "#{phantomjs.path} test/runner.coffee 'http://localhost:#{port}/'", (code) ->
     server.close -> exit(code)
 
 target[zepto_js] = ->
