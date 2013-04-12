@@ -17,11 +17,13 @@
       "url": "http://zeptojs.com/license/"
     }
   ],
-  "devDependencies": {
+  "dependencies": {
     "uglify-js": "1.2.6",
-    "express": "3.1.x",
     "coffee-script": "1.4.x",
-    "shelljs": "0.1.x",
+    "shelljs": "0.1.x"
+  },
+  "devDependencies": {
+    "express": "3.1.x",
     "phantomjs": "~1.9.0-1"
   }
 }
