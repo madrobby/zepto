@@ -1,4 +1,5 @@
 language: node_js
+install: npm install --dev
 node_js:
   - 0.6
 script: script/test
