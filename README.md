@@ -166,10 +166,10 @@ This will submit a pull request to us that we can review.
 
 ### Running tests
 
-You will need to install [PhantomJS][]. On OS X, that's easy:
+You will need to install the development dependencies in order to run tests. This is done simply with:
 
 ~~~ sh
-$ brew install phantomjs
+$ npm install --dev
 ~~~
 
 To run the test suite, these are all equivalent:
@@ -187,4 +187,3 @@ $ script/test
   [docs]: https://github.com/madrobby/zepto/tree/gh-pages#readme
   [mkd]: http://github.github.com/github-flavored-markdown/
   [evidence.js]: https://github.com/tobie/Evidence
-  [phantomjs]: http://code.google.com/p/phantomjs/wiki/Installation
