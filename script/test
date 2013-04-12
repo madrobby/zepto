@@ -10,5 +10,5 @@ terminate_test_server() {
 }
 trap terminate_test_server EXIT
 
-phantomjs test/runner.coffee "http://localhost:${port}/" "$@"
+./node_modules/.bin/phantomjs test/runner.coffee "http://localhost:${port}/" "$@"
 exit $?
