@@ -17,8 +17,8 @@ target.all = ->
 ## TASKS ##
 
 target.test = ->
-  test_app = require './test/server'
-  phantom  = require 'phantomjs'
+  test_app  = require './test/server'
+  phantomjs = require 'phantomjs'
   server = test_app.listen port
   exec "#{phantomjs.path} test/runner.coffee 'http://localhost:#{port}/'", (code) ->
     server.close -> exit(code)
