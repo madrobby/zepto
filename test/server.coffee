@@ -1,9 +1,10 @@
 express = require 'express'
 app     = express()
+path    = require 'path'
 
 module.exports = app
 
-project_root = __dirname.replace(/(\/[^\/]+|\\[^\\]+)$/, '/')
+project_root = path.resolve(__dirname, '..')
 app.use express.static(project_root)
 app.use express.static(project_root + 'node_modules/mocha')
 app.use express.static(project_root + 'node_modules/chai')
