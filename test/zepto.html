@@ -422,6 +422,18 @@
         // can override DOM element
         $.extend(true, obj, { element:{a:'b'} })
         t.assertEqual('b', obj.element.a)
+
+        // deep copy with array
+        obj = {}
+        var initial = { array: [1,2,3,4], object:{a:{b:["c","d"]}} }
+        $.extend(true, obj, initial)
+        t.assertTrue($.isArray(obj.array))
+        t.assertEqual(JSON.stringify(obj), JSON.stringify(initial))
+        t.refuteIdentical(obj, initial)
+        t.refuteIdentical(obj.array, initial.array)
+        t.refuteIdentical(obj.object, initial.object)
+        t.refuteIdentical(obj.object.a, initial.object.a)
+        t.refuteIdentical(obj.object.a.b, initial.object.a.b)
       },
 
       testExtensionAPI: function(t) {
@@ -1004,6 +1016,24 @@
         t.assertLength(0, el.closest('form'))
       },
 
+      testClosestWithCollection: function(t){
+        var targets = $('#parents > li')
+        var result = $('#li2').closest(targets)
+        t.assertLength(1, result)
+        t.assertEqual('li1', result.get(0).id)
+
+        t.assertLength(0, $('#li1').closest('#li2'))
+      },
+
+      testClosestWithElement: function(t){
+        var target = $('#li1').get(0)
+        var result = $('#li2').closest(target)
+        t.assertLength(1, result)
+        t.assertIdentical(target, result.get(0))
+
+        t.assertLength(0, $('#li1').closest($('#li2').get(0)))
+      },
+
       testClosestOnDetached: function(t){
         var el = $('<div><p><a></a></p></div>'),
             para = el.children(),
@@ -1265,6 +1295,24 @@
 
         var found = $('p#find1, #find2').find('span')
         t.assertLength(11, found)
+      },
+
+      testFindWithCollection: function(t){
+        var targets = $('#find1 span span, #find1 b, #find2 span')
+        var found = $('p#find1').find(targets)
+        t.assertLength(2, found)
+        t.assertEqual('B', found.get(0).tagName)
+        t.assertEqual('6', found.get(1).innerHTML)
+      },
+
+      testFindWithElement: function(t){
+        var target = $('#find1 span span').get(0)
+        var found = $('p#find1').find(target)
+        t.assertLength(1, found)
+        t.assertEqual('6', found.get(0).innerHTML)
+
+        found = $('p#find1').find(document.body)
+        t.assertLength(0, found, "no elements should have matched")
       },
 
       testFindWithInvalidNode: function(t) {
@@ -2342,6 +2390,10 @@
         $(form).bind('submit', function(e) {
           executed.push("2")
           t.assertEqual(form, e.target)
+          // TODO
+          // Android 2.3 doesn't support stopImmediatePropagation,
+          // so the tests throws an error. Ideally Zepto should emulate
+          // stopImmediatePropagation on browsers that don't support it.
           e.stopImmediatePropagation()
           return 2
         })

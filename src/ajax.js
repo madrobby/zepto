@@ -88,8 +88,6 @@
       },
       xhr = { abort: abort }, abortTimeout
 
-    serializeData(options)
-
     if (ajaxBeforeSend(xhr, options) === false) {
       abort('abort')
       return false
@@ -144,10 +142,13 @@
     // Default timeout
     timeout: 0,
     // Whether data should be serialized to string
-    processData: true
+    processData: true,
+    // Whether the browser should be allowed to cache GET responses
+    cache: true
   }
 
   function mimeToDataType(mime) {
+    if (mime) mime = mime.split(';', 2)[0]
     return mime && ( mime == htmlType ? 'html' :
       mime == jsonType ? 'json' :
       scriptTypeRE.test(mime) ? 'script' :
@@ -175,14 +176,15 @@
     if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
       RegExp.$2 != window.location.host
 
+    if (!settings.url) settings.url = window.location.toString()
+    serializeData(settings)
+    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
+
     var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
       if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
       return $.ajaxJSONP(settings)
     }
-
-    if (!settings.url) settings.url = window.location.toString()
-    serializeData(settings)
 
     var mime = settings.accepts[dataType],
         baseHeaders = { },

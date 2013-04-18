@@ -18,25 +18,11 @@ optional modules and remove some of the default ones you don't need, to keep the
 size at minimum. That's when you need to check out Zepto's source code and use
 the build commands.
 
-You will need ruby, RubyGems, and rake installed on your system.
+You will need Node.js installed on your system.
 
 ~~~ sh
-# dependencies:
-$ ruby -v
-$ gem -v
-$ rake -V
-
-# required to generate the minified version:
-$ gem install uglifier
-~~~
-
-Build Zepto by running `rake`:
-
-~~~ sh
-$ rake
-Original version: 40.423k
-Minified: 18.776k
-Minified and gzipped: 7.033k, compression factor 5.747
+$ npm install
+$ npm run-script dist
 ~~~
 
 The resulting files are:
@@ -44,20 +30,16 @@ The resulting files are:
 1. `dist/zepto.js`
 2. `dist/zepto.min.js`
 
-To include optional modules and remove default ones, use the `concat` task. In
-this example, "fx" is removed, but "data" and "selector" are added:
+If you install CoffeeScript globally, you can run `make` directly:
 
+~~~ sh
+$ coffee make dist
+$ MODULES="zepto event data ..." ./make dist
 ~~~
-$ rake concat[-fx:data:selector] dist
-~~~
-
-<i>Zsh users may need to prepend `noglob` before that command because of special
-meaning of square brackets in the shell.</i>
 
 ## Zepto modules
 
-Zepto modules are individual files in the "src/" directory. You can also list
-the available modules by running `rake modules`.
+Zepto modules are individual files in the "src/" directory.
 
 <table>
 <thead><tr>
@@ -184,36 +166,18 @@ This will submit a pull request to us that we can review.
 
 ### Running tests
 
+You will need to install [PhantomJS][]. On OS X, that's easy:
+
 ~~~ sh
-# run all tests
+$ brew install phantomjs
+~~~
+
+To run the test suite, these are all equivalent:
+
+~~~ sh
+$ npm test
+$ ./make test
 $ script/test
-
-# test individual files
-$ script/test test/zepto.html
-~~~
-
-You will need <b>node</b> and [PhantomJS][]:
-
-~~~ sh
-# install on Mac OS
-$ brew install node phantomjs
-
-# install test prerequisites
-$ npm install
-~~~
-
-Zepto test suite is in "test/\*.html" files. Open the individual files in a web
-browser to run the tests. Files named with "\_functional" are not automated
-tests, but require interaction. Automated tests are written using
-[Evidence.js][].
-
-Ajax tests require a running test server. This is handled automatically through
-`script/test`. Alternatively, you can start the server manually:
-
-~~~ sh
-$ node test/server.js [PORT]
-# Now you can open http://localhost:3000/test/ajax.html in the browser.
-# Terminate the test server with Ctrl-C
 ~~~
 
 

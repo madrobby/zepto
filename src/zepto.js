@@ -185,8 +185,11 @@ var Zepto = (function() {
 
   function extend(target, source, deep) {
     for (key in source)
-      if (deep && isPlainObject(source[key])) {
-        if (!isPlainObject(target[key])) target[key] = {}
+      if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+        if (isPlainObject(source[key]) && !isPlainObject(target[key]))
+          target[key] = {}
+        if (isArray(source[key]) && !isArray(target[key]))
+          target[key] = []
         extend(target[key], source[key], deep)
       }
       else if (source[key] !== undefined) target[key] = source[key]
@@ -421,14 +424,22 @@ var Zepto = (function() {
       return el && !isObject(el) ? el : $(el)
     },
     find: function(selector){
-      var result
-      if (this.length == 1) result = $(zepto.qsa(this[0], selector))
+      var result, $this = this
+      if (typeof selector == 'object')
+        result = $(selector).filter(function(){
+          var node = this
+          return emptyArray.some.call($this, function(parent){
+            return $.contains(parent, node)
+          })
+        })
+      else if (this.length == 1) result = $(zepto.qsa(this[0], selector))
       else result = this.map(function(){ return zepto.qsa(this, selector) })
       return result
     },
     closest: function(selector, context){
-      var node = this[0]
-      while (node && !zepto.matches(node, selector))
+      var node = this[0], collection = false
+      if (typeof selector == 'object') collection = $(selector)
+      while (node && !(collection ? collection.indexOf(node) >= 0 : zepto.matches(node, selector)))
         node = node !== context && !isDocument(node) && node.parentNode
       return $(node)
     },
@@ -593,8 +604,8 @@ var Zepto = (function() {
       return {
         left: obj.left + window.pageXOffset,
         top: obj.top + window.pageYOffset,
-        width: obj.width,
-        height: obj.height
+        width: Math.round(obj.width),
+        height: Math.round(obj.height)
       }
     },
     css: function(property, value){
@@ -602,17 +613,18 @@ var Zepto = (function() {
         return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
       var css = ''
-      for (key in property)
-        if (!property[key] && property[key] !== 0)
-          this.each(function(){ this.style.removeProperty(dasherize(key)) })
-        else
-          css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
-
-      if (typeof property == 'string')
+      if (type(property) == 'string') {
         if (!value && value !== 0)
           this.each(function(){ this.style.removeProperty(dasherize(property)) })
         else
           css = dasherize(property) + ":" + maybeAddPx(property, value)
+      } else {
+        for (key in property)
+          if (!property[key] && property[key] !== 0)
+            this.each(function(){ this.style.removeProperty(dasherize(key)) })
+          else
+            css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
+      }
 
       return this.each(function(){ this.style.cssText += ';' + css })
     },

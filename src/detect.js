@@ -44,7 +44,8 @@
     if (firefox) browser.firefox = true, browser.version = firefox[1]
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) || (firefox && ua.match(/Tablet/)))
-    os.phone  = !!(!os.tablet && (android || iphone || webos || blackberry || bb10 || chrome || firefox))
+    os.phone  = !!(!os.tablet && (android || iphone || webos || blackberry || bb10 ||
+      (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) || (firefox && ua.match(/Mobile/))))
   }
 
   detect.call($, navigator.userAgent)

@@ -2,7 +2,11 @@
     "name": "zepto"
   , "version": "1.0.0"
   , "homepage": "http://zeptojs.com"
-  , "scripts": { "test": "script/test" }
+  , "scripts": {
+      "test": "coffee make test"
+    , "dist": "coffee make dist"
+    , "start": "coffee test/server.coffee"
+  }
   , "repository": {
       "type": "git"
     , "url": "https://github.com/madrobby/zepto.git"
@@ -15,6 +19,8 @@
   ]
   , "devDependencies": {
       "uglify-js": "1.2.6"
-    , "connect": "2.7.1"
+    , "express": "3.1.x"
+    , "coffee-script": "1.4.x"
+    , "shelljs": "0.1.x"
   }
 }
