@@ -132,7 +132,7 @@ var Zepto = (function() {
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
   zepto.Z = function(dom, selector) {
-    dom = dom || {}
+    dom = dom || []
     $.extend(dom.__proto__, $.fn)
     dom.selector = selector || ''
     return dom
