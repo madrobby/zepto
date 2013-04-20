@@ -4,7 +4,10 @@
     if (!('__proto__' in {})) {
         Object.defineProperty(Object.prototype, '__proto__', {
             set: function (x) {
-                console.warn('__proto__ reassignment not yet implemented.')
+                for (var prop in x) {
+                    if (prop == '__proto__') continue;
+                    this[prop] = x[prop];
+                }
             },
             get: function () {
                 return this;
