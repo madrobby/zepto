@@ -45,7 +45,7 @@
     return hover[type] || type
   }
 
-  function add(element, events, fn, selector, getDelegate, capture){
+  function add(element, events, data, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
       var handler   = parse(event)
@@ -60,6 +60,9 @@
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
       handler.proxy = function (e) {
+        // data may have been attached elsewhere, leave it if so
+        // TODO explore this further
+        if(!e.data && data) e.data = data
         var result = callback.apply(element, [e].concat(e.data))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
@@ -93,26 +96,31 @@
     }
   }
 
-  $.fn.bind = function(event, callback){
+  $.fn.bind = function(event, data, callback){
     return this.each(function(){
-      add(this, event, callback)
+      add.apply(null, [this, event].concat(callback ? [data, callback] : [null, data]))
     })
   }
+
   $.fn.unbind = function(event, callback){
     return this.each(function(){
       remove(this, event, callback)
     })
   }
-  $.fn.one = function(event, callback){
-    return this.each(function(i, element){
-      add(this, event, callback, null, function(fn, type){
+
+  $.fn.one = function(event, data, callback){
+    var outer = function(i, element){
+      var inner = function(fn, type){
         return function(){
           var result = fn.apply(element, arguments)
           remove(element, type, fn)
           return result
         }
-      })
-    })
+      }
+      add.apply(null, [this, event].concat(callback ? 
+        [data, callback, null, inner] : [null, data, null, inner]))
+    }
+    return this.each(outer)
   }
 
   var returnTrue = function(){return true},
@@ -123,6 +131,7 @@
         stopImmediatePropagation: 'isImmediatePropagationStopped',
         stopPropagation: 'isPropagationStopped'
       }
+
   function createProxy(event) {
     var key, proxy = { originalEvent: event }
     for (key in event)
@@ -150,9 +159,9 @@
     }
   }
 
-  $.fn.delegate = function(selector, event, callback){
-    return this.each(function(i, element){
-      add(element, event, callback, selector, function(fn){
+  $.fn.delegate = function(selector, event, data, callback){
+    var outer = function(i, element){
+      var inner = function(fn){
         return function(e){
           var evt, match = $(e.target).closest(selector, element).get(0)
           if (match) {
@@ -160,17 +169,23 @@
             return fn.apply(match, [evt].concat([].slice.call(arguments, 1)))
           }
         }
-      })
-    })
+      }
+      add.apply(null, [element, event].concat(callback ? 
+        [data, callback, selector, inner] : [null, data, selector, inner]))
+    }
+    return this.each(outer)
   }
+
   $.fn.undelegate = function(selector, event, callback){
     return this.each(function(){
       remove(this, event, callback, selector)
     })
   }
 
-  $.fn.live = function(event, callback){
-    $(document.body).delegate(this.selector, event, callback)
+  $.fn.live = function(event, data, callback){
+    var sel = $(document.body);
+    sel.delegate.apply(sel, [this.selector, event].concat(callback ? 
+      [data, callback] : [null, data]))
     return this
   }
   $.fn.die = function(event, callback){
@@ -178,9 +193,10 @@
     return this
   }
 
-  $.fn.on = function(event, selector, callback){
-    return !selector || $.isFunction(selector) ?
-      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
+  $.fn.on = function(event, selector, data, callback){
+    return !selector || $.isFunction(selector) || $.isPlainObject(selector) ?
+      this.bind(event, selector, data) : this.delegate.apply(this, 
+      [selector, event].concat(callback ? [data, callback] : [null, data]))
   }
   $.fn.off = function(event, selector, callback){
     return !selector || $.isFunction(selector) ?
