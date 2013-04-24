@@ -150,7 +150,7 @@
     }
   }
 
-  $.fn.delegate = function(selector, event, callback, capture){
+  $.fn.delegate = function(selector, event, callback){
     return this.each(function(i, element){
       add(element, event, callback, selector, function(fn){
         return function(e){
@@ -160,7 +160,7 @@
             return fn.apply(match, [evt].concat([].slice.call(arguments, 1)))
           }
         }
-      }, capture)
+      })
     })
   }
   $.fn.undelegate = function(selector, event, callback){
@@ -178,9 +178,9 @@
     return this
   }
 
-  $.fn.on = function(event, selector, callback){
+  $.fn.on = function(event, selector, callback, capture){
     return !selector || $.isFunction(selector) ?
-      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
+      this.bind(event, selector || callback, capture) : this.delegate(selector, event, callback)
   }
   $.fn.off = function(event, selector, callback){
     return !selector || $.isFunction(selector) ?
