@@ -15,8 +15,9 @@ if args.length > 0
   suites = args
 else
   # by default, run all test/*.html pages
-  modules = 'zepto ajax data detect event form fx selector stack'.split /\s+/
-  suites = modules.map (name)-> "test/#{name}.html"
+  modules = fs.list("#{fs.workingDirectory}/test").filter (name)->
+    name.slice(-5) == '.html' && name.slice(-16) != '_functional.html'
+  suites = modules.map (name)-> "test/#{name}"
 
 page = require('webpage').create()
 
