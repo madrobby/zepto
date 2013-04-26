@@ -116,7 +116,7 @@
         // prevent browser's default click event if last tap event is default prevented
         if (lastTapDefaultPrevented) {
           lastTapDefaultPrevented = false
-          e.stopPropagation()
+          return false
         }
       }, true)
 
