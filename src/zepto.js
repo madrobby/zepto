@@ -288,6 +288,8 @@ var Zepto = (function() {
 
   $.camelCase = camelize
   $.trim = function(str) { return str.trim() }
+  // why u no have noop?
+  $.noop = function() {}
 
   // plugin compatibility
   $.uuid = 0

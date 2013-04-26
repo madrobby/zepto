@@ -2328,6 +2328,29 @@
         t.assertEqual(40, e5.keyCode)
       },
 
+      testOneCustomData: function(t){
+        var eventData, handler = function (e) {
+          eventData = e.data;
+        }
+        
+        $('#another_element')
+          .one('click', {customKey: 20}, handler)
+          .trigger('click')
+          
+        t.assertEqual(eventData.customKey, 20);
+      },
+
+      testLiveCustomData: function(t){
+        var eventData, handler = function (e) {
+          eventData = e.data
+        }
+
+        $('body p').live('click', {customKey: 40}, handler)
+        click($('p').get(0))
+
+        t.assertEqual(eventData.customKey, 40)
+      },
+
       testTriggerObject: function(t){
         var el = $('#some_element'),
             eventType, eventCode
