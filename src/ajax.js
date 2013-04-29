@@ -295,7 +295,7 @@
     var type, array = $.isArray(obj)
     $.each(obj, function(key, value) {
       type = $.type(value)
-      if (scope) key = traditional ? scope : scope + '[' + (array ? '' : key) + ']'
+      if (scope) key = traditional ? scope : scope + '[' + key + ']'
       // handle data in serializeArray() format
       if (!scope && array) params.add(value.name, value.value)
       // recurse into nested objects
