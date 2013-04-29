@@ -9,6 +9,7 @@ var Zepto = (function() {
     getComputedStyle = document.defaultView.getComputedStyle,
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
     fragmentRE = /^\s*<(\w+|!)[^>]*>/,
+    singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
     rootNodeRE = /^(?:body|html)$/i,
 
@@ -108,15 +109,23 @@ var Zepto = (function() {
   // This function can be overriden in plugins for example to make
   // it compatible with browsers that don't support the DOM fully.
   zepto.fragment = function(html, name, properties) {
-    if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
-    if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
-    if (!(name in containers)) name = '*'
+    var dom, nodes, container
 
-    var nodes, dom, container = containers[name]
-    container.innerHTML = '' + html
-    dom = $.each(slice.call(container.childNodes), function(){
-      container.removeChild(this)
-    })
+    // A special case optimization for a single tag
+    if (singleTagRE.test(html)) dom = $(document.createElement(RegExp.$1))
+
+    if (!dom) {
+      if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
+      if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
+      if (!(name in containers)) name = '*'
+
+      container = containers[name]
+      container.innerHTML = '' + html
+      dom = $.each(slice.call(container.childNodes), function(){
+        container.removeChild(this)
+      })
+    }
+
     if (isPlainObject(properties)) {
       nodes = $(dom)
       $.each(properties, function(key, value) {
@@ -124,6 +133,7 @@ var Zepto = (function() {
         else nodes.attr(key, value)
       })
     }
+
     return dom
   }
 
