@@ -292,12 +292,12 @@
   var escape = encodeURIComponent
 
   function serialize(params, obj, traditional, scope){
-    var type, array = $.isArray(obj)
+    var type, objIsArray = $.isArray(obj), objIsObject = $.isPlainObject(obj) 
     $.each(obj, function(key, value) {
       type = $.type(value)
-      if (scope) key = traditional ? scope : scope + '[' + key + ']'
+      if (scope) key = traditional ? scope : scope + '[' + (objIsObject || type == 'object' || type == 'array' ? key : '') + ']'
       // handle data in serializeArray() format
-      if (!scope && array) params.add(value.name, value.value)
+      if (!scope && objIsArray) params.add(value.name, value.value)
       // recurse into nested objects
       else if (type == "array" || (!traditional && type == "object"))
         serialize(params, value, traditional, key)

@@ -744,7 +744,7 @@
       testDataOptionIsConvertedToSerializedForm: function(t) {
         $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } })
         MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
-        t.assertEqual('hello=world&array[0]=1&array[1]=2&array[2]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
+        t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
       },
 
       testDataOptionIsConvertedToSerializedTraditionalForm: function(t) {
@@ -1000,7 +1000,7 @@
       testParamMethod: function(t) {
         var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] })
         result = decodeURIComponent(result)
-        t.assertEqual(result, "libs[0]=jQuery&libs[1]=script.aculo.us&libs[2]=Prototype&libs[3]=Dojo")
+        t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo")
 
         result = $.param({ jquery: 'Javascript', rails: 'Ruby', django: 'Python' })
         result = decodeURIComponent(result)
@@ -1012,7 +1012,7 @@
           capitals: { ecuador: 'Quito', austria: 'Vienna', GB: { england: 'London', scotland: 'Edinburgh'} }
         })
         result = decodeURIComponent(result)
-        t.assertEqual(result, "title=Some+Countries&list[0]=Ecuador&list[1]=Austria&list[2]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
+        t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
       },
 
       testParamEscaping: function(t) {
@@ -1031,7 +1031,33 @@
         }
         var result = $.param(data)
         result = decodeURIComponent(result)
-        t.assertEqual("a[0]=b&a[1]=c&a[2][d]=e&a[2][f][0]=g&a[2][f][1]=h", result)
+        t.assertEqual("a[]=b&a[]=c&a[2][d]=e&a[2][f][]=g&a[2][f][]=h", result)
+      },
+
+      testParamComplexNested: function(t) {
+        var data = {
+          x: [
+            [1, { attr1: 2 } ],
+            3,
+            { attr1: 4 },
+            { attr1: 5, attr2: [ 6 ] },
+            [ 7, [8, 9] ],
+            { attr1: { attr2: [ [ 10 ] ] } }
+          ]
+        }
+        var result = $.param(data)
+        result = decodeURIComponent(result)
+        t.assertEqual(
+          "x[0][]=1&"+
+          "x[0][1][attr1]=2&"+
+          "x[]=3&"+
+          "x[2][attr1]=4&"+
+          "x[3][attr1]=5&"+
+          "x[3][attr2][]=6&"+
+          "x[4][]=7&"+
+          "x[4][1][]=8&"+
+          "x[4][1][]=9&"+
+          "x[5][attr1][attr2][0][]=10", result)
       },
 
       testParamShallow: function(t) {
