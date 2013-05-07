@@ -984,9 +984,6 @@
         var viewportWidth = $(window).width()
         t.assert(viewportWidth > 0 || viewportWidth === 0)
         t.assert($(document).width())
-        
-        // Not perfect but does the job in this case
-        t.refuteEqual($(window).width(), $(document).width())
 
         t.assertIdentical(100, $('#offset').width())
         $('#offset').width('90px')
