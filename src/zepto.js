@@ -714,7 +714,7 @@ var Zepto = (function() {
       var offset, el = this[0],
         Dimension = dimension.replace(/./, function(m){ return m[0].toUpperCase() })
       if (value === undefined) return isWindow(el) ? el['inner' + Dimension] :
-        isDocument(el) ? el.documentElement['offset' + Dimension] :
+        isDocument(el) ? el.documentElement['scroll' + Dimension] :
         (offset = this.offset()) && offset[dimension]
       else return this.each(function(idx){
         el = $(this)
