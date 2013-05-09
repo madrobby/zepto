@@ -40,28 +40,31 @@
 
   $(document).ready(function(){
     var now, delta
-
+    
     $(document.body)
-      .bind('touchstart', function(e){
+      .on('touchstart MSPointerDown', function(e){
+        if(e.type = 'MSPointerDown' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
         now = Date.now()
         delta = now - (touch.last || now)
-        touch.el = $(parentIfText(e.touches[0].target))
+        touch.el = $(parentIfText(e.type = 'MSPointerDown' ? e.target : e.touches[0].target))
         touchTimeout && clearTimeout(touchTimeout)
-        touch.x1 = e.touches[0].pageX
-        touch.y1 = e.touches[0].pageY
+        touch.x1 = (e.type = 'MSPointerDown' ? e.pageX : e.touches[0].pageX)
+        touch.y1 = (e.type = 'MSPointerDown' ? e.pageY : e.touches[0].pageY)
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
-      .bind('touchmove', function(e){
+      .on('touchmove MSPointerMove', function(e){
+        if(e.type = 'MSPointerMove' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
         cancelLongTap()
-        touch.x2 = e.touches[0].pageX
-        touch.y2 = e.touches[0].pageY
+        touch.x2 = (e.type = 'MSPointerMove' ? e.pageX : e.touches[0].pageX)
+        touch.y2 = (e.type = 'MSPointerMove' ? e.pageY : e.touches[0].pageY)
         if (Math.abs(touch.x1 - touch.x2) > 10)
           e.preventDefault()
       })
-      .bind('touchend', function(e){
-         cancelLongTap()
+      .on('touchend MSPointerUp', function(e){
+        if(e.type = 'MSPointerUp' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
+        cancelLongTap()
 
         // swipe
         if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
@@ -104,12 +107,12 @@
           }, 0)
 
       })
-      .bind('touchcancel', cancelAll)
+      .on('touchcancel MSPointerCancel', cancelAll)
 
-    $(window).bind('scroll', cancelAll)
+    $(window).on('scroll', cancelAll)
   })
 
   ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.bind(m, callback) }
+    $.fn[m] = function(callback){ return this.on(m, callback) }
   })
 })(Zepto)
