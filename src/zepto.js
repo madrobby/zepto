@@ -32,7 +32,21 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
-    tempParent = document.createElement('div')
+    tempParent = document.createElement('div'),
+    propMap = {
+      'tabindex': 'tabIndex',
+      'readonly': 'readOnly',
+      'for': 'htmlFor',
+      'class': 'className',
+      'maxlength': 'maxLength',
+      'cellspacing': 'cellSpacing',
+      'cellpadding': 'cellPadding',
+      'rowspan': 'rowSpan',
+      'colspan': 'colSpan',
+      'usemap': 'useMap',
+      'frameborder': 'frameBorder',
+      'contenteditable': 'contentEditable'
+    }
 
   zepto.matches = function(element, selector) {
     if (!element || element.nodeType !== 1) return false
@@ -599,6 +613,7 @@ var Zepto = (function() {
       return this.each(function(){ this.nodeType === 1 && setAttribute(this, name) })
     },
     prop: function(name, value){
+      name = propMap[name] || name
       return (value === undefined) ?
         (this[0] && this[0][name]) :
         this.each(function(idx){
