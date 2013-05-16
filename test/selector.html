@@ -69,7 +69,7 @@
             }).get()
 
         t.assertEqual('child1 child2', results.join(' '))
-        t.assertEqual('test', $('#child').prop('className'))
+        t.assertEqual('test', $('#child').prop('class'))
       },
       testChildHas: function(t) {
         var items = $('#child').find('> li:has(ul)'),
