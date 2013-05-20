@@ -226,6 +226,8 @@
 
   <svg></svg>
 
+  <iframe src="fixtures/iframe_document.html"></iframe>
+
   </div><!-- fixtures -->
 
   <script>
@@ -351,6 +353,14 @@
         t.assertFalse($.isPlainObject(obj), 'function with prototype is not a plain object')
       },
 
+      testIsWindow: function(t){
+        t.assertFalse($.isWindow())
+        t.assertFalse($.isWindow({}))
+        t.assertFalse($.isWindow(document.body))
+        t.assertTrue($.isWindow(window))
+        t.assertTrue($.isWindow($('iframe').get(0).contentWindow))
+      },
+
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
@@ -412,6 +422,18 @@
         // can override DOM element
         $.extend(true, obj, { element:{a:'b'} })
         t.assertEqual('b', obj.element.a)
+
+        // deep copy with array
+        obj = {}
+        var initial = { array: [1,2,3,4], object:{a:{b:["c","d"]}} }
+        $.extend(true, obj, initial)
+        t.assertTrue($.isArray(obj.array))
+        t.assertEqual(JSON.stringify(obj), JSON.stringify(initial))
+        t.refuteIdentical(obj, initial)
+        t.refuteIdentical(obj.array, initial.array)
+        t.refuteIdentical(obj.object, initial.object)
+        t.refuteIdentical(obj.object.a, initial.object.a)
+        t.refuteIdentical(obj.object.a.b, initial.object.a.b)
       },
 
       testExtensionAPI: function(t) {
@@ -560,6 +582,20 @@
         var documentFragment = $(document.createDocumentFragment())
         t.assertLength(1, documentFragment)
         t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType)
+      },
+
+      testDollarWithElementInIframe: function(t){
+        var iframe = $('#fixtures iframe').get(0),
+            iframeWin = iframe.contentWindow,
+            iframeDoc = iframe.contentDocument,
+            iframeBody = iframeDoc.body,
+            iframeEl = $(iframeBody).find('b')
+
+        t.assertIdentical(iframeWin, $(iframeWin).get(0))
+        t.assertIdentical(iframeDoc, $(iframeDoc).get(0))
+        t.assertIdentical(iframeBody, $(iframeBody).get(0))
+        t.assertEqual('B', iframeEl.pluck('tagName').join(','))
+        t.assertEqual('Hello from iframe!', iframeEl.text())
       },
 
       testDollarWithFragment: function(t){
@@ -980,6 +1016,24 @@
         t.assertLength(0, el.closest('form'))
       },
 
+      testClosestWithCollection: function(t){
+        var targets = $('#parents > li')
+        var result = $('#li2').closest(targets)
+        t.assertLength(1, result)
+        t.assertEqual('li1', result.get(0).id)
+
+        t.assertLength(0, $('#li1').closest('#li2'))
+      },
+
+      testClosestWithElement: function(t){
+        var target = $('#li1').get(0)
+        var result = $('#li2').closest(target)
+        t.assertLength(1, result)
+        t.assertIdentical(target, result.get(0))
+
+        t.assertLength(0, $('#li1').closest($('#li2').get(0)))
+      },
+
       testClosestOnDetached: function(t){
         var el = $('<div><p><a></a></p></div>'),
             para = el.children(),
@@ -1019,6 +1073,14 @@
 
         expected = [$('#nested').get(0), $('#parents').get(0)]
         t.assertEqualCollection($(expected), $('#li2').parents('ul'))
+      },
+
+      testParentsIframe: function(t){
+        var iframeBody = $('iframe').get(0).contentDocument.body
+        t.assertEqualCollection(
+          [iframeBody, iframeBody.parentNode],
+          $(iframeBody).find('b').first().parents()
+        )
       },
 
       testParent: function(t){
@@ -1233,6 +1295,24 @@
 
         var found = $('p#find1, #find2').find('span')
         t.assertLength(11, found)
+      },
+
+      testFindWithCollection: function(t){
+        var targets = $('#find1 span span, #find1 b, #find2 span')
+        var found = $('p#find1').find(targets)
+        t.assertLength(2, found)
+        t.assertEqual('B', found.get(0).tagName)
+        t.assertEqual('6', found.get(1).innerHTML)
+      },
+
+      testFindWithElement: function(t){
+        var target = $('#find1 span span').get(0)
+        var found = $('p#find1').find(target)
+        t.assertLength(1, found)
+        t.assertEqual('6', found.get(0).innerHTML)
+
+        found = $('p#find1').find(document.body)
+        t.assertLength(0, found, "no elements should have matched")
       },
 
       testFindWithInvalidNode: function(t) {
@@ -1751,6 +1831,11 @@
         appendDivs.append($('<span>Test</span>'))
         appendDivs.each(function() { spans.push($(this).html()) })
         t.assertEqual('<span>Test</span>,<span>Test</span>', spans.join(','))
+      },
+
+      testAppendNull: function(t){
+        var el = $(document.body)
+        t.assertIdentical(el, el.append(null))
       },
 
       testBeforeAfterFragment: function(t){
@@ -2305,6 +2390,10 @@
         $(form).bind('submit', function(e) {
           executed.push("2")
           t.assertEqual(form, e.target)
+          // TODO
+          // Android 2.3 doesn't support stopImmediatePropagation,
+          // so the tests throws an error. Ideally Zepto should emulate
+          // stopImmediatePropagation on browsers that don't support it.
           e.stopImmediatePropagation()
           return 2
         })
