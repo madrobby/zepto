@@ -1656,6 +1656,7 @@
         t.assertEqual('hello', el.data('fun'))
 
         // blank values
+        t.assertUndefined(el.data())
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
       },

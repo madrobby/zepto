@@ -573,6 +573,7 @@ var Zepto = (function() {
         })
     },
     data: function(name, value){
+      if (name === undefined) return
       var data = this.attr('data-' + dasherize(name), value)
       return data !== null ? deserializeValue(data) : undefined
     },
