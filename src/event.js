@@ -240,7 +240,7 @@
     if (typeof type != 'string') props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
-    event.initEvent(type, bubbles, true, null, null, null, null, null, null, null, null, null, null, null, null)
+    event.initEvent(type, bubbles, true)
     event.isDefaultPrevented = function(){ return this.defaultPrevented }
     return event
   }
