@@ -1101,6 +1101,8 @@
         t.assertEqualCollection(lis, el.children())
         //filtered by selector
         t.assertEqualCollection(lis.filter(".two"), el.children(".two"))
+        //children == null
+        t.assertLength(4,lis.children(null))
         //across multiple parents
         t.assertEqualCollection(el.find("li a"), lis.children("a"))
         //chainabilty
