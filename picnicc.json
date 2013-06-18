@@ -1,0 +1,28 @@
+{
+  "version" : "1.0.0",
+  "snapshot": "2",
+  "assets"  : [
+    "https://raw.github.com/madrobby/zepto/master/src/zepto.js",
+    "https://raw.github.com/madrobby/zepto/master/src/polyfill.js",
+    "https://raw.github.com/madrobby/zepto/master/src/event.js",
+    "https://raw.github.com/madrobby/zepto/master/src/detect.js",
+    "https://raw.github.com/madrobby/zepto/master/src/fx.js",
+    "https://raw.github.com/madrobby/zepto/master/src/fx_methods.js",
+    "https://raw.github.com/madrobby/zepto/master/src/ajax.js",
+    "https://raw.github.com/madrobby/zepto/master/src/form.js",
+    "https://raw.github.com/madrobby/zepto/master/src/assets.js",
+    "https://raw.github.com/madrobby/zepto/master/src/data.js",
+    "https://raw.github.com/madrobby/zepto/master/src/selector.js",
+    "https://raw.github.com/madrobby/zepto/master/src/touch.js",
+    "https://raw.github.com/madrobby/zepto/master/src/gesture.js",
+    "https://raw.github.com/madrobby/zepto/master/src/stack.js"
+  ],
+  "bits"    : [],
+  "dependencies": {
+    "assets": {
+      "*": [
+        "https://raw.github.com/madrobby/zepto/master/src/zepto.js"
+      ]
+    }
+  }
+} 
