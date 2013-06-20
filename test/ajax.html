@@ -1051,6 +1051,14 @@
         ]
         var result = $.param(data)
         t.assertEqual(result, "country=Ecuador&capital=Quito")
+      },
+
+      testParamSparseArray: function(t){
+        var data = []
+        data[5] = "NotEmpty"
+        data[10] = "NotEmpty"
+        var result = $.param(data)
+        t.assertEqual(result,"5=NotEmpty&10=NotEmpty")
       }
 
     })
