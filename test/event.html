@@ -278,6 +278,31 @@
 
         this.el.trigger('myevent')
         t.assertIdentical(data, gotData)
+      },
+
+      testDelegateEventMethods: function(t){
+        var methodName,
+            eventMethods = {
+              preventDefault: 'isDefaultPrevented',
+              stopImmediatePropagation: 'isImmediatePropagationStopped',
+              stopPropagation: 'isPropagationStopped'
+            },
+            eventMethodResults = {}
+
+        $(document).on('click', 'div', function(event){
+          $.each(eventMethods, function(methodName, predicate){
+            if (event[methodName]) {
+              event[methodName]()
+              eventMethodResults[predicate] = event[predicate]()
+            }
+          })
+        })
+
+        click($('<span>').appendTo(this.el))
+
+        $.each(eventMethodResults, function(predicate, value){
+          t.assertTrue(value, predicate)
+        })
       }
     })
   })()
