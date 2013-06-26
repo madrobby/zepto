@@ -4,10 +4,15 @@ body {
   line-height: 22px;
   background: #fff;
   color: #000;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+strong, b {
+  font-weight: 500;
 }
 .interface {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-family: "Helvetica Neue", Helvetica Arial, sans-serif;
 }
 #tour {
   max-width: 100%;
@@ -34,9 +39,9 @@ body {
 a.toc_title, a.toc_title:visited {
   display: block;
   color: black;
-  font-weight: bold;
+  font-weight: 500;
   margin-top: 15px;
-  text-decoration: underline;
+  text-decoration: none;
 }
 #sidebar .version {
   font-size: 10px;
@@ -50,8 +55,8 @@ ul.downloads li {
   margin: 10px 0;
 }
 ul.toc_section {
-  font-size: 11px;
-  line-height: 14px;
+  font-size: 12px;
+  line-height: 15px;
   margin: 5px 0 0 0;
   padding-left: 0px;
   list-style-type: none;
@@ -59,12 +64,8 @@ ul.toc_section {
 .toc_section li {
   margin: 0 0 3px 0;
 }
-.toc_section li:before { 
-  content: "▹ ";
-  color: #b01df9;
-}
 .toc_section li a {
-  text-decoration: underline;
+  text-decoration: none;
   color: black;
 }
 .container {
@@ -84,6 +85,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding-top: 1.5em;
   line-height: 1.1;
+  font-weight: 500;
 }
 h1:first-child {
   margin-top: 0;
