@@ -287,7 +287,10 @@ var Zepto = (function() {
   }
 
   $.camelCase = camelize
-  $.trim = function(str) { return str.trim() }
+  $.trim = function(str) {
+    if($.type(str) == "string") return str.trim()
+    else return undefined;
+  }
 
   // plugin compatibility
   $.uuid = 0
