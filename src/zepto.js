@@ -288,8 +288,7 @@ var Zepto = (function() {
 
   $.camelCase = camelize
   $.trim = function(str) {
-    if($.type(str) == "string") return str.trim()
-    else return undefined;
+    return str == null ? "" : String.prototype.trim.call(str)
   }
 
   // plugin compatibility
