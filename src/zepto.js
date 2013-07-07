@@ -159,9 +159,9 @@ var Zepto = (function() {
       var dom
       // normalize array if an array of nodes is given
       if (isArray(selector)) dom = compact(selector)
-      // Wrap DOM nodes. If a plain object is given, duplicate it.
+      // Wrap DOM nodes.
       else if (isObject(selector))
-        dom = [isPlainObject(selector) ? $.extend({}, selector) : selector], selector = null
+        dom = [selector], selector = null
       // If it's a html fragment, create nodes from it
       else if (fragmentRE.test(selector))
         dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null
