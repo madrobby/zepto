@@ -66,7 +66,8 @@
       }
       handler.i = set.length
       set.push(handler)
-      element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
+      if ('addEventListener' in element)
+        element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
     })
   }
   function remove(element, events, fn, selector, capture){
@@ -193,8 +194,8 @@
     event.data = data
     return this.each(function(){
       // items in the collection might not be DOM elements
-      // (todo: possibly support events on plain old objects)
       if('dispatchEvent' in this) this.dispatchEvent(event)
+      else $(this).triggerHandler(event, data)
     })
   }
 
