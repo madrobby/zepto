@@ -8,6 +8,7 @@
       webkit = ua.match(/WebKit\/([\d.]+)/),
       android = ua.match(/(Android)\s+([\d.]+)/),
       ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+      ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
       iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
       webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
       touchpad = webos && ua.match(/TouchPad/),
@@ -18,7 +19,8 @@
       rimtabletos = ua.match(/(RIM\sTablet\sOS)\s([\d.]+)/),
       playbook = ua.match(/PlayBook/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
-      firefox = ua.match(/Firefox\/([\d.]+)/)
+      firefox = ua.match(/Firefox\/([\d.]+)/),
+      webview = ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/)
 
     // Todo: clean this up with a better OS/browser seperation:
     // - discern (more) between multiple browsers on android
@@ -31,6 +33,7 @@
     if (android) os.android = true, os.version = android[2]
     if (iphone) os.ios = os.iphone = true, os.version = iphone[2].replace(/_/g, '.')
     if (ipad) os.ios = os.ipad = true, os.version = ipad[2].replace(/_/g, '.')
+    if (ipod) os.ios = os.ipod = true, os.version = ipod[3] ? ipod[3].replace(/_/g, '.') : null
     if (webos) os.webos = true, os.version = webos[2]
     if (touchpad) os.touchpad = true
     if (blackberry) os.blackberry = true, os.version = blackberry[2]
@@ -42,9 +45,10 @@
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
+    if (webview) browser.webview = true
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) || (firefox && ua.match(/Tablet/)))
-    os.phone  = !!(!os.tablet && (android || iphone || webos || blackberry || bb10 ||
+    os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || webos || blackberry || bb10 ||
       (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) || (firefox && ua.match(/Mobile/))))
   }
 
