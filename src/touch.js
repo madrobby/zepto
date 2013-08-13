@@ -42,7 +42,7 @@
     var now, delta
 
     $(document.body)
-      .bind('touchstart', function(e){
+      .on('touchstart', function(e){
         now = Date.now()
         delta = now - (touch.last || now)
         touch.el = $(parentIfText(e.touches[0].target))
@@ -53,14 +53,14 @@
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
-      .bind('touchmove', function(e){
+      .on('touchmove', function(e){
         cancelLongTap()
         touch.x2 = e.touches[0].pageX
         touch.y2 = e.touches[0].pageY
         if (Math.abs(touch.x1 - touch.x2) > 10)
           e.preventDefault()
       })
-      .bind('touchend', function(e){
+      .on('touchend', function(e){
          cancelLongTap()
 
         // swipe
@@ -104,12 +104,12 @@
           }, 0)
 
       })
-      .bind('touchcancel', cancelAll)
+      .on('touchcancel', cancelAll)
 
-    $(window).bind('scroll', cancelAll)
+    $(window).on('scroll', cancelAll)
   })
 
   ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.bind(m, callback) }
+    $.fn[m] = function(callback){ return this.on(m, callback) }
   })
 })(Zepto)
