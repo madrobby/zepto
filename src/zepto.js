@@ -789,4 +789,4 @@ var Zepto = (function() {
 
 // If `$` is not yet defined, point it to `Zepto`
 window.Zepto = Zepto
-'$' in window || (window.$ = Zepto)
+window.$ === undefined && (window.$ = Zepto)
