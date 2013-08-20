@@ -75,7 +75,8 @@
     eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
-        element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
+		if ('removeEventListener' in element)
+			element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
       })
     })
   }
