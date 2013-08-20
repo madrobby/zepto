@@ -43,6 +43,13 @@
 
     $(document.body)
       .bind('touchstart', function(e){
+        if (e.touches.length === 1 && touch.x2) {
+          // Clear out touch movement data if we have it sticking around
+          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
+          touch.x2 = undefined
+          touch.y2 = undefined
+        }
+
         now = Date.now()
         delta = now - (touch.last || now)
         touch.el = $(parentIfText(e.touches[0].target))
@@ -96,7 +103,7 @@
             else {
               touchTimeout = setTimeout(function(){
                 touchTimeout = null
-                touch.el.trigger('singleTap')
+                if (touch.el) touch.el.trigger('singleTap')
                 touch = {}
               }, 250)
             }
