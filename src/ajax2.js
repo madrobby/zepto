@@ -88,6 +88,13 @@
 
         settings.headers = $.extend(baseHeaders, settings.headers || {})
 
+        //HACK: this is a temporary fix for lack of support for the json responseType
+        xhr.onload = function(){
+            if (this.responseType == 'json' && typeof this.response === 'string' && this.response.trim() != ''){
+                this.response2 = JSON.parse(this.response)
+            }
+        }
+
         // Create a zepto object from the xhr object
         var zeptoXHR = $(xhr)
 
@@ -117,7 +124,7 @@
                     $(this).trigger($.Event('error', e))
                     e.stopImmediatePropagation()
                 } else {
-                    callback.call(context, this.response, this.statusText, this);
+                    callback.call(context, this.response2||this.response, this.statusText, this);
                 }
             })
 
@@ -150,6 +157,24 @@
             // Return the zepto object for chaining
             return this
         }
+
+        // Hook active request count
+        zeptoXHR.on('loadstart', function(){
+            $.active++
+        })
+        zeptoXHR.on('loadend', function(){
+            $.active--
+        })
+
+        // Hook beforeSend
+        zeptoXHR.on('beforesend', function(){
+            settings.beforeSend.call(settings.context, xhr, settings)
+        })
+
+        // Now hook in done, fail and always functions
+        zeptoXHR.done(settings.done)
+        zeptoXHR.fail(settings.fail)
+        zeptoXHR.always(settings.always)
         
         // If settings.global is set to true then hook in global ajax events
         if (settings.global){
@@ -169,7 +194,7 @@
                     $(this).trigger($.Event('error', e))
                     e.stopImmediatePropagation()
                 } else {
-                    $(settings.context || document).trigger($.Event('ajaxSuccess'), [this, settings, this.response])
+                    $(settings.context || document).trigger($.Event('ajaxSuccess'), [this, settings, this.response2||this.response])
                 }
             })
 
@@ -181,24 +206,6 @@
                 $(settings.context || document).trigger($.Event('ajaxStop'), [this, settings])
             })
         }
-
-        // Hook active request count
-        zeptoXHR.on('loadstart', function(){
-            $.active++
-        })
-        zeptoXHR.on('loadend', function(){
-            $.active--
-        })
-
-        // Hook beforeSend
-        zeptoXHR.on('beforesend', function(){
-            settings.beforeSend.call(settings.context, xhr, settings)
-        })
-
-        // Now hook in done, fail and always functions
-        zeptoXHR.done(settings.done)
-        zeptoXHR.fail(settings.fail)
-        zeptoXHR.always(settings.always)
 
         xhr.open(settings.type, settings.url, true, settings.username, settings.password)
 
@@ -224,41 +231,42 @@
     }
 
     // handle optional data/success arguments
-    function parseArguments(url, data, success, dataType) {
+    function parseArguments(url, data, success, responseType) {
         var hasData = !$.isFunction(data)
         return {
             url: url,
             data: hasData ? data : undefined,
             success: !hasData ? data : $.isFunction(success) ? success : undefined,
-            dataType: hasData ? dataType || success : success
+            responseType: hasData ? responseType || success : success
         }
     }
 
-    $.get = function (url, data, success, dataType) {
+    $.get = function (url, data, done, responseType) {
         return $.ajax(parseArguments.apply(null, arguments))
     }
 
-    $.post = function (url, data, success, dataType) {
+    $.post = function (url, data, done, responseType) {
         var options = parseArguments.apply(null, arguments)
         options.type = 'POST'
         return $.ajax(options)
     }
 
-    $.getJSON = function (url, data, success) {
+    $.getJSON = function (url, data, done) {
         var options = parseArguments.apply(null, arguments)
-        options.dataType = 'json'
+        // Not yet supported by any browsers
+        options.responseType = 'json'
         return $.ajax(options)
     }
 
-    $.fn.load = function (url, data, success) {
+    $.fn.load = function (url, data, done) {
         if (!this.length) return this
         var self = this,
             parts = url.split(/\s/),
             selector,
-            options = parseArguments(url, data, success),
+            options = parseArguments(url, data, done),
             callback = options.success
         if (parts.length > 1) options.url = parts[0], selector = parts[1]
-        options.success = function (response) {
+        options.done = function (response) {
             self.html(selector ?
                 $('<div>').html(response.replace(rscript, "")).find(selector) : response)
             callback && callback.apply(self, arguments)
