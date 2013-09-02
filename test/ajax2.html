@@ -162,8 +162,9 @@
                       url: 'fixtures/ajax_load_simple.html',
                       done: t.reg.handler('done'),
                       fail: t.reg.handler('fail'),
-                      always: t.reg.resumeHandler('always', function () {
+                      always: t.reg.handler('always', function () {
                           t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
+                          t.resume()
                       })
                   })
                   t.assert($.isFunction(zeptoXhr[0].getResponseHeader))
@@ -502,8 +503,8 @@
               send: function (data) {
                   this.data = data
                   this.dispatchEvent($.event('loadstart'))
-                  if (this.timeout != 0){
-                      setTimeout(function(){
+                  if (this.timeout != 0) {
+                      setTimeout(function () {
                           this.aborted = true
                           this.dispatchEvent($.event('timeout'))
                       }, this.timeout)
@@ -518,9 +519,9 @@
                   this.statusText = '200 OK'
                   this.responseText = this.response = responseText
                   $.extend(this.responseHeaders, headers)
-                  if ( !((this.status >= 200 && this.status < 300) || this.status == 304)){
+                  if (!((this.status >= 200 && this.status < 300) || this.status == 304)) {
                       this.dispatchEvent($.event('error'))
-                  }else{
+                  } else {
                       this.dispatchEvent($.event('load'))
                   }
                   this.onreadystatechange()
