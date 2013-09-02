@@ -157,13 +157,14 @@
               },
 
               testAjaxBase: function (t) {
-                  t.pause()
+                  //t.pause()
                   var zeptoXhr = $.ajax({
                       url: 'fixtures/ajax_load_simple.html',
+                      beforeSend: t.reg.handler('beforeSend'),
                       done: t.reg.handler('done'),
                       fail: t.reg.handler('fail'),
                       always: t.reg.handler('always', function () {
-                          t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
+                          t.assertEqualList('beforeSend ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
                           t.resume()
                       })
                   })
