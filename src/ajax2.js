@@ -230,14 +230,14 @@
         return zeptoXHR
     }
 
-    // handle optional data/success arguments
-    function parseArguments(url, data, success, responseType) {
+    // handle optional data/done arguments
+    function parseArguments(url, data, done, responseType) {
         var hasData = !$.isFunction(data)
         return {
             url: url,
             data: hasData ? data : undefined,
-            success: !hasData ? data : $.isFunction(success) ? success : undefined,
-            responseType: hasData ? responseType || success : success
+            done: !hasData ? data : $.isFunction(done) ? done : undefined,
+            responseType: hasData ? responseType || done : done
         }
     }
 
@@ -253,7 +253,7 @@
 
     $.getJSON = function (url, data, done) {
         var options = parseArguments.apply(null, arguments)
-        // Not yet supported by any browsers
+        // Currently only supported by Firefox and Chrome dev
         options.responseType = 'json'
         return $.ajax(options)
     }

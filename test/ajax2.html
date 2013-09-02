@@ -29,7 +29,7 @@
           }
 
           function resumeOnAjaxError(t) {
-              $(document).on('ajaxError', function (xhr, settings, e) {
+              $(document).on('ajaxError', function (e, xhr, settings, err) {
                   deferredResume(t, function () {
                       t.assert(false, "request errored out: " + xhr.responseText)
                   })
@@ -535,7 +535,7 @@
               }
           }
 
-          Evidence('ZeptoAjaxTest2', {
+          Evidence('ZeptoAjax2Test2', {
               setUp: function () {
                   $.ajaxSettings.xhr = function () { return new MockXHR }
               },
@@ -718,14 +718,14 @@
 
               testGlobalBeforeSendAbort: function (t) {
                   var xhr
-                  $(document).on('ajaxBeforeSend', function (x, s) { xhr = x; return false })
+                  $(document).on('ajaxBeforeSend', function (e, x, s) { xhr = x; return false })
                   t.assertFalse($.ajax())
                   t.assert(xhr.aborted)
               },
 
               testGlobalAjaxStartCantAbort: function (t) {
                   var xhr
-                  $(document).on('ajaxStart', function (x, s) { xhr = x; return false })
+                  $(document).on('ajaxStart', function (e, x, s) { xhr = x; return false })
                   t.assert($.ajax())
                   t.assert(!xhr.aborted)
               },
@@ -814,7 +814,7 @@
               }
           })
 
-          Evidence('ZeptoAjaxHelperMethodsTest', {
+          Evidence('ZeptoAjax2HelperMethodsTest', {
 
               testParamMethod: function (t) {
                   var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] })
