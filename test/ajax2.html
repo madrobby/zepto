@@ -103,11 +103,11 @@
                   var that = this
                   return this.handler(name, function () {
                       var context = this, args = arguments
-                      setTimeout(function () {
+                      //setTimeout(function () {
                           that.testCase.resume(function () {
                               if (fn) fn.apply(context, args)
                           })
-                      }, 50)
+                      //}, 5)
                   })
               },
               handlers: function () {
@@ -163,9 +163,8 @@
                       beforeSend: t.reg.handler('beforeSend'),
                       done: t.reg.handler('done'),
                       fail: t.reg.handler('fail'),
-                      always: t.reg.handler('always', function () {
+                      always: t.reg.resumeHandler('always', function () {
                           t.assertEqualList('beforeSend ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
-                          t.resume()
                       })
                   })
                   t.assert($.isFunction(zeptoXhr[0].getResponseHeader))
