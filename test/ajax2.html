@@ -29,7 +29,7 @@
           }
 
           function resumeOnAjaxError(t) {
-              $(document).on('ajaxError', function (e, zeptoXhr) {
+              $(document).on('ajaxError', function (xhr, settings, e) {
                   deferredResume(t, function () {
                       t.assert(false, "request errored out: " + xhr.responseText)
                   })
