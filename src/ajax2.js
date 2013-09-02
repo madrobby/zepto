@@ -264,7 +264,7 @@
             parts = url.split(/\s/),
             selector,
             options = parseArguments(url, data, done),
-            callback = options.success
+            callback = options.done
         if (parts.length > 1) options.url = parts[0], selector = parts[1]
         options.done = function (response) {
             self.html(selector ?

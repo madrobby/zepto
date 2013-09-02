@@ -158,7 +158,7 @@
 
               testAjaxBase: function (t) {
                   t.pause()
-                  var xhr = $.ajax({
+                  var zeptoXhr = $.ajax({
                       url: 'fixtures/ajax_load_simple.html',
                       done: t.reg.handler('done'),
                       fail: t.reg.handler('fail'),
@@ -166,17 +166,17 @@
                           t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
                       })
                   })
-                  t.assert($.isFunction(xhr.getResponseHeader))
+                  t.assert($.isFunction(zeptoXhr[0].getResponseHeader))
               },
 
               testAjaxGet: function (t) {
                   t.pause()
-                  var xhr = $.get('echo', t.reg.resumeHandler('done', function (response) {
+                  var zeptoXhr = $.get('echo', t.reg.resumeHandler('done', function (response) {
                       t.assertIdentical(window, this)
                       t.assertLine("GET ?{}", response)
                       t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                   }))
-                  t.assertIn('abort', xhr)
+                  t.assertIn('abort', zeptoXhr[0])
               },
 
               testAjaxGetWithParams: function (t) {
@@ -209,14 +209,14 @@
 
               testAjaxPost: function (t) {
                   t.pause()
-                  var xhr = $.post('echo', t.reg.resumeHandler('done', function (response) {
+                  var zeptoXhr = $.post('echo', t.reg.resumeHandler('done', function (response) {
                       t.assertIdentical(window, this)
                       t.assertLine("POST ?{}", response)
                       t.assertLine("accept: */*", response)
                       t.assertLine('{}', response)
                       t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                   }))
-                  t.assertIn('abort', xhr)
+                  t.assertIn('abort', zeptoXhr[0])
               },
 
               testAjaxPostWithPayloadAndType: function (t) {
@@ -259,7 +259,7 @@
                   $.ajax({
                       url: 'json',
                       headers: { accept: 'application/json' },
-                      success: t.reg.resumeHandler('done', function (data) {
+                      done: t.reg.resumeHandler('done', function (data) {
                           t.assertEqual('world', data.hello)
                       })
                   })
@@ -269,7 +269,7 @@
                   t.pause()
                   resumeOnAjaxError(t)
 
-                  var xhr = $.getJSON(
+                  var zeptoXhr = $.getJSON(
                 'json',
                 t.reg.resumeHandler('done', function (data) {
                     t.assertEqual('world', data.hello)
@@ -277,7 +277,7 @@
                     t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                 })
               )
-                  t.assertIn('abort', xhr)
+                  t.assertIn('abort', zeptoXhr[0])
               },
 
               testAjaxGetJSONWithParams: function (t) {
@@ -295,7 +295,7 @@
 
               testNoCacheParam: function (t) {
                   t.pause()
-                  var xhr = $.ajax({
+                  var zeptoXhr = $.ajax({
                       url: 'echo',
                       cache: false,
                       done: t.reg.resumeHandler('done', function (response) {
@@ -307,7 +307,7 @@
 
               testNoCacheParameterWithParam: function (t) {
                   t.pause()
-                  var xhr = $.ajax({
+                  var zeptoXhr = $.ajax({
                       url: 'echo',
                       data: { data: 'sample' },
                       cache: false,
@@ -320,7 +320,7 @@
 
               testNoCacheParameterAlreadyPresent: function (t) {
                   t.pause()
-                  var xhr = $.ajax({
+                  var zeptoXhr = $.ajax({
                       url: 'echo',
                       data: { _: 'test' },
                       cache: false,
@@ -333,7 +333,7 @@
 
               testNoCacheParameterAlreadyPresentWithParam: function (t) {
                   t.pause()
-                  var xhr = $.ajax({
+                  var zeptoXhr = $.ajax({
                       url: 'echo',
                       data: { _: 'test', data: 'sample' },
                       cache: false,
