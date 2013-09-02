@@ -142,11 +142,11 @@
               }
           })
 
-          Evidence('ZeptoAjaxTest', {
+          Evidence('ZeptoAjax2Test', {
 
               setUp: function () {
                   var reg = new CallbackRegistry(this),
-                  globals = toArray('ajaxBeforeSend ajaxSend ajaxSuccess ajaxError ajaxComplete')
+                  globals = toArray('ajaxBeforeSend ajaxStart ajaxSuccess ajaxError ajaxStop')
 
                   $(document).on(reg.handlers.apply(reg, globals))
                   this.reg = reg
@@ -160,10 +160,10 @@
                   t.pause()
                   var xhr = $.ajax({
                       url: 'fixtures/ajax_load_simple.html',
-                      success: t.reg.handler('success'),
-                      error: t.reg.handler('error'),
-                      complete: t.reg.resumeHandler('complete', function () {
-                          t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess complete ajaxComplete', t.reg.events())
+                      done: t.reg.handler('done'),
+                      fail: t.reg.handler('fail'),
+                      always: t.reg.resumeHandler('always', function () {
+                          t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
                       })
                   })
                   t.assert($.isFunction(xhr.getResponseHeader))
@@ -171,17 +171,17 @@
 
               testAjaxGet: function (t) {
                   t.pause()
-                  var xhr = $.get('echo', t.reg.resumeHandler('success', function (response) {
+                  var xhr = $.get('echo', t.reg.resumeHandler('done', function (response) {
                       t.assertIdentical(window, this)
                       t.assertLine("GET ?{}", response)
-                      t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+                      t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                   }))
                   t.assertIn('abort', xhr)
               },
 
               testAjaxGetWithParams: function (t) {
                   t.pause()
-                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function (response) {
+                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('done', function (response) {
                       t.assertLine('GET ?{"sample":"data"}', response)
                       t.assertLine("accept: */*", response)
                   }))
@@ -189,7 +189,7 @@
 
               testAjaxGetWithParamsAndType: function (t) {
                   t.pause()
-                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function (response) {
+                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('done', function (response) {
                       t.assertLine('GET ?{"sample":"data"}', response)
                       t.assertLine("accept: text/plain", response)
                   }), 'text')
@@ -201,7 +201,7 @@
                       deferredResume(t, function () {
                           t.assertLine('GET ?{"sample":"data"}', response)
                           t.assertLine("accept: text/plain", response)
-                          t.assertEqualList('ajaxBeforeSend ajaxSend ajaxSuccess ajaxComplete', t.reg.events())
+                          t.assertEqualList('ajaxBeforeSend ajaxStart ajaxSuccess ajaxStop', t.reg.events())
                       })
                   })
                   $.get('echo', { sample: 'data' }, 'text')
@@ -209,12 +209,12 @@
 
               testAjaxPost: function (t) {
                   t.pause()
-                  var xhr = $.post('echo', t.reg.resumeHandler('success', function (response) {
+                  var xhr = $.post('echo', t.reg.resumeHandler('done', function (response) {
                       t.assertIdentical(window, this)
                       t.assertLine("POST ?{}", response)
                       t.assertLine("accept: */*", response)
                       t.assertLine('{}', response)
-                      t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+                      t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                   }))
                   t.assertIn('abort', xhr)
               },
@@ -222,7 +222,7 @@
               testAjaxPostWithPayloadAndType: function (t) {
                   t.pause()
                   var payload = { sample: 'data' }
-                  $.post('echo', payload, t.reg.resumeHandler('success', function (response) {
+                  $.post('echo', payload, t.reg.resumeHandler('done', function (response) {
                       t.assertLine("content-type: application/x-www-form-urlencoded", response)
                       t.assertLine("accept: text/plain", response)
                       t.assertLine('{"sample":"data"}', response)
@@ -234,11 +234,11 @@
                   t.assertIdentical(0, $.active, 'initial count mismatch')
                   $(document)
                 .on('ajaxStart', function () { ajaxStarted++ })
-                .on('ajaxEnd', function () { ajaxEnded++ })
-                .on('ajaxSend', function () {
+                .on('ajaxStop', function () { ajaxEnded++ })
+                .on('ajaxStart', function () {
                     if ($.active > maxActive) maxActive = $.active
                 })
-                .on('ajaxComplete', function () {
+                .on('ajaxStop', function () {
                     if (++requestsCompleted == 3)
                         deferredResume(t, function () {
                             this.assertEqual(3, maxActive)
@@ -259,7 +259,7 @@
                   $.ajax({
                       url: 'json',
                       headers: { accept: 'application/json' },
-                      success: t.reg.resumeHandler('success', function (data) {
+                      success: t.reg.resumeHandler('done', function (data) {
                           t.assertEqual('world', data.hello)
                       })
                   })
@@ -271,10 +271,10 @@
 
                   var xhr = $.getJSON(
                 'json',
-                t.reg.resumeHandler('success', function (data) {
+                t.reg.resumeHandler('done', function (data) {
                     t.assertEqual('world', data.hello)
                     t.assert($.isEmptyObject(data.query))
-                    t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+                    t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                 })
               )
                   t.assertIn('abort', xhr)
@@ -286,7 +286,7 @@
 
                   $.getJSON(
                 'json', { sample: 'data' },
-                t.reg.resumeHandler('success', function (data) {
+                t.reg.resumeHandler('done', function (data) {
                     t.assertEqual('data', data.query.sample)
                 }),
                 'text' // ignored
@@ -298,7 +298,7 @@
                   var xhr = $.ajax({
                       url: 'echo',
                       cache: false,
-                      success: t.reg.resumeHandler('success', function (response) {
+                      done: t.reg.resumeHandler('done', function (response) {
                           // check that the no-cache param (or an element of it) looks like a timestamp
                           t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
                       })
@@ -311,7 +311,7 @@
                       url: 'echo',
                       data: { data: 'sample' },
                       cache: false,
-                      success: t.reg.resumeHandler('success', function (response) {
+                      done: t.reg.resumeHandler('done', function (response) {
                           // check that the no-cache param (or an element of it) looks like a timestamp
                           t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
                       })
@@ -324,7 +324,7 @@
                       url: 'echo',
                       data: { _: 'test' },
                       cache: false,
-                      success: t.reg.resumeHandler('success', function (response) {
+                      done: t.reg.resumeHandler('done', function (response) {
                           // check that the no-cache param (or an element of it) looks like a timestamp
                           t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
                       })
@@ -337,7 +337,7 @@
                       url: 'echo',
                       data: { _: 'test', data: 'sample' },
                       cache: false,
-                      success: t.reg.resumeHandler('success', function (response) {
+                      done: t.reg.resumeHandler('done', function (response) {
                           // check that the no-cache param (or an element of it) looks like a timestamp
                           t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
                       })
@@ -349,13 +349,13 @@
                   var testEl = $('#ajax_load')
                   var el = testEl.load(
                 'fixtures/ajax_load_simple.html',
-                t.reg.resumeHandler('success', function (response, status, xhr) {
+                t.reg.resumeHandler('done', function (response, statusText, xhr) {
                     t.assertIdentical(testEl, this)
                     t.assertEqual("simple ajax load\n", response)
                     t.assertEqual('simple ajax load', testEl.html().trim())
-                    t.assertEqual('success', status)
+                    t.assertEqual('200 OK', statusText)
                     t.assertIn('abort', xhr)
-                    t.assertEqualList('ajaxBeforeSend ajaxSend success ajaxSuccess ajaxComplete', t.reg.events())
+                    t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
                 })
               )
                   t.assertIdentical(testEl, el)
@@ -366,7 +366,7 @@
                   var testEl = $('#ajax_load')
                   testEl.load(
                 'fixtures/ajax_load_selector.html #ajax_load_test_div',
-                t.reg.resumeHandler('success', function () {
+                t.reg.resumeHandler('done', function () {
                     t.assertEqual(
                     '<div id="ajax_load_test_div">ajax load with selector</div>',
                     testEl.html().trim()
@@ -406,11 +406,11 @@
                       url: 'fixtures/ajax_load_simple.html',
                       context: body,
                       beforeSend: t.reg.handler('beforeSend'),
-                      success: t.reg.handler('success'),
-                      complete: t.reg.resumeHandler('complete', function () {
+                      done: t.reg.handler('done'),
+                      always: t.reg.resumeHandler('always', function () {
                           t.assertIdentical(body, this)
                           t.assertIdentical(body, t.reg.context('beforeSend'))
-                          t.assertIdentical(body, t.reg.context('success'))
+                          t.assertIdentical(body, t.reg.context('done'))
                           t.assertIdentical(document.body, t.reg.target('ajaxBeforeSend'))
                           t.assertIdentical(document.body, t.reg.target('ajaxSuccess'))
                       })
@@ -424,11 +424,11 @@
                       url: 'fixtures/ajax_load_simple.html',
                       context: obj,
                       beforeSend: t.reg.handler('beforeSend'),
-                      success: t.reg.handler('success'),
-                      complete: t.reg.resumeHandler('complete', function () {
+                      done: t.reg.handler('done'),
+                      always: t.reg.resumeHandler('always', function () {
                           t.assertIdentical(obj, this)
                           t.assertIdentical(obj, t.reg.context('beforeSend'))
-                          t.assertIdentical(obj, t.reg.context('success'))
+                          t.assertIdentical(obj, t.reg.context('done'))
                           t.assertUndefined(t.reg.target('ajaxBeforeSend'))
                           t.assertUndefined(t.reg.target('ajaxSuccess'))
                       })
