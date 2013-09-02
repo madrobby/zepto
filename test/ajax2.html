@@ -25,7 +25,7 @@
       (function () {
 
           function deferredResume(t, fn) {
-              setTimeout(function () { t.resume(fn || function () { }) }, 5)
+              t.resume(fn || function () { })
           }
 
           function resumeOnAjaxError(t) {
@@ -157,7 +157,7 @@
               },
 
               testAjaxBase: function (t) {
-                  //t.pause()
+                  t.pause()
                   var zeptoXhr = $.ajax({
                       url: 'fixtures/ajax_load_simple.html',
                       beforeSend: t.reg.handler('beforeSend'),
