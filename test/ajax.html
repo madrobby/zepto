@@ -445,6 +445,66 @@
         })
       },
 
+      testAjaxJSONPWithCallbackName: function(t) {
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
+          jsonpCallback: 'blah',
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertFalse('blah' in window)
+          })
+        })
+
+        t.assert($.isFunction(window.blah))
+        t.pause()
+      },
+
+      testAjaxJSONPWithCallbackNameAsFunction: function(t) {
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
+          jsonpCallback: function(){ return 'blah' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertFalse('blah' in window)
+          })
+        })
+
+        t.assert($.isFunction(window.blah))
+        t.pause()
+      },
+
+      testAjaxJSONPWithCallbackNameAndJSONPsetToFalse: function(t) {
+        var xhr = $.ajax({
+          url: 'jsonpBlah',
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: 'blah',
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertFalse('blah' in window)
+          })
+        })
+
+        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        t.assert($.isFunction(window.blah))
+        t.pause()
+      },
+
+      testAjaxJSONPWithCallbackNameAsFunctionAndJSONPsetToFalse: function(t) {
+        var xhr = $.ajax({
+          url: 'jsonpBlah',
+          dataType: 'jsonp',
+          jsonp: false,
+          jsonpCallback: function(){ return 'blah' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertFalse('blah' in window)
+          })
+        })
+
+        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        t.assert($.isFunction(window.blah))
+        t.pause()
+      },
+
       testNoCacheParam: function(t) {
         t.pause()
         var xhr = $.ajax({
