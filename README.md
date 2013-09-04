@@ -11,6 +11,7 @@ Zepto.js is licensed under the terms of the MIT License.
 ## Building
 
 [![Build Status](https://secure.travis-ci.org/madrobby/zepto.png?branch=master)](http://travis-ci.org/madrobby/zepto)
+[![Node dependencies status](https://david-dm.org/madrobby/zepto/dev-status.png?branch=master)](https://david-dm.org/madrobby/zepto#info=devDependencies&view=table)
 
 The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
