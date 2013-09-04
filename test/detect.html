@@ -33,6 +33,7 @@
       iOS_4_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C134 Safari/6533.18.5",
       iOS_4_3_iPhone_Simulator: "Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5",
       iOS_5_0_iPhone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3",
+      iOS_5_1_iPad_webView: "Mozilla/5.0 (iPad; CPU OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/98176",
       iOS_6_0_iPad_mini: "Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A406 Safari/8536.25",
       iOS_6_1_iPhone: "Mozilla/5.0 (iPhone; CPU iPhone OS 6_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B143 Safari/8536.25",
 
@@ -159,16 +160,16 @@
         })
         detect(UA.iOS_3_1_1_iPod, function(os, browser){
           t.assertTrue(os.ios)
-          t.assertTrue(os.iphone)
-          t.assertUndefined(os.ipod)
+          t.assertUndefined(os.iphone)
+          t.assertTrue(os.ipod)
           t.assertEqual("3.1.1", os.version)
-          t.assertTrue(os.phone)
+          t.assertFalse(!!os.phone)
           t.assertTrue(browser.safari)
         })
         detect(UA.iOS_3_2_iPad, function(os, browser){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
-          t.assert(!os.iphone)
+          t.assertFalse(!!os.iphone)
           t.assertEqual("3.2", os.version)
           t.assertTrue(os.tablet)
           t.assertTrue(browser.safari)
@@ -213,6 +214,13 @@
           t.assertFalse(os.tablet)
           t.assertTrue(browser.safari)
         })
+        detect(UA.iOS_5_1_iPad_webView, function(os, browser){
+          t.assert(os.ios)
+          t.assert(os.ipad)
+          t.assertEqual("5.1", os.version)
+          t.assertTrue(browser.webview)
+          t.assertTrue(browser.safari)
+        })
         detect(UA.iOS_6_1_iPhone, function(os, browser){
           t.assert(os.ios)
           t.assert(os.iphone)
@@ -220,6 +228,7 @@
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.webview)
           t.assertFalse(!!browser.chrome)
           t.assertFalse(!!browser.firefox)
         })
@@ -250,6 +259,7 @@
           t.assertFalse(!!browser.safari)
           t.assertTrue(browser.chrome)
           t.assertFalse(!!browser.firefox)
+          t.assertFalse(!!browser.webview)
         })
       },
 
