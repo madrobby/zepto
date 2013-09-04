@@ -6,7 +6,65 @@ description: >
 version: 1.0
 github_url: https://github.com/madrobby/zepto
 ---
-
+<style>
+/* ------------ custom build ------------ */
+    
+    [name="picnicc"] .group:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    [name="picnicc"] label {
+      float: left;
+      width: 33%;
+    }
+    [name="picnicc"] label.section {
+      float: none;
+      clear: both;
+      font-size: 16px;
+      font-weight: bold;
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+    [name="picnicc"] h3 {
+      clear: both;
+    }
+    [name="picnicc"] button {
+      clear: both;
+      display: block;
+      margin-top: 60px;
+    }
+    .block {
+      display: block;
+      margin-bottom: 24px;
+    }
+    .site-title {
+      font-size: 2.2em;
+      margin-top: 80px;
+    }
+    .center {
+      text-align: center;
+    }
+    .form-section {
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+      border-top: 4px double #ddd;
+      border-bottom: 4px double #ddd;
+    }
+    .form-section label {
+      width: 100%;
+      margin-top: 20px;
+    }
+    .form-section input {
+      display: block;
+      margin: 16px auto 24px auto;
+      border: 1px solid #ccc;
+      padding: 8px;
+      border-radius: 5px;
+    }
+</style>
 <div id="menu_icon">≣</div>
 
 <aside id="sidebar" class="interface">
@@ -115,6 +173,115 @@ github_url: https://github.com/madrobby/zepto
   <p>
     Or <b><a href="{{ page.github_url }}">grab the latest version on Github</a></b>.
   </p>
+  
+  <p>
+    Or <b>generate a custom build</b> right here, right now. <i>The core methods of zepto.js are always included.</i>
+  </p>
+  
+  <form name="picnicc" method="post" action="https://picni.cc/api/v1/build/">
+      <input type="hidden" name="username" value="alexduloz">
+      <input type="hidden" name="project" value="zepto.js">
+      <input type="hidden" name="picnicc" value="https://raw.github.com/alexduloz/zepto/gh-pages/picnicc.json">
+      <input type="hidden" name="if_success" value="302">
+      <input type="hidden" name="assets[]" value="https://raw.github.com/madrobby/zepto/master/src/zepto.js">
+      <input type="hidden" name="minify" value="js">
+
+      <div class="group">
+        <label class="section">
+          <input type="checkbox" name="check_section" class="check_section" data-check-section="modules">
+          Modules
+        </label>
+        
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/polyfill.js" checked="checked">
+          polyfill.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/event.js" checked="checked">
+          event.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/detect.js" checked="checked">
+          detect.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/fx.js" checked="checked">
+          fx.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/fx_methods.js">
+          fx_methods.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/ajax.js" checked="checked">
+          ajax.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/form.js" checked="checked">
+          form.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/assets.js">
+          assets.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/data.js">
+          data.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/selector.js">
+          selector.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/touch.js">
+          touch.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/gesture.js">
+          gesture.js
+        </label>
+        <label>
+          <input type="checkbox" name="assets[]" class="modules" value="https://raw.github.com/madrobby/zepto/master/src/stack.js">
+          stack.js
+        </label>
+        
+<!-- For easier testing without having to actually upload the picnicc.json file -->
+<!--
+<textarea name="picnicc_plain">
+{
+  "version" : "1.0.0",
+  "snapshot": "2",
+  "assets"  : [
+    "https://raw.github.com/madrobby/zepto/master/src/zepto.js",
+    "https://raw.github.com/madrobby/zepto/master/src/polyfill.js",
+    "https://raw.github.com/madrobby/zepto/master/src/event.js",
+    "https://raw.github.com/madrobby/zepto/master/src/detect.js",
+    "https://raw.github.com/madrobby/zepto/master/src/fx.js",
+    "https://raw.github.com/madrobby/zepto/master/src/fx_methods.js",
+    "https://raw.github.com/madrobby/zepto/master/src/ajax.js",
+    "https://raw.github.com/madrobby/zepto/master/src/form.js",
+    "https://raw.github.com/madrobby/zepto/master/src/assets.js",
+    "https://raw.github.com/madrobby/zepto/master/src/data.js",
+    "https://raw.github.com/madrobby/zepto/master/src/selector.js",
+    "https://raw.github.com/madrobby/zepto/master/src/touch.js",
+    "https://raw.github.com/madrobby/zepto/master/src/gesture.js",
+    "https://raw.github.com/madrobby/zepto/master/src/stack.js"
+  ],
+  "bits"    : [],
+  "dependencies": {
+    "assets": {
+      "*": [
+        "https://raw.github.com/madrobby/zepto/master/src/zepto.js"
+      ]
+    }
+  }
+} 
+</textarea>
+-->
+        
+      </div>
+      <button>Build it!</button>
+  </form>
   
   <ul class=downloads>
     <li>
@@ -326,6 +493,22 @@ document.write('<script src=' +
 
 <script src="zepto.min.js"></script>
 <script src="touch.js"></script>
+
+<script>
+// custom build
+var checkSection = document.getElementsByClassName("check_section");
+var l = checkSection.length;
+for (var i = 0; i < l; i++) {
+  checkSection[i].addEventListener("click", function() {
+    var checked = this.checked;
+    var checkboxes = document.getElementsByClassName(this.getAttribute("data-check-section"));
+    var n = checkboxes.length;
+    for (var x = 0; x < n; x++) {      
+      checkboxes[x].checked = checked;
+    };
+  });
+};
+</script>
 
 <script>
   var reflowTimeout;
