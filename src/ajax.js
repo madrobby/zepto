@@ -72,7 +72,7 @@
   $.ajaxJSONP = function(options){
     if (!('type' in options)) return $.ajax(options)
 
-    var callbackName = 'jsonp' + (++jsonpID),
+    var callbackName = options.jsonpCallback || ('jsonp' + (++jsonpID)),
       script = document.createElement('script'),
       cleanup = function() {
         clearTimeout(abortTimeout)
@@ -182,7 +182,7 @@
 
     var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
-      if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
+      if (!hasPlaceholder) settings.url = appendQuery(settings.url, settings.jsonp ? (settings.jsonp + '=?') : 'callback=?')
       return $.ajaxJSONP(settings)
     }
 
