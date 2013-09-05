@@ -10,7 +10,7 @@ Zepto.js is licensed under the terms of the MIT License.
 
 ## 说明
 
-本版本是基于官方最新版本Fork的一份，针对Windows Phone兼容问题，以及一些常见安卓机器出现的Bug，所做的Hack修复版本，目前主要用于http://m.51buy.com/易迅官方触屏版上，等版本成熟，会request pull到官方分支上去，欢迎广大zepto国内用户共同维护此Fork分支
+本版本是基于官方最新版本Fork的一份，针对Windows Phone兼容问题，以及一些常见安卓机器出现的Bug，所做的Hack修复版本，目前主要用于[http://m.51buy.com/易迅官方触屏版](http://m.51buy.com/)上，等版本成熟，会request pull到官方分支上去，欢迎广大zepto国内用户共同维护此Fork分支
 
 ## Building
 
