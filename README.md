@@ -13,12 +13,12 @@ Zepto.js is licensed under the terms of the MIT License.
 本版本是基于官方最新版本Fork的一份，针对Windows Phone兼容问题，以及一些常见安卓机器出现的Bug，所做的Hack修复版本，目前主要用于[http://m.51buy.com/易迅官方触屏版](http://m.51buy.com/)上，等版本成熟，会request pull到官方分支上去，欢迎广大zepto国内用户共同维护此Fork分支
 
 主要修改如下：
-1. 修复对于IE10的支持
-2. 修复对于IE10的touch事件兼容
-3. 修复对于-webkit-的属性，会针对IE会转化为相应的-ms-的css属性
-4. 修复对于JSONP的$.getJSON时候，可以指定script的charset，例如：$.getJSON('url', {a:1, charset: 'gbk'}, function(){})
-5. 修复对于[CORS](http://www.w3.org/TR/cors/)的支持，在setting中传入withCredentials : true
-6. 修复了touch事件在安卓机器上会造成无法滑动滚屏的bug
+* 修复对于IE10的支持
+* 修复对于IE10的touch事件兼容
+* 修复对于-webkit-的属性，会针对IE会转化为相应的-ms-的css属性
+* 修复对于JSONP的$.getJSON时候，可以指定script的charset，例如：$.getJSON('url', {a:1, charset: 'gbk'}, function(){})
+* 修复对于[CORS](http://www.w3.org/TR/cors/)的支持，在setting中传入withCredentials : true
+* 修复了touch事件在安卓机器上会造成无法滑动滚屏的bug
 
 ## Building
 
