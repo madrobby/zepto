@@ -728,7 +728,7 @@ var Zepto = (function() {
       // Subtract element margins
       // note: when an element has margin: auto the offsetLeft and marginLeft
       // are the same in Safari causing offset.left to incorrectly be 0
-      offset.top  -= parseFloat( $(elem). ('margin-top') ) || 0
+      offset.top  -= parseFloat( $(elem).css('margin-top') ) || 0
       offset.left -= parseFloat( $(elem).css('margin-left') ) || 0
 
       // Add offsetParent borders
