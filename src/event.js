@@ -7,7 +7,7 @@
     hover = { mouseenter: 'mouseover', mouseleave: 'mouseout',
       /**
        * addisonxue hacked
-       * ¼ÓÈë¶ÔÓÚÎ¢ÈíµÄ±Ê´¥ÊÂ¼ş¼æÈİ
+       * åŠ å…¥å¯¹äºå¾®è½¯çš„ç¬”è§¦äº‹ä»¶å…¼å®¹
        */   
       touchdown: window.navigator.msPointerEnabled? 'MSPointerDown': 'touchdown',
       touchmove: window.navigator.msPointerEnabled? 'MSPointerMove': 'touchmove',

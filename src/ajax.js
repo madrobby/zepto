@@ -246,7 +246,7 @@
      * addisonxue hacked
      */
     if (setting.withCredentials) {
-      //¼ÓÈë¶ÔÓÚCORSµÄÖ§³Ö£¬¾ßÌå²Î¿¼http://www.w3.org/TR/cors/
+      //åŠ å…¥å¯¹äºCORSçš„æ”¯æŒï¼Œå…·ä½“å‚è€ƒhttp://www.w3.org/TR/cors/
       try{
         xhr.withCredentials = true;
       } catch (e) {
@@ -278,7 +278,7 @@
     options.type = 'POST'
     /**
      * addisonxue hacked
-     * ¼ÓÈë¶ÔÓÚÖĞÎÄ¿ÉÄÜµÄÖ¸¶¨±àÂëÎÊÌâĞŞ¸´
+     * åŠ å…¥å¯¹äºä¸­æ–‡å¯èƒ½çš„æŒ‡å®šç¼–ç é—®é¢˜ä¿®å¤
      */
     options.charset = data.charset;
     return $.ajax(options)

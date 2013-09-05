@@ -132,7 +132,7 @@ var Zepto = (function() {
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
   
-  //¼ÓÈë¶ÔÓÚIEµÄ__proto__ Hacked
+  //åŠ å…¥å¯¹äºŽIEçš„__proto__ Hacked
   zepto.Z_IEHacker = function(dom, selector) {
     for ( var k in dom) {
       this[k] = dom[k];
@@ -161,7 +161,7 @@ var Zepto = (function() {
   // `$.zepto.isZ` should return `true` if the given object is a Zepto
   // collection. This method can be overriden in plugins.
   zepto.isZ = function(object) {
-    //ÅÐ¶ÏÊÇ·ñ¼Ì³ÐÓÚzepto¼ÓÈë¶ÔÓÚie10µÄÖ§³Ö£¬´ÓIE11¿ªÊ¼Ö§³Ö__proto__ÊôÐÔ¾Í²»ÐèÒªÔÙ×ö¼æÈÝÁË
+    //åˆ¤æ–­æ˜¯å¦ç»§æ‰¿äºŽzeptoåŠ å…¥å¯¹äºŽie10çš„æ”¯æŒï¼Œä»ŽIE11å¼€å§‹æ”¯æŒ__proto__å±žæ€§å°±ä¸éœ€è¦å†åšå…¼å®¹äº†
     if(object.__proto__){
       return object instanceof zepto.Z;
     }else{
@@ -638,7 +638,7 @@ var Zepto = (function() {
     css: function(property, value){
       /**
        * addisonxue hacked
-       * ¶ÔÓÚË½ÓÐwebkitÊôÐÔ¼ÓÈë¶ÔÓ¦µÄ-ms-Ç°×º
+       * å¯¹äºŽç§æœ‰webkitå±žæ€§åŠ å…¥å¯¹åº”çš„-ms-å‰ç¼€
        */
       var _msie = navigator.userAgent.indexOf('MSIE')>-1 ? true: false;
       if(typeof property == 'string' && _msie && property.indexOf('-webkit-') == 0){
