@@ -2,12 +2,12 @@
     var document = window.document,
         key,
         name,
-        rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi
+        rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
         //scriptTypeRE = /^(?:text|application)\/javascript/i,
         //xmlTypeRE = /^(?:text|application)\/xml/i,
         //jsonType = 'application/json',
         //htmlType = 'text/html',
-        //blankRE = /^\s*$/
+        blankRE = /^\s*$/
 
     // Number of active Ajax requests
     $.active = 0
@@ -90,8 +90,17 @@
 
         //HACK: this is a temporary fix for lack of support for the json responseType
         xhr.onload = function(){
-            if (this.responseType == 'json' && typeof this.response === 'string' && this.response.trim() != ''){
-                this.response2 = JSON.parse(this.response)
+            if (this.responseType == 'json'){
+                this.response2 = -1
+                try {
+                    this.response2 = blankRE.test(this.response) ? null : JSON.parse(this.response)
+                } catch (ex){
+                    this.response2 = null
+                }
+            }
+            else
+            {
+                this.response2 = this.response
             }
         }
 
@@ -124,7 +133,7 @@
                     $(this).trigger($.Event('error', e))
                     e.stopImmediatePropagation()
                 } else {
-                    callback.call(context, this.response2||this.response, this.statusText, this);
+                    callback.call(context, this.response2, this.statusText, this);
                 }
             })
 
@@ -179,7 +188,9 @@
         // If settings.global is set to true then hook in global ajax events
         if (settings.global){
             zeptoXHR.on('beforesend', function(e){
-                $(settings.context || document).trigger($.Event('ajaxBeforeSend'), [this, settings])
+                var globalBeforeSendEvent = $.Event('ajaxBeforeSend')
+                $(settings.context || document).trigger(globalBeforeSendEvent, [this, settings])
+                if (globalBeforeSendEvent.defaultPrevented === true) return false
             })
 
             zeptoXHR.on('loadstart', function(e){
@@ -194,7 +205,7 @@
                     $(this).trigger($.Event('error', e))
                     e.stopImmediatePropagation()
                 } else {
-                    $(settings.context || document).trigger($.Event('ajaxSuccess'), [this, settings, this.response2||this.response])
+                    $(settings.context || document).trigger($.Event('ajaxSuccess'), [this, settings, this.response2])
                 }
             })
 

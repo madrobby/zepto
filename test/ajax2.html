@@ -104,9 +104,9 @@
                   return this.handler(name, function () {
                       var context = this, args = arguments
                       //setTimeout(function () {
-                          that.testCase.resume(function () {
-                              if (fn) fn.apply(context, args)
-                          })
+                      that.testCase.resume(function () {
+                          if (fn) fn.apply(context, args)
+                      })
                       //}, 5)
                   })
               },
@@ -468,8 +468,10 @@
 
                   if (this._listeners[event.type] instanceof Array) {
                       var listeners = this._listeners[event.type]
+                      var data = [event]
+                      data.concat(event.data)
                       for (var i = 0, len = listeners.length; i < len; i++) {
-                          listeners[i].call(this, event)
+                          listeners[i].apply(this, data)
                       }
                   }
               },
@@ -502,11 +504,11 @@
               },
               send: function (data) {
                   this.data = data
-                  this.dispatchEvent($.event('loadstart'))
+                  this.dispatchEvent($.Event('loadstart'))
                   if (this.timeout != 0) {
                       setTimeout(function () {
                           this.aborted = true
-                          this.dispatchEvent($.event('timeout'))
+                          this.dispatchEvent($.Event('timeout'))
                       }, this.timeout)
                   }
               },
@@ -520,12 +522,12 @@
                   this.responseText = this.response = responseText
                   $.extend(this.responseHeaders, headers)
                   if (!((this.status >= 200 && this.status < 300) || this.status == 304)) {
-                      this.dispatchEvent($.event('error'))
+                      this.dispatchEvent($.Event('error'))
                   } else {
-                      this.dispatchEvent($.event('load'))
+                      this.dispatchEvent($.Event('load'))
                   }
                   this.onreadystatechange()
-                  this.dispatchEvent($.event('loadend'))
+                  this.dispatchEvent($.Event('loadend'))
               },
               onreadystatechange: function () { }
           }
@@ -764,7 +766,7 @@
                       fail: function () { fired.push('fail') },
                       always: function () { fired.push('always') }
                   })
-                  t.assertEqual('beforeSend ajaxBeforeSend ajaxStart ajaxStart', fired.join(' '))
+                  t.assertEqual('beforeSend ajaxBeforeSend ajaxStart', fired.join(' '))
 
                   fired = []
                   MockXHR.last.ready(4, 200, 'OK')
@@ -797,7 +799,7 @@
                   $.ajax({
                       timeout: 30,
                       done: function () { doneFired = true },
-                      fail: function (x, s) { xhr = x, status = s }
+                      fail: function (e, x, s) { xhr = x, status = s }
                   })
 
                   setTimeout(function () {
