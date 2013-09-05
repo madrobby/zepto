@@ -241,6 +241,18 @@
         ajaxError(null, 'timeout', xhr, settings)
       }, settings.timeout)
 
+      
+    /**
+     * addisonxue hacked
+     */
+    if (setting.withCredentials) {
+      //加入对于CORS的支持，具体参考http://www.w3.org/TR/cors/
+      try{
+        xhr.withCredentials = true;
+      } catch (e) {
+      }
+    }
+    
     // avoid sending empty string (#319)
     xhr.send(settings.data ? settings.data : null)
     return xhr
@@ -264,6 +276,11 @@
   $.post = function(url, data, success, dataType){
     var options = parseArguments.apply(null, arguments)
     options.type = 'POST'
+    /**
+     * addisonxue hacked
+     * 加入对于中文可能的指定编码问题修复
+     */
+    options.charset = data.charset;
     return $.ajax(options)
   }
 

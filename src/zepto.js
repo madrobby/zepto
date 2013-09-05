@@ -131,17 +131,42 @@ var Zepto = (function() {
   // of nodes with `$.fn` and thus supplying all the Zepto functions
   // to the array. Note that `__proto__` is not supported on Internet
   // Explorer. This method can be overriden in plugins.
+  
+  //加入对于IE的__proto__ Hacked
+  zepto.Z_IEHacker = function(dom, selector) {
+    for ( var k in dom) {
+      this[k] = dom[k];
+    }
+    this.length = dom.length;
+  }
+  
   zepto.Z = function(dom, selector) {
-    dom = dom || []
-    dom.__proto__ = $.fn
-    dom.selector = selector || ''
+    dom = dom || [];
+    if (dom.__proto__) {
+      dom.__proto__ = $.fn;
+    } else {
+      for ( var p in [].prototype) {
+        zepto.Z_IEHacker.prototype[p] = [].prototype[p];
+      }
+      for ( var p in $.fn) {
+        zepto.Z_IEHacker.prototype[p] = $.fn[p];
+      }
+      zepto.Z_IEHacker.prototype.constructor = zepto.Z_IEHacker;
+      dom = new zepto.Z_IEHacker(dom, selector);
+    }
+    dom.selector = selector || '';
     return dom
   }
-
+  
   // `$.zepto.isZ` should return `true` if the given object is a Zepto
   // collection. This method can be overriden in plugins.
   zepto.isZ = function(object) {
-    return object instanceof zepto.Z
+    //判断是否继承于zepto加入对于ie10的支持，从IE11开始支持__proto__属性就不需要再做兼容了
+    if(object.__proto__){
+      return object instanceof zepto.Z;
+    }else{
+      return object instanceof zepto.Z_IEHacker;
+    }
   }
 
   // `$.zepto.init` is Zepto's counterpart to jQuery's `$.fn.init` and
@@ -611,6 +636,25 @@ var Zepto = (function() {
       }
     },
     css: function(property, value){
+      /**
+       * addisonxue hacked
+       * 对于私有webkit属性加入对应的-ms-前缀
+       */
+      var _msie = navigator.userAgent.indexOf('MSIE')>-1 ? true: false;
+      if(typeof property == 'string' && _msie && property.indexOf('-webkit-') == 0){
+        property = '-ms-' + property.substring(8);
+      }else if(typeof property == 'object'){
+        var _pro = {};
+        for(var p in property){
+          if(_msie && p.indexOf('-webkit-') == 0){
+            _pro['-ms-' + p.substring(8)] = property[p];
+          }else{
+            _pro[p] = property[p];
+          }
+        }
+        property = _pro;
+      }
+      
       if (arguments.length < 2 && typeof property == 'string')
         return this[0] && (this[0].style[camelize(property)] || getComputedStyle(this[0], '').getPropertyValue(property))
 
@@ -684,7 +728,7 @@ var Zepto = (function() {
       // Subtract element margins
       // note: when an element has margin: auto the offsetLeft and marginLeft
       // are the same in Safari causing offset.left to incorrectly be 0
-      offset.top  -= parseFloat( $(elem).css('margin-top') ) || 0
+      offset.top  -= parseFloat( $(elem). ('margin-top') ) || 0
       offset.left -= parseFloat( $(elem).css('margin-left') ) || 0
 
       // Add offsetParent borders

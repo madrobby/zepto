@@ -4,7 +4,15 @@
 
 ;(function($){
   var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
-      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
+    hover = { mouseenter: 'mouseover', mouseleave: 'mouseout',
+      /**
+       * addisonxue hacked
+       * 加入对于微软的笔触事件兼容
+       */   
+      touchdown: window.navigator.msPointerEnabled? 'MSPointerDown': 'touchdown',
+      touchmove: window.navigator.msPointerEnabled? 'MSPointerMove': 'touchmove',
+      touchend: window.navigator.msPointerEnabled? 'MSPointerCancel': 'touchend'
+  }
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
 
