@@ -228,7 +228,17 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
+    for (name in settings.headers){
+      /**
+       * addisonxue
+       * 加入对于部分不能设置的头字段的保护，否则会报错
+       */
+      try{
+        xhr.setRequestHeader(name, settings.headers[name])
+      }catch(e){
+        
+      }
+    }
 
     if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort()
