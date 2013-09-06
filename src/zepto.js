@@ -687,9 +687,11 @@ var Zepto = (function() {
         })
       })
     },
-    scrollTop: function(){
+    scrollTop: function(val){
       if (!this.length) return
-      return ('scrollTop' in this[0]) ? this[0].scrollTop : this[0].scrollY
+      var p = ('scrollTop' in this[0]) ? 'scrollTop' : 'scrollY'
+      if (val === undefined) return this[0][p]
+      return this.each(function(){ this[p] = val })
     },
     position: function() {
       if (!this.length) return
