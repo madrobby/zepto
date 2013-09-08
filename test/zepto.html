@@ -2250,8 +2250,11 @@
       },
 
       testScrollTop: function(t) {
-        t.assert($(window).scrollTop() >= 0)
-        t.assert($(document.body).scrollTop() >= 0)
+        var w = $(window), b = $(document.body)
+        t.assert(w.scrollTop() >= 0)
+        t.assert(b.scrollTop() >= 0)
+        t.assertIdentical(w.scrollTop(20), w)
+        t.assertIdentical(b.scrollTop(20), b)
       },
 
       testSort: function(t){
