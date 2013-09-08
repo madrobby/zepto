@@ -669,9 +669,9 @@ var Zepto = (function() {
     },
     scrollTop: function(val){
       if (!this.length) return
-      var p = ('scrollTop' in this[0]) ? 'scrollTop' : 'scrollY'
-      if (val === undefined) return this[0][p]
-      return this.each(function(){ this[p] = val })
+      var e = 'scrollTop' in this[0]
+      if (val === undefined) return e ? this[0].scrollTop : this[0].scrollY
+      return this.each(e ? function(){this.scrollTop = val} : function(){this.scrollTo(this.scrollX, val)})
     },
     position: function() {
       if (!this.length) return
