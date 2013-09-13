@@ -39,7 +39,7 @@
   }
 
   $(document).ready(function(){
-    var now, delta
+    var now, delta, lastTapDefaultPrevented
 
     $(document.body)
       .bind('touchstart', function(e){
@@ -49,7 +49,11 @@
         touchTimeout && clearTimeout(touchTimeout)
         touch.x1 = e.touches[0].pageX
         touch.y1 = e.touches[0].pageY
-        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
+        if (delta > 0 && delta <= 250) {
+          // double tap then prevent the zoom
+          e.preventDefault()
+          touch.isDoubleTap = true
+        }
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
       })
@@ -86,6 +90,9 @@
             event.cancelTouch = cancelAll
             touch.el.trigger(event)
 
+            if (event.defaultPrevented)
+              lastTapDefaultPrevented = true
+
             // trigger double tap immediately
             if (touch.isDoubleTap) {
               touch.el.trigger('doubleTap')
@@ -105,6 +112,13 @@
 
       })
       .bind('touchcancel', cancelAll)
+      .bind('click', function(e) {
+        // prevent browser's default click event if last tap event is default prevented
+        if (lastTapDefaultPrevented) {
+          lastTapDefaultPrevented = false
+          return false
+        }
+      }, true)
 
     $(window).bind('scroll', cancelAll)
   })

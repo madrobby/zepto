@@ -93,9 +93,9 @@
     }
   }
 
-  $.fn.bind = function(event, callback){
+  $.fn.bind = function(event, callback, capture){
     return this.each(function(){
-      add(this, event, callback)
+      add(this, event, callback, null, null, capture)
     })
   }
   $.fn.unbind = function(event, callback){
@@ -103,7 +103,7 @@
       remove(this, event, callback)
     })
   }
-  $.fn.one = function(event, callback){
+  $.fn.one = function(event, callback, capture){
     return this.each(function(i, element){
       add(this, event, callback, null, function(fn, type){
         return function(){
@@ -111,7 +111,7 @@
           remove(element, type, fn)
           return result
         }
-      })
+      }, capture)
     })
   }
 
@@ -178,9 +178,9 @@
     return this
   }
 
-  $.fn.on = function(event, selector, callback){
+  $.fn.on = function(event, selector, callback, capture){
     return !selector || $.isFunction(selector) ?
-      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
+      this.bind(event, selector || callback, capture) : this.delegate(selector, event, callback)
   }
   $.fn.off = function(event, selector, callback){
     return !selector || $.isFunction(selector) ?
