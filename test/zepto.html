@@ -1451,6 +1451,20 @@
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'))
         t.assertEqual('2px', $('#some_element').css('padding-left'))
 
+        var arrCamelCss = $('#some_element').css(['borderLeftWidth', 'borderLeftStyle', 'borderLeftColor', 'color'])
+        t.assertEqual('2px', arrCamelCss['borderLeftWidth'])
+        t.assertEqual('solid', arrCamelCss['borderLeftStyle'])
+        t.assertEqual('rgb(0, 0, 0)', arrCamelCss['borderLeftColor'])
+        t.assertEqual('rgb(0, 255, 0)', arrCamelCss['color'])
+        t.assertUndefined(arrCamelCss['paddingLeft'])
+
+        var arrDashedCss = $('#some_element').css(['border-left-width', 'border-left-style', 'border-left-color', 'color'])
+        t.assertEqual('2px', arrDashedCss['border-left-width'])
+        t.assertEqual('solid', arrDashedCss['border-left-style'])
+        t.assertEqual('rgb(0, 0, 0)', arrDashedCss['border-left-color'])
+        t.assertEqual('rgb(0, 255, 0)', arrDashedCss['color'])
+        t.assertUndefined(arrDashedCss['padding-left'])
+
         var div = $('#get_style_element')
         t.assertEqual('48px', div.css('font-size'))
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
