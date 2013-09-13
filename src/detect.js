@@ -20,12 +20,9 @@
       playbook = ua.match(/PlayBook/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
-<<<<<<< HEAD
       ie = ua.match(/MSIE ([\d.]+)/)
-=======
       safari = webkit && ua.match(/Mobile\//) && !chrome,
       webview = ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/) && !chrome
->>>>>>> upstream/master
 
     // Todo: clean this up with a better OS/browser seperation:
     // - discern (more) between multiple browsers on android
@@ -50,12 +47,9 @@
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
-<<<<<<< HEAD
     if (ie) browser.ie = true, browser.verson = ie[1]
-=======
     if (safari && (ua.match(/Safari/) || !!os.ios)) browser.safari = true
     if (webview) browser.webview = true
->>>>>>> upstream/master
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) || (firefox && ua.match(/Tablet/)))
     os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || webos || blackberry || bb10 ||
