@@ -57,8 +57,11 @@
         cancelLongTap()
         touch.x2 = e.touches[0].pageX
         touch.y2 = e.touches[0].pageY
+        /*
+         * 暂时将这段代码注释掉，会导致android大部分机器滑动屏幕滑动不了
         if (Math.abs(touch.x1 - touch.x2) > 10)
           e.preventDefault()
+        */
       })
       .bind('touchend', function(e){
          cancelLongTap()

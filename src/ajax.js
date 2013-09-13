@@ -233,7 +233,17 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
+    for (name in settings.headers){
+      /**
+       * addisonxue
+       * 加入对于部分不能设置的头字段的保护，否则会报错
+       */
+      try{
+        xhr.setRequestHeader(name, settings.headers[name])
+      }catch(e){
+        
+      }
+    }
 
     if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort()
@@ -246,6 +256,18 @@
         ajaxError(null, 'timeout', xhr, settings)
       }, settings.timeout)
 
+      
+    /**
+     * addisonxue hacked
+     */
+    if (setting.withCredentials) {
+      //加入对于CORS的支持，具体参考http://www.w3.org/TR/cors/
+      try{
+        xhr.withCredentials = true;
+      } catch (e) {
+      }
+    }
+    
     // avoid sending empty string (#319)
     xhr.send(settings.data ? settings.data : null)
     return xhr
@@ -269,6 +291,11 @@
   $.post = function(url, data, success, dataType){
     var options = parseArguments.apply(null, arguments)
     options.type = 'POST'
+    /**
+     * addisonxue hacked
+     * 加入对于中文可能的指定编码问题修复
+     */
+    options.charset = data.charset;
     return $.ajax(options)
   }
 
