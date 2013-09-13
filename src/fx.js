@@ -47,7 +47,7 @@
       ease = duration.easing, callback = duration.complete, delay = duration.delay, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
                     ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000
-    if (delay) delay = (typeof delay == 'number' ? delay / 1000 : 0)
+    if (delay) delay = parseFloat(delay) / 1000
     return this.anim(properties, duration, ease, callback, delay)
   }
 
