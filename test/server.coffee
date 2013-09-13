@@ -32,6 +32,11 @@ app.get '/test/jsonp', (req, res) ->
     query: req.query
     hello: 'world'
 
+# send JSONP response despite callback not being set
+app.get '/test/jsonpBlah', (req, res) ->
+  res.set 'Content-Type', 'text/javascript'
+  res.send 'blah()'
+
 app.get '/test/json', (req, res) ->
   if /json/.test req.headers['accept']
     res.json

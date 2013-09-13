@@ -65,6 +65,7 @@
 
   <div id="texttest1" class="texttest"><span>Here <strong>is</strong> some text</span></div>
   <div id="texttest2" class="texttest">And <em>some more</em></div>
+  <div id="texttest3" class="texttest"></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
   <div id="appendtoprependto_container"><div id="appendtoprependto"></div></div>
@@ -364,6 +365,10 @@
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
+        t.assertIdentical("", $.trim(undefined))
+        t.assertIdentical("", $.trim(null))
+        t.assertIdentical("", $.trim(""))
+        t.assertIdentical("0", $.trim(0))
       },
 
       testCamelCase: function(t){
@@ -1101,6 +1106,8 @@
         t.assertEqualCollection(lis, el.children())
         //filtered by selector
         t.assertEqualCollection(lis.filter(".two"), el.children(".two"))
+        //children == null
+        t.assertLength(4,lis.children(null))
         //across multiple parents
         t.assertEqualCollection(el.find("li a"), lis.children("a"))
         //chainabilty
@@ -1493,9 +1500,12 @@
       },
 
       testHtml: function(t){
-        var div = $('div.htmltest')
-        t.assertIdentical(div, div.html('yowza'))
+        var div = $('div.htmltest');
 
+        div.text(undefined);
+        t.assertEqual('undefined', div.html());
+
+        t.assertIdentical(div, div.html('yowza'))
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
         t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML)
 
@@ -1528,6 +1538,10 @@
       },
 
       testText: function(t){
+
+        $('#texttest3').text(undefined);
+        t.assertEqual('undefined', $('#texttest3').text());
+
         t.assertEqual('Here is some text', $('div.texttest').text())
         t.assertEqual('And some more', $('#texttest2').text())
 
@@ -1690,6 +1704,9 @@
 
         t.assertEqual('Hello World', input.val())
 
+        input.val(undefined);
+        t.assertEqual('undefined', input.val());
+        
         input.val('')
         t.assertEqual('', input.val())
 

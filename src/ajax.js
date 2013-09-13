@@ -72,7 +72,9 @@
   $.ajaxJSONP = function(options){
     if (!('type' in options)) return $.ajax(options)
 
-    var callbackName = 'jsonp' + (++jsonpID),
+    var _callbackName = options.jsonpCallback,
+      callbackName = ($.isFunction(_callbackName) ?
+        _callbackName() : _callbackName) || ('jsonp' + (++jsonpID)),
       script = document.createElement('script'),
       cleanup = function() {
         clearTimeout(abortTimeout)
@@ -156,6 +158,7 @@
   }
 
   function appendQuery(url, query) {
+    if (query == '') return url
     return (url + '&' + query).replace(/[&?]{1,2}/, '?')
   }
 
@@ -182,7 +185,9 @@
 
     var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
-      if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
+      if (!hasPlaceholder)
+        settings.url = appendQuery(settings.url,
+          settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
       return $.ajaxJSONP(settings)
     }
 

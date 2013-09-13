@@ -20,7 +20,7 @@
   , "devDependencies": {
       "uglify-js": "1.2.6"
     , "express": "3.1.x"
-    , "coffee-script": "1.4.x"
+    , "coffee-script": "1.5.x"
     , "shelljs": "0.1.x"
   }
 }

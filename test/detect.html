@@ -33,15 +33,20 @@
       iOS_4_2_iPad: "Mozilla/5.0 (iPad; U; CPU OS 4_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C134 Safari/6533.18.5",
       iOS_4_3_iPhone_Simulator: "Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 4_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8F190 Safari/6533.18.5",
       iOS_5_0_iPhone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3",
+      iOS_5_1_iPad_webView: "Mozilla/5.0 (iPad; CPU OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/98176",
       iOS_6_0_iPad_mini: "Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A406 Safari/8536.25",
-      iOS_6_1_iPhone: "Mozilla/5.0 (iPhone; CPI iPhone OS 6_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B143 Safari/8536.25",
+      iOS_6_1_iPhone: "Mozilla/5.0 (iPhone; CPU iPhone OS 6_1 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B143 Safari/8536.25",
 
       iOS_3_2_iPad_2: "Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10",
+
+      iOS_7_0_iPhone: "Mozilla 5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KTHML, like Gecko) Version/7.0 Mobile/11A449d Safari/9537.53",
+      iOS_7_0_iPhone_Chrome: "Mozilla 5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/536.26 (KHTM, like Gecko) CriOS/28.0.1500.17 Mobile/11A4449d Safari/8536.25",
 
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
       Android_4_1_1: "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03O) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19",
       Android_4_1_1_Tablet: "Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03S) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
+      Android_4_3: "Mozilla/5.0 (Linux; Android 4.3; Nexus 4 Build/JWR66Y) AppleWebKit/537.36 (KTHML, like Gecko) Chrome/29.0.1547.59 Mobile Safari/537.36",
 
       BlackBerry_6_0_0_141: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9800; en-GB) AppleWebKit/534.1+ (KHTML, like Gecko) Version/6.0.0.141 Mobile Safari/534.1+",
       PlayBook_1_0_0: "Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.8+ (KHTML, like Gecko) Version/0.0.1 Safari/534.8+",
@@ -104,12 +109,14 @@
           t.assertTrue(browser.webkit)
           t.assertEqual("1.5", os.version)
           t.assertTrue(os.phone)
+          t.assertFalse(!!browser.safari)
         })
         detect(UA.Android_2_1, function(os, browser){
           t.assertTrue(os.android)
           t.assertTrue(browser.webkit)
           t.assertEqual("2.1", os.version)
           t.assertTrue(os.phone)
+          t.assertFalse(!!browser.safari)
         })
         detect(UA.Android_4_1_1, function(os, browser){
           t.assertTrue(os.android)
@@ -119,6 +126,7 @@
           t.assertTrue(os.phone)
           t.assertFalse(!!os.iphone)
           t.assertTrue(browser.chrome)
+          t.assertFalse(!!browser.safari)
         })
         detect(UA.Android_4_1_1_Tablet, function(os, browser){
           t.assertTrue(os.android)
@@ -126,6 +134,17 @@
           t.assertEqual("4.1.1", os.version)
           t.assertTrue(os.tablet)
           t.assertTrue(browser.chrome)
+          t.assertFalse(!!browser.safari)
+        })
+        detect(UA.Android_4_3, function(os, browser){
+          t.assertTrue(os.android)
+          t.assertTrue(browser.webkit)
+          t.assertFalse(!!os.ios)
+          t.assertEqual("4.3", os.version)
+          t.assertTrue(os.phone)
+          t.assertFalse(!!os.iphone)
+          t.assertTrue(browser.chrome)
+          t.assertFalse(!!browser.safari)
         })
       },
 
@@ -137,69 +156,110 @@
           t.assertEqual("3.0", os.version)
           t.assertEqual("420.1", browser.version)
           t.assertTrue(os.phone)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_3_1_1_iPod, function(os){
+        detect(UA.iOS_3_1_1_iPod, function(os, browser){
           t.assertTrue(os.ios)
-          t.assertTrue(os.iphone)
-          t.assertUndefined(os.ipod)
+          t.assertUndefined(os.iphone)
+          t.assertTrue(os.ipod)
           t.assertEqual("3.1.1", os.version)
-          t.assertTrue(os.phone)
+          t.assertFalse(!!os.phone)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_3_2_iPad, function(os){
+        detect(UA.iOS_3_2_iPad, function(os, browser){
+          t.assertTrue(os.ios)
+          t.assertTrue(os.ipad)
+          t.assertFalse(!!os.iphone)
+          t.assertEqual("3.2", os.version)
+          t.assertTrue(os.tablet)
+          t.assertTrue(browser.safari)
+        })
+        detect(UA.iOS_3_2_iPad_2, function(os, browser){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
           t.assert(!os.iphone)
           t.assertEqual("3.2", os.version)
           t.assertTrue(os.tablet)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_3_2_iPad_2, function(os){
-          t.assertTrue(os.ios)
-          t.assertTrue(os.ipad)
-          t.assert(!os.iphone)
-          t.assertEqual("3.2", os.version)
-          t.assertTrue(os.tablet)
-        })
-        detect(UA.iOS_4_0_iPhone, function(os){
+        detect(UA.iOS_4_0_iPhone, function(os, browser){
           t.assertTrue(os.ios)
           t.assertTrue(os.iphone)
           t.assert(!os.ipad)
           t.assertEqual("4.0", os.version)
           t.assertTrue(os.phone)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_4_2_iPad, function(os){
+        detect(UA.iOS_4_2_iPad, function(os, browser){
           t.assertTrue(os.ios)
           t.assertTrue(os.ipad)
           t.assertEqual("4.2", os.version)
           t.assertFalse(os.phone)
           t.assertTrue(os.tablet)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_4_3_iPhone_Simulator, function(os){
+        detect(UA.iOS_4_3_iPhone_Simulator, function(os, browser){
           t.assertTrue(os.ios)
           t.assertTrue(os.iphone)
           t.assertEqual("4.3", os.version)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_5_0_iPhone, function(os){
+        detect(UA.iOS_5_0_iPhone, function(os, browser){
           t.assert(os.ios)
           t.assert(os.iphone)
           t.assertEqual("5.0", os.version)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
+          t.assertTrue(browser.safari)
         })
-        detect(UA.iOS_6_1_iPhone, function(os){
+        detect(UA.iOS_5_1_iPad_webView, function(os, browser){
+          t.assert(os.ios)
+          t.assert(os.ipad)
+          t.assertEqual("5.1", os.version)
+          t.assertTrue(browser.webview)
+          t.assertTrue(browser.safari)
+        })
+        detect(UA.iOS_6_1_iPhone, function(os, browser){
           t.assert(os.ios)
           t.assert(os.iphone)
           t.assertEqual("6.1", os.version)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.webview)
+          t.assertFalse(!!browser.chrome)
+          t.assertFalse(!!browser.firefox)
         })
-        detect(UA.iOS_6_0_iPad_mini, function(os){
+        detect(UA.iOS_6_0_iPad_mini, function(os, browser){
           t.assert(os.ios)
           t.assert(os.ipad)
           t.assertEqual("6.0", os.version)
           t.assertFalse(os.phone)
           t.assertTrue(os.tablet)
+          t.assertTrue(browser.safari)
+        })
+        detect(UA.iOS_7_0_iPhone, function(os, browser){
+          t.assert(os.ios)
+          t.assert(os.iphone)
+          t.assertEqual("7.0", os.version)
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertFalse(!!browser.firefox)
+        })
+        detect(UA.iOS_7_0_iPhone_Chrome, function(os, browser){
+          t.assert(os.ios)
+          t.assert(os.iphone)
+          t.assertEqual("7.0", os.version)
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertFalse(!!browser.safari)
+          t.assertTrue(browser.chrome)
+          t.assertFalse(!!browser.firefox)
+          t.assertFalse(!!browser.webview)
         })
       },
 
