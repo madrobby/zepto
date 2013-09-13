@@ -622,15 +622,16 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (arguments.length < 2) {
-        var el = this[0], cCSS = getComputedStyle(el, '')
+        var element = this[0], computedStyle = getComputedStyle(element, '')
+        if(!element) return
         if (typeof property == 'string')
-          return el && (el.style[camelize(property)] || cCSS.getPropertyValue(property))  
+          return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
         else if (isArray(property)) {
           var props = {}
-          $.each(isArray(property) ? property: [property], function(i, prop){
-            props[prop] = (el.style[camelize(prop)] || cCSS.getPropertyValue(prop))
+          $.each(isArray(property) ? property: [property], function(_, prop){
+            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
           })
-          return el && props
+          return props
         }
       }
 
