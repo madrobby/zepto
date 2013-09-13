@@ -38,10 +38,23 @@
     touch = {}
   }
 
+  var gesture;
+  if ('undefined' !== typeof(MSGesture)) {
+    gesture = new MSGesture();
+    gesture.target = document.body;
+  }
+
   $(document).ready(function(){
     var now, delta
     
     $(document.body)
+      .bind('MSGestureEnd', function(e){
+        var swipe_dir = e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+        if (swipe_dir) {
+          touch.el.trigger('swipe')
+          touch.el.trigger('swipe'+ swipe_dir)
+        }
+      })
       .on('touchstart MSPointerDown', function(e){
         if(e.type == 'MSPointerDown' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
         now = Date.now()
