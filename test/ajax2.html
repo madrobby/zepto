@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Ajax2 unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/polyfill.js"></script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/ajax2.js"></script>
+</head>
+<body>
+  <h1>Zepto Ajax2 unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+  <div id="fixtures">
+    <div id="ajax_load"></div>
+  </div>
+
+  <script>
+      (function () {
+
+          function deferredResume(t, fn) {
+              t.resume(fn || function () { })
+          }
+
+          function resumeOnAjaxError(t) {
+              $(document).on('ajaxError', function (e, xhr, settings, err) {
+                  deferredResume(t, function () {
+                      t.assert(false, "request errored out: " + xhr.responseText)
+                  })
+              })
+          }
+
+          function toArray(list) {
+              if ($.type(list) == "string") return list.split(/(?:\s*,\s*|\s+)/)
+              else return list
+          }
+
+          Evidence.Assertions.assertEqualList = function (expected, actual, message) {
+              var expectedList = toArray(expected),
+                actualList = toArray(actual)
+
+              this._assertExpression(
+              expectedList.join(' ') == actualList.join(' '),
+              message || "Lists don't match.",
+              'Expected %o, got %o.', expectedList, actualList
+            )
+          }
+
+          Evidence.Assertions.assertLine = function (line, string, message) {
+              var lines = string.split("\n")
+
+              this._assertExpression(
+              $.inArray(line, lines) >= 0,
+              message || "Line not found.",
+              'Expected line %s in %s.', line, string
+            )
+          }
+
+          Evidence.Assertions.assertLinePattern = function (pattern, string, message) {
+              var lines = string.split("\n")
+
+              var i, match = false
+              if (lines.length) {
+                  for (i = 0; i < lines.length; i++) {
+                      if (lines[i].search(pattern) !== -1) {
+                          match = true
+                          break
+                      }
+                  }
+              }
+
+              this._assertExpression(
+              match === true,
+              message || "Pattern not found.",
+              'Expected pattern %s in %s.', pattern, string
+            )
+          }
+
+          var slice = [].slice
+
+          function CallbackRegistry(t) {
+              this.testCase = t
+              this.called = []
+          }
+          $.extend(CallbackRegistry.prototype, {
+              register: function (name, context, args) {
+                  this.called.push([name, context, args])
+              },
+              handler: function (name, fn) {
+                  var that = this
+                  return function () {
+                      that.register(name, this, slice.call(arguments))
+                      if (fn) return fn.apply(this, arguments)
+                  }
+              },
+              resumeHandler: function (name, fn) {
+                  var that = this
+                  return this.handler(name, function () {
+                      var context = this, args = arguments
+                      //setTimeout(function () {
+                      that.testCase.resume(function () {
+                          if (fn) fn.apply(context, args)
+                      })
+                      //}, 5)
+                  })
+              },
+              handlers: function () {
+                  var that = this, hash = {}
+                  $.each(arguments, function (i, name) {
+                      hash[name] = that.handler(name)
+                  })
+                  return hash
+              },
+              events: function () {
+                  return $.map(this.called, function (item) { return item[0] })
+              },
+              context: function (name) {
+                  return this.find(name, function (item) { return item[1] })
+              },
+              args: function (name) {
+                  return this.find(name, function (item) { return item[2] })
+              },
+              target: function (name) {
+                  var args = this.args(name)
+                  return args && args[0].target
+              },
+              find: function (name, fn) {
+                  var obj
+                  $.each(this.called, function (i, item) {
+                      if (item[0] == name) {
+                          obj = fn(item)
+                          return false
+                      }
+                  })
+                  return obj
+              }
+          })
+
+          Evidence('ZeptoAjax2Test', {
+
+              setUp: function () {
+                  var reg = new CallbackRegistry(this),
+                  globals = toArray('ajaxBeforeSend ajaxStart ajaxSuccess ajaxError ajaxStop')
+
+                  $(document).on(reg.handlers.apply(reg, globals))
+                  this.reg = reg
+              },
+
+              tearDown: function () {
+                  $(document).off()
+              },
+
+              testAjaxBase: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.ajax({
+                      url: 'fixtures/ajax_load_simple.html',
+                      beforeSend: t.reg.handler('beforeSend'),
+                      done: t.reg.handler('done'),
+                      fail: t.reg.handler('fail'),
+                      always: t.reg.resumeHandler('always', function () {
+                          t.assertEqualList('beforeSend ajaxBeforeSend ajaxStart done ajaxSuccess always ajaxStop', t.reg.events())
+                      })
+                  })
+                  t.assert($.isFunction(zeptoXhr[0].getResponseHeader))
+              },
+
+              testAjaxGet: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.get('echo', t.reg.resumeHandler('done', function (response) {
+                      t.assertIdentical(window, this)
+                      t.assertLine("GET ?{}", response)
+                      t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
+                  }))
+                  t.assertIn('abort', zeptoXhr[0])
+              },
+
+              testAjaxGetWithParams: function (t) {
+                  t.pause()
+                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('done', function (response) {
+                      t.assertLine('GET ?{"sample":"data"}', response)
+                      t.assertLine("accept: */*", response)
+                  }))
+              },
+
+              testAjaxGetWithParamsAndType: function (t) {
+                  t.pause()
+                  $.get('echo', { sample: 'data' }, t.reg.resumeHandler('done', function (response) {
+                      t.assertLine('GET ?{"sample":"data"}', response)
+                      t.assertLine("accept: text/plain", response)
+                  }), 'text')
+              },
+
+              testAjaxGetWithParamsAndTypeNoCallback: function (t) {
+                  t.pause()
+                  $(document).on('ajaxSuccess', function (e, xhr, settings, response) {
+                      deferredResume(t, function () {
+                          t.assertLine('GET ?{"sample":"data"}', response)
+                          t.assertLine("accept: text/plain", response)
+                          t.assertEqualList('ajaxBeforeSend ajaxStart ajaxSuccess ajaxStop', t.reg.events())
+                      })
+                  })
+                  $.get('echo', { sample: 'data' }, 'text')
+              },
+
+              testAjaxPost: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.post('echo', t.reg.resumeHandler('done', function (response) {
+                      t.assertIdentical(window, this)
+                      t.assertLine("POST ?{}", response)
+                      t.assertLine("accept: */*", response)
+                      t.assertLine('{}', response)
+                      t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
+                  }))
+                  t.assertIn('abort', zeptoXhr[0])
+              },
+
+              testAjaxPostWithPayloadAndType: function (t) {
+                  t.pause()
+                  var payload = { sample: 'data' }
+                  $.post('echo', payload, t.reg.resumeHandler('done', function (response) {
+                      t.assertLine("content-type: application/x-www-form-urlencoded", response)
+                      t.assertLine("accept: text/plain", response)
+                      t.assertLine('{"sample":"data"}', response)
+                  }), 'text')
+              },
+
+              testNumberOfActiveRequests: function (t) {
+                  var maxActive = 0, ajaxStarted = 0, ajaxEnded = 0, requestsCompleted = 0
+                  t.assertIdentical(0, $.active, 'initial count mismatch')
+                  $(document)
+                .on('ajaxStart', function () { ajaxStarted++ })
+                .on('ajaxStop', function () { ajaxEnded++ })
+                .on('ajaxStart', function () {
+                    if ($.active > maxActive) maxActive = $.active
+                })
+                .on('ajaxStop', function () {
+                    if (++requestsCompleted == 3)
+                        deferredResume(t, function () {
+                            this.assertEqual(3, maxActive)
+                            this.assertIdentical(0, $.active)
+                        })
+                })
+
+                  t.pause()
+                  $.ajax({ url: 'echo' })
+                  $.ajax({ url: 'echo' })
+                  $.ajax({ url: 'echo' })
+              },
+
+              testAjaxJSON: function (t) {
+                  t.pause()
+                  resumeOnAjaxError(t)
+
+                  $.ajax({
+                      url: 'json',
+                      headers: { accept: 'application/json' },
+                      done: t.reg.resumeHandler('done', function (data) {
+                          t.assertEqual('world', data.hello)
+                      })
+                  })
+              },
+
+              testAjaxGetJSON: function (t) {
+                  t.pause()
+                  resumeOnAjaxError(t)
+
+                  var zeptoXhr = $.getJSON(
+                'json',
+                t.reg.resumeHandler('done', function (data) {
+                    t.assertEqual('world', data.hello)
+                    t.assert($.isEmptyObject(data.query))
+                    t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
+                })
+              )
+                  t.assertIn('abort', zeptoXhr[0])
+              },
+
+              testAjaxGetJSONWithParams: function (t) {
+                  t.pause()
+                  resumeOnAjaxError(t)
+
+                  $.getJSON(
+                'json', { sample: 'data' },
+                t.reg.resumeHandler('done', function (data) {
+                    t.assertEqual('data', data.query.sample)
+                }),
+                'text' // ignored
+              )
+              },
+
+              testNoCacheParam: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.ajax({
+                      url: 'echo',
+                      cache: false,
+                      done: t.reg.resumeHandler('done', function (response) {
+                          // check that the no-cache param (or an element of it) looks like a timestamp
+                          t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+                      })
+                  })
+              },
+
+              testNoCacheParameterWithParam: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.ajax({
+                      url: 'echo',
+                      data: { data: 'sample' },
+                      cache: false,
+                      done: t.reg.resumeHandler('done', function (response) {
+                          // check that the no-cache param (or an element of it) looks like a timestamp
+                          t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+                      })
+                  })
+              },
+
+              testNoCacheParameterAlreadyPresent: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.ajax({
+                      url: 'echo',
+                      data: { _: 'test' },
+                      cache: false,
+                      done: t.reg.resumeHandler('done', function (response) {
+                          // check that the no-cache param (or an element of it) looks like a timestamp
+                          t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+                      })
+                  })
+              },
+
+              testNoCacheParameterAlreadyPresentWithParam: function (t) {
+                  t.pause()
+                  var zeptoXhr = $.ajax({
+                      url: 'echo',
+                      data: { _: 'test', data: 'sample' },
+                      cache: false,
+                      done: t.reg.resumeHandler('done', function (response) {
+                          // check that the no-cache param (or an element of it) looks like a timestamp
+                          t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
+                      })
+                  })
+              },
+
+              testAjaxLoad: function (t) {
+                  t.pause()
+                  var testEl = $('#ajax_load')
+                  var el = testEl.load(
+                'fixtures/ajax_load_simple.html',
+                t.reg.resumeHandler('done', function (response, statusText, xhr) {
+                    t.assertIdentical(testEl, this)
+                    t.assertEqual("simple ajax load\n", response)
+                    t.assertEqual('simple ajax load', testEl.html().trim())
+                    t.assertEqual('200 OK', statusText)
+                    t.assertIn('abort', xhr)
+                    t.assertEqualList('ajaxBeforeSend ajaxStart done ajaxSuccess ajaxStop', t.reg.events())
+                })
+              )
+                  t.assertIdentical(testEl, el)
+              },
+
+              testAjaxLoadWithSelector: function (t) {
+                  t.pause()
+                  var testEl = $('#ajax_load')
+                  testEl.load(
+                'fixtures/ajax_load_selector.html #ajax_load_test_div',
+                t.reg.resumeHandler('done', function () {
+                    t.assertEqual(
+                    '<div id="ajax_load_test_div">ajax load with selector</div>',
+                    testEl.html().trim()
+                  )
+                })
+              )
+              },
+
+              testAjaxLoadWithJavaScript: function (t) {
+                  var testEl = $('#ajax_load')
+                  t.pause()
+                  window.testValue = 0
+                  testEl.load('fixtures/ajax_load_selector_javascript.html', function () {
+                      deferredResume(t, function () {
+                          this.assertEqual(window.testValue, 1)
+                          delete window.testValue
+                      })
+                  })
+              },
+
+              testAjaxLoadWithSelectorAndJavaScript: function (t) {
+                  var testEl = $('#ajax_load')
+                  t.pause()
+                  window.testValue = 0
+                  testEl.load('fixtures/ajax_load_selector_javascript.html #ajax_load_test_div', function () {
+                      deferredResume(t, function () {
+                          this.assertEqual(window.testValue, 0)
+                          delete window.testValue
+                      })
+                  })
+              },
+
+              testAjaxWithContext: function (t) {
+                  t.pause()
+                  var body = $('body')
+                  $.ajax({
+                      url: 'fixtures/ajax_load_simple.html',
+                      context: body,
+                      beforeSend: t.reg.handler('beforeSend'),
+                      done: t.reg.handler('done'),
+                      always: t.reg.resumeHandler('always', function () {
+                          t.assertIdentical(body, this)
+                          t.assertIdentical(body, t.reg.context('beforeSend'))
+                          t.assertIdentical(body, t.reg.context('done'))
+                          t.assertIdentical(document.body, t.reg.target('ajaxBeforeSend'))
+                          t.assertIdentical(document.body, t.reg.target('ajaxSuccess'))
+                      })
+                  })
+              },
+
+              testAjaxWithContextPlainObject: function (t) {
+                  t.pause()
+                  var obj = {}
+                  $.ajax({
+                      url: 'fixtures/ajax_load_simple.html',
+                      context: obj,
+                      beforeSend: t.reg.handler('beforeSend'),
+                      done: t.reg.handler('done'),
+                      always: t.reg.resumeHandler('always', function () {
+                          t.assertIdentical(obj, this)
+                          t.assertIdentical(obj, t.reg.context('beforeSend'))
+                          t.assertIdentical(obj, t.reg.context('done'))
+                          t.assertUndefined(t.reg.target('ajaxBeforeSend'))
+                          t.assertUndefined(t.reg.target('ajaxSuccess'))
+                      })
+                  })
+              }
+          })
+
+          var OriginalXHR = $.ajaxSettings.xhr
+
+          function MockXHR() {
+              this.headers = []
+              this.responseHeaders = {}
+              this._listeners = {}
+              MockXHR.last = this
+          }
+          MockXHR.prototype = {
+              addEventListener: function (type, listener) {
+                  if (typeof this._listeners[type] == "undefined") {
+                      this._listeners[type] = []
+                  }
+
+                  this._listeners[type].push(listener)
+              },
+
+              dispatchEvent: function (event) {
+                  if (typeof event == "string") {
+                      event = { type: event }
+                  }
+                  if (!event.target) {
+                      event.target = this
+                  }
+
+                  if (!event.type) {  //falsy
+                      throw new Error("Event object missing 'type' property.")
+                  }
+
+                  if (this._listeners[event.type] instanceof Array) {
+                      var listeners = this._listeners[event.type]
+                      var data = [event]
+                      data.concat(event.data)
+                      for (var i = 0, len = listeners.length; i < len; i++) {
+                          listeners[i].apply(this, data)
+                      }
+                  }
+              },
+
+              removeEventListener: function (type, listener) {
+                  if (this._listeners[type] instanceof Array) {
+                      var listeners = this._listeners[type]
+                      for (var i = 0, len = listeners.length; i < len; i++) {
+                          if (listeners[i] === listener) {
+                              listeners.splice(i, 1)
+                              break
+                          }
+                      }
+                  }
+              },
+
+              open: function (method, url, async) {
+                  this.method = method
+                  this.url = url
+                  this.async = async
+              },
+              setRequestHeader: function (name, value) {
+                  this.headers.push({ name: name, value: value })
+              },
+              getResponseHeader: function (name) {
+                  return this.responseHeaders[name]
+              },
+              overrideMimeType: function (type) {
+                  this.responseHeaders['content-type'] = type
+              },
+              send: function (data) {
+                  this.data = data
+                  this.dispatchEvent($.Event('loadstart'))
+                  if (this.timeout != 0) {
+                      setTimeout(function () {
+                          this.aborted = true
+                          this.dispatchEvent($.Event('timeout'))
+                      }, this.timeout)
+                  }
+              },
+              abort: function () {
+                  this.aborted = true
+              },
+              ready: function (readyState, status, responseText, headers) {
+                  this.readyState = readyState
+                  this.status = status
+                  this.statusText = '200 OK'
+                  this.responseText = this.response = responseText
+                  $.extend(this.responseHeaders, headers)
+                  if (!((this.status >= 200 && this.status < 300) || this.status == 304)) {
+                      this.dispatchEvent($.Event('error'))
+                  } else {
+                      this.dispatchEvent($.Event('load'))
+                  }
+                  this.onreadystatechange()
+                  this.dispatchEvent($.Event('loadend'))
+              },
+              onreadystatechange: function () { }
+          }
+
+          function matchHeader(name, value) {
+              return function (header) {
+                  return header.name == name && (!value || header.value == value)
+              }
+          }
+
+          Evidence('ZeptoAjax2Test2', {
+              setUp: function () {
+                  $.ajaxSettings.xhr = function () { return new MockXHR }
+              },
+
+              tearDown: function () {
+                  $.ajaxSettings.xhr = OriginalXHR
+                  $(document).off()
+                  $.active = 0
+              },
+
+              testTypeDefaultsToGET: function (t) {
+                  $.ajax({
+                      url: '/foo',
+                      beforeSend: function (xhr, settings) {
+                      }
+                  })
+                  t.assertEqual('GET', MockXHR.last.method)
+              },
+
+              testURLDefaultsToWindowLocation: function (t) {
+                  $.ajax()
+                  t.assertEqual(window.location, MockXHR.last.url)
+              },
+
+              testHeadersOptionCanSetContentType: function (t) {
+                  $.ajax({ type: 'POST', data: [], headers: { 'Content-Type': 'application/hal+json'} })
+                  t.assert(MockXHR.last.headers.some(matchHeader('Content-Type', 'application/hal+json')))
+              },
+
+              testCustomHeader: function (t) {
+                  $.ajax({ headers: { 'X-Awesome': 'true'} })
+                  t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')))
+                  t.assert(MockXHR.last.headers.some(matchHeader('X-Awesome', 'true')))
+              },
+
+              testJSONdataType: function (t) {
+                  var result = {}
+                  $.ajax({ responseType: 'json', done: function (json) { result = json } })
+                  MockXHR.last.ready(4, 200, '{"hello":"world"}')
+                  t.assertEqual("world", result.hello)
+              },
+
+              testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsEmptyString: function (t) {
+                  var result, done = false
+                  $.ajax({ responseType: 'json', done: function (json) { result = json; done = true } })
+                  MockXHR.last.ready(4, 200, '')
+                  t.assert(done)
+                  t.assertNull(result)
+              },
+
+              testJSONResponseBodiesAreNotParsedWhenDataTypeOptionIsJSONButResponseIsSingleSpace: function (t) {
+                  var result, done = false
+                  $.ajax({ responseType: 'json', done: function (json) { result = json; done = true } })
+                  MockXHR.last.ready(4, 200, ' ')
+                  t.assert(done)
+                  t.assertNull(result)
+              },
+
+              testDataOptionIsConvertedToSerializedForm: function (t) {
+                  $.ajax({ data: { hello: 'world', array: [1, 2, 3], object: { prop1: 'val', prop2: 2}} })
+                  MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
+                  t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
+              },
+
+              testDataOptionIsConvertedToSerializedTraditionalForm: function (t) {
+                  $.ajax({ data: { hello: 'world', array: [1, 2, 3], object: { prop1: 'val', prop2: 2} }, traditional: true })
+                  MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
+                  t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', MockXHR.last.data)
+              },
+
+              testProcessDataDisabled: function (t) {
+                  var data = { country: 'Ecuador' }
+                  $.ajax({
+                      data: data,
+                      processData: false,
+                      type: "POST"
+                  })
+                  t.assertIdentical(data, MockXHR.last.data)
+              },
+
+              testDataIsAppendedToGETURL: function (t) {
+                  $.ajax({ url: 'test.html', data: 'foo=bar' })
+                  t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+                  $.ajax({ url: 'test.html', data: '?foo=bar' })
+                  t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+                  $.ajax({ url: 'test.html?', data: 'foo=bar' })
+                  t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+                  $.ajax({ url: 'test.html?baz', data: 'foo=bar' })
+                  t.assertEqual('test.html?baz&foo=bar', MockXHR.last.url)
+
+                  $.ajax({ url: 'test.html?bar=baz', data: 'foo=bar' })
+                  t.assertEqual('test.html?bar=baz&foo=bar', MockXHR.last.url)
+
+                  $.ajax({ url: 'test.html', data: { foo: 'bar'} })
+                  t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+              },
+
+              testErrorCallback: function (t) {
+                  var doneFired = false, xhr, status
+                  $.ajax({
+                      done: function () { doneFired = true },
+                      fail: function (s, x) { xhr = x, status = s }
+                  })
+
+                  MockXHR.last.ready(4, 500, '500 Internal Server Error')
+                  t.assert(!doneFired)
+                  t.assertEqual(MockXHR.last, xhr)
+                  t.assertEqual('error', status)
+              },
+
+              test201ResponseIsSuccess: function (t) {
+                  var doneFired, failFired
+                  $.ajax({
+                      done: function () { doneFired = true },
+                      fail: function () { failFired = true }
+                  })
+
+                  MockXHR.last.ready(4, 201, 'Created')
+                  t.assert(doneFired)
+                  t.refute(failFired)
+              },
+
+              test304ResponseIsSuccess: function (t) {
+                  var doneFired, failFired
+                  $.ajax({
+                      done: function () { doneFired = true },
+                      fail: function () { failFired = true }
+                  })
+
+                  MockXHR.last.ready(4, 304, 'Not Modified')
+                  t.assert(doneFired)
+                  t.refute(failFired)
+              },
+              testXHRParameterInSuccessCallback: function (t) {
+                  var body, status, xhr
+                  $.ajax({
+                      done: function (b, s, x) { body = b, status = s, xhr = x }
+                  })
+
+                  MockXHR.last.ready(4, 200, 'Hello')
+                  t.assertEqual('Hello', body)
+                  t.assertEqual('200 OK', status)
+                  t.assertEqual(MockXHR.last, xhr)
+
+                  body = status = xhr = null
+                  $.ajax({
+                      responseType: 'json',
+                      done: function (b, s, x) { body = b, status = s, xhr = x }
+                  })
+
+                  MockXHR.last.ready(4, 200, '{"message":"Hello"}')
+                  t.assertEqual('Hello', body.message)
+                  t.assertEqual('200 OK', status)
+                  t.assertEqual(MockXHR.last, xhr)
+              },
+
+              testBeforeSendAbortCallback: function (t) {
+                  var xhr, beforeFired = false, settings = {}
+                  $.ajax({
+                      data: "1=2",
+                      beforeSend: function (x, s) {
+                          beforeFired = true, settings = s, xhr = x
+                      }
+                  })
+
+                  t.assert(beforeFired)
+                  t.assertEqual(MockXHR.last, xhr)
+                  t.assertEqual("1=2", settings.data)
+              },
+
+              testBeforeSendAbort: function (t) {
+                  var xhr
+                  $.ajax({ beforeSend: function (x) { xhr = x; return false } })
+
+                  t.assert(xhr.aborted)
+              },
+
+              testGlobalBeforeSendAbort: function (t) {
+                  var xhr
+                  $(document).on('ajaxBeforeSend', function (e, x, s) { xhr = x; return false })
+                  t.assertFalse($.ajax())
+                  t.assert(xhr.aborted)
+              },
+
+              testGlobalAjaxStartCantAbort: function (t) {
+                  var xhr
+                  $(document).on('ajaxStart', function (e, x, s) { xhr = x; return false })
+                  t.assert($.ajax())
+                  t.assert(!xhr.aborted)
+              },
+
+              testCompleteCallback: function (t) {
+                  var settings, xhr
+                  $.ajax({ always: function (x, s) { settings = s, xhr = x } })
+
+                  MockXHR.last.ready(4, 200, 'OK')
+                  t.assertEqual(MockXHR.last, xhr)
+                  //t.assertEqual('success', status) Always does not return a status
+              },
+
+              testCallbackOrder: function (t) {
+                  var order = []
+                  $.ajax({
+                      beforeSend: function () { order.push('beforeSend') },
+                      done: function () { order.push('done') },
+                      always: function () { order.push('always') }
+                  })
+
+                  MockXHR.last.ready(4, 200, 'OK')
+                  t.assertEqual('beforeSend,done,always', order.join(','))
+              },
+
+              testGlobalCallbacks: function (t) {
+                  var fired = []
+                  $(document).on('ajaxBeforeSend ajaxStart ajaxSuccess ajaxError ajaxStop', function (e) {
+                      fired.push(e.type)
+                  })
+
+                  $.ajax({
+                      beforeSend: function () { fired.push('beforeSend') },
+                      done: function () { fired.push('done') },
+                      fail: function () { fired.push('fail') },
+                      always: function () { fired.push('always') }
+                  })
+                  t.assertEqual('beforeSend ajaxBeforeSend ajaxStart', fired.join(' '))
+
+                  fired = []
+                  MockXHR.last.ready(4, 200, 'OK')
+                  t.assertEqual('done ajaxSuccess always ajaxStop', fired.join(' '))
+              },
+
+              testGlobalCallbacksOff: function (t) {
+                  var fired = []
+                  $(document).on('ajaxBeforeSend ajaxStart ajaxSuccess ajaxError ajaxStop', function (e) {
+                      fired.push(e.type)
+                  })
+
+                  $.ajax({
+                      global: false,
+                      beforeSend: function () { fired.push('beforeSend') },
+                      done: function () { fired.push('done') },
+                      fail: function () { fired.push('fail') },
+                      always: function () { fired.push('always') }
+                  })
+                  t.assertEqual('beforeSend', fired.join(' '))
+
+                  fired = []
+                  MockXHR.last.ready(4, 200, 'OK')
+                  t.assertEqual('done always', fired.join(' '))
+              },
+
+              testTimeout: function (t) {
+                  var doneFired = false, xhr, status
+                  t.pause()
+                  $.ajax({
+                      timeout: 30,
+                      done: function () { doneFired = true },
+                      fail: function (e, x, s) { xhr = x, status = s }
+                  })
+
+                  setTimeout(function () {
+                      t.assertFalse(doneFired)
+                      t.assertUndefined(status)
+                  }, 20)
+
+                  setTimeout(function () {
+                      t.resume(function () {
+                          t.assertFalse(doneFired)
+                          t.assertTrue(xhr.aborted)
+                          t.assertEqual('timeout', status)
+                      })
+                  }, 40)
+              }
+          })
+
+          Evidence('ZeptoAjax2HelperMethodsTest', {
+
+              testParamMethod: function (t) {
+                  var result = $.param({ libs: ['jQuery', 'script.aculo.us', 'Prototype', 'Dojo'] })
+                  result = decodeURIComponent(result)
+                  t.assertEqual(result, "libs[]=jQuery&libs[]=script.aculo.us&libs[]=Prototype&libs[]=Dojo")
+
+                  result = $.param({ jquery: 'Javascript', rails: 'Ruby', django: 'Python' })
+                  result = decodeURIComponent(result)
+                  t.assertEqual(result, "jquery=Javascript&rails=Ruby&django=Python")
+
+                  result = $.param({
+                      title: "Some Countries",
+                      list: ['Ecuador', 'Austria', 'England'],
+                      capitals: { ecuador: 'Quito', austria: 'Vienna', GB: { england: 'London', scotland: 'Edinburgh'} }
+                  })
+                  result = decodeURIComponent(result)
+                  t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
+              },
+
+              testParamEscaping: function (t) {
+                  var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' })
+                  t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
+              },
+
+              testParamSpaces: function (t) {
+                  var result = $.param({ "foo bar": "baz kuux" })
+                  t.assertEqual("foo+bar=baz+kuux", result)
+              },
+
+              testParamComplex: function (t) {
+                  var data = {
+                      a: ['b', 'c', { d: 'e', f: ['g', 'h']}]
+                  }
+                  var result = $.param(data)
+                  result = decodeURIComponent(result)
+                  t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result)
+              },
+
+              testParamShallow: function (t) {
+                  var data = {
+                      libs: ['jQuery', 'Prototype', 'Dojo'],
+                      nested: { will: 'be ignored' }
+                  }
+                  var result = $.param(data, true)
+                  result = decodeURIComponent(result)
+                  t.assertEqual("libs=jQuery&libs=Prototype&libs=Dojo&nested=[object+Object]", result)
+              },
+
+              testParamArray: function (t) {
+                  var data = [
+                { name: 'country', value: 'Ecuador' },
+                { name: 'capital', value: 'Quito' }
+              ]
+                  var result = $.param(data)
+                  t.assertEqual(result, "country=Ecuador&capital=Quito")
+              }
+
+          })
+      })()
+  </script>
+</body>
+</html>
