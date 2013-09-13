@@ -129,11 +129,13 @@
       if (!ignoreProperties.test(key) && event[key] !== undefined) proxy[key] = event[key]
 
     $.each(eventMethods, function(name, predicate) {
-      proxy[name] = function(){
-        this[predicate] = returnTrue
-        return event[name].apply(event, arguments)
+	  if(event[name]){
+	    proxy[name] = function(){
+	      this[predicate] = returnTrue
+	      return event[name].apply(event, arguments)
+	    }
+	    proxy[predicate] = returnFalse
       }
-      proxy[predicate] = returnFalse
     })
     return proxy
   }

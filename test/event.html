@@ -144,6 +144,28 @@
         t.assertEqual('click', type)
         t.assertIdentical(this.el.find('span').get(0), target)
         t.assertIdentical(this.el.get(0), currentTarget)
+      },
+
+      testDelegateEventMethods: function(t){
+        var eventMethods = {
+          preventDefault: 'isDefaultPrevented',
+          stopImmediatePropagation: 'isImmediatePropagationStopped',
+          stopPropagation: 'isPropagationStopped'
+        }, eventMethodResult = {};
+
+        $(document).on('click', 'div', function(e){
+          for(var i in eventMethods){
+            if(e[i]){
+                eventMethodResult[eventMethods[i]] = false;
+                e[i]();
+                eventMethodResult[eventMethods[i]] = e[eventMethods[i]]();
+            }
+          }
+        })
+        click($('<span>').appendTo(this.el))
+        for(var i in eventMethodResult){
+          t.assertIdentical(eventMethodResult[i], true)
+        }
       }
     })
   })()
