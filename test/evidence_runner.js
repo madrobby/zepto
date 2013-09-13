@@ -71,11 +71,13 @@
       if (results.failureCount || results.errorCount) {
         container.className = 'failed'
         container.innerHTML = printf("Finished in %d s. &ndash; <em>%d failures, %d errors</em> (%d assertions)",
-                                     [seconds, results.failureCount, results.errorCount, results.assertionCount])
+                                     [seconds, results.failureCount, results.errorCount, results.assertionCount])+
+        '<br><br>'+JSON.stringify(results)
       } else {
         container.className = 'passed'
         container.innerHTML = printf("Finished in %d s. &ndash; <em>%d tests passed</em> (%d assertions)",
-                                     [seconds, results.testCount, results.assertionCount])
+                                     [seconds, results.testCount, results.assertionCount])+
+        '<br><br>'+JSON.stringify(results)
       }
       container.className += ' finished'
     }

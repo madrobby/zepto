@@ -1,20 +1,25 @@
-// IE Support
-// This module provides a IE Support to all __proto__ dependant libraries by adding the __proto__ property to objects.
+//     Zepto.js
+//     (c) 2010-2013 Thomas Fuchs
+//     Zepto.js may be freely distributed under the MIT license.
+
+// this provides a incomplete but workable implementation of
+// __proto__, which enables Zepto to run on Internet Explorer <= 10
 ;(function(undefined){
-    if (!('__proto__' in {})) {
-        Object.defineProperty(Object.prototype, '__proto__', {
-            set: function (x) {
-                for (var prop in x) {
-                    // Stops stack overflow errors
-                    if (prop == '__proto__') continue;
-                    this[prop] = x[prop];
-                }
-            },
-            get: function () {
-                return this;
-            },
-            enumerable: false,
-            configurable: true
-        });
-    }
+  if (!('__proto__' in {})) {
+    Object.defineProperty(Object.prototype, '__proto__', {
+      set: function(newPrototype) {
+        for (var property in newPrototype) {
+          // stops stack overflow errors
+          if (property == '__proto__') continue
+
+          this[property] = newPrototype[property]
+        }
+      },
+      get: function() {
+        return this
+      },
+      enumerable: false,
+      configurable: true
+    });
+  }
 })()
