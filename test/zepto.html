@@ -1465,6 +1465,8 @@
         t.assertEqual('rgb(0, 255, 0)', arrDashedCss['color'])
         t.assertUndefined(arrDashedCss['padding-left'])
 
+        t.assertUndefined($().css(['border-left-width']))
+
         var div = $('#get_style_element')
         t.assertEqual('48px', div.css('font-size'))
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
