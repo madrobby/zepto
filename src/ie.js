@@ -4,7 +4,7 @@
 
 // this provides a incomplete but workable implementation of
 // __proto__, which enables Zepto to run on Internet Explorer <= 10
-;(function(undefined){
+;(function(){
   if (!('__proto__' in {})) {
     Object.defineProperty(Object.prototype, '__proto__', {
       set: function(newPrototype) {
@@ -21,5 +21,20 @@
       enumerable: false,
       configurable: true
     });
+  }
+
+  // getComputedStyle shouldn't freak out when called
+  // without a valid element as argument
+  try{
+    getComputedStyle(undefined)
+  } catch(e) {
+    var nativeGetComputedStyle = getComputedStyle;
+    window.getComputedStyle = function(element){
+      try{
+        return nativeGetComputedStyle(element)
+      } catch(e) {
+        return null
+      }
+    }
   }
 })()
