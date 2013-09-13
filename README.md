@@ -143,7 +143,6 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
 
 Get in touch:
 
-* IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
 * @[zeptojs](http://twitter.com/zeptojs)
 
 ### Write documentation
