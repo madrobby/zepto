@@ -47,7 +47,7 @@
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
-    if (ie) browser.ie = true, browser.verson = ie[1]
+    if (ie) browser.ie = true, browser.version = ie[1]
     if (safari && (ua.match(/Safari/) || !!os.ios)) browser.safari = true
     if (webview) browser.webview = true
 
