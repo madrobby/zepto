@@ -20,7 +20,7 @@
       playbook = ua.match(/PlayBook/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
-      ie = ua.match(/MSIE ([\d.]+)/)
+      ie = ua.match(/MSIE ([\d.]+)/),
       safari = webkit && ua.match(/Mobile\//) && !chrome,
       webview = ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/) && !chrome
 
