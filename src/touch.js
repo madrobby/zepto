@@ -52,6 +52,8 @@
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
+        //fix bug, some android devices can't trigger touchend event
+        touch.x2 = touch.y2 = null
       })
       .bind('touchmove', function(e){
         cancelLongTap()
@@ -62,6 +64,10 @@
       })
       .bind('touchend', function(e){
          cancelLongTap()
+        //if move distance less than 5px, still tigger tap
+        var tinyMove = false
+        if((touch.x2 && Math.abs(touch.x1 - touch.x2) < 5) && (touch.y2 && Math.abs(touch.y1 - touch.y2) < 5))
+          tinyMove = true
 
         // swipe
         if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
@@ -74,7 +80,7 @@
           }, 0)
 
         // normal tap
-        else if ('last' in touch)
+        else if ('last' in touch || tinyMove)
 
           // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
           // ('tap' fires before 'scroll')
