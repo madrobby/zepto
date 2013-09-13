@@ -7,5 +7,5 @@ pkg
 docs/*
 .jhw-cache
 .rbenv-version
-public/
+public
 node_modules

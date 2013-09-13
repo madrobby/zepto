@@ -143,7 +143,6 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
 
 Get in touch:
 
-* IRC channel: [#zepto on freenode.net](irc://irc.freenode.net/zepto)
 * @[zeptojs](http://twitter.com/zeptojs)
 
 ### Write documentation
@@ -180,6 +179,9 @@ $ ./make test
 $ script/test
 ~~~
 
+To run manually run tests (all except for the ajax module) on a device,
+you can serve the whole Zepto folder on a web server and open
+`test/index.html` in the device's browser.
 
   [zeptojs.com]: http://zeptojs.com
   [master]: https://github.com/madrobby/zepto/commits/master
