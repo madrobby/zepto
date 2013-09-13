@@ -1000,7 +1000,7 @@
         var viewportHeight = $(window).height()
         t.assert(viewportHeight > 0 || viewportHeight === 0)
         t.assert($(document).height())
-        
+
         // Not perfect but does the job in this case
         t.refuteEqual($(window).height(), $(document).height())
 
@@ -1522,7 +1522,7 @@
         var div = $('div.htmltest');
 
         div.text(undefined);
-        t.assertEqual('undefined', div.html());
+        t.assertEqual('', div.html());
 
         t.assertIdentical(div, div.html('yowza'))
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
@@ -1557,9 +1557,20 @@
       },
 
       testText: function(t){
+        // test basics with Zepto-created DOM elements
+        t.assertEqual('',         $('<h1/>').text())
+        t.assertEqual('',         $('<h1/>').text('').text())
+        t.assertEqual('',         $('<h1/>').text(undefined).text())
+        t.assertEqual('null',     $('<h1/>').text(null).text())
+        t.assertEqual('1',        $('<h1/>').text(1).text())
+        t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
 
-        $('#texttest3').text(undefined);
-        t.assertEqual('undefined', $('#texttest3').text());
+        t.assertEqual('&lt;b&gt;a&lt;/b&gt;',
+          $('<h1/>').text('<b>a</b>').html())
+
+        // now test with some existing DOM elements
+        $('#texttest3').text(undefined)
+        t.assertEqual('', $('#texttest3').text())
 
         t.assertEqual('Here is some text', $('div.texttest').text())
         t.assertEqual('And some more', $('#texttest2').text())
@@ -1725,7 +1736,7 @@
 
         input.val(undefined);
         t.assertEqual('undefined', input.val());
-        
+
         input.val('')
         t.assertEqual('', input.val())
 
