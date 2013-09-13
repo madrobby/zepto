@@ -667,11 +667,13 @@ var Zepto = (function() {
         })
       })
     },
-    scrollTop: function(val){
+    scrollTop: function(value){
       if (!this.length) return
-      var e = 'scrollTop' in this[0]
-      if (val === undefined) return e ? this[0].scrollTop : this[0].scrollY
-      return this.each(e ? function(){this.scrollTop = val} : function(){this.scrollTo(this.scrollX, val)})
+      var hasScrollTop = 'scrollTop' in this[0]
+      if (value === undefined) return hasScrollTop ? this[0].scrollTop : this[0].scrollY
+      return this.each(hasScrollTop ?
+        function(){ this.scrollTop = value } :
+        function(){ this.scrollTo(this.scrollX, value) })
     },
     position: function() {
       if (!this.length) return
