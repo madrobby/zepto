@@ -1915,7 +1915,7 @@
       },
 
       testAppendToPrependTo: function(t){
-        //testing with Zepto object
+        // testing with Zepto object
         function div(contents){
           var el = document.createElement('div')
           el.innerHTML = contents
@@ -1928,7 +1928,7 @@
         var ap2 = ap.appendTo($('#appendtoprependto'))
         var pr2 = pr.prependTo($('#appendtoprependto'))
 
-        // Test the object returned is correct for method chaining
+        // the object returned is the correct one for method chaining
         t.assertSame(ap, ap2)
         t.assertSame(pr, pr2)
 
@@ -1938,21 +1938,19 @@
           $('#appendtoprependto_container').html()
         )
 
-        //testing with a zepto object of more than one element as parameter
+        // zepto object with more than one element
         $(document.body).append('<div class="appendto">appendto1</div><div class="appendto">appendto2</div>')
         $(document.body).append('<div class="prependto">prependto1</div><div class="prependto">prependto2</div>')
 
-        $('#appendtoprependto_container').html('<div id="appendtoprependto"></div>')
+        // selector
 
-        $('.appendto').appendTo($('#appendtoprependto'))
-        $('.prependto').prependTo($('#appendtoprependto'))
+        // Note that on IE resetting the parent element to be empty will
+        // cause inserted elements to be emptied out, so we have to re-create
+        // them. This is the same behavior as on jQuery.
+        // (Other browsers don't exhibit this problem.)
+        ap = $(div('appendto'))
+        pr = $(div('prependto'))
 
-        t.assertEqual(
-          '<div id="appendtoprependto"><div class="prependto">prependto1</div><div class="prependto">prependto2</div><div class="appendto">appendto1</div><div class="appendto">appendto2</div></div>',
-          $('#appendtoprependto_container').html()
-        )
-
-        //testing with a selector as parameter
         $('#appendtoprependto_container').html('<div id="appendtoprependto"></div>')
         ap.appendTo('#appendtoprependto')
         pr.prependTo('#appendtoprependto')
@@ -1961,10 +1959,22 @@
           '<div>appendto</div></div>',
           $('#appendtoprependto_container').html()
         )
+
+        // reset test elements
+        ap = $(div('appendto'))
+        pr = $(div('prependto'))
+        $('#appendtoprependto_container').html('<div id="appendtoprependto"></div>')
+        $('.appendto').appendTo($('#appendtoprependto'))
+        $('.prependto').prependTo($('#appendtoprependto'))
+
+        t.assertEqual(
+          '<div id="appendtoprependto"><div class="prependto">prependto1</div><div class="prependto">prependto2</div><div class="appendto">appendto1</div><div class="appendto">appendto2</div></div>',
+          $('#appendtoprependto_container').html()
+        )
       },
 
       testInsertBeforeInsertAfter: function(t){
-        //testing with Zepto object
+        // testing with Zepto object
         function div(contents){
           var el = document.createElement('div')
           el.innerHTML = contents
@@ -1978,14 +1988,14 @@
         var ib2 = ib.insertBefore(ibia)
         var ia2 = ia.insertAfter(ibia)
 
-        // Test the object returned is correct for method chaining
+        // test the object returned is correct for method chaining
         t.assertEqual(
           '<div>insertbefore</div><div id="insertbeforeinsertafter">'+
           '</div><div>insertafter</div>',
           $('#insertbeforeinsertafter_container').html()
         )
 
-        //testing with a zepto object of more than one element as parameter
+        // testing with a zepto object of more than one element as parameter
         $(document.body).append('<div class="insertbefore">insertbefore1</div><div class="insertbefore">insertbefore2</div>')
         $(document.body).append('<div class="insertafter">insertafter1</div><div class="insertafter">insertafter2</div>')
 
@@ -2001,9 +2011,12 @@
           $('#insertbeforeinsertafter_container').html()
         )
 
-        //testing with a selector as parameter
+        // testing with a selector as parameter
         $('#insertbeforeinsertafter_container').html('<div id="insertbeforeinsertafter"></div>')
 
+        // reset test elements
+        ib = $(div('insertbefore'))
+        ia = $(div('insertafter'))
         ib.insertBefore('#insertbeforeinsertafter')
         ia.insertAfter('#insertbeforeinsertafter')
 
