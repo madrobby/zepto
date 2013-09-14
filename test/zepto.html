@@ -52,10 +52,6 @@
   <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
 
   <form id="attr_with_text_input">
-    <input value="Default input">
-    <input type="text" value="Text input">
-    <input type="email" value="Email input">
-    <input type="search" value="Search input">
   </form>
 
   <div class="htmltest" id="htmltest1"></div>
@@ -1648,7 +1644,17 @@
       },
 
       testAttrOnTextInputField: function(t) {
-        var inputs = $('#attr_with_text_input input'), values
+        var inputs, values
+
+        // HTML is set here because IE does not reset
+        // values of input fields on page reload
+        document.getElementById('attr_with_text_input').innerHTML =
+          '<input value="Default input">'+
+          '<input type="text" value="Text input">'+
+          '<input type="email" value="Email input">'+
+          '<input type="search" value="Search input">'
+
+        inputs = $('#attr_with_text_input input')
 
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
