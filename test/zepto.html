@@ -1415,15 +1415,16 @@
       testCSS: function(t){
         var el = $('#some_element').get(0)
 
+        // single assignments
         $('#some_element').css('color', '#f00')
         $('#some_element').css('margin-top', '10px')
         $('#some_element').css('marginBottom', '5px')
         $('#some_element').css('left', 42)
         $('#some_element').css('z-index', 10)
         $('#some_element').css('fontWeight', 300)
-        $('#some_element').css('border', '1px solid rgba(255,0,0,1)')
+        $('#some_element').css('border', '1px solid rgba(255,0,0,0)')
         t.assertEqual('rgb(255, 0, 0)', el.style.color)
-        t.assertEqual('rgb(255, 0, 0)', el.style.borderLeftColor)
+        t.assertEqual('rgba(255, 0, 0, 0)', el.style.borderLeftColor)
         t.assertEqual('1px', el.style.borderLeftWidth)
         t.assertEqual('10px', el.style.marginTop)
         t.assertEqual('5px', el.style.marginBottom)
@@ -1431,29 +1432,30 @@
         t.assertEqual(300, el.style.fontWeight)
         t.assertEqual(10, el.style.zIndex)
 
-        var style1 = $('#some_element').css('color')
-        var style2 = $('#some_element').css('border')
-        t.assertEqual('rgb(255, 0, 0)', style1)
-        t.assertEqual('1px solid rgb(255, 0, 0)', style2)
+        // read single values, including shorthands
+        t.assertEqual('rgb(255, 0, 0)',
+          $('#some_element').css('color'))
+        t.assertEqual('1px solid rgba(255, 0, 0, 0)',
+          $('#some_element').css('border'))
 
+        // multiple assignments
         $('#some_element').css({
           'border': '2px solid #000',
           'color': 'rgb(0,255,0)',
           'padding-left': '2px'
         })
-
         t.assertEqual('2px', $('#some_element').css('borderLeftWidth'))
         t.assertEqual('solid', $('#some_element').css('borderLeftStyle'))
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('borderLeftColor'))
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'))
         t.assertEqual('2px', $('#some_element').css('paddingLeft'))
-
         t.assertEqual('2px', $('#some_element').css('border-left-width'))
         t.assertEqual('solid', $('#some_element').css('border-left-style'))
         t.assertEqual('rgb(0, 0, 0)', $('#some_element').css('border-left-color'))
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'))
         t.assertEqual('2px', $('#some_element').css('padding-left'))
 
+        // read multiple values, camelCased CSS
         var arrCamelCss = $('#some_element').css(['borderLeftWidth', 'borderLeftStyle', 'borderLeftColor', 'color'])
         t.assertEqual('2px', arrCamelCss['borderLeftWidth'])
         t.assertEqual('solid', arrCamelCss['borderLeftStyle'])
@@ -1461,6 +1463,7 @@
         t.assertEqual('rgb(0, 255, 0)', arrCamelCss['color'])
         t.assertUndefined(arrCamelCss['paddingLeft'])
 
+        // read multiple values, dashed CSS property names
         var arrDashedCss = $('#some_element').css(['border-left-width', 'border-left-style', 'border-left-color', 'color'])
         t.assertEqual('2px', arrDashedCss['border-left-width'])
         t.assertEqual('solid', arrDashedCss['border-left-style'])
@@ -1468,6 +1471,7 @@
         t.assertEqual('rgb(0, 255, 0)', arrDashedCss['color'])
         t.assertUndefined(arrDashedCss['padding-left'])
 
+        // make sure reads from empty Zepto collections just return undefined
         t.assertUndefined($().css(['border-left-width']))
 
         var div = $('#get_style_element')
