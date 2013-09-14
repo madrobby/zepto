@@ -18,12 +18,12 @@
 
   // getComputedStyle shouldn't freak out when called
   // without a valid element as argument
-  try{
+  try {
     getComputedStyle(undefined)
   } catch(e) {
     var nativeGetComputedStyle = getComputedStyle;
     window.getComputedStyle = function(element){
-      try{
+      try {
         return nativeGetComputedStyle(element)
       } catch(e) {
         return null
