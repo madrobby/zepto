@@ -998,8 +998,14 @@
         t.assert(viewportHeight > 0 || viewportHeight === 0)
         t.assert($(document).height())
 
-        // Not perfect but does the job in this case
-        t.refuteEqual($(window).height(), $(document).height())
+        // with a tall element on the page,
+        // the window (viewport) should be shorter than the total
+        // document height
+        $('<div style="height:9999px" id="very_high"></div>').appendTo('body')
+        t.assert(
+          $(window).height() < $(document).height(),
+          "'window' height was not smaller than 'document' height?")
+        $('#very_high').remove()
 
         t.assertIdentical(50, $('#offset').height())
         $('#offset').height('60px')
