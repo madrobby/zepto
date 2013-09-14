@@ -66,6 +66,8 @@
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
+        // adds the current touch contact for IE gesture recognition
+        if (gesture && e.type == 'MSPointerDown') gesture.addPointer(e.pointerId);
       })
       .on('touchmove MSPointerMove', function(e){
         if(e.type == 'MSPointerMove' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
