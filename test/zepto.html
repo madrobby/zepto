@@ -143,13 +143,17 @@
   </div>
 
   <style>
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
+
     #show_hide_span1,
     #show_hide_span2 {
-      display:block
+      display: block;
     }
+
     #show_hide_div1 {
-      display:inline-block
+      display: inline-block;
     }
   </style>
 
@@ -887,9 +891,6 @@
       testPluck: function(t){
         t.assertEqual('H1DIVDIV', $('h1,div.htmltest').pluck('tagName').join(''))
       },
-
-      // for now, we brute-force "display:block" for show/hide
-      // need to change that to work better with inline elements in the future
 
       testShow: function(t){
         $('#show_hide_div1').show()
