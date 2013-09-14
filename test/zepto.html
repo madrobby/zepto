@@ -1736,6 +1736,11 @@
       testVal: function(t) {
         var input = $('#attr_val')
 
+        // some browsers like IE don't reset input values on reload
+        // which messes up repeated test runs, so set the start value
+        // directly via the DOM API
+        document.getElementById('attr_val').value = 'Hello World'
+
         t.assertEqual('Hello World', input.val())
 
         input.val(undefined);
