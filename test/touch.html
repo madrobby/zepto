@@ -31,6 +31,7 @@
 
   <script>
   (function(){
+    var emitEvent, tests
 
     // Fire a simulated touch event.
     // While it is possible to fire real touch events,
@@ -40,7 +41,7 @@
     //
     // Zepto's touch module only uses the `pageX/Y` and `target`
     // properties of the first touch in the `touches` TouchList
-    function fire(type, element, x, y) {
+    function touchEvent(type, element, x, y) {
       var event = document.createEvent('Event'),
         touch = { pageX: x, pageY: y, target: element }
 
@@ -50,17 +51,34 @@
       element.dispatchEvent(event)
     }
 
-    function down(element, x, y) {
-      fire('start', element, x, y)
-    }
-    function move(element, x,y) {
-      fire('move', element, x, y)
-    }
-    function up(element) {
-      fire('end', element)
+    // MSPointer events, same idea, diffrent implementation
+    // for compatibility accepts the same arguments as `fire`
+    // (touch event names will be mapped to MSPointer event names)
+    function MSPointerEvent(type, element, x, y) {
+      var event = document.createEvent('Event'),
+        eventMap = { start: 'Down', move: 'Move', end: 'Up'}
+
+      event.initEvent('MSPointer'+eventMap[type], true, true)
+      event.pageX = x
+      event.pageY = y
+      event.pointerType = 99999
+      event.MSPOINTER_TYPE_TOUCH = 99999
+      event.isPrimary = true
+
+      element.dispatchEvent(event)
     }
 
-    Evidence('TouchTest', {
+    function down(element, x, y) {
+      emitEvent('start', element, x, y)
+    }
+    function move(element, x,y) {
+      emitEvent('move', element, x, y)
+    }
+    function up(element) {
+      emitEvent('end', element)
+    }
+
+    tests = {
       setUp: function(){
         $('<div id=test>TEST ELEMENT</div>').appendTo('body')
       },
@@ -240,8 +258,13 @@
       }
 
       // TODO: test swipes in specific directions
-    })
+    }
 
+    emitEvent = touchEvent
+    Evidence('TouchTest', tests)
+
+    emitEvent = MSPointerEvent
+    Evidence('MSPointerTest', tests)
   })()
   </script>
 </body>
