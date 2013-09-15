@@ -147,23 +147,30 @@
       },
 	  testEventOnPlainObject: function (t) {
 		var obj = {}, 
-			log = []
+			log = [],
 			fn1 = function(){ log.push('a') },
 			fn2 = function(evt, value){ log.push(value) }
-			
+			fn3 = function (evt, value) { log.push("event2") }
 		$(obj)
 			.on('event', fn1)
 			.on('event', fn2)
+			.on('event2', fn3)
 			
 		$(obj).trigger('event', 'b')
-		t.assertEqual('a b', log.sort().join(' '))
-		
-		$(obj).trigger('event', 'c')
-		t.assertEqual('a a b c', log.sort().join(' '))
+		t.assertEqual('a b', log.join(' '))
 
+		log = [];
+		$(obj).trigger('event', 'c')
+		t.assertEqual('a c', log.join(' '))
+
+		log = [];
 		$(obj).off('event', fn1)
 		$(obj).trigger('event', 'd')
-		t.assertEqual('a a b c d', log.sort().join(' '))
+		t.assertEqual('d', log.join(' '))
+
+		log = [];
+		$(obj).trigger('event2');
+		t.assertEqual('event2', log.join(' '));
 	  }
     })
   })()
