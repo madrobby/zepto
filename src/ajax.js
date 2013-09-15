@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2012 Thomas Fuchs
+//     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -72,7 +72,9 @@
   $.ajaxJSONP = function(options){
     if (!('type' in options)) return $.ajax(options)
 
-    var callbackName = 'jsonp' + (++jsonpID),
+    var _callbackName = options.jsonpCallback,
+      callbackName = ($.isFunction(_callbackName) ?
+        _callbackName() : _callbackName) || ('jsonp' + (++jsonpID)),
       script = document.createElement('script'),
       cleanup = function() {
         clearTimeout(abortTimeout)
@@ -87,8 +89,6 @@
         ajaxError(null, type || 'abort', xhr, options)
       },
       xhr = { abort: abort }, abortTimeout
-
-    serializeData(options)
 
     if (ajaxBeforeSend(xhr, options) === false) {
       abort('abort')
@@ -144,10 +144,13 @@
     // Default timeout
     timeout: 0,
     // Whether data should be serialized to string
-    processData: true
+    processData: true,
+    // Whether the browser should be allowed to cache GET responses
+    cache: true
   }
 
   function mimeToDataType(mime) {
+    if (mime) mime = mime.split(';', 2)[0]
     return mime && ( mime == htmlType ? 'html' :
       mime == jsonType ? 'json' :
       scriptTypeRE.test(mime) ? 'script' :
@@ -155,6 +158,7 @@
   }
 
   function appendQuery(url, query) {
+    if (query == '') return url
     return (url + '&' + query).replace(/[&?]{1,2}/, '?')
   }
 
@@ -175,14 +179,17 @@
     if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
       RegExp.$2 != window.location.host
 
-    var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
-    if (dataType == 'jsonp' || hasPlaceholder) {
-      if (!hasPlaceholder) settings.url = appendQuery(settings.url, 'callback=?')
-      return $.ajaxJSONP(settings)
-    }
-
     if (!settings.url) settings.url = window.location.toString()
     serializeData(settings)
+    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
+
+    var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
+    if (dataType == 'jsonp' || hasPlaceholder) {
+      if (!hasPlaceholder)
+        settings.url = appendQuery(settings.url,
+          settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
+      return $.ajaxJSONP(settings)
+    }
 
     var mime = settings.accepts[dataType],
         baseHeaders = { },

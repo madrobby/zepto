@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2012 Thomas Fuchs
+//     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($, undefined){
@@ -8,8 +8,8 @@
     document = window.document, testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
     transform,
-    transitionProperty, transitionDuration, transitionTiming,
-    animationName, animationDuration, animationTiming,
+    transitionProperty, transitionDuration, transitionTiming, transitionDelay,
+    animationName, animationDuration, animationTiming, animationDelay,
     cssReset = {}
 
   function dasherize(str) { return downcase(str.replace(/([a-z])([A-Z])/, '$1-$2')) }
@@ -27,9 +27,11 @@
   transform = prefix + 'transform'
   cssReset[transitionProperty = prefix + 'transition-property'] =
   cssReset[transitionDuration = prefix + 'transition-duration'] =
+  cssReset[transitionDelay    = prefix + 'transition-delay'] =
   cssReset[transitionTiming   = prefix + 'transition-timing-function'] =
   cssReset[animationName      = prefix + 'animation-name'] =
   cssReset[animationDuration  = prefix + 'animation-duration'] =
+  cssReset[animationDelay     = prefix + 'animation-delay'] =
   cssReset[animationTiming    = prefix + 'animation-timing-function'] = ''
 
   $.fx = {
@@ -40,25 +42,28 @@
     animationEnd: normalizeEvent('AnimationEnd')
   }
 
-  $.fn.animate = function(properties, duration, ease, callback){
+  $.fn.animate = function(properties, duration, ease, callback, delay){
     if ($.isPlainObject(duration))
-      ease = duration.easing, callback = duration.complete, duration = duration.duration
+      ease = duration.easing, callback = duration.complete, delay = duration.delay, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
                     ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000
-    return this.anim(properties, duration, ease, callback)
+    if (delay) delay = parseFloat(delay) / 1000
+    return this.anim(properties, duration, ease, callback, delay)
   }
 
-  $.fn.anim = function(properties, duration, ease, callback){
+  $.fn.anim = function(properties, duration, ease, callback, delay){
     var key, cssValues = {}, cssProperties, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd
 
     if (duration === undefined) duration = 0.4
+    if (delay === undefined) delay = 0
     if ($.fx.off) duration = 0
 
     if (typeof properties == 'string') {
       // keyframe animation
       cssValues[animationName] = properties
       cssValues[animationDuration] = duration + 's'
+      cssValues[animationDelay] = delay + 's'
       cssValues[animationTiming] = (ease || 'linear')
       endEvent = $.fx.animationEnd
     } else {
@@ -72,6 +77,7 @@
       if (duration > 0 && typeof properties === 'object') {
         cssValues[transitionProperty] = cssProperties.join(', ')
         cssValues[transitionDuration] = duration + 's'
+        cssValues[transitionDelay] = delay + 's'
         cssValues[transitionTiming] = (ease || 'linear')
       }
     }

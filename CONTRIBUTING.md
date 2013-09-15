@@ -1,3 +1,27 @@
+## Contributing to Zepto
+
+**Thanks for helping out!**
+
+In order for your code to make it in, several conditions must be met:
+
+* It's more likely your pull request will make it in if you adhere to **Zepto's
+  project goals**. Be sure to read the README in its entirety before setting out
+  to code.
+* Please talk to the maintainers (@madrobby and @mislav) first if you want
+  to write a plugin, those are better kept in their own repositories.
+* Fix only ONE thing or have only ONE feature in your pull request. If you have multiple unrelated code updatates, please submit a seperate pull request for each one.
+* **Your pull request must be written in English and be accompanied by a
+  detailed description**, ideally something we can use as documentation.
+  If you're not fluent in English, try your best and let us know so we'll help!
+* Changes to jQuery-based API methods **must match their jQuery counterparts**.
+* **All code must have tests, and all tests must pass.** See the README on running the test suite.
+* Please **also test manually** on as many target platforms you have access to,
+  but at least on latest Chrome (desktop) and Firefox (desktop).
+  See http://zeptojs.com for a full list of platforms.
+* It's required that you follow Zepto's **code style guidelines** (see below)
+
+Whew, now that we have that out of the way thanks again!
+
 ## Code style guidelines
 
 * `function name() { }` for named functions

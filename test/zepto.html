@@ -65,6 +65,7 @@
 
   <div id="texttest1" class="texttest"><span>Here <strong>is</strong> some text</span></div>
   <div id="texttest2" class="texttest">And <em>some more</em></div>
+  <div id="texttest3" class="texttest"></div>
 
   <div id="beforeafter_container"><div id="beforeafter"></div></div>
   <div id="appendtoprependto_container"><div id="appendtoprependto"></div></div>
@@ -364,6 +365,10 @@
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
+        t.assertIdentical("", $.trim(undefined))
+        t.assertIdentical("", $.trim(null))
+        t.assertIdentical("", $.trim(""))
+        t.assertIdentical("0", $.trim(0))
       },
 
       testCamelCase: function(t){
@@ -422,6 +427,18 @@
         // can override DOM element
         $.extend(true, obj, { element:{a:'b'} })
         t.assertEqual('b', obj.element.a)
+
+        // deep copy with array
+        obj = {}
+        var initial = { array: [1,2,3,4], object:{a:{b:["c","d"]}} }
+        $.extend(true, obj, initial)
+        t.assertTrue($.isArray(obj.array))
+        t.assertEqual(JSON.stringify(obj), JSON.stringify(initial))
+        t.refuteIdentical(obj, initial)
+        t.refuteIdentical(obj.array, initial.array)
+        t.refuteIdentical(obj.object, initial.object)
+        t.refuteIdentical(obj.object.a, initial.object.a)
+        t.refuteIdentical(obj.object.a.b, initial.object.a.b)
       },
 
       testExtensionAPI: function(t) {
@@ -984,6 +1001,9 @@
         t.assert(viewportHeight > 0 || viewportHeight === 0)
         t.assert($(document).height())
 
+        // Not perfect but does the job in this case
+        t.refuteEqual($(window).height(), $(document).height())
+
         t.assertIdentical(50, $('#offset').height())
         $('#offset').height('60px')
         t.assertIdentical(60, $('#offset').height())
@@ -1002,6 +1022,24 @@
         t.assertLength(0, el.closest('#parents', $('#li1').get(0)))
         // no ancestor matched
         t.assertLength(0, el.closest('form'))
+      },
+
+      testClosestWithCollection: function(t){
+        var targets = $('#parents > li')
+        var result = $('#li2').closest(targets)
+        t.assertLength(1, result)
+        t.assertEqual('li1', result.get(0).id)
+
+        t.assertLength(0, $('#li1').closest('#li2'))
+      },
+
+      testClosestWithElement: function(t){
+        var target = $('#li1').get(0)
+        var result = $('#li2').closest(target)
+        t.assertLength(1, result)
+        t.assertIdentical(target, result.get(0))
+
+        t.assertLength(0, $('#li1').closest($('#li2').get(0)))
       },
 
       testClosestOnDetached: function(t){
@@ -1071,6 +1109,8 @@
         t.assertEqualCollection(lis, el.children())
         //filtered by selector
         t.assertEqualCollection(lis.filter(".two"), el.children(".two"))
+        //children == null
+        t.assertLength(4,lis.children(null))
         //across multiple parents
         t.assertEqualCollection(el.find("li a"), lis.children("a"))
         //chainabilty
@@ -1267,6 +1307,24 @@
         t.assertLength(11, found)
       },
 
+      testFindWithCollection: function(t){
+        var targets = $('#find1 span span, #find1 b, #find2 span')
+        var found = $('p#find1').find(targets)
+        t.assertLength(2, found)
+        t.assertEqual('B', found.get(0).tagName)
+        t.assertEqual('6', found.get(1).innerHTML)
+      },
+
+      testFindWithElement: function(t){
+        var target = $('#find1 span span').get(0)
+        var found = $('p#find1').find(target)
+        t.assertLength(1, found)
+        t.assertEqual('6', found.get(0).innerHTML)
+
+        found = $('p#find1').find(document.body)
+        t.assertLength(0, found, "no elements should have matched")
+      },
+
       testFindWithInvalidNode: function(t) {
         var found = $('<div><a>1</a></div>\n<div></div>').find('a')
         t.assertLength(1, found)
@@ -1396,6 +1454,22 @@
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'))
         t.assertEqual('2px', $('#some_element').css('padding-left'))
 
+        var arrCamelCss = $('#some_element').css(['borderLeftWidth', 'borderLeftStyle', 'borderLeftColor', 'color'])
+        t.assertEqual('2px', arrCamelCss['borderLeftWidth'])
+        t.assertEqual('solid', arrCamelCss['borderLeftStyle'])
+        t.assertEqual('rgb(0, 0, 0)', arrCamelCss['borderLeftColor'])
+        t.assertEqual('rgb(0, 255, 0)', arrCamelCss['color'])
+        t.assertUndefined(arrCamelCss['paddingLeft'])
+
+        var arrDashedCss = $('#some_element').css(['border-left-width', 'border-left-style', 'border-left-color', 'color'])
+        t.assertEqual('2px', arrDashedCss['border-left-width'])
+        t.assertEqual('solid', arrDashedCss['border-left-style'])
+        t.assertEqual('rgb(0, 0, 0)', arrDashedCss['border-left-color'])
+        t.assertEqual('rgb(0, 255, 0)', arrDashedCss['color'])
+        t.assertUndefined(arrDashedCss['padding-left'])
+
+        t.assertUndefined($().css(['border-left-width']))
+
         var div = $('#get_style_element')
         t.assertEqual('48px', div.css('font-size'))
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
@@ -1445,9 +1519,12 @@
       },
 
       testHtml: function(t){
-        var div = $('div.htmltest')
-        t.assertIdentical(div, div.html('yowza'))
+        var div = $('div.htmltest');
 
+        div.text(undefined);
+        t.assertEqual('', div.html());
+
+        t.assertIdentical(div, div.html('yowza'))
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
         t.assertEqual('yowza', document.getElementById('htmltest2').innerHTML)
 
@@ -1480,6 +1557,21 @@
       },
 
       testText: function(t){
+        // test basics with Zepto-created DOM elements
+        t.assertEqual('',         $('<h1/>').text())
+        t.assertEqual('',         $('<h1/>').text('').text())
+        t.assertEqual('',         $('<h1/>').text(undefined).text())
+        t.assertEqual('null',     $('<h1/>').text(null).text())
+        t.assertEqual('1',        $('<h1/>').text(1).text())
+        t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
+
+        t.assertEqual('&lt;b&gt;a&lt;/b&gt;',
+          $('<h1/>').text('<b>a</b>').html())
+
+        // now test with some existing DOM elements
+        $('#texttest3').text(undefined)
+        t.assertEqual('', $('#texttest3').text())
+
         t.assertEqual('Here is some text', $('div.texttest').text())
         t.assertEqual('And some more', $('#texttest2').text())
 
@@ -1641,6 +1733,9 @@
         var input = $('#attr_val')
 
         t.assertEqual('Hello World', input.val())
+
+        input.val(undefined);
+        t.assertEqual('undefined', input.val());
 
         input.val('')
         t.assertEqual('', input.val())
@@ -2168,8 +2263,11 @@
       },
 
       testScrollTop: function(t) {
-        t.assert($(window).scrollTop() >= 0)
-        t.assert($(document.body).scrollTop() >= 0)
+        var w = $(window), b = $(document.body)
+        t.assert(w.scrollTop() >= 0)
+        t.assert(b.scrollTop() >= 0)
+        t.assertIdentical(w.scrollTop(20), w)
+        t.assertIdentical(b.scrollTop(20), b)
       },
 
       testSort: function(t){
@@ -2342,6 +2440,10 @@
         $(form).bind('submit', function(e) {
           executed.push("2")
           t.assertEqual(form, e.target)
+          // TODO
+          // Android 2.3 doesn't support stopImmediatePropagation,
+          // so the tests throws an error. Ideally Zepto should emulate
+          // stopImmediatePropagation on browsers that don't support it.
           e.stopImmediatePropagation()
           return 2
         })
