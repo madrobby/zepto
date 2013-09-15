@@ -998,10 +998,6 @@
         t.assert(viewportHeight > 0 || viewportHeight === 0)
         t.assert($(document).height())
 
-<<<<<<< HEAD
-        // Not perfect but does the job in this case
-        t.refuteEqual($(window).height(), $(document).height())
-=======
         // with a tall element on the page,
         // the window (viewport) should be shorter than the total
         // document height
@@ -1010,7 +1006,6 @@
           $(window).height() < $(document).height(),
           "'window' height was not smaller than 'document' height?")
         $('#very_high').remove()
->>>>>>> upstream/ie10
 
         t.assertIdentical(50, $('#offset').height())
         $('#offset').height('60px')
@@ -1463,10 +1458,7 @@
         t.assertEqual('rgb(0, 255, 0)', $('#some_element').css('color'))
         t.assertEqual('2px', $('#some_element').css('padding-left'))
 
-<<<<<<< HEAD
-=======
         // read multiple values, camelCased CSS
->>>>>>> upstream/ie10
         var arrCamelCss = $('#some_element').css(['borderLeftWidth', 'borderLeftStyle', 'borderLeftColor', 'color'])
         t.assertEqual('2px', arrCamelCss['borderLeftWidth'])
         t.assertEqual('solid', arrCamelCss['borderLeftStyle'])
@@ -1474,10 +1466,7 @@
         t.assertEqual('rgb(0, 255, 0)', arrCamelCss['color'])
         t.assertUndefined(arrCamelCss['paddingLeft'])
 
-<<<<<<< HEAD
-=======
         // read multiple values, dashed CSS property names
->>>>>>> upstream/ie10
         var arrDashedCss = $('#some_element').css(['border-left-width', 'border-left-style', 'border-left-color', 'color'])
         t.assertEqual('2px', arrDashedCss['border-left-width'])
         t.assertEqual('solid', arrDashedCss['border-left-style'])
@@ -1485,10 +1474,7 @@
         t.assertEqual('rgb(0, 255, 0)', arrDashedCss['color'])
         t.assertUndefined(arrDashedCss['padding-left'])
 
-<<<<<<< HEAD
-=======
         // make sure reads from empty Zepto collections just return undefined
->>>>>>> upstream/ie10
         t.assertUndefined($().css(['border-left-width']))
 
         var div = $('#get_style_element')
@@ -2312,20 +2298,12 @@
       },
 
       testScrollTop: function(t) {
-<<<<<<< HEAD
-        var w = $(window), b = $(document.body)
-        t.assert(w.scrollTop() >= 0)
-        t.assert(b.scrollTop() >= 0)
-        t.assertIdentical(w.scrollTop(20), w)
-        t.assertIdentical(b.scrollTop(20), b)
-=======
         var $window = $(window), $body = $(document.body)
         t.assert($window.scrollTop() >= 0)
         t.assert($body.scrollTop() >= 0)
 
         t.assertIdentical($window.scrollTop(20), $window)
         t.assertIdentical($body.scrollTop(20),   $body)
->>>>>>> upstream/ie10
       },
 
       testSort: function(t){
