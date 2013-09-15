@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>__proto__ requirement checking</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script src="../src/ie.js"></script>
+</head>
+<body>
+  <h1>__proto__ requirement</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+      (function () {
+          Evidence('ZeptoDetectTest', {
+              testProtoExistance: function (t) {
+                  var testObj = {}
+                  t.assertFalse(testObj.__proto__ === undefined)
+              },
+
+              testProtoAssignment: function (t) {
+                  var myProto = {
+                      myFunc: function () {
+                          return "hello "
+                      },
+                      myProperty: "world"
+                  }
+
+                  var testObj = {}
+                  t.assertTrue(testObj.myFunc === undefined)
+                  t.assertTrue(testObj.myProperty === undefined)
+
+                  testObj.__proto__ = myProto
+
+                  var testVar = testObj.myFunc()
+                  t.assertEqual("hello ", testVar)
+
+                  testVar += testObj.myProperty
+                  t.assertEqual("hello world", testVar)
+              },
+
+              testProtoNesting: function (t) {
+                  var myProto1 = { property1: "hello" }
+                  var myProto2 = { property2: "world" }
+                  var testObj = {}
+
+                  myProto2.__proto__ = myProto1
+                  t.assertEqual("hello", myProto2.property1)
+
+                  testObj.__proto__ = myProto2
+                  t.assertEqual("hello", testObj.property1)
+                  t.assertEqual("world", testObj.property2)
+              }
+          })
+      })()
+  </script>
+</body>
+</html>

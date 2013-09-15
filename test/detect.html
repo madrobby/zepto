@@ -10,6 +10,7 @@
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/detect.js"></script>
+  <script src="../src/ie.js"></script>
 </head>
 <body>
   <h1>Browser detection</h1>
@@ -69,6 +70,7 @@
       Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
 
+      Windows_IE: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
       Windows_RT_Surface: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch)",
       Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
@@ -157,6 +159,12 @@
           t.assertEqual("420.1", browser.version)
           t.assertTrue(os.phone)
           t.assertTrue(browser.safari)
+          t.assertFalse(!!os.android)
+          t.assertFalse(!!browser.ie)
+          t.assertFalse(!!browser.firefox)
+          t.assertFalse(!!browser.silk)
+          t.assertFalse(!!browser.chrome)
+          t.assertFalse(!!browser.playbook)
         })
         detect(UA.iOS_3_1_1_iPod, function(os, browser){
           t.assertTrue(os.ios)
@@ -364,6 +372,29 @@
           t.assertFalse(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.chrome)
+        })
+      },
+
+      testIE: function(t) {
+        detect(UA.Windows_IE, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("10.0", browser.version)
+        })
+
+        detect(UA.Windows_RT_Surface, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertTrue(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("10.0", browser.version)
+        })
+
+        detect(UA.Windows_Phone_8, function(os, browser){
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("10.0", browser.version)
         })
       }
     })
