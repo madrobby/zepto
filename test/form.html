@@ -36,13 +36,20 @@
     </fieldset>
 
     <select name="selectbox">
-        <option value="selectopt1">select1</option>
-        <option value="selectopt2">select2</option>
-        <option value="selectopt3">select3</option>
+      <option value="selectopt1">select1</option>
+      <option value="selectopt2">select2</option>
+      <option value="selectopt3">select3</option>
     </select>
 
     <div class="actions">
-      <input type="submit" name="submit" value="Save">
+      <!--
+        The name of the following element can't be "submit",
+        as this breaks on IE 10 (the form's "submit" method
+        is overwritten by an accessor to the input field
+        with the "submit" name). Yes, that's a dumb bug.
+      -->
+      <input type="submit" name="submit_button" value="Save">
+
       <input type="button" name="preview" value="Preview">
       <input type="reset" name="clear" value="Clear form">
       <button name="button">I'm a button</button>
@@ -55,36 +62,29 @@
   <script>
   (function(){
 
-    var isObjectEquals = function (obj1, obj2) {
-      for (var key in obj1) {
-        switch( typeof( obj1[key] ) ) {
+    // TODO: do we really need this function? This should be refactored.
+    var isObjectEquals = function(obj1, obj2){
+      for (var key in obj1)
+        switch(typeof(obj1[key])) {
           case 'object':
-            if ( !isObjectEquals( obj1[key], obj2[key] ) ) {
+            if (!isObjectEquals(obj1[key], obj2[key]))
               return false
-            }
             break
 
           case 'function':
-            if (
-                 typeof( obj2[key] ) == 'undefined' ||
-                 ( obj1[key].toString() != obj2[key].toString() )
-               ) {
+            if (typeof(obj2[key]) == 'undefined' ||
+              (obj1[key].toString() != obj2[key].toString()))
               return false
-            }
             break
 
           default:
-            if ( obj1[key] != obj2[key] ) {
+            if (obj1[key] != obj2[key])
               return false
-            }
         }
-      }
 
-      for (key in obj2) {
-        if (typeof( obj1[key] ) == 'undefined') {
+      for (key in obj2)
+        if (typeof(obj1[key]) == 'undefined')
           return false
-        }
-      }
 
       return true
     }
@@ -99,7 +99,7 @@
 
     Evidence('FormTest', {
 
-      testSerializeArray: function (t) {
+      testSerializeArray: function(t){
         var loginForm = $('#login_form')
 
         t.assertEqual(Function, loginForm.serializeArray.constructor)
@@ -118,20 +118,20 @@
         )
       },
 
-      testSerialize: function (t) {
+      testSerialize: function(t){
         var loginForm = $('#login_form')
 
         t.assertEqual(Function, loginForm.serialize.constructor)
-        t.assertEqual( 'string', typeof loginForm.serialize() )
+        t.assertEqual('string', typeof loginForm.serialize())
 
-        t.assertEqual( 'email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize() )
+        t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize())
       },
 
-      testFormSubmit: function (t) {
+      testFormSubmit: function(t){
         var eventTriggered = false
-        $('#login_form').submit(function (e) {
+        $('#login_form').submit(function(event){
           eventTriggered = true
-          e.preventDefault()
+          event.preventDefault()
         })
         $('#login_form').submit()
         t.assert(eventTriggered)
