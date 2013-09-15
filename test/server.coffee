@@ -39,9 +39,13 @@ app.get '/test/jsonpBlah', (req, res) ->
 
 app.get '/test/json', (req, res) ->
   if /json/.test req.headers['accept']
-    res.json
-      query: req.query
-      hello: 'world'
+    if req.query.invalid
+      res.set 'Content-Type', 'application/json'
+      res.send 'invalidJSON'
+    else
+      res.json
+        query: req.query
+        hello: 'world'
   else
     res.send 400, 'FAIL'
 

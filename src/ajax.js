@@ -55,7 +55,7 @@
   function ajaxError(error, type, xhr, settings) {
     var context = settings.context
     settings.error.call(context, xhr, type, error)
-    triggerGlobal(settings, context, 'ajaxError', [xhr, settings, error])
+    triggerGlobal(settings, context, 'ajaxError', [xhr, settings, error || type])
     ajaxComplete(type, xhr, settings)
   }
   // status: "success", "notmodified", "error", "timeout", "abort", "parsererror"
@@ -225,7 +225,7 @@
           if (error) ajaxError(error, 'parsererror', xhr, settings)
           else ajaxSuccess(result, xhr, settings)
         } else {
-          ajaxError(null, xhr.status ? 'error' : 'abort', xhr, settings)
+          ajaxError(xhr.statusText || null, xhr.status ? 'error' : 'abort', xhr, settings)
         }
       }
     }
