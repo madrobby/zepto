@@ -23,7 +23,7 @@
       ie = ua.match(/MSIE ([\d.]+)/),
       safari = webkit && ua.match(/Mobile\//) && !chrome,
       webview = ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/) && !chrome,
-      ie = ua.match(/MSIE ([\d.]+)/)
+      ie = ua.match(/MSIE\s([\d.]+)/)
 
     // Todo: clean this up with a better OS/browser seperation:
     // - discern (more) between multiple browsers on android
@@ -51,11 +51,13 @@
     if (ie) browser.ie = true, browser.version = ie[1]
     if (safari && (ua.match(/Safari/) || !!os.ios)) browser.safari = true
     if (webview) browser.webview = true
-    if (ie) browser.ie = true, browser.verson = ie[1]
+    if (ie) browser.ie = true, browser.version = ie[1]
 
-    os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) || (firefox && ua.match(/Tablet/)))
+    os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) ||
+      (firefox && ua.match(/Tablet/)) || (ie && !ua.match(/Phone/) && ua.match(/Touch/)))
     os.phone  = !!(!os.tablet && !os.ipod && (android || iphone || webos || blackberry || bb10 ||
-      (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) || (firefox && ua.match(/Mobile/))))
+      (chrome && ua.match(/Android/)) || (chrome && ua.match(/CriOS\/([\d.]+)/)) ||
+      (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
   }
 
   detect.call($, navigator.userAgent)
