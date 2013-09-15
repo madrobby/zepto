@@ -293,6 +293,26 @@
         )
       },
 
+      testAjaxJSONParserError: function(t){
+        t.pause()
+        $.ajax({
+          url:      'json',
+          dataType: 'json',
+          data:     { invalid: true },
+          success:  t.reg.handler('success'),
+          error:    t.reg.handler('error'),
+          complete: t.reg.resumeHandler('complete', function(){
+            t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
+            var errorArgs = t.reg.args('error')
+            t.assertEqual('parsererror', errorArgs[1])
+            t.assert(errorArgs[2] instanceof SyntaxError)
+            var globalErrorArgs = t.reg.args('ajaxError')
+            t.assert(globalErrorArgs[3] instanceof SyntaxError)
+            t.assertEqual(0, $('script[src^=slow]').size())
+          })
+        })
+      },
+
       testAjaxGetJSONP: function(t){
         t.pause()
         $.getJSON(
@@ -387,6 +407,8 @@
             t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
             var errorArgs = t.reg.args('error')
             t.assertEqual('timeout', errorArgs[1])
+            var globalErrorArgs = t.reg.args('ajaxError')
+            t.assertEqual('timeout', globalErrorArgs[3])
             t.assertEqual(0, $('script[src^=slow]').size())
           })
         })
@@ -409,6 +431,8 @@
             t.assertEqualList('ajaxBeforeSend ajaxSend error ajaxError complete ajaxComplete', t.reg.events())
             var errorArgs = t.reg.args('error')
             t.assertEqual('abort', errorArgs[1])
+            var globalErrorArgs = t.reg.args('ajaxError')
+            t.assertEqual('abort', globalErrorArgs[3])
             t.assertEqual(0, $('script[src^=slow]').size())
           })
         }, 50)
@@ -1022,8 +1046,12 @@
       },
 
       testTimeout: function(t) {
-        var successFired = false, xhr, status
+        var successFired = false, xhr, status, globalStatus
         t.pause()
+        $(document).on('ajaxError', function (e, x, o, s) {
+          globalStatus = s
+        })
+
         $.ajax({
           timeout: 30,
           success: function() { successFired = true },
@@ -1040,8 +1068,33 @@
             t.assertFalse(successFired)
             t.assertTrue(xhr.aborted)
             t.assertEqual('timeout', status)
+            t.assertEqual('timeout', globalStatus)
           })
         }, 40)
+      },
+
+      testAbort: function(t) {
+        var successFired = false, xhr, status, globalStatus
+        t.pause()
+        $(document).on('ajaxError', function (e, x, o, s) {
+          globalStatus = s
+        })
+
+        $.ajax({
+          success: function() { successFired = true },
+          error: function(x, s) { xhr = x, status = s }
+        })
+        MockXHR.last.abort()
+        MockXHR.last.ready(4, 0, 'Aborted')
+
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertFalse(successFired)
+            t.assertTrue(xhr.aborted)
+            t.assertEqual('abort', status)
+            t.assertEqual('abort', globalStatus)
+          })
+        }, 20)
       },
 
       testAsyncDefaultsToTrue: function(t) {
