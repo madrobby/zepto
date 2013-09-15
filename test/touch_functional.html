@@ -3,15 +3,24 @@
 <head>
   <meta charset="utf-8">
   <title>Zepto touch functional test</title>
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
   <meta name="viewport" content="maximum-scale=1,initial-scale=1,user-scalable=0">
   <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
-  <script src="../src/touch.js"></script>
   <script src="../src/ie.js"></script>
+  <script src="../src/touch.js"></script>
 </head>
 <body>
   <h1>Zepto touch functional test</h1>
+
+  <p>
+    Browser supports touch events?
+    <script>document.write('ontouchstart' in window)</script><br>
+
+    Browser supports MS pointer events?
+    <script>document.write(!!navigator.msPointerEnabled)</script>
+  </p>
 
   <div id="touch_test" style="width: 200px; height: 200px; background: #cce; -webkit-user-select: none">
     touch events test

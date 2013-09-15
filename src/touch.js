@@ -46,8 +46,8 @@
 
   $(document).ready(function(){
     var now, delta
-    
-    $(document.body)
+
+    $(document)
       .bind('MSGestureEnd', function(e){
         var swipe_dir = e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
         if (swipe_dir) {
