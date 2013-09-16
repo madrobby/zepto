@@ -504,7 +504,15 @@
         t.assertEqualCollection(['a', 'b', 'c'], zepto)
 
         t.assert($({}))
-        t.assertTrue($({ a:true })[0].a)
+        t.assertTrue($({ a: true })[0].a)
+
+        // Plain objects wrapped by a Zepto collection
+        // should still refer to the original object
+        // This is required for events on plain objects
+        var plainObject = { a: 1 }
+        $(plainObject).get(0).a = 2
+        t.assertEqual(2, plainObject.a)
+        t.assertEqual(2, $(plainObject).get(0).a)
       },
 
       testGetWithoutIndex: function(t){
