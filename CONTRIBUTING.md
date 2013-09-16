@@ -18,13 +18,14 @@ In order for your code to make it in, several conditions must be met:
 * Please **also test manually** on as many target platforms you have access to,
   but at least on latest Chrome (desktop) and Firefox (desktop).
   See http://zeptojs.com for a full list of platforms.
-* Remove trailing whitespace from the end of lines.
 * It's required that you follow Zepto's **code style guidelines** (see below)
 
 Whew, now that we have that out of the way thanks again!
 
 ## Code style guidelines
 
+* Two spaces "soft tabs" indentation
+* Remove amy trailing whitespace from the end of lines
 * `function name() { }` for named functions
 * `function(){ }` for anonymous functions
 * No curly braces for single-line control flow statements such as `if` & friends
