@@ -45,8 +45,6 @@
     return hover[type] || type
   }
 
-  var iter = 0
-
   function add(element, events, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
