@@ -145,33 +145,34 @@
         t.assertIdentical(this.el.find('span').get(0), target)
         t.assertIdentical(this.el.get(0), currentTarget)
       },
-	  testEventOnPlainObject: function (t) {
-		var obj = {}, 
-			log = [],
-			fn1 = function(){ log.push('a') },
-			fn2 = function(evt, value){ log.push(value) }
-			fn3 = function (evt, value) { log.push("event2") }
-		$(obj)
-			.on('event', fn1)
-			.on('event', fn2)
-			.on('event2', fn3)
-			
-		$(obj).trigger('event', 'b')
-		t.assertEqual('a b', log.join(' '))
 
-		log = [];
-		$(obj).trigger('event', 'c')
-		t.assertEqual('a c', log.join(' '))
+      testEventsOnPlainObjects: function (t){
+        var obj = {},
+        	log = [],
+        	fn1 = function(){ log.push('a') },
+        	fn2 = function(evt, value){ log.push(value)    }
+        	fn3 = function(evt, value){ log.push("event2") }
+        $(obj)
+        	.on('event', fn1)
+        	.on('event', fn2)
+        	.on('event2', fn3)
 
-		log = [];
-		$(obj).off('event', fn1)
-		$(obj).trigger('event', 'd')
-		t.assertEqual('d', log.join(' '))
+        $(obj).trigger('event', 'b')
+        t.assertEqual('a b', log.join(' '))
 
-		log = [];
-		$(obj).trigger('event2');
-		t.assertEqual('event2', log.join(' '));
-	  }
+        log = []
+        $(obj).trigger('event', 'c')
+        t.assertEqual('a c', log.join(' '))
+
+        log = []
+        $(obj).off('event', fn1)
+        $(obj).trigger('event', 'd')
+        t.assertEqual('d', log.join(' '))
+
+        log = []
+        $(obj).trigger('event2');
+        t.assertEqual('event2', log.join(' '));
+      }
     })
   })()
   </script>
