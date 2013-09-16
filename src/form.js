@@ -3,9 +3,9 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function ($) {
-  $.fn.serializeArray = function () {
+  $.fn.serializeArray = function() {
     var result = [], el
-    $( Array.prototype.slice.call(this.get(0).elements) ).each(function () {
+    $([].slice.call(this.get(0).elements)).each(function(){
       el = $(this)
       var type = el.attr('type')
       if (this.nodeName.toLowerCase() != 'fieldset' &&
@@ -19,15 +19,15 @@
     return result
   }
 
-  $.fn.serialize = function () {
+  $.fn.serialize = function(){
     var result = []
-    this.serializeArray().forEach(function (elm) {
-      result.push( encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value) )
+    this.serializeArray().forEach(function(elm){
+      result.push(encodeURIComponent(elm.name) + '=' + encodeURIComponent(elm.value))
     })
     return result.join('&')
   }
 
-  $.fn.submit = function (callback) {
+  $.fn.submit = function(callback) {
     if (callback) this.bind('submit', callback)
     else if (this.length) {
       var event = $.Event('submit')
