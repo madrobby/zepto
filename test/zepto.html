@@ -229,6 +229,10 @@
 
   <iframe src="fixtures/iframe_document.html"></iframe>
 
+  <iframe id="link_target_iframe" name="link_target_iframe" width="10" height="10"></iframe>
+  <a id="link_that_will_be_prevented" href="fixtures/iframe_document.html" target="link_target_iframe"></a>
+
+
   </div><!-- fixtures -->
 
   <script>
@@ -2659,11 +2663,44 @@
       },
 
       testDelegateReturnFalse: function(t){
-        $(document.body).delegate('#some_element', 'click', function(){ return false })
+        $(document.body).delegate('#link_that_will_be_prevented', 'click', function(){
+          return false
+        })
 
         var event = $.Event('click')
-        $('#some_element').trigger(event)
-        t.assertTrue(event.defaultPrevented)
+        $('#link_that_will_be_prevented').trigger(event)
+
+        // IE10 resets this property after dispatchEvent returns.
+        // Let's test if (as expected) there's nothing loaded into the iframe.
+        // t.assertTrue(event.defaultPrevented)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            t.assert(!text.match(/Hello from iframe/))
+          })
+        }, 500)
+      },
+
+      testDelegateReturnValueShouldntPreventDefault: function(t){
+        $(document.body).delegate('#link_that_will_be_prevented', 'click', function(){
+        })
+
+        var event = $.Event('click')
+        $('#link_that_will_be_prevented').trigger(event)
+
+        // IE10 resets this property after dispatchEvent returns.
+        // Let's test if (as expected) there is something loaded into the iframe.
+        // t.assertFalse(event.defaultPrevented)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            t.assert(text.match(/Hello from iframe/))
+          })
+        }, 500)
       },
 
       testDelegateWithObject: function(t){
