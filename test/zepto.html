@@ -2455,16 +2455,33 @@
       },
 
       testTriggerEventCancelled: function(t){
-        $('#some_element').bind('custom', function(e){
-          e.preventDefault()
-        })
-        var event = $.Event('custom')
+        var event = $.Event('custom'),
+          element = $('<div/>'),
+          defaultPrevented = false,
+          isDefaultPrevented = false
+
         t.refute(event.defaultPrevented)
         t.refute(event.isDefaultPrevented())
 
-        $('#some_element').trigger(event)
-        t.assert(event.defaultPrevented)
-        t.assert(event.isDefaultPrevented())
+        element.bind('custom', function(e){
+          e.preventDefault()
+          defaultPrevented = e.defaultPrevented
+          isDefaultPrevented = e.isDefaultPrevented()
+        })
+
+        element.trigger(event)
+
+        // FIXME: on IE10 the following tests fail because, well,
+        // because IE is a bag of dicks by changing the value of these
+        // variables back to their default states after dispatchEvent
+        // returns. (This works fine on other browsers.)
+        // For the bug and details see
+        // http://connect.microsoft.com/IE/feedback/details/790389/event-defaultprevented-returns-false-after-preventdefault-was-called
+        // t.assertTrue(event.defaultPrevented)
+        // t.assertTrue(event.isDefaultPrevented())
+
+        t.assertTrue(defaultPrevented)
+        t.assertTrue(isDefaultPrevented)
       },
 
       testTriggerHandler: function(t){

@@ -45,6 +45,8 @@
     return hover[type] || type
   }
 
+  var iter = 0
+
   function add(element, events, fn, selector, getDelegate, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     eachEvent(events, fn, function(event, fn){
@@ -59,7 +61,7 @@
       }
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
-      handler.proxy = function (e) {
+      handler.proxy = function(e){
         var result = callback.apply(element, [e].concat(e.data))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
@@ -145,9 +147,9 @@
     if (!('defaultPrevented' in event)) {
       event.defaultPrevented = false
       var prevent = event.preventDefault
-      event.preventDefault = function() {
-        this.defaultPrevented = true
-        prevent.call(this)
+      event.preventDefault = function(){
+        event.defaultPrevented = true
+        prevent.call(event)
       }
     }
   }
@@ -243,7 +245,7 @@
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true)
-    event.isDefaultPrevented = function(){ return this.defaultPrevented }
+    event.isDefaultPrevented = function(){ return event.defaultPrevented }
     return event
   }
 
