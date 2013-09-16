@@ -4,16 +4,13 @@
 
 ;(function($){
   var touch = {},
-    touchTimeout, tapTimeout, swipeTimeout,
-    longTapDelay = 750, longTapTimeout
-
-  function parentIfText(node) {
-    return 'tagName' in node ? node : node.parentNode
-  }
+    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
+    longTapDelay = 750,
+    gesture
 
   function swipeDirection(x1, x2, y1, y2) {
-    var xDelta = Math.abs(x1 - x2), yDelta = Math.abs(y1 - y2)
-    return xDelta >= yDelta ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+    return Math.abs(x1 - x2) >=
+      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
   }
 
   function longTap() {
@@ -38,12 +35,6 @@
     touch = {}
   }
 
-  var gesture
-  if ('undefined' !== typeof(MSGesture)) {
-    gesture = new MSGesture()
-    gesture.target = document.body
-  }
-
   function isPrimaryTouch(event){
     return event.pointerType == event.MSPOINTER_TYPE_TOUCH && event.isPrimary
   }
@@ -51,20 +42,27 @@
   $(document).ready(function(){
     var now, delta, firstTouch
 
+    if ('MSGesture' in window) {
+      gesture = new MSGesture()
+      gesture.target = document.body
+    }
+
     $(document)
       .bind('MSGestureEnd', function(e){
-        var swipe_dir = e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
-        if (swipe_dir) {
+        var swipeDirectionFromVelocity =
+          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+        if (swipeDirectionFromVelocity) {
           touch.el.trigger('swipe')
-          touch.el.trigger('swipe'+ swipe_dir)
+          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
       .on('touchstart MSPointerDown', function(e){
         if(e.type == 'MSPointerDown' && !isPrimaryTouch(e)) return;
-        firstTouch = e.type == 'MSPointerDown' ? e : touches[0]
+        firstTouch = e.type == 'MSPointerDown' ? e : e.touches[0]
         now = Date.now()
         delta = now - (touch.last || now)
-        touch.el = $(parentIfText(firstTouch.target))
+        touch.el = $('tagName' in firstTouch.target ?
+          firstTouch.target : firstTouch.target.parentNode)
         touchTimeout && clearTimeout(touchTimeout)
         touch.x1 = firstTouch.pageX
         touch.y1 = firstTouch.pageY
@@ -76,12 +74,10 @@
       })
       .on('touchmove MSPointerMove', function(e){
         if(e.type == 'MSPointerMove' && !isPrimaryTouch(e)) return;
-        firstTouch = e.type == 'MSPointerMove' ? e : touches[0]
+        firstTouch = e.type == 'MSPointerMove' ? e : e.touches[0]
         cancelLongTap()
         touch.x2 = firstTouch.pageX
         touch.y2 = firstTouch.pageY
-        if (Math.abs(touch.x1 - touch.x2) > 10)
-          e.preventDefault()
       })
       .on('touchend MSPointerUp', function(e){
         if(e.type == 'MSPointerUp' && !isPrimaryTouch(e)) return;
@@ -99,7 +95,6 @@
 
         // normal tap
         else if ('last' in touch)
-
           // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
           // ('tap' fires before 'scroll')
           tapTimeout = setTimeout(function() {
@@ -117,23 +112,27 @@
             }
 
             // trigger single tap after 250ms of inactivity
-            else {
+            else
               touchTimeout = setTimeout(function(){
                 touchTimeout = null
                 touch.el.trigger('singleTap')
                 touch = {}
               }, 250)
-            }
 
           }, 0)
-
       })
+      // when the browser window loses focus,
+      // for example when a modal dialog is shown,
+      // cancel all ongoing events
       .on('touchcancel MSPointerCancel', cancelAll)
 
+    // scrolling the window indicates intention of the user
+    // to scroll, not tap or swipe, so cancel all ongoing events
     $(window).on('scroll', cancelAll)
   })
 
-  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.on(m, callback) }
+  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
+    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
+    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
   })
 })(Zepto)
