@@ -59,14 +59,15 @@
       }
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
-      handler.proxy = function (e) {
+      handler.proxy = function(e){
         var result = callback.apply(element, [e].concat(e.data))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
       }
       handler.i = set.length
       set.push(handler)
-      element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
+      if ('addEventListener' in element)
+        element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
     })
   }
   function remove(element, events, fn, selector, capture){
@@ -74,6 +75,7 @@
     eachEvent(events || '', fn, function(event, fn){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
+      if ('removeEventListener' in element)
         element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
       })
     })
@@ -143,9 +145,9 @@
     if (!('defaultPrevented' in event)) {
       event.defaultPrevented = false
       var prevent = event.preventDefault
-      event.preventDefault = function() {
-        this.defaultPrevented = true
-        prevent.call(this)
+      event.preventDefault = function(){
+        event.defaultPrevented = true
+        prevent.call(event)
       }
     }
   }
@@ -193,8 +195,8 @@
     event.data = data
     return this.each(function(){
       // items in the collection might not be DOM elements
-      // (todo: possibly support events on plain old objects)
       if('dispatchEvent' in this) this.dispatchEvent(event)
+      else $(this).triggerHandler(event, data)
     })
   }
 
@@ -241,7 +243,7 @@
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true)
-    event.isDefaultPrevented = function(){ return this.defaultPrevented }
+    event.isDefaultPrevented = function(){ return event.defaultPrevented }
     return event
   }
 

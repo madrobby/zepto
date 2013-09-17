@@ -4,20 +4,13 @@
 
 ;(function($){
   var touch = {},
-    touchTimeout, tapTimeout, swipeTimeout,
-    longTapDelay = 750, longTapTimeout,
-    MSPointer = 'MSPointer',
-    MSPointerDown = MSPointer + 'Down',
-    MSPointerMove = MSPointer + 'Move',
-    MSPointerUp = MSPointer + 'Up'
-
-  function parentIfText(node) {
-    return 'tagName' in node ? node : node.parentNode
-  }
+    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
+    longTapDelay = 750,
+    gesture
 
   function swipeDirection(x1, x2, y1, y2) {
-    var xDelta = Math.abs(x1 - x2), yDelta = Math.abs(y1 - y2)
-    return xDelta >= yDelta ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+    return Math.abs(x1 - x2) >=
+      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
   }
 
   function longTap() {
@@ -42,85 +35,55 @@
     touch = {}
   }
 
-  var gesture
-  if ('undefined' !== typeof(MSGesture)) {
-    gesture = new MSGesture()
-    gesture.target = document.body
-  }
-
-  function pageX(event){
-    return event.touches ? event.touches[0].pageX : event.pageX
-  }
-
-  function pageY(event){
-    return event.touches ? event.touches[0].pageY : event.pageY
-  }
-
   function isPrimaryTouch(event){
     return event.pointerType == event.MSPOINTER_TYPE_TOUCH && event.isPrimary
   }
 
   $(document).ready(function(){
-    var now, delta
+    var now, delta, deltaX = 0, deltaY = 0, firstTouch
+
+    if ('MSGesture' in window) {
+      gesture = new MSGesture()
+      gesture.target = document.body
+    }
 
     $(document)
       .bind('MSGestureEnd', function(e){
-        var swipe_dir = e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
-        if (swipe_dir) {
+        var swipeDirectionFromVelocity =
+          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+        if (swipeDirectionFromVelocity) {
           touch.el.trigger('swipe')
-          touch.el.trigger('swipe'+ swipe_dir)
+          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
-<<<<<<< HEAD
       .on('touchstart MSPointerDown', function(e){
-        if(e.type == 'MSPointerDown' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
+        if(e.type == 'MSPointerDown' && !isPrimaryTouch(e)) return;
+        firstTouch = e.type == 'MSPointerDown' ? e : e.touches[0]
         now = Date.now()
         delta = now - (touch.last || now)
-        touch.el = $(parentIfText(e.type == 'MSPointerDown' ? e.target : e.touches[0].target))
+        touch.el = $('tagName' in firstTouch.target ?
+          firstTouch.target : firstTouch.target.parentNode)
         touchTimeout && clearTimeout(touchTimeout)
-        touch.x1 = (e.type == 'MSPointerDown' ? e.pageX : e.touches[0].pageX)
-        touch.y1 = (e.type == 'MSPointerDown' ? e.pageY : e.touches[0].pageY)
-=======
-      .on('touchstart ' + MSPointerDown, function(e){
-        if(e.type == MSPointerDown && !isPrimaryTouch(e)) return;
-        now = Date.now()
-        delta = now - (touch.last || now)
-        touch.el = $(parentIfText(e.type == MSPointerDown ? e.target : e.touches[0].target))
-        touchTimeout && clearTimeout(touchTimeout)
-        touch.x1 = pageX(e)
-        touch.y1 = pageY(e)
->>>>>>> upstream/ie10
+        touch.x1 = firstTouch.pageX
+        touch.y1 = firstTouch.pageY
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
         // adds the current touch contact for IE gesture recognition
-<<<<<<< HEAD
         if (gesture && e.type == 'MSPointerDown') gesture.addPointer(e.pointerId);
       })
       .on('touchmove MSPointerMove', function(e){
-        if(e.type == 'MSPointerMove' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
+        if(e.type == 'MSPointerMove' && !isPrimaryTouch(e)) return;
+        firstTouch = e.type == 'MSPointerMove' ? e : e.touches[0]
         cancelLongTap()
-        touch.x2 = (e.type == 'MSPointerMove' ? e.pageX : e.touches[0].pageX)
-        touch.y2 = (e.type == 'MSPointerMove' ? e.pageY : e.touches[0].pageY)
-        if (Math.abs(touch.x1 - touch.x2) > 10)
-          e.preventDefault()
+        touch.x2 = firstTouch.pageX
+        touch.y2 = firstTouch.pageY
+
+        deltaX += Math.abs(touch.x1 - touch.x2)
+        deltaY += Math.abs(touch.y1 - touch.y2)
       })
       .on('touchend MSPointerUp', function(e){
-        if(e.type == 'MSPointerUp' && (e.pointerType != e.MSPOINTER_TYPE_TOUCH || !e.isPrimary)) return;
-=======
-        if (gesture && e.type == MSPointerDown) gesture.addPointer(e.pointerId);
-      })
-      .on('touchmove ' + MSPointerMove, function(e){
-        if(e.type == MSPointerMove && !isPrimaryTouch(e)) return;
-        cancelLongTap()
-        touch.x2 = pageX(e)
-        touch.y2 = pageY(e)
-        if (Math.abs(touch.x1 - touch.x2) > 10)
-          e.preventDefault()
-      })
-      .on('touchend ' + MSPointerUp, function(e){
-        if(e.type == MSPointerUp && !isPrimaryTouch(e)) return;
->>>>>>> upstream/ie10
+        if(e.type == 'MSPointerUp' && !isPrimaryTouch(e)) return;
         cancelLongTap()
 
         // swipe
@@ -135,45 +98,52 @@
 
         // normal tap
         else if ('last' in touch)
+          // don't fire tap when delta position changed by more than 30 pixels,
+          // for instance when moving to a point and back to origin
+          if (deltaX < 30 && deltaY < 30) {
+            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
+            // ('tap' fires before 'scroll')
+            tapTimeout = setTimeout(function() {
 
-          // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
-          // ('tap' fires before 'scroll')
-          tapTimeout = setTimeout(function() {
+              // trigger universal 'tap' with the option to cancelTouch()
+              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+              var event = $.Event('tap')
+              event.cancelTouch = cancelAll
+              touch.el.trigger(event)
 
-            // trigger universal 'tap' with the option to cancelTouch()
-            // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-            var event = $.Event('tap')
-            event.cancelTouch = cancelAll
-            touch.el.trigger(event)
-
-            // trigger double tap immediately
-            if (touch.isDoubleTap) {
-              touch.el.trigger('doubleTap')
-              touch = {}
-            }
-
-            // trigger single tap after 250ms of inactivity
-            else {
-              touchTimeout = setTimeout(function(){
-                touchTimeout = null
-                touch.el.trigger('singleTap')
+              // trigger double tap immediately
+              if (touch.isDoubleTap) {
+                touch.el.trigger('doubleTap')
                 touch = {}
-              }, 250)
-            }
+              }
 
-          }, 0)
+              // trigger single tap after 250ms of inactivity
+              else {
+                touchTimeout = setTimeout(function(){
+                  touchTimeout = null
+                  touch.el.trigger('singleTap')
+                  touch = {}
+                }, 250)
+              }
+            }, 0)
+          } else {
+            touch = {}
+          }
+          deltaX = deltaY = 0
 
       })
-<<<<<<< HEAD
+      // when the browser window loses focus,
+      // for example when a modal dialog is shown,
+      // cancel all ongoing events
       .on('touchcancel MSPointerCancel', cancelAll)
-=======
-      .on('touchcancel ' + MSPointer + 'Cancel', cancelAll)
->>>>>>> upstream/ie10
 
+    // scrolling the window indicates intention of the user
+    // to scroll, not tap or swipe, so cancel all ongoing events
     $(window).on('scroll', cancelAll)
   })
 
-  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown', 'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(m){
-    $.fn[m] = function(callback){ return this.on(m, callback) }
+  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
+    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
+    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
   })
 })(Zepto)

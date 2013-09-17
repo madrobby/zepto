@@ -9,3 +9,4 @@ docs/*
 .rbenv-version
 public
 node_modules
+temp/
