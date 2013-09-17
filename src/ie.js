@@ -5,7 +5,8 @@
 ;(function(){
   // __proto__ doesn't exist on IE<11, so redefine
   // the Z function to use object extension instead
-  if (!('__proto__' in {})) {
+  // No Thankyou!
+  /*if (!('__proto__' in {})) {
     $.extend($.zepto, {
       Z: function(dom, selector) {
         dom = dom || []
@@ -14,7 +15,7 @@
         return dom
       }
     })
-  }
+  }*/
 
   // getComputedStyle shouldn't freak out when called
   // without a valid element as argument
