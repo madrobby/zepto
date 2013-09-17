@@ -255,6 +255,30 @@
             }, 50)
           })
         }, 50)
+      },
+
+      testTapDoNotFireWhenMoveToPointAndBack: function (t) {
+        var tapCount = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          tapCount++
+        })
+        down(element, 10, 10)
+        move(element, 60, 10)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            move(element, 10, 10)
+            up(element)
+            t.pause()
+            setTimeout(function(){
+              t.resume( function () {
+                t.assertEqual(0, tapCount)
+              })
+            }, 100)
+          })
+        }, 100)
       }
 
       // TODO: test swipes in specific directions
