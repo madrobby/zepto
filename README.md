@@ -47,14 +47,6 @@ Zepto modules are individual files in the "src/" directory.
 </tr></thead>
 <tbody>
   <tr>
-    <th><a href="https://github.com/madrobby/zepto/blob/master/src/polyfill.js#files">polyfill</a></th>
-    <td>✔</td>
-    <td>
-      Provides String.prototype.trim and Array.prototype.reduce methods
-      if they are missing (required for iOS 3.x)
-    </td>
-  </tr>
-  <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/zepto.js#files">zepto</a></th>
     <td>✔</td>
     <td>Core module; contains most methods</td>
@@ -135,6 +127,14 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/stack.js#files">stack</a></th>
     <td></td>
     <td>Provides <code>andSelf</code> &amp; <code>end()</code> chaining methods</td>
+  </tr>
+  <tr>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/ios3.js#files">ios3</a></th>
+    <td></td>
+    <td>
+      Provides String.prototype.trim and Array.prototype.reduce methods
+      (if they are missing) for compatibility with iOS 3.x.
+    </td>
   </tr>
 </tbody>
 </table>
