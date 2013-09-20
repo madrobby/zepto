@@ -7,11 +7,16 @@
   // the Z function to use object extension instead
   if (!('__proto__' in {})) {
     $.extend($.zepto, {
-      Z: function(dom, selector) {
+      Z: function(dom, selector){
         dom = dom || []
         $.extend(dom, $.fn)
         dom.selector = selector || ''
+        dom.__Z = true
         return dom
+      },
+      // this is a kludge but works
+      isZ: function(object){
+        return $.type(object) === 'array' && '__Z' in object
       }
     })
   }
