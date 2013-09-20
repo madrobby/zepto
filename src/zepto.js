@@ -58,7 +58,7 @@ var Zepto = (function() {
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
-    return isObject(obj) && !isWindow(obj) && obj.__proto__ == Object.prototype
+    return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
   }
   function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
@@ -137,19 +137,21 @@ var Zepto = (function() {
     return dom
   }
 
-  // `$.zepto.Z` swaps out the prototype of the given `dom` array
-  // of nodes with `$.fn` and thus supplying all the Zepto functions
-  // to the array. Note that `__proto__` is not supported on Internet
-  // Explorer. This method can be overriden in plugins.
+  // `$.zepto.Z` is now Zepto
+  // It's prototype is based on an array giving Zepto the ability
+  // to be an array. Not all array functions treat Zepto as an array
+  // so you must use the $.fn equivalents, e.g. $.fn.concat
+  // This should not be overridden!!!
   zepto.Z = function(dom, selector) {
     dom = dom || []
-    dom.__proto__ = $.fn
-    dom.selector = selector || ''
-    return dom
+    dom = (dom instanceof Array) ? dom : [dom]
+    $.extend(this, dom)
+    this.selector = selector || ''
   }
+  zepto.Z.prototype = []
 
   // `$.zepto.isZ` should return `true` if the given object is a Zepto
-  // collection. This method can be overriden in plugins.
+  // collection. This method can be overridden in plugins.
   zepto.isZ = function(object) {
     return object instanceof zepto.Z
   }
@@ -157,10 +159,10 @@ var Zepto = (function() {
   // `$.zepto.init` is Zepto's counterpart to jQuery's `$.fn.init` and
   // takes a CSS selector and an optional context (and handles various
   // special cases).
-  // This method can be overriden in plugins.
+  // This method can be overridden in plugins.
   zepto.init = function(selector, context) {
     // If nothing given, return an empty Zepto collection
-    if (!selector) return zepto.Z()
+    if (!selector) return new zepto.Z()
     // If a function is given, call it when the DOM is ready
     else if (isFunction(selector)) return $(document).ready(selector)
     // If a Zepto collection is given, juts return it
@@ -181,7 +183,7 @@ var Zepto = (function() {
       // And last but no least, if it's a CSS selector, use it to select nodes.
       else dom = zepto.qsa(document, selector)
       // create a new Zepto collection from the nodes found
-      return zepto.Z(dom, selector)
+      return new zepto.Z(dom, selector)
     }
   }
 
@@ -285,6 +287,7 @@ var Zepto = (function() {
   $.isWindow = isWindow
   $.isArray = isArray
   $.isPlainObject = isPlainObject
+  $.isZ = zepto.isZ
 
   $.isEmptyObject = function(obj) {
     var name
@@ -347,15 +350,28 @@ var Zepto = (function() {
 
   // Define methods that will be available on all
   // Zepto collections
-  $.fn = {
-    // Because a collection acts like an array
-    // copy over these useful array functions.
-    forEach: emptyArray.forEach,
-    reduce: emptyArray.reduce,
-    push: emptyArray.push,
-    sort: emptyArray.sort,
-    indexOf: emptyArray.indexOf,
-    concat: emptyArray.concat,
+  $.fn = zepto.Z.prototype
+  $.extend($.fn, {
+    concat: function () {
+      var arr = [],
+      args = arguments,
+      len = args.length
+
+      arr.push(this)
+
+      for (var i = 0; i < len; i++) {
+        if (args[i] instanceof Array) {
+          var arg = args[i],
+          arglen = arg.length
+          for (var x = 0; x < arglen; x++){
+            arr.push(arg[x])
+          }
+        } else {
+          arr.push(args[i])
+        }
+      }
+      return arr;
+    },
 
     // `map` and `slice` in the jQuery API work differently
     // from their array counterparts
@@ -730,7 +746,7 @@ var Zepto = (function() {
         return parent
       })
     }
-  }
+  })
 
   // for now
   $.fn.detach = $.fn.remove
@@ -801,8 +817,6 @@ var Zepto = (function() {
       return this
     }
   })
-
-  zepto.Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
   zepto.uniq = uniq
