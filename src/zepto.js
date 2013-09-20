@@ -145,7 +145,7 @@ var Zepto = (function() {
   zepto.Z = function(dom, selector) {
     dom = dom || []
     dom = (dom instanceof Array) ? dom : [dom]
-    Array.prototype.push.apply(this, dom)
+    $.extend(this, dom)
     this.selector = selector || ''
   }
   zepto.Z.prototype = []
@@ -357,7 +357,7 @@ var Zepto = (function() {
       args = arguments,
       len = args.length
 
-      this.push.apply(arr, this)
+      arr.push(this)
 
       for (var i = 0; i < len; i++) {
         if (args[i] instanceof Array) {
