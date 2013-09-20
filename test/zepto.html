@@ -7,7 +7,6 @@
   <title>Zepto DOM unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
   <!--<script src="../dist/zepto.min.js"></script>-->
@@ -469,6 +468,10 @@
         $.zepto.Z = oldZ
         var Z3 = $('')
         t.assertLength(2, calls)
+
+        t.assertFalse($.zepto.isZ())
+        t.assertFalse($.zepto.isZ([]))
+        t.assertTrue($.zepto.isZ($('body')))
       },
 
       testDollar: function(t){
