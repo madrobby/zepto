@@ -272,6 +272,112 @@
         		t.assertEqual(piped2, this, "default context gets updated to latest promise in the chain (without passing function)")
         		t.assertEqual(2, value, "proper value received (without passing function)")
         	})
+        },
+        testWhenValueCreatesPromise: function(t) {
+          $.each({
+            "an empty string": "",
+            "a non-empty string": "some string",
+            "zero": 0,
+            "a number other than zero": 1,
+            "true": true,
+            "false": false,
+            "null": null,
+            "undefined": undefined,
+            "a plain object": {},
+            "an array": [ 1, 2, 3 ]
+          }, function(message, value) {
+            t.assertTrue(
+              $.isFunction($.when(value).done(function(resolveValue) {
+                t.assertEqual(window, this, "Context is the global object with " + message)
+                t.assertEqual(value, resolveValue, "Test the promise was resolved with " + message)
+              }).promise), "Test " + message + " triggers the creation of a new Promise")
+          })
+        },
+        testWhenNoValueCreatesPromise: function(t) {
+          t.assertTrue(
+            $.isFunction($.when().done(function(resolveValue) {
+              t.assertEqual(window, this, "Context is the global object")
+              t.assertEqual(undefined, resolveValue, "Test the promise was resolved with no parameter")
+            }).promise), "Test calling when with no parameter triggers the creation of a new Promise")
+        },
+        testWhenPropagatesContext: function(t) {
+          var context = {}, called = false
+          $.when(createDeferred().resolveWith(context)).done(function() {
+              called = true
+          		t.assertEqual(context, this, "when( promise ) propagates context")
+          	})
+          t.assertTrue(called, "called done() after resolveWith")
+        },
+        testWhenDoneOnlyPromise: function(t) {
+          var cache
+          $.each([1,2,3], function(_, i) {
+            $.when(cache || createDeferred(function() {
+              this.resolve(i)
+            })).done(function(value) {
+              t.assertEqual(1, value, "Function executed" + (i > 1 ? " only once" : ""))
+              cache = value
+            })
+          })
+        },
+        testWhenJoined: function(t) {
+          var deferreds = {
+                value: 1,
+                success: createDeferred().resolve(1),
+                error: createDeferred().reject(0),
+                futureSuccess: createDeferred().notify(true),
+                futureError: createDeferred().notify(true),
+                notify: createDeferred().notify(true)
+              },
+              willSucceed = {
+                value: true,
+                success: true,
+                futureSuccess: true
+              },
+              willError = {
+                error: true,
+                futureError: true
+              },
+              willNotify = {
+                futureSuccess: true,
+                futureError: true,
+                notify: true
+              }
+            $.each(deferreds, function(id1, defer1) {
+              $.each(deferreds, function(id2, defer2) {
+                var shouldResolve = willSucceed[id1] && willSucceed[id2],
+                    shouldError = willError[id1] || willError[id2],
+                    shouldNotify = willNotify[id1] || willNotify[id2],
+                    expected = shouldResolve ? [1, 1] : [0, undefined],
+                    expectedNotify = shouldNotify && [willNotify[id1], willNotify[id2]],
+                    code = id1 + '/' + id2,
+                    context1 = defer1 && $.isFunction(defer1.promise) ? defer1.promise() : undefined,
+                    context2 = defer2 && $.isFunction(defer2.promise) ? defer2.promise() : undefined
+                $.when(defer1, defer2).done(function(a, b) {
+                  if (shouldResolve) {
+                    t.assertEqual(expected[0], a, code + " => resolve" )
+                    t.assertEqual(expected[1], b, code + " => resolve" )
+                    t.assertIdentical(context1, this[0], code + " => first context OK")
+                    t.assertIdentical(context2, this[1], code + " => second context OK")
+                  } else {
+                    t.fail(code + " => resolve")
+                  }
+                }).fail(function(a, b) {
+                  if (shouldError) {
+                    t.assertIdentical(expected[0], a, code + " => reject")
+                    t.assertIdentical(expected[1], b, code + " => reject")
+                  } else {
+                    t.fail(code + " => reject")
+                  }
+                }).progress(function(a, b) {
+                  t.assertIdentical( expectedNotify[0], a, code + " => progress")
+                  t.assertIdentical( expectedNotify[1], b, code + " => progress")
+                  t.assertIdentical(expectedNotify[0] ? context1 : undefined, this[0], code + " => first context OK")
+                  t.assertIdentical(expectedNotify[1] ? context2 : undefined, this[1], code + " => second context OK")
+                })
+              })
+            })
+            deferreds.futureSuccess.resolve(1)
+            deferreds.futureError.reject(0)
         }
       })
     })

@@ -87,4 +87,44 @@
     // Return created object
     return deferred
   }
+  $.when = function(sub) {
+    var slice = Array.prototype.slice, 
+        resolveValues = slice.call(arguments),
+        len = resolveValues.length,
+        i = 0,
+        remain = len !== 1 || (sub && $.isFunction(sub.promise)) ? len : 0,
+        deferred = remain === 1 ? sub : $.Deferred(),
+        progressValues, progressContexts, resolveContexts,
+
+        updateFn = function(i, ctx, val) {
+          return function(value) {
+            ctx[i] = this
+            val[i] = arguments.length > 1 ? slice.call(arguments) : value
+            if (val === progressValues) {
+              deferred.notifyWith(ctx, val)
+            } else if (!(--remain)) {
+              deferred.resolveWith(ctx, val)
+            }
+          }
+        }
+    if (len > 1) {
+      progressValues = new Array(len)
+      progressContexts = new Array(len)
+      resolveContexts = new Array(len)
+      for ( ; i < len; ++i ) {
+        if (resolveValues[i] && $.isFunction(resolveValues[i].promise)) {
+          resolveValues[i].promise()
+            .done(updateFn(i, resolveContexts, resolveValues))
+            .fail(deferred.reject)
+            .progress(updateFn(i, progressContexts, progressValues))
+        } else {
+          --remain
+        }
+      }
+    }
+    if (!remain) {
+      deferred.resolveWith(resolveContexts, resolveValues)
+    }
+    return deferred.promise()
+  }
 })(Zepto)
