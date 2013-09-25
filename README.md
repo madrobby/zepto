@@ -116,7 +116,10 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
   <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/touch.js#files">touch</a></th>
     <td></td>
-    <td>Fires tap– and swipe–related events on touch devices</td>
+    <td>
+      Fires tap– and swipe–related events on touch devices. This works with both
+      `touch` (iOS, Android) and `pointer` events (Windows Phone).
+    </td>
   </tr>
   <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/gesture.js#files">gesture</a></th>
@@ -132,8 +135,16 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/ios3.js#files">ios3</a></th>
     <td></td>
     <td>
-      Provides String.prototype.trim and Array.prototype.reduce methods
+      String.prototype.trim and Array.prototype.reduce methods
       (if they are missing) for compatibility with iOS 3.x.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/ie.js#files">ie</a></th>
+    <td></td>
+    <td>
+      Experimental support for Internet Explorer 10+ on desktop and Windows Phone 8.
+      (Some tests are failing. Help us fix this!)
     </td>
   </tr>
 </tbody>
