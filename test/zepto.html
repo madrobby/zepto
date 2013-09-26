@@ -1816,11 +1816,12 @@
         t.assertEqual('plugin!', el.innerHTML)
 
         // test if existing Zepto objects receive new plugins
+        var $some_element = $('#some_element')
         $.fn.anotherplugin = function(){
           return this.each(function(){ this.innerHTML = 'anotherplugin!' })
         }
-        t.assert(typeof $('#some_element').anotherplugin == 'function')
-        $('#some_element').anotherplugin()
+        t.assert(typeof $some_element.anotherplugin == 'function')
+        $some_element.anotherplugin()
         t.assertEqual('anotherplugin!', el.innerHTML)
       },
 
