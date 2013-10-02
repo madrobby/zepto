@@ -366,7 +366,8 @@ var Zepto = (function() {
     },
 
     ready: function(callback){
-      if (readyRE.test(document.readyState)) callback($)
+      // need to check for the existance of document.body as IE reports document ready when it hasn't yet created the body element.
+      if (readyRE.test(document.readyState) && document.body) callback($)
       else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false)
       return this
     },
