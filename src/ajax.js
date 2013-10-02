@@ -132,9 +132,8 @@
       return new window.XMLHttpRequest()
     },
     // MIME types mapping
-    // IIS returns Javascript as "application/x-javascript"
     accepts: {
-      script: 'text/javascript, application/javascript, application/x-javascript',
+      script: 'text/javascript, application/javascript',
       json:   jsonType,
       xml:    'application/xml, text/xml',
       html:   htmlType,
