@@ -9,7 +9,7 @@ In order for your code to make it in, several conditions must be met:
   to code.
 * Please talk to the maintainers (@madrobby and @mislav) first if you want
   to write a plugin, those are better kept in their own repositories.
-* Fix only ONE thing or have only ONE feature in your pull request. If you have multiple unrelated code updatates, please submit a seperate pull request for each one.
+* Fix only ONE thing or have only ONE feature in your pull request. If you have multiple unrelated code updates, please submit a separate pull request for each one.
 * **Your pull request must be written in English and be accompanied by a
   detailed description**, ideally something we can use as documentation.
   If you're not fluent in English, try your best and let us know so we'll help!
@@ -25,7 +25,7 @@ Whew, now that we have that out of the way thanks again!
 ## Code style guidelines
 
 * Two spaces "soft tabs" indentation
-* Remove amy trailing whitespace from the end of lines
+* Remove any trailing whitespace from the end of lines
 * `function name() { }` for named functions
 * `function(){ }` for anonymous functions
 * No curly braces for single-line control flow statements such as `if` & friends
