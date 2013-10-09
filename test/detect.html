@@ -337,6 +337,7 @@
         detect(UA.Firefox_13_Tablet, function(os, browser){
           t.assertTrue(browser.firefox)
           t.assertFalse(browser.webkit)
+          t.assertTrue(os.android)
           t.assertFalse(os.phone)
           t.assertTrue(os.tablet)
         })
@@ -344,6 +345,7 @@
         detect(UA.Firefox_13_Phone, function(os, browser){
           t.assertTrue(browser.firefox)
           t.assertFalse(browser.webkit)
+          t.assertTrue(os.android)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
         })
