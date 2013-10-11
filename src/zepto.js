@@ -682,7 +682,7 @@ var Zepto = (function() {
     toggleClass: function(name, when){
       return this.each(function(idx){
         var $this = $(this), names = funcArg(this, name, idx, className(this))
-        if(typeof names === "undefined" || typeof names === "null") newName = "";
+        if(typeof names === "undefined" || typeof names === "null") newName = ""; 
         names.split(/\s+/g).forEach(function(klass){
           (when === undefined ? !$this.hasClass(klass) : when) ?
             $this.addClass(klass) : $this.removeClass(klass)
