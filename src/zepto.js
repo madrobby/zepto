@@ -661,13 +661,11 @@ var Zepto = (function() {
     addClass: function(name){
       return this.each(function(idx){
         classList = []
-        var cls = className(this), newName = funcArg(this, name, idx, cls);
-        if(newName){
-          newName.split(/\s+/g).forEach(function(klass){
-            if (!$(this).hasClass(klass)) classList.push(klass)
-          }, this)
-          classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
-        }
+        var cls = className(this), newName = funcArg(this, name, idx, cls)
+        newName.split(/\s+/g).forEach(function(klass){
+          if (!$(this).hasClass(klass)) classList.push(klass)
+        }, this)
+        classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
       })
     },
     removeClass: function(name){
@@ -682,13 +680,11 @@ var Zepto = (function() {
     },
     toggleClass: function(name, when){
       return this.each(function(idx){
-        var $this = $(this), names = funcArg(this, name, idx, className(this));
-        if(names){
-          names.split(/\s+/g).forEach(function(klass){
-            (when === undefined ? !$this.hasClass(klass) : when) ?
-              $this.addClass(klass) : $this.removeClass(klass)
-          })
-        }
+        var $this = $(this), names = funcArg(this, name, idx, className(this))
+        names.split(/\s+/g).forEach(function(klass){
+          (when === undefined ? !$this.hasClass(klass) : when) ?
+            $this.addClass(klass) : $this.removeClass(klass)
+        })
       })
     },
     scrollTop: function(value){
@@ -698,6 +694,14 @@ var Zepto = (function() {
       return this.each(hasScrollTop ?
         function(){ this.scrollTop = value } :
         function(){ this.scrollTo(this.scrollX, value) })
+    },
+    scrollLeft: function(value){
+      if (!this.length) return
+      var hasScrollLeft = 'scrollLeft' in this[0]
+      if (value === undefined) return hasScrollLeft ? this[0].scrollLeft : this[0].pageXOffset
+      return this.each(hasScrollLeft ?
+        function(){ this.scrollLeft = value } :
+        function(){ this.scrollTo(value, this.scrollY) })
     },
     position: function() {
       if (!this.length) return
