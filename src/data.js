@@ -6,7 +6,7 @@
 
 ;(function($) {
   var data = {}, dataAttr = $.fn.data, camelize = $.camelCase,
-    exp = $.expando = 'Zepto' + (+new Date())
+    exp = $.expando = 'Zepto' + (+new Date()), emptyArray = []
 
   // Get value from node:
   // 1. first try key as given,
@@ -36,7 +36,7 @@
   // Read all "data-*" attributes from a node
   function attributeData(node) {
     var store = {}
-    $.each(node.attributes, function(i, attr){
+    $.each(node.attributes || emptyArray, function(i, attr){
       if (attr.name.indexOf('data-') == 0)
         store[camelize(attr.name.replace('data-', ''))] =
           $.zepto.deserializeValue(attr.value)
