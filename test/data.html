@@ -209,6 +209,14 @@
 
           var values2 = items.map(function(){ return $(this).data('answer') }).get()
           t.assertEqual('42, 42', values2.join(', '))
+      },
+
+      testSettingDataOnObjectWithoutAttributes: function(t) {
+        var el = $(window)
+
+        t.assertUndefined(el.data('foo'))
+        el.data('foo', 'bar')
+        t.assertEqual(el.data('foo'), 'bar')
       }
 
     })
