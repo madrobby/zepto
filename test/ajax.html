@@ -707,6 +707,7 @@
       overrideMimeType: function(type) {
         this.responseHeaders['content-type'] = type
       },
+      withCredentials: false, 
       send: function(data) {
         this.data = data
       },
@@ -816,6 +817,14 @@
         $.ajax({ headers: {'X-Awesome': 'true'} })
         t.assert(MockXHR.last.headers.some(matchHeader('X-Requested-With', 'XMLHttpRequest')))
         t.assert(MockXHR.last.headers.some(matchHeader('X-Awesome', 'true')))
+      },
+
+      testXhrFieldsOptionSetsWithCredentialsProperty: function(t) {
+        var xhr = $.ajax({
+          url: 'http://example.com/foo',
+          xhrFields: { withCredentials: true }
+        })
+        t.assert(xhr.withCredentials)
       },
 
       testJSONdataType: function(t) {

@@ -236,6 +236,8 @@
       return false
     }
 
+    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async)
 
