@@ -197,7 +197,7 @@
         xhr = settings.xhr(), abortTimeout
 
     if (settings.xhrFields) {
-      for (i in settings.xhrFields) xhr[i] = settings.xhrFields[i]
+      for (var i in settings.xhrFields) xhr[i] = settings.xhrFields[i]
     }
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
     if (mime) {
