@@ -196,6 +196,9 @@
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
         xhr = settings.xhr(), abortTimeout
 
+    if (settings.xhrFields) {
+      for (i in settings.xhrFields) xhr[i] = settings.xhrFields[i]
+    }
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
     if (mime) {
       baseHeaders['Accept'] = mime
