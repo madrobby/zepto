@@ -61,7 +61,9 @@
     if (typeof names == 'string') names = names.split(/\s+/)
     return this.each(function(){
       var id = this[exp], store = id && data[id]
-      if (store) $.each(names, function(){ delete store[camelize(this)] })
+      if (store) $.each(names || store, function(key){
+        delete store[names ? camelize(this) : key]
+      })
     })
   }
 })(Zepto)
