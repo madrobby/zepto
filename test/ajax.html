@@ -1144,7 +1144,16 @@
         }
         var result = $.param(data)
         result = decodeURIComponent(result)
-        t.assertEqual("a[]=b&a[]=c&a[][d]=e&a[][f][]=g&a[][f][]=h", result)
+        t.assertEqual("a[]=b&a[]=c&a[2][d]=e&a[2][f][]=g&a[2][f][]=h", result)
+      },
+
+      testParamComplexIssue850: function(t) {
+        var data = {
+          $push: { _:[ { name: 'bob', members:['aaa'] } ] }
+        }
+        var result = $.param(data)
+        result = decodeURIComponent(result)
+        t.assertEqual("$push[_][0][name]=bob&$push[_][0][members][]=aaa", result)
       },
 
       testParamShallow: function(t) {
