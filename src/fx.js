@@ -81,6 +81,9 @@
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, wrappedCallback)
+      }else{
+        //triggered by setTimeout
+        $(this).unbind(endEvent, wrappedCallback)
       }
       fired = true
       $(this).css(cssReset)
@@ -91,7 +94,7 @@
       //transitionEnd not always fired on some android phones
       setTimeout(function(){
         if(fired) return
-        that.each(function(){ wrappedCallback.call(this) })
+        wrappedCallback.call(that)
       }, duration * 1000)
     }
 
