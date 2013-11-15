@@ -137,6 +137,8 @@
       }
       proxy[predicate] = returnFalse
     })
+
+    if (event.defaultPrevented) proxy.isDefaultPrevented = returnTrue
     return proxy
   }
 
