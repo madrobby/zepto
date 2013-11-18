@@ -162,7 +162,7 @@ var Zepto = (function() {
     if (!selector) return zepto.Z()
     // If a function is given, call it when the DOM is ready
     else if (isFunction(selector)) return $(document).ready(selector)
-    // If a Zepto collection is given, juts return it
+    // If a Zepto collection is given, just return it
     else if (zepto.isZ(selector)) return selector
     else {
       var dom
