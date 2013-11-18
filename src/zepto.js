@@ -695,6 +695,14 @@ var Zepto = (function() {
         function(){ this.scrollTop = value } :
         function(){ this.scrollTo(this.scrollX, value) })
     },
+    scrollLeft: function(value){
+      if (!this.length) return
+      var hasScrollLeft = 'scrollLeft' in this[0]
+      if (value === undefined) return hasScrollLeft ? this[0].scrollLeft : this[0].pageXOffset
+      return this.each(hasScrollLeft ?
+        function(){ this.scrollLeft = value } :
+        function(){ this.scrollTo(value, this.scrollY) })
+    },
     position: function() {
       if (!this.length) return
 

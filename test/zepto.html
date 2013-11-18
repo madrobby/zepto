@@ -2322,6 +2322,15 @@
         t.assertIdentical($body.scrollTop(20),   $body)
       },
 
+      testScrollLeft: function(t) {
+        var $window = $(window), $body = $(document.body)
+        t.assert($window.scrollLeft() >= 0)
+        t.assert($body.scrollLeft() >= 0)
+
+        t.assertIdentical($window.scrollLeft(20), $window)
+        t.assertIdentical($body.scrollLeft(20),   $body)
+      },
+
       testSort: function(t){
         var els = $(['eight', 'nine', 'ten', 'eleven'])
         var result = els.sort(function(a,b){ return b.length > a.length ? -1 : 1 })
