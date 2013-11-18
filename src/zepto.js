@@ -261,6 +261,7 @@ var Zepto = (function() {
   // "null"  => null
   // "42"    => 42
   // "42.5"  => 42.5
+  // "08"    => "08"
   // JSON    => parse if valid
   // String  => self
   function deserializeValue(value) {
@@ -270,7 +271,7 @@ var Zepto = (function() {
         value == "true" ||
         ( value == "false" ? false :
           value == "null" ? null :
-          !isNaN(num = Number(value)) ? num :
+          !isNaN(num = Number(value)) && (num+'') === value ? num :
           /^[\[\{]/.test(value) ? $.parseJSON(value) :
           value )
         : value

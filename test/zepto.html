@@ -1739,6 +1739,9 @@
       testDataNumberType: function(t){
         var el = $('<div data-num=42 />')
         t.assertIdentical(42, el.data('num'))
+
+        t.assertIdentical("08",
+          $('<div data-notnum=08 />').data('notnum'))
       },
 
       testDataBooleanType: function(t){
