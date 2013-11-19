@@ -27,7 +27,7 @@ page.onError = (msg, trace) ->
   console.log 'ERROR: ' + msg
 
 # used for waiting until the tests finish running
-waitFor = (testFn, onReady, timeout=3000) ->
+waitFor = (testFn, onReady, timeout=4000) ->
   start = new Date()
   interval = setInterval ->
     if testFn()
