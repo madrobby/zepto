@@ -655,11 +655,13 @@ var Zepto = (function() {
       return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0])
     },
     hasClass: function(name){
+      if (!name) return false
       return emptyArray.some.call(this, function(el){
         return this.test(className(el))
       }, classRE(name))
     },
     addClass: function(name){
+      if (!name) return this
       return this.each(function(idx){
         classList = []
         var cls = className(this), newName = funcArg(this, name, idx, cls)
@@ -680,6 +682,7 @@ var Zepto = (function() {
       })
     },
     toggleClass: function(name, when){
+      if (!name) return this
       return this.each(function(idx){
         var $this = $(this), names = funcArg(this, name, idx, className(this))
         names.split(/\s+/g).forEach(function(klass){

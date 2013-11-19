@@ -2169,6 +2169,12 @@
         })
         t.assertEqual('red blue green', el.className)
 
+        // addClass with no argument
+        t.assertEqualCollection($('#some_element'), $('#some_element').addClass())
+        t.assertEqual('red blue green', el.className)
+        t.assertEqualCollection($('#some_element'), $('#some_element').addClass(''))
+        t.assertEqual('red blue green', el.className)
+
         //removeClass with function argument
         $('#some_element').removeClass(function(idx,classes){
           //test the value of "this"
@@ -2198,6 +2204,9 @@
         t.assert(!el.hasClass('orange'), "body shouldn't have the class")
         el = el.add('#some_element')
         t.assert(el.hasClass('orange'), "an element in collection has the class")
+
+        t.assertFalse(el.hasClass())
+        t.assertFalse(el.hasClass(''))
       },
 
       testHasClassEmpty: function(t){
@@ -2264,6 +2273,12 @@
           return "yellow"
         }, true)
         t.assert(el.hasClass('yellow'))
+
+        // no/empty argument
+        t.assertIdentical(el, el.toggleClass())
+        t.assertEqual('orange brown yellow', el.get(0).className)
+        t.assertIdentical(el, el.toggleClass(''))
+        t.assertEqual('orange brown yellow', el.get(0).className)
       },
 
       testClassSVG: function(t){
