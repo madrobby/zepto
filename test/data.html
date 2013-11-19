@@ -166,6 +166,19 @@
         t.assertUndefined(el.data('twoThree'))
       },
 
+      testRemoveAllData: function(t){
+        var el = $('<div data-attr-test=val />')
+
+        el.data('one', { foo: 'bar' })
+        el.data('two', 'two').data('three', 3)
+        el.removeData()
+
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('one'))
+        t.assertUndefined(el.data('two'))
+        t.assertUndefined(el.data('three'))
+      },
+
       testRemoveDataNoop: function(t){
         var empty = $(),
             vanilla = $('<div />')
