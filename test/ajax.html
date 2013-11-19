@@ -669,6 +669,19 @@
             t.assertUndefined(t.reg.target('ajaxSuccess'))
           })
         })
+      },
+
+      testAjaxLoadJavaScript: function (t) {
+        t.pause()
+        window.testValue = 0
+        var xhr = $.ajax({
+          url:'fixtures/ajax_load_javascript.js',
+          success: t.reg.resumeHandler('success', function(response){
+            // check that the javascript has loaded and executed.
+            t.assertEqual(window.testValue, 1)
+            delete window.testValue
+          })
+        })
       }
     })
 
@@ -759,6 +772,10 @@
         t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')))
         // verifies overrideMimeType:
         t.assertEqual('application/json', MockXHR.last.getResponseHeader('content-type'))
+
+        $.ajax({ dataType: 'script' })
+        //check that the head matches all of those required for loading scripts.
+        t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'text/javascript, application/javascript, application/x-javascript')))
       },
 
       testContentTypeOptionSetsContentTypeHeader: function(t) {
