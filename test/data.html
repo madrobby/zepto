@@ -189,27 +189,44 @@
 
       testRemoveDataOnElementRemoval: function(t){
         var el = $('<div data-attr-test=val />'),
-          childEl = $('<span />'), elData = { foo: 'bar' }
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
 
         el.data('test', elData)
-        childEl.appendTo(el).data('test', 1)
-
-        el.empty()
-        t.assertEqual('val', el.data('attrTest'))
-        t.assertEqual(elData, el.data('test'))
-        t.assertUndefined(childEl.data('test'))
-
-        childEl.appendTo(el).data('test', 2)
-
-        el.detach()
-        t.assertEqual('val', el.data('attrTest'))
-        t.assertEqual(elData, el.data('test'))
-        t.assertEqual(2, childEl.data('test'))
+        childEl.data('test', 1)
 
         el.remove()
         t.assertEqual('val', el.data('attrTest'))
         t.assertUndefined(el.data('test'))
         t.assertUndefined(childEl.data('test'))
+      },
+
+      testRemoveDataOnElementEmpty: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.empty()
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertEqual(elData, el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testKeepDataOnElementDetach: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.detach()
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertEqual(elData, el.data('test'))
+        t.assertEqual(1, childEl.data('test'))
       },
 
       testSettingDataWithObj: function(t){
