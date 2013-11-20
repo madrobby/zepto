@@ -68,11 +68,11 @@
   }
 
   // Generate extended `remove` and `empty` functions
-  ;['remove', 'empty'].forEach(function(fn){
-    var origFn = $.fn[fn]
-    $.fn[fn] = function() {
+  ;['remove', 'empty'].forEach(function(methodName){
+    var origFn = $.fn[methodName]
+    $.fn[methodName] = function() {
       var elements = this.find('*')
-      if (fn === 'remove') elements = elements.add(this)
+      if (methodName === 'remove') elements = elements.add(this)
       elements.removeData()
       return origFn.call(this)
     }
