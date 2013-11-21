@@ -27,7 +27,7 @@ github_url: https://github.com/madrobby/zepto
   <a class=toc_title href="#core">Core</a>
   {% assign posts = site.categories.core %}
   {% include methods_sidebar.html %}
-  
+
   <a class=toc_title href="#detect">Detect</a>
   {% assign posts = site.categories.detect %}
   {% include methods_sidebar.html %}
@@ -111,11 +111,11 @@ github_url: https://github.com/madrobby/zepto
       – <i>9.7k when gzipped</i>
     </li>
   </ul>
-  
+
   <p>
-    Or <b><a href="{{ page.github_url }}">grab the latest version on Github</a></b>.
+    Or <b><a href="{{ page.github_url }}">grab the latest version on GitHub</a></b>.
   </p>
-  
+
   <ul class=downloads>
     <li>
       <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&repo=zepto&type=watch&count=true"
@@ -137,7 +137,7 @@ github_url: https://github.com/madrobby/zepto
 {% endhighlight %}
 
   <p class=compat>
-    Zepto will only set the <code>$</code> global to itself if it is 
+    Zepto will only set the <code>$</code> global to itself if it is
     not yet defined. There is no <code>Zepto.noConflict</code> method.
   </p>
 
@@ -165,7 +165,7 @@ document.write('<script src=' +
     <li>Opera 10+ (Win, Mac, Linux)</li>
   </ul>
 
-  <h4>Mobile browsers</h4>  
+  <h4>Mobile browsers</h4>
   <ul>
     <li>iOS 4+ Safari</li>
     <li>Chrome for Android</li>
@@ -246,7 +246,7 @@ document.write('<script src=' +
     <h2 id="core">Core methods</h2>
     {% assign posts = site.categories.core %}
     {% include methods_full.html %}
-    
+
     <hr>
     <h2 id="detect">Detect methods</h2>
     {% assign posts = site.categories.detect %}
@@ -329,7 +329,7 @@ document.write('<script src=' +
 
 <script>
   var reflowTimeout;
-  
+
   function injectScript(src) {
     var s = document.createElement('script')
     s.src = src; s.async = true
@@ -357,7 +357,7 @@ document.write('<script src=' +
 
   if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
     $(document.body).addClass('emoji-enabled')
-    
+
   // don't follow links when the sidebar is tap-enabled
   $('#sidebar').on('click', 'a', function(e){
     return !$('body').hasClass('navigating')
@@ -370,15 +370,15 @@ document.write('<script src=' +
     setTimeout(function(){
       // fixes sidebar becoming unscrollable in Safari 6
       reflowFixedPositions()
-    }, 10)    
+    }, 10)
     return false
   })
-  
+
   $(window).on('scroll', function(){
     if(reflowTimeout) clearTimeout(reflowTimeout)
     reflowTimeout = setTimeout(reflowFixedPositions, 200)
   })
-  
+
   function closeMenu(){
     if ($('body').hasClass('navigating')) {
       $('body').removeClass('navigating')
@@ -387,7 +387,7 @@ document.write('<script src=' +
       }, 350)
     }
   }
-  
+
   // show/hide menu on mobile
   $('#menu_icon').on('tap', function(){
     if ($('body').hasClass('navigating')) {
