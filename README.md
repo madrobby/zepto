@@ -9,7 +9,7 @@ and documentation.
 Zepto.js is licensed under the terms of the MIT License.
 
 Want to give us money or a tip? Don't.
-Instead please donate to (http://www.charitywater.org)charity: water.
+Instead please donate to [charity: water](http://charitywater.org/).
 
 ## Building
 
