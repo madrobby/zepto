@@ -36,7 +36,12 @@
   }
 
   function isPrimaryTouch(event){
-    return event.pointerType == event.MSPOINTER_TYPE_TOUCH && event.isPrimary
+	var pType = event.pointerType;
+    return ( pType == event.MSPOINTER_TYPE_TOUCH || pType === 'touch') && event.isPrimary
+  }
+  
+  function pointerTest(event, test) {
+    return event.type.toLowerCase().indexOf("pointer"+test) != -1
   }
 
   $(document).ready(function(){
@@ -56,9 +61,10 @@
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
-      .on('touchstart MSPointerDown', function(e){
-        if(e.type == 'MSPointerDown' && !isPrimaryTouch(e)) return;
-        firstTouch = e.type == 'MSPointerDown' ? e : e.touches[0]
+      .on('touchstart MSPointerDown pointerdown', function(e){
+        var isPointer = pointerTest(e, 'down');
+        if(isPointer && !isPrimaryTouch(e)) return;
+        firstTouch = isPointer ? e : e.touches[0]
         now = Date.now()
         delta = now - (touch.last || now)
         touch.el = $('tagName' in firstTouch.target ?
@@ -70,11 +76,12 @@
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
         // adds the current touch contact for IE gesture recognition
-        if (gesture && e.type == 'MSPointerDown') gesture.addPointer(e.pointerId);
+        if (gesture && isPointer) gesture.addPointer(e.pointerId);
       })
-      .on('touchmove MSPointerMove', function(e){
-        if(e.type == 'MSPointerMove' && !isPrimaryTouch(e)) return;
-        firstTouch = e.type == 'MSPointerMove' ? e : e.touches[0]
+      .on('touchmove MSPointerMove pointermove', function(e){
+        var isPointer = pointerTest(e, 'move');
+        if(isPointer && !isPrimaryTouch(e)) return;
+        firstTouch = isPointer ? e : e.touches[0]
         cancelLongTap()
         touch.x2 = firstTouch.pageX
         touch.y2 = firstTouch.pageY
@@ -82,8 +89,9 @@
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
-      .on('touchend MSPointerUp', function(e){
-        if(e.type == 'MSPointerUp' && !isPrimaryTouch(e)) return;
+      .on('touchend MSPointerUp pointerup', function(e){
+        var isPointer = pointerTest(e, 'up');
+        if(isPointer && !isPrimaryTouch(e)) return;
         cancelLongTap()
 
         // swipe
@@ -135,7 +143,7 @@
       // when the browser window loses focus,
       // for example when a modal dialog is shown,
       // cancel all ongoing events
-      .on('touchcancel MSPointerCancel', cancelAll)
+      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
 
     // scrolling the window indicates intention of the user
     // to scroll, not tap or swipe, so cancel all ongoing events
