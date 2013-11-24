@@ -2322,6 +2322,9 @@
         t.assertTrue(fired)
         t.assertIdentical(Zepto, arg1)
         t.assertIdentical(Zepto, arg2)
+
+        // TODO: there's some edge cases that can cause certain browsers to fail,
+        // like a problem with IE that was fixed in c2d5763a. Unsure how to test this.
       },
 
       testSlice: function (t) {
