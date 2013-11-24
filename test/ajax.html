@@ -587,7 +587,7 @@
           'fixtures/ajax_load_simple.html',
           t.reg.resumeHandler('success', function(response, status, xhr){
             t.assertIdentical(testEl, this)
-            t.assertEqual("simple ajax load\n", response)
+            t.assertEqual("simple ajax load\n", response.replace(/\r\n|\r/,"\n"))
             t.assertEqual('simple ajax load', testEl.html().trim())
             t.assertEqual('success', status)
             t.assertIn('abort', xhr)
