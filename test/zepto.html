@@ -53,6 +53,25 @@
   <form id="attr_with_text_input">
   </form>
 
+  <label for="prop_test2" id="prop_test1"></label>
+  <input id="prop_test2" type="text" tabindex="-1" maxlength="10" readonly class="propTest" />
+  <table id="prop_test3" cellspacing="10" cellpadding="5">
+    <tr>
+      <td id="prop_test4" rowspan="2"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+    <tr>
+      <td id="prop_test5" colspan="2"></td>
+    </tr>
+  </table>
+  <img id="prop_test6" usemap="#imgMap" />
+  <map name="imgMap">
+  </map>
+  <div id="prop_test7" contenteditable="true"></div>
+
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
   <div id="htmltest3"></div>
@@ -1646,6 +1665,28 @@
         })
         t.assertEqual('0id', els.attr('data-id'))
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
+      },
+
+      testProp: function(t){
+        var label = $('#prop_test1')
+        var input = $('#prop_test2')
+        var table = $('#prop_test3')
+        var td1 = $('#prop_test4')
+        var td2 = $('#prop_test5')
+        var img = $('#prop_test6')
+        var div = $('#prop_test7')
+
+        t.assertEqual(input.prop('tabindex'), -1)
+        t.assertEqual(input.prop('readonly'), true)
+        t.assertEqual(label.prop('for'), 'prop_test2')
+        t.assertEqual(input.prop('class'), 'propTest')
+        t.assertEqual(input.prop('maxlength'), 10)
+        t.assertEqual(table.prop('cellspacing'), 10)
+        t.assertEqual(table.prop('cellpadding'), 5)
+        t.assertEqual(td1.prop('rowspan'), 2)
+        t.assertEqual(td2.prop('colspan'), 2)
+        t.assertEqual(img.prop('usemap'), '#imgMap')
+        t.assertEqual(div.prop('contenteditable'), 'true')
       },
 
       testAttrNoElement: function(t){
