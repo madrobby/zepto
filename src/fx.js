@@ -42,6 +42,10 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback, delay){
+    if ($.isFunction(duration))
+      callback = duration, ease = undefined, duration = undefined
+    if ($.isFunction(ease))
+      callback = ease, ease = undefined
     if ($.isPlainObject(duration))
       ease = duration.easing, callback = duration.complete, delay = duration.delay, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
@@ -54,7 +58,7 @@
     var key, cssValues = {}, cssProperties, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd
 
-    if (duration === undefined) duration = 0.4
+    if (duration === undefined) duration = $.fx.speeds._default / 1000
     if (delay === undefined) delay = 0
     if ($.fx.off) duration = 0
 

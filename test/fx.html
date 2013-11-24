@@ -7,7 +7,6 @@
   <title>Zepto FX unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/polyfill.js"></script>
   <script src="../src/zepto.js"></script>
   <script src="../src/event.js"></script>
   <script src="../src/fx.js"></script>
@@ -185,11 +184,59 @@
         var duration = 250, start = new Date().getTime()
 
         t.pause()
-        $('#callbacktest').anim({
+        $('#callbacktest').animate({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
-        }, duration / 1000, 'linear',
+        }, duration, 'linear',
+        function(){
+          var context = this
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong")
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
+          })
+        })
+      },
+
+      testCallbackWithoutEasing: function(t){
+        var duration = 250, start = new Date().getTime()
+
+        t.pause()
+        $('#callbacktest').animate({
+          translate3d: '10px, 20px, 400px',
+          rotateZ: '-90deg',
+          opacity: 0.2
+        }, duration,
+        function(){
+          var context = this
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong")
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
+          })
+        })
+      },
+
+      testCallbackWithoutEasingAndWithoutDuration: function(t){
+        var duration = 250, start = new Date().getTime()
+
+        t.pause()
+        $('#callbacktest').animate({
+          translate3d: '30px, 220px, 40px',
+          rotateZ: '180deg',
+          opacity: 0.9
+        },
         function(){
           var context = this
           t.resume(function(){
