@@ -107,6 +107,21 @@ href="https://github.com/madrobby/zepto/blob/master/src/data.js#files">data</a><
     </td>
   </tr>
   <tr>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/deferred.js#files">deferred</a></th>
+    <td></td>
+    <td>
+      Provides <code>$.Deferred</code> promises API.
+      Depends on the "callbacks" module.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="https://github.com/madrobby/zepto/blob/master/src/callbacks.js#files">callbacks</a></th>
+    <td></td>
+    <td>
+      Provides <code>$.Callbacks</code> for use in "deferred" module.
+    </td>
+  </tr>
+  <tr>
     <th><a
 href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selector</a></th>
     <td></td>
