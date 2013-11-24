@@ -85,15 +85,27 @@
       }
     }
 
+    var fired = false
     wrappedCallback = function(event){
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, wrappedCallback)
+      }else{
+        //triggered by setTimeout
+        $(this).unbind(endEvent, wrappedCallback)
       }
+      fired = true
       $(this).css(cssReset)
       callback && callback.call(this)
     }
-    if (duration > 0) this.bind(endEvent, wrappedCallback)
+    if (duration > 0){
+      this.bind(endEvent, wrappedCallback)
+      //transitionEnd not always fired on some android phones
+      setTimeout(function(){
+        if(fired) return
+        wrappedCallback.call(that)
+      }, duration * 1000)
+    }
 
     // trigger page reflow so new elements can animate
     this.size() && this.get(0).clientLeft
