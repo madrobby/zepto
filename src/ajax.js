@@ -209,7 +209,7 @@
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
-        xhr.onreadystatechange = empty;
+        xhr.onreadystatechange = empty
         clearTimeout(abortTimeout)
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
@@ -298,13 +298,13 @@
   var escape = encodeURIComponent
 
   function serialize(params, obj, traditional, scope){
-    var type, array = $.isArray(obj), arrayIndex = 0;
+    var type, array = $.isArray(obj), arrayIndex = 0
     $.each(obj, function(key, value) {
       type = $.type(value)
       if (scope) {
-      	if (traditional) key = scope
-      	else key = scope + '[' + (array ? type == 'object' ? arrayIndex : '' : key) + ']' // if current is an object, use a key, if current is array and value is an object use a numeric index, if current is array and value is non-object use no index...
-      } 
+        if (traditional) key = scope
+        else key = scope + '[' + (array ? type == 'object' ? arrayIndex : '' : key) + ']'
+      }
       arrayIndex++
       // handle data in serializeArray() format
       if (!scope && array) params.add(value.name, value.value)
