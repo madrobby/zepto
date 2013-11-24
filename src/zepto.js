@@ -162,13 +162,11 @@ var Zepto = (function() {
     // If nothing given, return an empty Zepto collection
     if (!selector) return zepto.Z()
     // Optimize for string selectors
-    else if (typeof selector == 'string')
-    {
+    else if (typeof selector == 'string') {
       selector = selector.trim()
       // If it's a html fragment, create nodes from it
-      
-      // Sidenote: I noticed that in both Chrome 21 and Firefox 15,
-      // DOM error 12 is thrown if the fragment doesn't begin with <
+      // Note: In both Chrome 21 and Firefox 15, DOM error 12
+      // is thrown if the fragment doesn't begin with <
       if (selector[0] == '<' && fragmentRE.test(selector))
         dom = zepto.fragment(selector, RegExp.$1, context), selector = null
       // If there's a context, create a collection on that context first, and select
@@ -236,7 +234,7 @@ var Zepto = (function() {
   // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
   // This method can be overriden in plugins.
   zepto.qsa = function(element, selector){
-    var found, 
+    var found,
         maybeID = selector[0] == '#',
         maybeClass = !maybeID && selector[0] == '.',
         nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
@@ -245,10 +243,10 @@ var Zepto = (function() {
       ( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
       (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
       slice.call(
-        isSimple && !maybeID ? 
-          maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class 
+        isSimple && !maybeID ?
+          maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
           element.getElementsByTagName(selector) : // Or a tag
-          element.querySelectorAll(selector) // Or it's not simple, and we need to query all 
+          element.querySelectorAll(selector) // Or it's not simple, and we need to query all
       )
   }
 
