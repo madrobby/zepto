@@ -204,7 +204,7 @@ $ ./make test
 $ script/test
 ~~~
 
-To run manually run tests (all except for the ajax module) on a device,
+To manually run tests (all except for the "ajax" module) on a device,
 you can serve the whole Zepto folder on a web server and open
 `test/index.html` in the device's browser.
 
