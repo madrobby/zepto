@@ -11,6 +11,7 @@ var Zepto = (function() {
     singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
     rootNodeRE = /^(?:body|html)$/i,
+    selectorGroupRE = /(([\w#:.~>+()\s-]+|\*|\[.*?\])+)\s*(,|$)/g,
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -32,7 +33,8 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
-    tempParent = document.createElement('div')
+    tempParent = document.createElement('div'),
+    classTag = 'Zepto' + (+new Date())
 
   zepto.matches = function(element, selector) {
     if (!element || element.nodeType !== 1) return false
@@ -100,6 +102,29 @@ var Zepto = (function() {
     return 'children' in element ?
       slice.call(element.children) :
       $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
+  }
+  
+  // Given a selector, splits it into groups. Necessary because naively
+  // splitting on commas will do the wrong thing.
+  // 
+  // Examples:
+  //  "div.foo" -> ["div.foo"]
+  //  "div, p"  -> ["div", "p"]
+  //  "div[title='foo, bar'], p" -> ["div[title='foo, bar']", "p"]
+  function splitSelector(selector){
+    var results = []
+    selector.replace(selectorGroupRE, function(m, unit){
+      results.push(unit.trim())
+    })
+    return results
+  }
+  
+  // Checks whether the selector has a combinator in it. If not, it's a
+  // "simple selector" and can be optimized in some cases.
+  // This logic isn't exhaustive, but it doesn't have to be. False
+  // positives are OK.
+  function hasCombinator(selector){
+    return selector.match(/[\s>~+]/)
   }
 
   // `$.zepto.fragment` takes a html string and an optional tag name
@@ -457,7 +482,7 @@ var Zepto = (function() {
       return el && !isObject(el) ? el : $(el)
     },
     find: function(selector){
-      var result, $this = this
+      var result, $this = this, error = false
       if (typeof selector == 'object')
         result = $(selector).filter(function(){
           var node = this
@@ -465,8 +490,60 @@ var Zepto = (function() {
             return $.contains(parent, node)
           })
         })
-      else if (this.length == 1) result = $(zepto.qsa(this[0], selector))
-      else result = this.map(function(){ return zepto.qsa(this, selector) })
+      else {
+        // querySelectorAll has scoping issues that come into play when:
+        //   (a) we're querying from a node, rather than from the document
+        //       root;
+        //   (b) the selector in question has any combinator in it.
+        // 
+        // Break the selector into groups, prepend a class name to each
+        // selector to ensure proper scoping (if necessary), then join them
+        // back together.
+        
+        // If we don't need to transform this selector, we won't need to do
+        // any DOM work later. Use a flag to keep track of this.
+        var slow = false
+        selector = splitSelector(selector).map(function(unit){
+          if (hasCombinator(selector)) {
+            slow = true
+            return '.'+classTag+' '+unit
+          }
+          return unit
+        }).join(', ')
+        
+        function findBySelector(elem, selector, slow) {
+          if (elem.length == 1) {
+            if (slow) elem.addClass(classTag)
+            result = $(zepto.qsa(elem[0], selector))
+            if (slow) elem.removeClass(classTag)
+          } else {
+            result = elem.map(function(){
+              if (slow) $(this).addClass(classTag)
+              var result = zepto.qsa(this, selector)
+              if (slow) $(this).removeClass(classTag)
+              return result
+            })
+          }
+          return result
+        }
+        
+        // If we have to do DOM manipulation, we should wrap in a try/catch;
+        // otherwise, we shouldn't bother with the overhead.
+        if (slow) {
+          try {
+            result = findBySelector(this, selector, slow)
+          } catch (e) {
+            console.error('error performing selector: %o', selector)
+            error = true
+            throw e
+          } finally {
+            // If an error was thrown, we should assume that the class name
+            // cleanup didn't happen, and do it ourselves.
+            if (error) $('.'+classTag).removeClass(classTag)
+          }
+        }
+        else result = findBySelector(this, selector, slow)
+      }
       return result
     },
     closest: function(selector, context){
