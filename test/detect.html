@@ -45,6 +45,7 @@
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
       Android_2_3: "Mozilla/5.0 (Linux; U; Android 2.3.7; en-us; Nexus One Build/GRK39F) AppleWebKit/533.1 (KTHML, like Gecko) Version/4.0 Mobile Safari/533.1",
+      Android_2_3_Lenovo_A750: "Lenovo-A750/S102 Linux/2.6.35.7 Android/2.3 Release/12.12.2011 Browser AppleWebkit533.1 Profile/ Configuration/",
       Android_4_1_1: "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03O) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19",
       Android_4_1_1_Tablet: "Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03S) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
       Android_4_3: "Mozilla/5.0 (Linux; Android 4.3; Nexus 4 Build/JWR66Y) AppleWebKit/537.36 (KTHML, like Gecko) Chrome/29.0.1547.59 Mobile Safari/537.36",
@@ -126,6 +127,15 @@
           t.assertEqual("2.3.7", os.version)
           t.assertTrue(os.phone)
           t.assertFalse(!!browser.safari)
+        })
+        detect(UA.Android_2_3_Lenovo_A750, function(os, browser){
+          t.assertTrue(os.android, 'Expected Android')
+          t.assertTrue(browser.webkit, 'Expected WebKit')
+          t.assertEqual("2.3", os.version)
+          // FIXME: Unfortunately we can't detect if it's a phone, as there's
+          // no "mobile" in the UA string.
+          // t.assertTrue(os.phone, 'Expected phone')
+          t.assertFalse(!!browser.safari, 'Expected browser to not be Safari')
         })
         detect(UA.Android_4_1_1, function(os, browser){
           t.assertTrue(os.android)
