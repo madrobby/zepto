@@ -192,7 +192,7 @@
   $.fn.trigger = function(event, data){
     if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
-    event.data = data
+    event.data = data || []
     return this.each(function(){
       // items in the collection might not be DOM elements
       if('dispatchEvent' in this) this.dispatchEvent(event)
@@ -204,6 +204,7 @@
   // doesn't trigger an actual event, doesn't bubble
   $.fn.triggerHandler = function(event, data){
     var e, result
+    data = data || []
     this.each(function(i, element){
       e = createProxy(typeof event == 'string' ? $.Event(event) : event)
       e.data = data
