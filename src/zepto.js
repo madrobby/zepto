@@ -32,8 +32,10 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
-    tempParent = document.createElement('div')
-
+    tempParent = document.createElement('div'),
+    //detection object style
+    cssShow = { position:"absolute", visibility:"hidden", display:"block" }
+    
   zepto.matches = function(element, selector) {
     if (!element || element.nodeType !== 1) return false
     var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
@@ -356,7 +358,19 @@ var Zepto = (function() {
   $.grep = function(elements, callback){
     return filter.call(elements, callback)
   }
+  //swap object
+  $.swap = function (elem, options, callback) {
+      var old = {};
+      for (var name in options) {
+          old[ name ] = elem.style[ name ];
+          elem.style[ name ] = options[ name ];
+      }
+      callback.call(elem);
 
+      for (name in options) {
+          elem.style[ name ] = old[ name ];
+      }
+  }
   if (window.JSON) $.parseJSON = JSON.parse
 
   // Populate the class2type map
@@ -633,7 +647,15 @@ var Zepto = (function() {
         $this.css(props)
       })
       if (this.length==0) return null
-      var obj = this[0].getBoundingClientRect()
+      //determine whether is a hiden element
+      var obj = this[0].getBoundingClientRect(),elem=this[0]
+      if (elem.offsetWidth !== 0) {
+          obj = elem.getBoundingClientRect()
+      } else {
+          $.swap(elem, cssShow, function () {
+              obj = getHiddenClientRect(elem);
+          });
+      }
       return {
         left: obj.left + window.pageXOffset,
         top: obj.top + window.pageYOffset,
@@ -783,6 +805,10 @@ var Zepto = (function() {
       })
     }
   })
+  
+  function getHiddenClientRect(elem) {
+      return elem.getBoundingClientRect();
+  }
 
   function traverseNode(node, fun) {
     fun(node)
