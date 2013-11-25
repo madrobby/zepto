@@ -145,7 +145,7 @@
               event.defaultPrevented === undefined &&
               event.getPreventDefault && event.getPreventDefault() ?
       returnTrue :
-      returnFalse;
+      returnFalse
 
     return proxy
   }

@@ -146,14 +146,15 @@
         t.assertIdentical(this.el.get(0), currentTarget)
       },
 
-      testPreventDefaultWithDelegatedEvent: function(t) {
-        var isDefaultPrevented, span = $('<span>').appendTo(this.el).on('click', function(event) {
-          event.preventDefault()
+      testPreventDefaultWithDelegatedEvent: function(t){
+        var isDefaultPrevented,
+            span = $('<span>').appendTo(this.el).on('click', function(event){
+              event.preventDefault()
+            })
+        $(document).on('click', 'div', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
         })
-        $(document).on('click', 'div', function(event) {
-          isDefaultPrevented = event.isDefaultPrevented();
-        })
-        click(span);
+        click(span)
         t.assertEqual(true, isDefaultPrevented)
       },
 
