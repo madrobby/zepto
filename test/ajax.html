@@ -778,6 +778,12 @@
         t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'text/javascript, application/javascript, application/x-javascript')))
       },
 
+      testMimeTypeOptionOverride: function(t) {
+        $.ajax({ mimeType: 'text/plain' })
+        t.assert(!MockXHR.last.headers.some(matchHeader('Accept')))
+        t.assertEqual('text/plain', MockXHR.last.getResponseHeader('content-type'))
+      },
+
       testContentTypeOptionSetsContentTypeHeader: function(t) {
         $.ajax()
         t.assert(!MockXHR.last.headers.some(matchHeader('Content-Type')))

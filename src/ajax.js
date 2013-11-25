@@ -198,8 +198,8 @@
         xhr = settings.xhr(), abortTimeout
 
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
-    if (mime) {
-      baseHeaders['Accept'] = mime
+    if (mime) baseHeaders['Accept'] = mime
+    if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
@@ -213,7 +213,7 @@
         clearTimeout(abortTimeout)
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
-          dataType = dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
+          dataType = dataType || mimeToDataType(settings.mimeType || xhr.getResponseHeader('content-type'))
           result = xhr.responseText
 
           try {
