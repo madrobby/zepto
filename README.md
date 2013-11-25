@@ -166,6 +166,9 @@ Zepto modules are individual files in the "src/" directory.
 
 ## Contributing
 
+Please read our [contribution guidelines](https://github.com/madrobby/zepto/blob/master/CONTRIBUTING.md)
+for information on how to contribute.
+
 Get in touch:
 
 * @[zeptojs](http://twitter.com/zeptojs)
