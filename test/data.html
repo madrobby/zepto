@@ -215,6 +215,35 @@
         t.assertUndefined(childEl.data('test'))
       },
 
+      testRemoveDataOnElementReplacement: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.replaceWith('<div />')
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testRemoveDataOnElementReplacementHtml: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          wrapper = $('<div />'),
+          elData = { foo: 'bar' }
+
+        el.wrap(wrapper).data('test', elData)
+        childEl.data('test', 1)
+
+        wrapper.html('<b>New content</b>')
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
       testKeepDataOnElementDetach: function(t){
         var el = $('<div data-attr-test=val />'),
           childEl = $('<span />').appendTo(el),
