@@ -973,6 +973,49 @@
         t.assertEqual(MockXHR.last, xhr)
       },
 
+      testBeforeSendCanChangeUrl: function(t) {
+        var xhr = $.ajax({
+          url: 'one',
+          beforeSend: function(x, s) {
+            s.url = 'two'
+          }
+        })
+        t.assertEqual('two', xhr.url)
+      },
+
+      testBeforeSendCanChangeMethod: function(t) {
+        var xhr = $.ajax({
+          type: 'POST',
+          beforeSend: function(x, s) {
+            s.type = 'PUT'
+          }
+        })
+        t.assertEqual('PUT', xhr.method)
+      },
+
+      testBeforeSendCanAccessSerializedData: function(t) {
+        var xhr = $.ajax({
+          data: { a:'b' },
+          beforeSend: function(x, s) {
+            s.data = s.data.toUpperCase()
+          }
+        })
+        t.assertEqual('A=B', xhr.data)
+      },
+
+      testBeforeSendCanChangeAndAddHeaders: function(t) {
+        var xhr = $.ajax({
+          headers: { a:'b', c:'d' },
+          beforeSend: function(x, s) {
+            s.headers['a'] = 'B'
+            s.headers['e'] = 'f'
+          }
+        })
+        t.assert(xhr.headers.some(matchHeader('a', 'B')))
+        t.assert(xhr.headers.some(matchHeader('c', 'd')))
+        t.assert(xhr.headers.some(matchHeader('e', 'f')))
+      },
+
       testBeforeSendAbortCallback: function(t) {
         var xhr, beforeFired = false, settings = {}
         $.ajax({

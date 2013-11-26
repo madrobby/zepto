@@ -231,15 +231,15 @@
       }
     }
 
-    var async = 'async' in settings ? settings.async : true
-    xhr.open(settings.type, settings.url, async)
-
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
-
     if (ajaxBeforeSend(xhr, settings) === false) {
       xhr.abort()
       return false
     }
+
+    var async = 'async' in settings ? settings.async : true
+    xhr.open(settings.type, settings.url, async)
+
+    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
 
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty
