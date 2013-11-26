@@ -137,6 +137,16 @@
       }
       proxy[predicate] = returnFalse
     })
+
+    // Events bubbling up the document may have been marked as prevented
+    // by a handler lower down the tree; reflect the correct value.
+    proxy.isDefaultPrevented = event.defaultPrevented ||
+              // Support: Android < 4.0
+              event.defaultPrevented === undefined &&
+              event.getPreventDefault && event.getPreventDefault() ?
+      returnTrue :
+      returnFalse
+
     return proxy
   }
 

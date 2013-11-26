@@ -146,6 +146,18 @@
         t.assertIdentical(this.el.get(0), currentTarget)
       },
 
+      testPreventDefaultWithDelegatedEvent: function(t){
+        var isDefaultPrevented,
+            span = $('<span>').appendTo(this.el).on('click', function(event){
+              event.preventDefault()
+            })
+        $(document).on('click', 'div', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
+        })
+        click(span)
+        t.assertEqual(true, isDefaultPrevented)
+      },
+
       testEventsOnPlainObjects: function (t){
         var obj = {},
         	log = [],
