@@ -164,7 +164,7 @@
         var obj = {},
         	log = [],
         	fn1 = function(){ log.push('a') },
-        	fn2 = function(evt, value){ log.push(value)    }
+          fn2 = function(evt, value){ log.push(value)    },
         	fn3 = function(evt, value){ log.push("event2") }
         $(obj)
         	.on('event', fn1)
