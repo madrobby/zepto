@@ -2765,7 +2765,7 @@
         t.pause()
         setTimeout(function(){
           t.resume(function(){
-            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            var text = $('#link_target_iframe')[0].contentDocument.body.textContent
             t.assert(!text.match(/Hello from iframe/))
           })
         }, 500)
@@ -2785,7 +2785,7 @@
         t.pause()
         setTimeout(function(){
           t.resume(function(){
-            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            var text = $('#link_target_iframe')[0].contentDocument.body.textContent
             t.assert(text.match(/Hello from iframe/))
           })
         }, 500)
