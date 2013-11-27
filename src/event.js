@@ -62,7 +62,7 @@
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
       handler.proxy = function(e){
-        var result = callback.apply(element, [e].concat(e.data))
+        var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
       }
@@ -193,24 +193,24 @@
       this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
   }
 
-  $.fn.trigger = function(event, data){
+  $.fn.trigger = function(event, args){
     if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
-    event.data = data
+    event._args = args
     return this.each(function(){
       // items in the collection might not be DOM elements
       if('dispatchEvent' in this) this.dispatchEvent(event)
-      else $(this).triggerHandler(event, data)
+      else $(this).triggerHandler(event, args)
     })
   }
 
   // triggers event handlers on current element just as if an event occurred,
   // doesn't trigger an actual event, doesn't bubble
-  $.fn.triggerHandler = function(event, data){
+  $.fn.triggerHandler = function(event, args){
     var e, result
     this.each(function(i, element){
       e = createProxy(typeof event == 'string' ? $.Event(event) : event)
-      e.data = data
+      e._args = args
       e.target = element
       $.each(findHandlers(element, event.type || event), function(i, handler){
         result = handler.proxy(e)
