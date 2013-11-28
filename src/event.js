@@ -5,6 +5,8 @@
 ;(function($){
   var $$ = $.zepto.qsa, _zid = 1, undefined,
       slice = Array.prototype.slice,
+      isFunction = $.isFunction,
+      isString = function(obj){ return typeof obj == 'string' },
       handlers = {},
       specialEvents={},
       hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
@@ -84,11 +86,11 @@
   $.event = { add: add, remove: remove }
 
   $.proxy = function(fn, context) {
-    if ($.isFunction(fn)) {
+    if (isFunction(fn)) {
       var proxyFn = function(){ return fn.apply(context, arguments) }
       proxyFn._zid = zid(fn)
       return proxyFn
-    } else if (typeof context == 'string') {
+    } else if (isString(context)) {
       return $.proxy(fn[context], fn)
     } else {
       throw new TypeError("expected function")
@@ -160,16 +162,16 @@
 
   $.fn.on = function(event, selector, data, callback, one){
     var autoRemove, delegator, $this = this
-    if (event && typeof event != 'string') {
+    if (event && !isString(event)) {
       $.each(event, function(type, fn){
         $this.on(type, selector, data, fn, one)
       })
       return $this
     }
 
-    if (typeof selector != 'string' && !$.isFunction(callback))
+    if (!isString(selector) && !isFunction(callback))
       callback = data, data = selector, selector = undefined
-    if ($.isFunction(data))
+    if (isFunction(data))
       callback = data, data = undefined
 
     return $this.each(function(_, element){
@@ -191,14 +193,14 @@
   }
   $.fn.off = function(event, selector, callback){
     var $this = this
-    if (event && typeof event != 'string') {
+    if (event && !isString(event)) {
       $.each(event, function(type, fn){
         $this.off(type, selector, fn)
       })
       return $this
     }
 
-    if (typeof selector != 'string' && !$.isFunction(callback))
+    if (!isString(selector) && !isFunction(callback))
       callback = selector, selector = undefined
 
     return $this.each(function(){
@@ -207,7 +209,7 @@
   }
 
   $.fn.trigger = function(event, args){
-    if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
+    if (isString(event) || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
     event._args = args
     return this.each(function(){
@@ -222,7 +224,7 @@
   $.fn.triggerHandler = function(event, args){
     var e, result
     this.each(function(i, element){
-      e = createProxy(typeof event == 'string' ? $.Event(event) : event)
+      e = createProxy(isString(event) ? $.Event(event) : event)
       e._args = args
       e.target = element
       $.each(findHandlers(element, event.type || event), function(i, handler){
@@ -256,7 +258,7 @@
   })
 
   $.Event = function(type, props) {
-    if (typeof type != 'string') props = type, type = props.type
+    if (!isString(type)) props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true)
