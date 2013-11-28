@@ -62,6 +62,7 @@
       handler.del   = getDelegate && getDelegate(fn, event)
       var callback  = handler.del || fn
       handler.proxy = function(e){
+        fix(e)
         var result = callback.apply(element, [e].concat(e.data))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
@@ -144,7 +145,8 @@
     return proxy
   }
 
-  // emulates the 'defaultPrevented' property for browsers that have none
+  // emulates the 'defaultPrevented' property for browsers that have none.
+  // emulates jQuery's proprietary method - isDefaultPrevented
   function fix(event) {
     if (!('defaultPrevented' in event)) {
       event.defaultPrevented = false
@@ -154,6 +156,7 @@
         prevent.call(event)
       }
     }
+    event.isDefaultPrevented = function(){ return event.defaultPrevented }
   }
 
   $.fn.delegate = function(selector, event, callback){
