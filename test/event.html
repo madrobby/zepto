@@ -86,7 +86,7 @@
         $([document, document.body]).off()
       },
 
-      testProxiedHandlerCanBeUnbindedWithOriginal: function(t){
+      testProxiedHandlerCanBeUnboundWithOriginal: function(t){
         var obj = {times:0, fn: function(){ this.times++ }}
 
         this.el.on('click', $.proxy(obj, 'fn'))
@@ -96,6 +96,15 @@
         this.el.off('click', obj.fn)
         click(this.el)
         t.assertEqual(1, obj.times)
+      },
+
+      testOneHandlerCanBeUnboundWithOriginal: function(t){
+        var count = 0, fn = function(){ count++ }
+
+        this.el.one('click', fn)
+        this.el.off('click', fn)
+        click(this.el)
+        t.assertEqual(0, count)
       },
 
       testOnWithObject: function(t){
