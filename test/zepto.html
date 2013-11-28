@@ -2469,13 +2469,19 @@
         t.assertEqualCollection($('#empty_test'), context)
       },
 
-      testBindWithCustomData: function(t) {
-        var counter = 0
-        var handler = function(ev,customData) { counter = customData.counter }
+      testBindWithCustomArgument: function(t) {
+        var data, numArgs, counter = 0,
+            handler = function(ev, arg) {
+              numArgs = arguments.length,
+              data = ev.data
+              counter = arg.counter
+            }
 
         $('#some_element').bind('custom', handler)
         $('#some_element').trigger('custom', { counter: 10 })
         t.assertEqual(10, counter)
+        t.assertEqual(2, numArgs)
+        t.assertUndefined(data)
       },
 
       testBindPreventDefault: function (t) {
@@ -2529,10 +2535,11 @@
       },
 
       testTriggerEventObject: function(t){
-        var counter = 0,
+        var data, counter = 0,
             customEventKey = 0
 
         var handler = function(ev,customData) {
+          data = ev.data
           counter = customData.counter
           customEventKey = ev.customKey
         }
@@ -2544,6 +2551,7 @@
 
         t.assertEqual(10, counter)
         t.assertEqual(20, customEventKey)
+        t.assertUndefined(data)
       },
 
       testTriggerEventCancelled: function(t){
@@ -2795,7 +2803,7 @@
         var counter = 0, received, el = $('p').first(),
           eventData = {
             click: function(){ counter++ },
-            custom: function(e, data){ received = data }
+            custom: function(e, arg){ received = arg }
           }
 
         $(document.body).delegate('p', eventData)
@@ -2815,11 +2823,11 @@
         t.assertEqual('boo', received)
       },
 
-      testDelegateWithCustomData: function(t) {
+      testDelegateWithCustomArgument: function(t) {
         var received
-        $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more })
-        $('p').delegate('span.yay', 'custom', function(e, data){ received = data })
-        $(document).delegate('p', 'custom', function(e, data){ received = data })
+        $(document).delegate('#some_element', 'custom', function(e, arg, more){ received = arg + more })
+        $('p').delegate('span.yay', 'custom', function(e, arg){ received = arg })
+        $(document).delegate('p', 'custom', function(e, arg){ received = arg })
 
         $('#some_element').trigger('custom', 'one')
         t.assertEqual('oneundefined', received)
@@ -2998,10 +3006,10 @@
 
       testOne: function(t){
         var counter = 0, context, received, el = $('#some_element')
-        $(document.body).one('click', function(e, data, more){
+        $(document.body).one('click', function(e, arg, more){
           context = this
           counter++
-          received = data + more
+          received = arg + more
           t.assertIn('preventDefault', e)
           return false
         })

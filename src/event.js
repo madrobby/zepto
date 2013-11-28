@@ -3,8 +3,12 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
+  var $$ = $.zepto.qsa, _zid = 1, undefined,
       slice = Array.prototype.slice,
+      isFunction = $.isFunction,
+      isString = function(obj){ return typeof obj == 'string' },
+      handlers = {},
+      specialEvents={},
       hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
@@ -31,11 +35,6 @@
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)')
   }
 
-  function eachEvent(events, fn, iterator){
-    if ($.type(events) != "string") $.each(events, iterator)
-    else events.split(/\s/).forEach(function(type){ iterator(type, fn) })
-  }
-
   function eventCapture(handler, captureSetting) {
     return handler.del &&
       (handler.e == 'focus' || handler.e == 'blur') ||
@@ -46,9 +45,9 @@
     return hover[type] || type
   }
 
-  function add(element, events, fn, selector, getDelegate, capture){
+  function add(element, events, fn, data, selector, delegator, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
-    eachEvent(events, fn, function(event, fn){
+    events.split(/\s/).forEach(function(event){
       if (event == 'ready') return $(document).ready(fn)
       var handler   = parse(event)
       handler.fn    = fn
@@ -59,10 +58,11 @@
         if (!related || (related !== this && !$.contains(this, related)))
           return handler.fn.apply(this, arguments)
       }
-      handler.del   = getDelegate && getDelegate(fn, event)
-      var callback  = handler.del || fn
+      handler.del   = delegator
+      var callback  = delegator || fn
       handler.proxy = function(e){
-        var result = callback.apply(element, [e].concat(e.data))
+        e.data = data
+        var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
       }
@@ -74,7 +74,7 @@
   }
   function remove(element, events, fn, selector, capture){
     var id = zid(element)
-    eachEvent(events || '', fn, function(event, fn){
+    ;(events || '').split(/\s/).forEach(function(event){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
       if ('removeEventListener' in element)
@@ -86,37 +86,25 @@
   $.event = { add: add, remove: remove }
 
   $.proxy = function(fn, context) {
-    if ($.isFunction(fn)) {
+    if (isFunction(fn)) {
       var proxyFn = function(){ return fn.apply(context, arguments) }
       proxyFn._zid = zid(fn)
       return proxyFn
-    } else if (typeof context == 'string') {
+    } else if (isString(context)) {
       return $.proxy(fn[context], fn)
     } else {
       throw new TypeError("expected function")
     }
   }
 
-  $.fn.bind = function(event, callback){
-    return this.each(function(){
-      add(this, event, callback)
-    })
+  $.fn.bind = function(event, data, callback){
+    return this.on(event, data, callback)
   }
   $.fn.unbind = function(event, callback){
-    return this.each(function(){
-      remove(this, event, callback)
-    })
+    return this.off(event, callback)
   }
-  $.fn.one = function(event, callback){
-    return this.each(function(i, element){
-      add(this, event, callback, null, function(fn, type){
-        return function(){
-          var result = fn.apply(element, arguments)
-          remove(element, type, fn)
-          return result
-        }
-      })
-    })
+  $.fn.one = function(event, selector, data, callback){
+    return this.on(event, selector, data, callback, 1)
   }
 
   var returnTrue = function(){return true},
@@ -157,22 +145,10 @@
   }
 
   $.fn.delegate = function(selector, event, callback){
-    return this.each(function(i, element){
-      add(element, event, callback, selector, function(fn){
-        return function(e){
-          var evt, match = $(e.target).closest(selector, element).get(0)
-          if (match) {
-            evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
-            return fn.apply(match, [evt].concat(slice.call(arguments, 1)))
-          }
-        }
-      })
-    })
+    return this.on(event, selector, callback)
   }
   $.fn.undelegate = function(selector, event, callback){
-    return this.each(function(){
-      remove(this, event, callback, selector)
-    })
+    return this.off(event, selector, callback)
   }
 
   $.fn.live = function(event, callback){
@@ -184,33 +160,72 @@
     return this
   }
 
-  $.fn.on = function(event, selector, callback){
-    return !selector || $.isFunction(selector) ?
-      this.bind(event, selector || callback) : this.delegate(selector, event, callback)
+  $.fn.on = function(event, selector, data, callback, one){
+    var autoRemove, delegator, $this = this
+    if (event && !isString(event)) {
+      $.each(event, function(type, fn){
+        $this.on(type, selector, data, fn, one)
+      })
+      return $this
+    }
+
+    if (!isString(selector) && !isFunction(callback))
+      callback = data, data = selector, selector = undefined
+    if (isFunction(data))
+      callback = data, data = undefined
+
+    return $this.each(function(_, element){
+      if (one) autoRemove = function(e){
+        remove(element, e.type, callback)
+        return callback.apply(this, arguments)
+      }
+
+      if (selector) delegator = function(e){
+        var evt, match = $(e.target).closest(selector, element).get(0)
+        if (match) {
+          evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
+          return (autoRemove || callback).apply(match, [evt].concat(slice.call(arguments, 1)))
+        }
+      }
+
+      add(element, event, callback, data, selector, delegator || autoRemove)
+    })
   }
   $.fn.off = function(event, selector, callback){
-    return !selector || $.isFunction(selector) ?
-      this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
+    var $this = this
+    if (event && !isString(event)) {
+      $.each(event, function(type, fn){
+        $this.off(type, selector, fn)
+      })
+      return $this
+    }
+
+    if (!isString(selector) && !isFunction(callback))
+      callback = selector, selector = undefined
+
+    return $this.each(function(){
+      remove(this, event, callback, selector)
+    })
   }
 
-  $.fn.trigger = function(event, data){
-    if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
+  $.fn.trigger = function(event, args){
+    if (isString(event) || $.isPlainObject(event)) event = $.Event(event)
     fix(event)
-    event.data = data
+    event._args = args
     return this.each(function(){
       // items in the collection might not be DOM elements
       if('dispatchEvent' in this) this.dispatchEvent(event)
-      else $(this).triggerHandler(event, data)
+      else $(this).triggerHandler(event, args)
     })
   }
 
   // triggers event handlers on current element just as if an event occurred,
   // doesn't trigger an actual event, doesn't bubble
-  $.fn.triggerHandler = function(event, data){
+  $.fn.triggerHandler = function(event, args){
     var e, result
     this.each(function(i, element){
-      e = createProxy(typeof event == 'string' ? $.Event(event) : event)
-      e.data = data
+      e = createProxy(isString(event) ? $.Event(event) : event)
+      e._args = args
       e.target = element
       $.each(findHandlers(element, event.type || event), function(i, handler){
         result = handler.proxy(e)
@@ -243,7 +258,7 @@
   })
 
   $.Event = function(type, props) {
-    if (typeof type != 'string') props = type, type = props.type
+    if (!isString(type)) props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true)
