@@ -4,6 +4,7 @@
 
 ;(function($){
   var $$ = $.zepto.qsa, handlers = {}, _zid = 1, specialEvents={},
+      slice = Array.prototype.slice,
       hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
@@ -162,7 +163,7 @@
           var evt, match = $(e.target).closest(selector, element).get(0)
           if (match) {
             evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
-            return fn.apply(match, [evt].concat([].slice.call(arguments, 1)))
+            return fn.apply(match, [evt].concat(slice.call(arguments, 1)))
           }
         }
       })
