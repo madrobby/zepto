@@ -33,11 +33,6 @@
     return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)')
   }
 
-  function eachEvent(events, fn, iterator){
-    if ($.type(events) != "string") $.each(events, iterator)
-    else events.split(/\s/).forEach(function(type){ iterator(type, fn) })
-  }
-
   function eventCapture(handler, captureSetting) {
     return handler.del &&
       (handler.e == 'focus' || handler.e == 'blur') ||
@@ -48,9 +43,9 @@
     return hover[type] || type
   }
 
-  function add(element, events, fn, data, selector, getDelegate, capture){
+  function add(element, events, fn, data, selector, delegator, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
-    eachEvent(events, fn, function(event, fn){
+    events.split(/\s/).forEach(function(event){
       if (event == 'ready') return $(document).ready(fn)
       var handler   = parse(event)
       handler.fn    = fn
@@ -61,8 +56,8 @@
         if (!related || (related !== this && !$.contains(this, related)))
           return handler.fn.apply(this, arguments)
       }
-      handler.del   = getDelegate && getDelegate(fn, event)
-      var callback  = handler.del || fn
+      handler.del   = delegator
+      var callback  = delegator || fn
       handler.proxy = function(e){
         e.data = data
         var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
@@ -77,7 +72,7 @@
   }
   function remove(element, events, fn, selector, capture){
     var id = zid(element)
-    eachEvent(events || '', fn, function(event, fn){
+    ;(events || '').split(/\s/).forEach(function(event){
       findHandlers(element, event, fn, selector).forEach(function(handler){
         delete handlers[id][handler.i]
       if ('removeEventListener' in element)
@@ -101,26 +96,13 @@
   }
 
   $.fn.bind = function(event, data, callback){
-    if ($.isFunction(data)) callback = data, data = undefined
-    return this.each(function(){
-      add(this, event, callback, data)
-    })
+    return this.on(event, data, callback)
   }
   $.fn.unbind = function(event, callback){
-    return this.each(function(){
-      remove(this, event, callback)
-    })
+    return this.off(event, callback)
   }
-  $.fn.one = function(event, callback){
-    return this.each(function(i, element){
-      add(this, event, callback, undefined, null, function(fn, type){
-        return function(){
-          var result = fn.apply(element, arguments)
-          remove(element, type, fn)
-          return result
-        }
-      })
-    })
+  $.fn.one = function(event, selector, data, callback){
+    return this.on(event, selector, data, callback, 1)
   }
 
   var returnTrue = function(){return true},
@@ -160,24 +142,11 @@
     }
   }
 
-  $.fn.delegate = function(selector, event, data, callback){
-    if (!callback) callback = data, data = undefined
-    return this.each(function(i, element){
-      add(element, event, callback, data, selector, function(fn){
-        return function(e){
-          var evt, match = $(e.target).closest(selector, element).get(0)
-          if (match) {
-            evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
-            return fn.apply(match, [evt].concat(slice.call(arguments, 1)))
-          }
-        }
-      })
-    })
+  $.fn.delegate = function(selector, event, callback){
+    return this.on(event, selector, callback)
   }
   $.fn.undelegate = function(selector, event, callback){
-    return this.each(function(){
-      remove(this, event, callback, selector)
-    })
+    return this.off(event, selector, callback)
   }
 
   $.fn.live = function(event, callback){
@@ -189,14 +158,52 @@
     return this
   }
 
-  $.fn.on = function(event, selector, data, callback){
-    return $.type(selector) != 'string' ?
-      this.bind(event, selector, data) :
-      this.delegate(selector, event, data, callback)
+  $.fn.on = function(event, selector, data, callback, one){
+    var autoRemove, delegator, $this = this
+    if (event && typeof event != 'string') {
+      $.each(event, function(type, fn){
+        $this.on(type, selector, data, fn, one)
+      })
+      return $this
+    }
+
+    if (typeof selector != 'string' && !$.isFunction(callback))
+      callback = data, data = selector, selector = undefined
+    if ($.isFunction(data))
+      callback = data, data = undefined
+
+    return $this.each(function(_, element){
+      if (one) autoRemove = function(e){
+        remove(element, e.type, callback)
+        return callback.apply(this, arguments)
+      }
+
+      if (selector) delegator = function(e){
+        var evt, match = $(e.target).closest(selector, element).get(0)
+        if (match) {
+          evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
+          return (autoRemove || callback).apply(match, [evt].concat(slice.call(arguments, 1)))
+        }
+      }
+
+      add(element, event, callback, data, selector, delegator || autoRemove)
+    })
   }
   $.fn.off = function(event, selector, callback){
-    return !selector || $.isFunction(selector) ?
-      this.unbind(event, selector || callback) : this.undelegate(selector, event, callback)
+    var $this = this
+    if (event && typeof event != 'string') {
+      $.each(event, function(type, fn){
+        $this.off(type, selector, fn)
+      })
+      return $this
+    }
+
+    if (typeof selector != 'string' && !$.isFunction(callback))
+      callback = selector, selector = undefined
+
+    return $this.each(function(){
+      remove(this, event, callback, selector)
+    })
   }
 
   $.fn.trigger = function(event, args){

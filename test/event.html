@@ -107,6 +107,26 @@
         t.assertEqual(0, count)
       },
 
+      testOneDelegation: function(t){
+        var context, count = 0
+        $(document).one('click', 'div', function(){ context = this; count++ })
+
+        click(this.el)
+        click(this.el)
+        t.assertEqual(1, count)
+        t.assertIdentical(this.el.get(0), context)
+      },
+
+      testOneWithData: function(t){
+        var obj = {}, gotObj, count = 0
+        $(document).one('click', obj, function(e){ gotObj = e.data; count++ })
+
+        click(this.el)
+        click(this.el)
+        t.assertEqual(1, count)
+        t.assertIdentical(obj, gotObj)
+      },
+
       testHandlerArity: function(t){
         var numArgs
         this.el.on('click', function(){ numArgs = arguments.length })
