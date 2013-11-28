@@ -61,12 +61,12 @@ Zepto modules are individual files in the "src/" directory.
   </tr>
   <tr>
     <th><a href="src/detect.js#files">detect</a></th>
-    <td>✔</td>
+    <td></td>
     <td>Provides <code>$.os</code> and <code>$.browser</code> information</td>
   </tr>
   <tr>
     <th><a href="src/fx.js#files">fx</a></th>
-    <td>✔</td>
+    <td></td>
     <td>The <code>animate()</code> method</td>
   </tr>
   <tr>
