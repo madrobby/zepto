@@ -578,7 +578,7 @@ var Zepto = (function() {
     toggle: function(setting){
       return this.each(function(){
         var el = $(this)
-        ;(setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
+        ;+!!(setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
       })
     },
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
@@ -722,7 +722,7 @@ var Zepto = (function() {
       return this.each(function(idx){
         var $this = $(this), names = funcArg(this, name, idx, className(this))
         names.split(/\s+/g).forEach(function(klass){
-          (when === undefined ? !$this.hasClass(klass) : when) ?
+          +!!(when === undefined ? !$this.hasClass(klass) : when) ?
             $this.addClass(klass) : $this.removeClass(klass)
         })
       })
