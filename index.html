@@ -157,26 +157,27 @@ document.write('<script src=' +
 
   <h3 id=platforms>Target platforms</h3>
 
-  <h4>Desktop browsers</h4>
+  <h4>Primary (100% support)</h4>
   <ul>
-    <li>Safari 5+ (Mac, Win)</li>
-    <li>Chrome 5+ (Win, Mac, Linux, Chrome OS)</li>
-    <li>Mozilla Firefox 4+ (Win, Mac, Linux)</li>
-    <li>Opera 10+ (Win, Mac, Linux)</li>
+    <li>Safari 6+ (Mac)</li>
+    <li>Chrome 30+ (Windows, Mac, Android, iOS, Linux, Chrome OS)</li>
+    <li>Firefox 24+ (Windows, Mac, Android, Linux, Firefox OS)</li>
+    <li>iOS 5+ Safari</li>
+    <li>Android 2.3+ Browser</li>
+    <li>Internet Explorer 10+ (Windows, Windows Phone)</li>
   </ul>
 
-  <h4>Mobile browsers</h4>
+  <h4>Secondary targets (fully or mostly supported)</h4>
   <ul>
-    <li>iOS 4+ Safari</li>
-    <li>Chrome for Android</li>
-    <li>Chrome for iOS</li>
-    <li>Android 2.2+ Browser</li>
+    <li>iOS 3+ Safari</li>
+    <li>Chrome <30</li>
+    <li>Firefox <24</li>
+    <li>Android Browser 2.2</li>
+    <li>Opera 10+</li>
     <li>webOS 1.4.5+ Browser</li>
     <li>BlackBerry Tablet OS 1.0.7+ Browser</li>
     <li>Amazon Silk 1.0+</li>
-    <li>Firefox for Android</li>
-    <li>Firefox OS Browser</li>
-    <li>Practically any WebKit-based browsers/runtimes</li>
+    <li>Any WebKit-based browsers/runtimes</li>
   </ul>
 
   <p>
@@ -193,7 +194,8 @@ document.write('<script src=' +
 
   <p>
     In short, Zepto is expected to work in every modern browser
-    and browser-like environment, except for Internet Explorer.
+    and browser-like environment. Notably, Zepto doesn't support
+    old Internet Explorer versions (&lt;10).
   </p>
 
   <h3>Manually building Zepto</h3>
