@@ -765,10 +765,12 @@
         })
       },
 
-      testDataTypeOptionSetsAcceptHeader: function(t) {
+      testDefaultAcceptHeader: function(t) {
         $.ajax()
-        t.assert(!MockXHR.last.headers.some(matchHeader('Accept')))
+        t.assert(MockXHR.last.headers.some(matchHeader('Accept', '*/*')))
+      },
 
+      testDataTypeOptionSetsAcceptHeader: function(t) {
         $.ajax({ dataType: 'json' })
         t.assert(MockXHR.last.headers.some(matchHeader('Accept', 'application/json')))
         // verifies overrideMimeType:
@@ -781,7 +783,6 @@
 
       testMimeTypeOptionOverride: function(t) {
         $.ajax({ mimeType: 'text/plain' })
-        t.assert(!MockXHR.last.headers.some(matchHeader('Accept')))
         t.assertEqual('text/plain', MockXHR.last.getResponseHeader('content-type'))
       },
 
