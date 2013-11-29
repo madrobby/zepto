@@ -107,6 +107,34 @@
         t.assertEqual(0, count)
       },
 
+      testOneDelegation: function(t){
+        var context, count = 0
+        $(document).one('click', 'div', function(){ context = this; count++ })
+
+        click(this.el)
+        click(this.el)
+        t.assertEqual(1, count)
+        t.assertIdentical(this.el.get(0), context)
+      },
+
+      testOneWithData: function(t){
+        var obj = {}, gotObj, count = 0
+        $(document).one('click', obj, function(e){ gotObj = e.data; count++ })
+
+        click(this.el)
+        click(this.el)
+        t.assertEqual(1, count)
+        t.assertIdentical(obj, gotObj)
+      },
+
+      testHandlerArity: function(t){
+        var numArgs
+        this.el.on('click', function(){ numArgs = arguments.length })
+
+        click(this.el)
+        t.assertEqual(1, numArgs)
+      },
+
       testOnWithObject: function(t){
         var log = []
         this.el.on({ click: function(){ log.push('a') } }).
@@ -116,15 +144,18 @@
         t.assertEqual('a b', log.sort().join(' '))
       },
 
-      testOnWithNullSelector: function(t){
-        var log = []
-        this.el.on('click', null, function(){ log.push('a') }).
-                on('click', undefined, function(){ log.push('b') }).
-                on('click', false, function(){ log.push('c') }).
-                on('click', '', function(){ log.push('d') })
+      testOnWithBlankData: function(t){
+        var log = [], fn = function(e){ log.push(e.data) }
+        this.el
+          .on('click', null, fn)
+          .on('click', undefined, fn)
+          .on('click', false, fn)
 
         click(this.el)
-        t.assertEqual('a b c d', log.sort().join(' '))
+        t.assertEqual(3, log.length)
+        t.assertIdentical(null, log[0])
+        t.assertIdentical(undefined, log[1])
+        t.assertIdentical(false, log[2])
       },
 
       testOffWithObject: function(t){
@@ -195,6 +226,58 @@
         log = []
         $(obj).trigger('event2');
         t.assertEqual('event2', log.join(' '));
+      },
+
+      testHandlerWithoutData: function(t){
+        var gotData
+
+        $(document).on('click', function(event){
+          gotData = event.data
+        })
+        t.assertUndefined(gotData)
+
+        click(this.el)
+        t.assertUndefined(gotData)
+      },
+
+      testHandlerWithData: function(t){
+        var data = {}, gotData, numArgs
+
+        $(document).on('click', data, function(event){
+          gotData = event.data
+          numArgs = arguments.length
+        })
+        t.assertUndefined(gotData)
+
+        click(this.el)
+        t.assertEqual(1, numArgs)
+        t.assertIdentical(data, gotData)
+      },
+
+      testDelegatedWithData: function(t){
+        var data = {}, gotData, numArgs
+
+        $(document).on('click', 'div', data, function(event){
+          gotData = event.data
+          numArgs = arguments.length
+        })
+        t.assertUndefined(gotData)
+
+        click(this.el)
+        t.assertEqual(1, numArgs)
+        t.assertIdentical(data, gotData)
+      },
+
+      testTriggerWithData: function(t){
+        var data = {}, gotData
+
+        $(document).on('myevent', data, function(event){
+          gotData = event.data
+        })
+        t.assertUndefined(gotData)
+
+        this.el.trigger('myevent')
+        t.assertIdentical(data, gotData)
       }
     })
   })()
