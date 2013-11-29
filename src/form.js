@@ -32,7 +32,7 @@
     else if (this.length) {
       var event = $.Event('submit')
       this.eq(0).trigger(event)
-      if (!event.defaultPrevented) this.get(0).submit()
+      if (!event.isDefaultPrevented()) this.get(0).submit()
     }
     return this
   }

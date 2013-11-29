@@ -140,20 +140,24 @@
       proxy[predicate] = returnFalse
     })
 
-    if (event.defaultPrevented) proxy.isDefaultPrevented = returnTrue
+    if (event.defaultPrevented !== undefined ? event.defaultPrevented :
+        event.getPreventDefault && event.getPreventDefault())
+      proxy.isDefaultPrevented = returnTrue
     return proxy
   }
 
-  // emulates the 'defaultPrevented' property for browsers that have none
   function fix(event) {
-    if (!('defaultPrevented' in event)) {
+    if (!('isDefaultPrevented' in event)) {
+      var original = event.preventDefault
       event.defaultPrevented = false
-      var prevent = event.preventDefault
+      event.isDefaultPrevented = returnFalse
       event.preventDefault = function(){
         event.defaultPrevented = true
-        prevent.call(event)
+        event.isDefaultPrevented = returnTrue
+        original.call(event)
       }
     }
+    return event
   }
 
   $.fn.delegate = function(selector, event, callback){
@@ -194,8 +198,7 @@
   }
 
   $.fn.trigger = function(event, data){
-    if (typeof event == 'string' || $.isPlainObject(event)) event = $.Event(event)
-    fix(event)
+    event = (typeof event == 'string' || $.isPlainObject(event)) ? $.Event(event) : fix(event)
     event.data = data
     return this.each(function(){
       // items in the collection might not be DOM elements
@@ -209,7 +212,7 @@
   $.fn.triggerHandler = function(event, data){
     var e, result
     this.each(function(i, element){
-      e = createProxy(typeof event == 'string' ? $.Event(event) : event)
+      e = createProxy(typeof event == 'string' ? $.Event(event) : fix(event))
       e.data = data
       e.target = element
       $.each(findHandlers(element, event.type || event), function(i, handler){
@@ -247,8 +250,7 @@
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
     if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
     event.initEvent(type, bubbles, true)
-    event.isDefaultPrevented = function(){ return event.defaultPrevented }
-    return event
+    return fix(event)
   }
 
 })(Zepto)
