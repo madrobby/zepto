@@ -189,8 +189,8 @@
 
       testAjaxGetWithParamsAndType: function(t){
         t.pause()
-        $.get('echo', { sample: 'data' }, t.reg.resumeHandler('success', function(response){
-          t.assertLine('GET ?{"sample":"data"}', response)
+        $.get('echo', { sample: 'plain' }, t.reg.resumeHandler('success', function(response){
+          t.assertLine('GET ?{"sample":"plain"}', response)
           t.assertLine("accept: text/plain", response)
         }), 'text')
       },
@@ -199,12 +199,12 @@
         t.pause()
         $(document).on('ajaxSuccess', function(e, xhr, settings, response){
           deferredResume(t, function(){
-            t.assertLine('GET ?{"sample":"data"}', response)
+            t.assertLine('GET ?{"sample":"plain"}', response)
             t.assertLine("accept: text/plain", response)
             t.assertEqualList('ajaxBeforeSend ajaxSend ajaxSuccess ajaxComplete', t.reg.events())
           })
         })
-        $.get('echo', { sample: 'data' }, 'text')
+        $.get('echo', { sample: 'plain' }, 'text')
       },
 
       testAjaxPost: function(t){

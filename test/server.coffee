@@ -21,6 +21,7 @@ dump = (obj) ->
   obj
 
 app.all '/test/echo', (req, res) ->
+  res.set 'Cache-Control', 'no-cache'
   res.send """
            #{req.method} ?#{dump(req.query)}
            content-type: #{mime(req)}
@@ -39,6 +40,7 @@ app.get '/test/jsonpBlah', (req, res) ->
   res.send 'blah()'
 
 app.get '/test/json', (req, res) ->
+  res.set 'Cache-Control', 'no-cache'
   if /json/.test req.headers['accept']
     if req.query.invalid
       res.set 'Content-Type', 'application/json'
