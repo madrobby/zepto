@@ -142,7 +142,7 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <p>
-    <b>If you need to support Internet Explorer, you can fall back on jQuery.</b>
+    <b>If you need to support older Internet Explorer versions, you can fall back on jQuery.</b>
     Note that conditional comments are no longer supported starting on IE 10,
     so we recommend the following <code>document.write</code> approach:
   </p>
@@ -154,6 +154,11 @@ document.write('<script src=' +
 '.js><\/script>')
 </script>
 {% endhighlight %}
+
+  <p>
+    This will load jQuery on Internet Explorer up to version 10, and
+    load Zepto on other browsers and Internet Explorer 11 and higher.
+  </p>
 
   <h3 id=platforms>Target platforms</h3>
 
