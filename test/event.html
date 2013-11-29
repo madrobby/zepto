@@ -294,6 +294,8 @@
             if (event[methodName]) {
               event[methodName]()
               eventMethodResults[predicate] = event[predicate]()
+            } else {
+              console.warn("method not available: ", methodName)
             }
           })
         })
@@ -303,7 +305,37 @@
         $.each(eventMethodResults, function(predicate, value){
           t.assertTrue(value, predicate)
         })
+      },
+
+      testIsDefaultPreventedOnAllEvents: function(t){
+        var isDefaultPrevented
+
+        $(this.el).on('click', function(event){
+          event.preventDefault()
+        })
+        $(document).on('click', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
+        })
+
+        click(this.el)
+        t.assertTrue(isDefaultPrevented)
+      },
+
+      testIsDefaultPreventedOnOriginalEventAfterDelegate: function(t){
+        var isDefaultPrevented
+
+        this.el.on('click', 'span', function(event){
+          event.preventDefault()
+        })
+        $(document).on('click', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
+        })
+
+        click($('<span>').appendTo(this.el))
+
+        t.assertTrue(isDefaultPrevented)
       }
+
     })
   })()
   </script>
