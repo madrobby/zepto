@@ -109,7 +109,7 @@
 
   var returnTrue = function(){return true},
       returnFalse = function(){return false},
-      ignoreProperties = /^([A-Z]|layer[XY]$)/,
+      ignoreProperties = /^([A-Z]|returnValue$|layer[XY]$)/,
       eventMethods = {
         preventDefault: 'isDefaultPrevented',
         stopImmediatePropagation: 'isImmediatePropagationStopped',
