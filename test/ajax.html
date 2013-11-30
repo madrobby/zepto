@@ -580,6 +580,24 @@
         })
       },
 
+      testBrowserCaching: function(t) {
+        t.pause()
+        resumeOnAjaxError(t)
+        $.ajax({
+          url: 'cached',
+          cache: true,
+          success: function(firstResponse){
+            $.ajax({
+              url: 'cached',
+              cache: true,
+              success: t.reg.resumeHandler('success', function(secondResponse){
+                t.assertEqual(secondResponse, firstResponse)
+              })
+            })
+          }
+        })
+      },
+
       testAjaxLoad: function(t) {
         t.pause()
         var testEl = $('#ajax_load')
