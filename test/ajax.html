@@ -888,6 +888,16 @@
         t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', MockXHR.last.data)
       },
 
+      testQueryParamsTraditional: function(t) {
+        $.ajax({
+          url: '/',
+          data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } },
+          traditional: true
+        })
+        var url = decodeURIComponent(MockXHR.last.url)
+        t.assertEqual('/?hello=world&array=1&array=2&array=3&object=[object+Object]', url)
+      },
+
       testProcessDataDisabled: function(t) {
         var data = { country: 'Ecuador' }
         $.ajax({
