@@ -1844,7 +1844,7 @@
           $('<select multiple><option selected>1</option><option value=2 selected="selected">a</option><option>3</option></select>')
         t.assertEqualCollection(['1','2'], multiple.val())
 
-        multiple.find('option')[0].selected = false
+        $(multiple.find('option').get(0)).removeAttr('selected')
         t.assertEqualCollection(['2'], multiple.val())
       },
 

@@ -627,7 +627,7 @@ var Zepto = (function() {
     val: function(value){
       return arguments.length === 0 ?
         (this[0] && (this[0].multiple ?
-           $(this[0]).find('option').filter(function(o){ return this.selected }).pluck('value') :
+           $(this[0]).find('option[selected]').pluck('value') :
            this[0].value)
         ) :
         this.each(function(idx){
