@@ -168,7 +168,7 @@
     if (options.processData && options.data && $.type(options.data) != "string")
       options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
-      options.url = appendQuery(options.url, options.data)
+      options.url = appendQuery(options.url, options.data), options.data = null
   }
 
   $.ajax = function(options){
@@ -198,7 +198,7 @@
         xhr = settings.xhr(), abortTimeout
 
     if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
-    if (mime) baseHeaders['Accept'] = mime
+    baseHeaders['Accept'] = mime || '*/*'
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)

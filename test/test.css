@@ -1,5 +1,5 @@
 * {
-  font-family: "AmericanTypewriter", "American Typewriter", Helvetica, sans-serif;
+  font-family: -apple-system-font, Helvetica, sans-serif;
 }
 body {
   padding: 1em;
@@ -31,6 +31,26 @@ a:link, a:visited { color: darkblue; }
 }
 #nav .current a { background: #ccc; color: black; }
 #nav a:active { background: #555; color: white; }
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
+  padding: 0 0 15px;
+}
+
+li a {
+  font-size: 16px;
+  border: 1px solid darkblue;
+  padding: 3px 10px;
+  text-decoration: none;
+}
+li a:visited {
+  border-color: #888;
+  color: #aaa;
+}
 
 @media only screen and (max-device-width:480px) {
   body { margin: 7px; font-size: small; }

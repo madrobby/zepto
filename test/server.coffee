@@ -57,6 +57,11 @@ app.all '/test/slow', (req, res) ->
     res.send 'DONE'
   , 200
 
+app.get '/test/cached', (req, res) ->
+  res.set 'Cache-Control', 'max-age=2'
+  now = new Date()
+  res.send now.getTime().toString()
+
 app.all '/test/error', (req, res) ->
   res.send 500, 'BOOM'
 
