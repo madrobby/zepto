@@ -1844,8 +1844,13 @@
           $('<select multiple><option selected>1</option><option value=2 selected="selected">a</option><option>3</option></select>')
         t.assertEqualCollection(['1','2'], multiple.val())
 
+        // FIXME
+        // This is the "approved" way of de-selecting an option
+        // Unfortunately, this fails on Chrome 29 for Android
         multiple.find('option')[0].selected = false
-        t.assertEqualCollection(['2'], multiple.val())
+
+        t.assertEqualCollection(['2'], multiple.val(),
+          "Expected val() to reflect changes to selected options in a <select multiple> element")
       },
 
       testChaining: function(t){
