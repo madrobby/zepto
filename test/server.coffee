@@ -20,6 +20,9 @@ dump = (obj) ->
   obj = JSON.stringify(obj) if obj and typeof obj isnt "string"
   obj
 
+app.all '/', (req, res) ->
+  res.redirect '/test'
+
 app.all '/test/echo', (req, res) ->
   res.set 'Cache-Control', 'no-cache'
   res.send """
