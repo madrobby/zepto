@@ -7,9 +7,18 @@
   <title>Zepto extended data() unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/callbacks.js"></script>
-  <script src="../src/deferred.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto callbacks deferred')
+    })()
+  </script>
 </head>
 <body>
   <h1>Zepto data() tests</h1>

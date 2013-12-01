@@ -57,4 +57,13 @@
     <li><a href="functional/touch.html">touch</a></li>
     <li><a href="functional/touchcancel.html">touchcancel</a></li>
   </ul>
+
+  <script>
+    // avoid caching
+    (function(){
+      [].slice.apply(document.getElementsByTagName('a')).forEach(function(link){
+        link.href += '?' + (+new Date)
+      })
+    })()
+  </script>
 </body>
