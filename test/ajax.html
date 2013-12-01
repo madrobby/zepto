@@ -876,16 +876,28 @@
         t.assertNull(result)
       },
 
+      testDataIsNotSentAsBodyForGetRequests: function(t) {
+        $.ajax({ type: 'GET', data: {a:'b'} })
+        t.assertNull(MockXHR.last.data)
+      },
+
       testDataOptionIsConvertedToSerializedForm: function(t) {
-        $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } } })
-        MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
-        t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', MockXHR.last.data)
+        $.ajax({
+          type: 'POST',
+          data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } }
+        })
+        var data = decodeURIComponent(MockXHR.last.data)
+        t.assertEqual('hello=world&array[]=1&array[]=2&array[]=3&object[prop1]=val&object[prop2]=2', data)
       },
 
       testDataOptionIsConvertedToSerializedTraditionalForm: function(t) {
-        $.ajax({ data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } }, traditional: true })
-        MockXHR.last.data = decodeURIComponent(MockXHR.last.data)
-        t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', MockXHR.last.data)
+        $.ajax({
+          type: 'POST',
+          data: {hello: 'world', array: [1,2,3], object: { prop1: 'val', prop2: 2 } },
+          traditional: true
+        })
+        var data = decodeURIComponent(MockXHR.last.data)
+        t.assertEqual('hello=world&array=1&array=2&array=3&object=[object+Object]', data)
       },
 
       testQueryParamsTraditional: function(t) {
@@ -1031,14 +1043,30 @@
         t.assertEqual('PUT', xhr.method)
       },
 
-      testBeforeSendCanAccessSerializedData: function(t) {
+      testBeforeSendCanAccessSerializedPostData: function(t) {
         var xhr = $.ajax({
+          type: 'POST',
           data: { a:'b' },
           beforeSend: function(x, s) {
             s.data = s.data.toUpperCase()
           }
         })
         t.assertEqual('A=B', xhr.data)
+      },
+
+      testBeforeSendCannotAccessRawQueryParams: function(t) {
+        var url, data
+        $.ajax({
+          url: '/',
+          type: 'GET',
+          data: { a:'b' },
+          beforeSend: function(x, s) {
+            url = s.url
+            data = s.data
+          }
+        })
+        t.assertEqual('/?a=b', url)
+        t.assertNull(data)
       },
 
       testBeforeSendCanChangeAndAddHeaders: function(t) {
@@ -1055,17 +1083,15 @@
       },
 
       testBeforeSendAbortCallback: function(t) {
-        var xhr, beforeFired = false, settings = {}
+        var xhr, settings
         $.ajax({
-          data: "1=2",
           beforeSend: function(x, s) {
-            beforeFired = true, settings = s, xhr = x
+            settings = s, xhr = x
           }
         })
 
-        t.assert(beforeFired)
         t.assertEqual(MockXHR.last, xhr)
-        t.assertEqual("1=2", settings.data)
+        t.assertEqual('GET', settings.type)
       },
 
       testBeforeSendAbort: function(t) {
