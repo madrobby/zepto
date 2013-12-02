@@ -2,6 +2,32 @@
 //     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
+// Polyfill for stopImmediatePropagation for Android 2.3
+// extracted from https://github.com/ftlabs/fastclick (MIT-licensed)
+;if (!Event.prototype.stopImmediatePropagation) {
+  (function() {
+    var addEventListener = Node.prototype.addEventListener,
+      removeEventListener = Node.prototype.removeEventListener
+
+    Node.prototype.addEventListener = function(type, listener, capture){
+      addEventListener.call(this, type, listener.__immediatePropagationWrapper ||
+        (listener.__immediatePropagationWrapper = function(event) {
+          if (!event.immediatePropagationStopped) return listener(event)
+        }), capture)
+    }
+
+    Node.prototype.removeEventListener = function(type, listener, capture){
+      removeEventListener.call(this, type, listener.__immediatePropagationWrapper ||
+        listener, capture)
+    }
+  }())
+
+  Event.prototype.stopImmediatePropagation = function() {
+    this.immediatePropagationStopped = true
+    this.stopPropagation()
+  }
+}
+
 ;(function($){
   var $$ = $.zepto.qsa, _zid = 1, undefined,
       slice = Array.prototype.slice,
