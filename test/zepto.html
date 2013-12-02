@@ -2511,7 +2511,7 @@
             return false
           })
           .bind('click', function (e) {
-            prevented = e.defaultPrevented
+            prevented = e.isDefaultPrevented()
           })
           .trigger('click')
 
@@ -2574,21 +2574,18 @@
       testTriggerEventCancelled: function(t){
         var event = $.Event('custom'),
           element = $('<div/>'),
-          defaultPrevented = false,
           isDefaultPrevented = false
 
         t.refute(event.isDefaultPrevented())
 
         element.bind('custom', function(e){
           e.preventDefault()
-          defaultPrevented = e.defaultPrevented
           isDefaultPrevented = e.isDefaultPrevented()
         })
 
         element.trigger(event)
 
         t.assertTrue(event.isDefaultPrevented())
-        t.assertTrue(defaultPrevented)
         t.assertTrue(isDefaultPrevented)
       },
 

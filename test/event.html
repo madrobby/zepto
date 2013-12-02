@@ -206,7 +206,7 @@
         })
 
         click(span)
-        t.assertEqual(true, isDefaultPrevented)
+        t.assertTrue(isDefaultPrevented, "isDefaultPrevented() value invalid for delegate proxy")
       },
 
       testEventsOnPlainObjects: function (t){
@@ -287,7 +287,64 @@
 
         this.el.trigger('myevent')
         t.assertIdentical(data, gotData)
+      },
+
+      testDelegateEventMethods: function(t){
+        var methodName,
+            eventMethods = {
+              preventDefault: 'isDefaultPrevented',
+              stopImmediatePropagation: 'isImmediatePropagationStopped',
+              stopPropagation: 'isPropagationStopped'
+            },
+            eventMethodResults = {}
+
+        $(document).on('click', 'div', function(event){
+          $.each(eventMethods, function(methodName, predicate){
+            if (event[methodName]) {
+              event[methodName]()
+              eventMethodResults[predicate] = event[predicate]()
+            } else {
+              console.warn("method not available: ", methodName)
+            }
+          })
+        })
+
+        click($('<span>').appendTo(this.el))
+
+        $.each(eventMethodResults, function(predicate, value){
+          t.assertTrue(value, predicate)
+        })
+      },
+
+      testIsDefaultPreventedOnAllEvents: function(t){
+        var isDefaultPrevented
+
+        $(this.el).on('click', function(event){
+          event.preventDefault()
+        })
+        $(document).on('click', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
+        })
+
+        click(this.el)
+        t.assertTrue(isDefaultPrevented)
+      },
+
+      testIsDefaultPreventedOnOriginalEventAfterDelegate: function(t){
+        var isDefaultPrevented
+
+        this.el.on('click', 'span', function(event){
+          event.preventDefault()
+        })
+        $(document).on('click', function(event){
+          isDefaultPrevented = event.isDefaultPrevented()
+        })
+
+        click($('<span>').appendTo(this.el))
+
+        t.assertTrue(isDefaultPrevented)
       }
+
     })
   })()
   </script>
