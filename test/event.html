@@ -343,6 +343,21 @@
         click($('<span>').appendTo(this.el))
 
         t.assertTrue(isDefaultPrevented)
+      },
+
+      testStopImmediatePropagation: function(t){
+        var log = ''
+
+        this.el
+          .on('click', function(e){ log += 'A' })
+          .on('click', function(e){ log += 'B'; e.stopImmediatePropagation() })
+          .on('click', function(e){ log += 'C' })
+
+        $(document).on('click', function(e){ log += 'D' })
+
+        click(this.el)
+
+        t.assertEqual('AB', log)
       }
 
     })

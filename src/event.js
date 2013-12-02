@@ -2,32 +2,6 @@
 //     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-// Polyfill for stopImmediatePropagation for Android 2.3
-// extracted from https://github.com/ftlabs/fastclick (MIT-licensed)
-;if (!Event.prototype.stopImmediatePropagation) {
-  (function() {
-    var addEventListener = Node.prototype.addEventListener,
-      removeEventListener = Node.prototype.removeEventListener
-
-    Node.prototype.addEventListener = function(type, listener, capture){
-      addEventListener.call(this, type, listener.__immediatePropagationWrapper ||
-        (listener.__immediatePropagationWrapper = function(event) {
-          if (!event.immediatePropagationStopped) return listener(event)
-        }), capture)
-    }
-
-    Node.prototype.removeEventListener = function(type, listener, capture){
-      removeEventListener.call(this, type, listener.__immediatePropagationWrapper ||
-        listener, capture)
-    }
-  }())
-
-  Event.prototype.stopImmediatePropagation = function() {
-    this.immediatePropagationStopped = true
-    this.stopPropagation()
-  }
-}
-
 ;(function($){
   var $$ = $.zepto.qsa, _zid = 1, undefined,
       slice = Array.prototype.slice,
@@ -88,6 +62,7 @@
       var callback  = delegator || fn
       handler.proxy = function(e){
         e = compatible(e)
+        if (e.isImmediatePropagationStopped()) return
         e.data = data
         var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
@@ -149,10 +124,9 @@
 
       $.each(eventMethods, function(name, predicate) {
         var sourceMethod = source[name]
-        if (!sourceMethod) return
         event[name] = function(){
           this[predicate] = returnTrue
-          return sourceMethod.apply(source, arguments)
+          return sourceMethod && sourceMethod.apply(source, arguments)
         }
         event[predicate] = returnFalse
       })
