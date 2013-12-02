@@ -20,6 +20,27 @@ dump = (obj) ->
   obj = JSON.stringify(obj) if obj and typeof obj isnt "string"
   obj
 
+cleanTrace = (traceStr) ->
+  trace = traceStr.split("\n")
+  filtered = []
+  for line in trace
+    if /\.html:/.test line
+      line = line.replace(/^.+?@/, '')
+      line = line.replace(/http:\/\/.+?\//, '')
+      line = line.replace(/(:\d+):\d+$/, '$1')
+      filtered.push line
+  filtered
+
+browser = (ua) ->
+  if m = ua.match /(Android .+?);/
+    m[1]
+  else if m = ua.match /(Chrome\/[\d.]+)/
+    m[1].replace '/', ' '
+  else if m = ua.match /(Safari\/[\d.]+)/
+    m[1].replace '/', ' '
+  else
+    ua
+
 app.all '/', (req, res) ->
   res.redirect '/test'
 
@@ -64,6 +85,13 @@ app.get '/test/cached', (req, res) ->
   res.set 'Cache-Control', 'max-age=2'
   now = new Date()
   res.send now.getTime().toString()
+
+app.post '/test/log', (req, res) ->
+  params = req.body
+  trace = cleanTrace params.trace
+  console.log "[%s] %s: %s", browser(req.headers['user-agent']), params.name, params.message
+  console.log trace.join("\n").replace(/^/mg, '  ') if trace.length
+  res.send 200
 
 app.all '/test/error', (req, res) ->
   res.send 500, 'BOOM'
