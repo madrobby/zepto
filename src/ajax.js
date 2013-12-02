@@ -76,34 +76,41 @@
       callbackName = ($.isFunction(_callbackName) ?
         _callbackName() : _callbackName) || ('jsonp' + (++jsonpID)),
       script = document.createElement('script'),
-      cleanup = function() {
-        clearTimeout(abortTimeout)
-        $(script).remove()
-        delete window[callbackName]
-      },
-      abort = function(type){
-        cleanup()
-        // In case of manual abort or timeout, keep an empty function as callback
-        // so that the SCRIPT tag that eventually loads won't result in an error.
-        if (!type || type == 'timeout') window[callbackName] = empty
-        ajaxError(null, type || 'abort', xhr, options)
+      originalCallback = window[callbackName],
+      responseData,
+      abort = function(errorType) {
+        $(script).triggerHandler('error', errorType || 'abort')
       },
       xhr = { abort: abort }, abortTimeout
+
+    $(script).on('load error', function(e, errorType){
+      clearTimeout(abortTimeout)
+      $(script).off().remove()
+
+      if (e.type == 'error' || !responseData) {
+        ajaxError(null, errorType || 'error', xhr, options)
+      } else {
+        ajaxSuccess(responseData[0], xhr, options)
+      }
+
+      window[callbackName] = originalCallback
+      if (responseData && $.isFunction(originalCallback))
+        originalCallback(responseData[0])
+
+      originalCallback = responseData = undefined
+    })
 
     if (ajaxBeforeSend(xhr, options) === false) {
       abort('abort')
       return false
     }
 
-    window[callbackName] = function(data){
-      cleanup()
-      ajaxSuccess(data, xhr, options)
+    window[callbackName] = function(){
+      responseData = arguments
     }
 
-    script.onerror = function() { abort('error') }
-
     script.src = options.url.replace(/=\?/, '=' + callbackName)
-    $('head').append(script)
+    document.head.appendChild(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
       abort('timeout')
