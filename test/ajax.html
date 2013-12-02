@@ -162,6 +162,9 @@
 
       tearDown: function() {
         $(document).off()
+        for (var key in window)
+          if (/^(jsonp\d+|blah)$/.test(key) && window[key] === undefined)
+            delete window[key]
       },
 
       testAjaxBase: function(t){
