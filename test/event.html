@@ -206,7 +206,7 @@
         })
 
         click(span)
-        t.assertEqual(true, isDefaultPrevented)
+        t.assertTrue(isDefaultPrevented, "isDefaultPrevented() value invalid for delegate proxy")
       },
 
       testEventsOnPlainObjects: function (t){
