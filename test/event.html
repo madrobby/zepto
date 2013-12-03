@@ -358,6 +358,18 @@
         click(this.el)
 
         t.assertEqual('AB', log)
+      },
+
+      testDelegateSelectorLookupDoesNotIncludeParent: function(t){
+        var fired = false
+
+        this.el
+          .addClass('offender')
+          .on('click', '.offender', function(){ fired = true })
+
+        click(this.el)
+
+        t.assertFalse(fired)
       }
 
     })
