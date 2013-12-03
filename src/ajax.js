@@ -246,7 +246,7 @@
     if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
 
     var async = 'async' in settings ? settings.async : true
-    xhr.open(settings.type, settings.url, async)
+    xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 
     for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
 

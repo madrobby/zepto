@@ -711,6 +711,17 @@
             delete window.testValue
           })
         })
+      },
+
+      testAjaxBasicAuth: function(t) {
+        t.pause()
+        resumeOnAjaxError(t)
+        $.ajax({
+          url: 'auth?realm=zepto',
+          username: 'zepto',
+          password: 'doge',
+          success: t.reg.resumeHandler('success')
+        })
       }
     })
 

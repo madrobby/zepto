@@ -87,6 +87,13 @@ app.get '/test/cached', (req, res) ->
   now = new Date()
   res.send now.getTime().toString()
 
+app.get '/test/auth', (req, res) ->
+  if req.headers.authorization is 'Basic emVwdG86ZG9nZQ=='
+    res.send 200
+  else
+    res.set 'WWW-Authenticate', "Basic realm=\"#{req.query.realm}\""
+    res.send 401
+
 app.post '/test/log', (req, res) ->
   params = req.body
   trace = cleanTrace params.trace
