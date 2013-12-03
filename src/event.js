@@ -205,8 +205,10 @@
       return $this
     }
 
-    if (!isString(selector) && !isFunction(callback))
+    if (!isString(selector) && !isFunction(callback) && callback !== false)
       callback = selector, selector = undefined
+
+    if (callback === false) callback = returnFalse
 
     return $this.each(function(){
       remove(this, event, callback, selector)

@@ -380,6 +380,21 @@
         t.assertTrue(event.isPropagationStopped())
       },
 
+      testUnbindingFalseLiteral: function(t){
+        var event = $.Event('click'), fired
+
+        this.el
+          .on('click', function() { fired = true })
+          .on('click', false)
+          .off('click', false)
+
+        this.el.trigger(event)
+
+        t.assertTrue(fired)
+        t.assertFalse(event.isDefaultPrevented())
+        t.assertFalse(event.isPropagationStopped())
+      },
+
       testFalseLiteralAsCallbackWithDataArgument: function(t){
         var event = $.Event('click')
 
