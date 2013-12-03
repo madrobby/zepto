@@ -83,6 +83,7 @@ app.all '/test/slow', (req, res) ->
 
 app.get '/test/cached', (req, res) ->
   res.set 'Cache-Control', 'max-age=2'
+  res.set 'Expires', new Date(Date.now() + 2000).toUTCString()
   now = new Date()
   res.send now.getTime().toString()
 
