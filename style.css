@@ -255,6 +255,19 @@ p.compat a {
   color: #000 !important;
 }
 
+table {
+  margin: 1em 0;
+  border-collapse: collapse;
+}
+table td, table th {
+  border: 1px solid silver;
+  padding: .2em .5em;
+}
+table td:nth-child(2) {
+  text-align: center;
+  color: darkgreen;
+}
+
 @media only screen and (device-width: 768px) {
   /* this solves scrolling issues and taps not being recognized specifically on ipad */
   .container {
