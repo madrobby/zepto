@@ -3,7 +3,7 @@ title: "Zepto.js: the aerogel-weight jQuery-compatible JavaScript library"
 layout: default
 description: >
   The aerogel-weight jQuery-compatible JavaScript library
-version: 1.0
+version: 1.1
 github_url: https://github.com/madrobby/zepto
 ---
 
@@ -17,7 +17,8 @@ github_url: https://github.com/madrobby/zepto
 
   <ul class=toc_section>
     <li><a href="#download">Download</a></li>
-    <li><a href="#platforms">Target Platforms</a></li>
+    <li><a href="#browsers">Browser support</a></li>
+    <li><a href="#modules">Modules</a></li>
     <li><a href="#changelog">Change Log</a></li>
     <li><a href="#thanks">Acknowledgements</a></li>
   </ul>
@@ -72,8 +73,9 @@ github_url: https://github.com/madrobby/zepto
 
   <p>
     While 100% jQuery coverage is not a design goal, the <b>APIs provided
-    match their jQuery counterparts</b>. The goal is to have a ~5-10k modular library
-    that <b>downloads and executes fast</b>, with a <b>familiar and versatile API</b>,
+    match their jQuery counterparts</b>. The goal is to have a ~5-10k modular
+    library that <b>downloads and executes fast</b>, with a
+    <b>familiar and versatile API</b>,
     so you can <b>concentrate on getting stuff done</b>.
   </p>
 
@@ -93,21 +95,21 @@ github_url: https://github.com/madrobby/zepto
 
   <p>
     The default build includes the following modules:<br>
-    <em>Core, Ajax, Event, Form, Effects, Polyfill, and Detect</em>.
+    <em>Core, Ajax, Event, Form, IE</em>.
   </p>
 
   <p class=important>
-    There are more modules; a list of all modules
-    is available in the <a href="{{ page.github_url }}#readme">README</a>.
+    See below for
+    <a href="#modules">optional modules</a>.
   </p>
 
   <ul class=downloads>
     <li>
-      <a href="zepto.js" class="download">zepto.js v{{ page.version }} (for development)</a>
+      <a href="download/zepto.js" class="download">zepto.js v{{ page.version }} (for development)</a>
       – <i>54.6k uncompressed, lots of comments</i>
     </li>
     <li>
-      <a href="zepto.min.js" class="download">zepto.min.js v{{ page.version }} (for production)</a>
+      <a href="download/zepto.min.js" class="download">zepto.min.js v{{ page.version }} (for production)</a>
       – <i>9.7k when gzipped</i>
     </li>
   </ul>
@@ -118,9 +120,9 @@ github_url: https://github.com/madrobby/zepto
 
   <ul class=downloads>
     <li>
-      <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&repo=zepto&type=watch&count=true"
+      <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&amp;repo=zepto&amp;type=watch&amp;count=true"
       allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
-      <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&repo=zepto&type=fork&count=true"
+      <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&amp;repo=zepto&amp;type=fork&amp;count=true"
       allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
     </li>
   </ul>
@@ -142,25 +144,11 @@ github_url: https://github.com/madrobby/zepto
   </p>
 
   <p>
-    <b>If you need to support older Internet Explorer versions, you can fall back on jQuery.</b>
-    Note that conditional comments are no longer supported starting on IE 10,
-    so we recommend the following <code>document.write</code> approach:
+    <b>If you need to support older browers, like Internet Explorer 9
+    and lower, you can fall back to jQuery 1.x.</b>
   </p>
 
-{% highlight html %}
-<script>
-document.write('<script src=' +
-('__proto__' in {} ? 'zepto' : 'jquery') +
-'.js><\/script>')
-</script>
-{% endhighlight %}
-
-  <p>
-    This will load jQuery on Internet Explorer up to version 10, and
-    load Zepto on other browsers and Internet Explorer 11 and higher.
-  </p>
-
-  <h3 id=platforms>Target platforms</h3>
+  <h3 id=browsers>Browser support</h3>
 
   <h4>Primary (100% support)</h4>
   <ul>
@@ -175,14 +163,15 @@ document.write('<script src=' +
   <h4>Secondary targets (fully or mostly supported)</h4>
   <ul>
     <li>iOS 3+ Safari</li>
-    <li>Chrome <30</li>
-    <li>Firefox <24</li>
+    <li>Chrome &lt;30</li>
+    <li>Firefox &lt;24</li>
+    <li>Safari &lt;6</li>
     <li>Android Browser 2.2</li>
     <li>Opera 10+</li>
     <li>webOS 1.4.5+ Browser</li>
     <li>BlackBerry Tablet OS 1.0.7+ Browser</li>
     <li>Amazon Silk 1.0+</li>
-    <li>Any WebKit-based browsers/runtimes</li>
+    <li>Other WebKit-based browsers/runtimes</li>
   </ul>
 
   <p>
@@ -192,14 +181,14 @@ document.write('<script src=' +
   </p>
 
   <p>
-    Zepto is a good choice for browser extensions (for Safari and Chrome) and
-    to develop HTML-based views within native app frameworks, such as
-    <a href="http://phonegap.com/">PhoneGap</a>.
+    Zepto is a good choice for browser extensions (for Safari, Chrome and
+    Firefox) and to develop HTML-based views within native app frameworks,
+    such as <a href="http://phonegap.com/">PhoneGap</a>.
   <p>
 
   <p>
     In short, Zepto is expected to work in every modern browser
-    and browser-like environment. Notably, Zepto doesn't support
+    and browser-like environment. Zepto doesn't support
     old Internet Explorer versions (&lt;10).
   </p>
 
@@ -220,6 +209,128 @@ document.write('<script src=' +
     for instructions on how to build Zepto, including running the tests and
     contributing patches.
   </p>
+
+  <h3 id=modules>Zepto modules</h3>
+
+  <table>
+<thead><tr>
+  <th>module</th> <th>default</th> <th>description</th>
+</tr></thead>
+<tbody>
+  <tr>
+    <th><a href="src/zepto.js#files">zepto</a></th>
+    <td>✔</td>
+    <td>Core module; contains most methods</td>
+  </tr>
+  <tr>
+    <th><a href="src/event.js#files">event</a></th>
+    <td>✔</td>
+    <td>Event handling via <code>on()</code> &amp; <code>off()</code></td>
+  </tr>
+  <tr>
+    <th><a href="src/ajax.js#files">ajax</a></th>
+    <td>✔</td>
+    <td>XMLHttpRequest and JSONP functionality</td>
+  </tr>
+  <tr>
+    <th><a href="src/form.js#files">form</a></th>
+    <td>✔</td>
+    <td>Serialize &amp; submit web forms</td>
+  </tr>
+  <tr>
+    <th><a href="src/ie.js#files">ie</a></th>
+    <td>✔</td>
+    <td>
+      Support for Internet Explorer 10+ on desktop and Windows Phone 8.
+      (Some tests are failing. Help us fix this!)
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/detect.js#files">detect</a></th>
+    <td></td>
+    <td>Provides <code>$.os</code> and <code>$.browser</code> information</td>
+  </tr>
+  <tr>
+    <th><a href="src/fx.js#files">fx</a></th>
+    <td></td>
+    <td>The <code>animate()</code> method</td>
+  </tr>
+  <tr>
+    <th><a href="src/fx_methods.js#files">fx_methods</a></th>
+    <td></td>
+    <td>
+      Animated <code>show</code>, <code>hide</code>, <code>toggle</code>,
+      and <code>fade*()</code> methods.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/assets.js#files">assets</a></th>
+    <td></td>
+    <td>
+      Experimental support for cleaning up iOS memory after removing
+      image elements from the DOM.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/data.js#files">data</a></th>
+    <td></td>
+    <td>
+      A full-blown <code>data()</code> method, capable of storing arbitrary
+      objects in memory.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/deferred.js#files">deferred</a></th>
+    <td></td>
+    <td>
+      Provides <code>$.Deferred</code> promises API.
+      Depends on the "callbacks" module.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/callbacks.js#files">callbacks</a></th>
+    <td></td>
+    <td>
+      Provides <code>$.Callbacks</code> for use in "deferred" module.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/selector.js#files">selector</a></th>
+    <td></td>
+    <td>
+      Experimental <a href="http://api.jquery.com/category/selectors/jquery-selector-extensions/">jQuery
+      CSS extensions</a> support for functionality such as <code>$('div:first')</code> and
+      <code>el.is(':visible')</code>.
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/touch.js#files">touch</a></th>
+    <td></td>
+    <td>
+      Fires tap– and swipe–related events on touch devices. This works with both
+      `touch` (iOS, Android) and `pointer` events (Windows Phone).
+    </td>
+  </tr>
+  <tr>
+    <th><a href="src/gesture.js#files">gesture</a></th>
+    <td></td>
+    <td>Fires pinch gesture events on touch devices</td>
+  </tr>
+  <tr>
+    <th><a href="src/stack.js#files">stack</a></th>
+    <td></td>
+    <td>Provides <code>andSelf</code> &amp; <code>end()</code> chaining methods</td>
+  </tr>
+  <tr>
+    <th><a href="src/ios3.js#files">ios3</a></th>
+    <td></td>
+    <td>
+      String.prototype.trim and Array.prototype.reduce methods
+      (if they are missing) for compatibility with iOS 3.x.
+    </td>
+  </tr>
+</tbody>
+</table>
 
   <h3>Creating plug-ins</h3>
 
@@ -331,11 +442,13 @@ document.write('<script src=' +
 
 </div>
 
-<script src="zepto.min.js"></script>
-<script src="touch.js"></script>
+<script src="zepto-docs.min.js"></script>
 
 <script>
-  var reflowTimeout;
+$(function(){
+  var reflowTimeout,
+    tour = $('#tour'), tourSlides = tour.children(),
+    tourSlide = 0, tourSlidesTotal = 5
 
   function injectScript(src) {
     var s = document.createElement('script')
@@ -418,9 +531,6 @@ document.write('<script src=' +
     ('devicePixelRatio' in window && devicePixelRatio > 1) ?
     'intro2x.jpg' : 'intro.jpg'
 
-  var tour = $('#tour'), tourSlides = tour.children(),
-      tourSlide = 0, tourSlidesTotal = 5
-
   function advanceTourSlide(delta){
     tourSlide = (tourSlide + delta + tourSlidesTotal) % tourSlidesTotal
     var offset = tourSlide * tour.width()
@@ -435,18 +545,15 @@ document.write('<script src=' +
 
   if (/\.com$/.test(location.hostname))
     injectScript('http://platform.twitter.com/widgets.js')
+})
 </script>
 
 <script>
-  var _gauges = _gauges || [];
-  if (/\.com$/.test(location.hostname)) (function() {
-    var t   = document.createElement('script');
-    t.type  = 'text/javascript';
-    t.async = true;
-    t.id    = 'gauges-tracker';
-    t.setAttribute('data-site-id', '4f46b5c5f5a1f573c300004c');
-    t.src = '//secure.gaug.es/track.js';
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(t, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-37896092-14', 'zeptojs.com');
+  ga('send', 'pageview');
 </script>

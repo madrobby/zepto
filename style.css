@@ -121,7 +121,7 @@ li + li {
 li > ul { margin-top: .3em }
 li li { margin-top: 0 }
 code, pre, tt {
-  font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace; 
+  font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace;
 }
 pre {
   background: #f8f8ff;
@@ -143,7 +143,7 @@ pre.signature {
 pre.signature code {
   background-color: transparent !important;
 }
-pre.signature .return { 
+pre.signature .return {
   color: gray;
 }
 code {
@@ -187,7 +187,7 @@ article.method .warning, article.method .version {
 article.method .warning a {
   color: #770000;
 }
-article.method .version { 
+article.method .version {
   background: #ccf;
   color: #000;
   padding: 1px 3px;
@@ -284,12 +284,16 @@ p.compat a {
 }
 
 @media only screen and (max-width: 480px) {
-  html { -webkit-text-size-adjust: 100% }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   body { margin: 0; padding: 0 }
   p { margin: .5em 0 }
   h1, h2, h3, h4, h5, h6 { padding-top: .5em }
   #sidebar {
     display: none;
+    -ms-box-sizing: border-box;
     box-sizing: border-box;
     padding: 12px 16px 30px;
     width: 140px;
@@ -299,13 +303,19 @@ p.compat a {
     right: 0px;
     -webkit-transform: translateX(140px);
     -webkit-transition: -webkit-transform 0.2s ease-out;
+    -moz-transform: translateX(140px);
+    transform: translateX(140px);
     z-index: 1000;
     border-right: none;
     border-left: 1px solid #d4b4ff;
     background: -webkit-gradient(linear, right top, left top, from(transparent), color-stop(0.92, transparent), color-stop(0.9201, rgba(212, 180, 255, 0.0)), to(rgba(212, 180, 255, 0.3))), #f3eaff;
+    background: -moz-gradient(linear, right top, left top, from(transparent), color-stop(0.92, transparent), color-stop(0.9201, rgba(212, 180, 255, 0.0)), to(rgba(212, 180, 255, 0.3))), #f3eaff;
+    background: -ms-gradient(linear, right top, left top, from(transparent), color-stop(0.92, transparent), color-stop(0.9201, rgba(212, 180, 255, 0.0)), to(rgba(212, 180, 255, 0.3))), #f3eaff;
   }
   .navigating #sidebar {
     -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    transform: translateX(0);
   }
   #menu_icon {
     position: fixed;
@@ -325,27 +335,40 @@ p.compat a {
     z-index: 10000;
     -webkit-transform: translateX(0px);
     -webkit-transition: -webkit-transform 0.2s ease-out;
+    -moz-transform: translateX(0px);
+    -moz-transition: -moz-transform 0.2s ease-out;
+    transform: translateX(0px);
+    transition: transform 0.2s ease-out;
   }
   .navigating #menu_icon {
     -webkit-transform: translateX(-140px);
+    -moz-transform: translateX(-140px);
+    transform: translateX(-140px);
   }
   a.toc_title { margin-top: .2em }
-  ul.toc_section { 
-    font-size: 13px; line-height: 18px 
+  ul.toc_section {
+    font-size: 13px; line-height: 18px
   }
   .container {
     margin: 12px;
     max-width: none;
+    padding: 0;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
     -webkit-transform: translateX(0px);
     -webkit-transition: -webkit-transform 0.2s ease-out;
+    -moz-transform: translateX(0px);
+    -moz-transition: -moz-transform 0.2s ease-out;
+    transform: translateX(0px);
+    transition: transform 0.2s ease-out;
   }
   .navigating .container {
     -webkit-transform: translateX(-140px);
+    -moz-transform: translateX(-140px);
+    transform: translateX(-140px);
   }
   img[src^=logo] { max-width: 250px }
-  article { 
+  article {
     margin-bottom: 12px;
   }
   article.method h3 { padding-top: 10px }
@@ -358,7 +381,7 @@ p.compat a {
   html { -webkit-text-size-adjust: 100% }
   #menu_icon {
     display: none;
-  }  
+  }
   #sidebar {
     width: 135px;
     padding: 0 15px;
@@ -367,9 +390,9 @@ p.compat a {
     max-width: 568px;
     margin: 30px 10px 50px 175px;
   }
-  ul.toc_section li { 
-    font-size: 15px; 
-    line-height: 20px 
+  ul.toc_section li {
+    font-size: 15px;
+    line-height: 20px
   }
 }
 
@@ -383,9 +406,9 @@ p.compat a {
     max-width: 100%;
     margin: 0px 10px 50px 175px;
   }
-  ul.toc_section li { 
-    font-size: 15px; 
-    line-height: 20px 
+  ul.toc_section li {
+    font-size: 15px;
+    line-height: 20px
   }
 }
 
