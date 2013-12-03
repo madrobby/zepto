@@ -60,6 +60,24 @@ Zepto modules are individual files in the "src/" directory.
     <td>Event handling via <code>on()</code> &amp; <code>off()</code></td>
   </tr>
   <tr>
+    <th><a href="src/ajax.js#files">ajax</a></th>
+    <td>✔</td>
+    <td>XMLHttpRequest and JSONP functionality</td>
+  </tr>
+  <tr>
+    <th><a href="src/form.js#files">form</a></th>
+    <td>✔</td>
+    <td>Serialize &amp; submit web forms</td>
+  </tr>
+  <tr>
+    <th><a href="src/ie.js#files">ie</a></th>
+    <td>✔</td>
+    <td>
+      Add support for Internet Explorer 10+ on desktop and Windows Phone 8.
+      (Some tests are failing. Help us fix this!)
+    </td>
+  </tr>
+  <tr>
     <th><a href="src/detect.js#files">detect</a></th>
     <td></td>
     <td>Provides <code>$.os</code> and <code>$.browser</code> information</td>
@@ -76,16 +94,6 @@ Zepto modules are individual files in the "src/" directory.
       Animated <code>show</code>, <code>hide</code>, <code>toggle</code>,
       and <code>fade*()</code> methods.
     </td>
-  </tr>
-  <tr>
-    <th><a href="src/ajax.js#files">ajax</a></th>
-    <td>✔</td>
-    <td>XMLHttpRequest and JSONP functionality</td>
-  </tr>
-  <tr>
-    <th><a href="src/form.js#files">form</a></th>
-    <td>✔</td>
-    <td>Serialize &amp; submit web forms</td>
   </tr>
   <tr>
     <th><a href="src/assets.js#files">assets</a></th>
@@ -151,14 +159,6 @@ Zepto modules are individual files in the "src/" directory.
     <td>
       String.prototype.trim and Array.prototype.reduce methods
       (if they are missing) for compatibility with iOS 3.x.
-    </td>
-  </tr>
-  <tr>
-    <th><a href="src/ie.js#files">ie</a></th>
-    <td></td>
-    <td>
-      Experimental support for Internet Explorer 10+ on desktop and Windows Phone 8.
-      (Some tests are failing. Help us fix this!)
     </td>
   </tr>
 </tbody>
