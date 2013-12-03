@@ -26,7 +26,12 @@
     Running… see browser console for results
   </p>
   <div id="fixtures">
-  <div id="data_attr" data-one="uno" data-two="due" data-foo-bar="baz"></div>
+  <div id="data_attr"
+    data-one="uno"
+    data-two="due"
+    data-foo-bar="baz"
+    data-under_score="kuuq"
+    ></div>
   <div id="data_full" data-mode="awesome"></div>
   <div id="data_obj" data-mode="awesome"></div>
   <ol id="data_list">
@@ -68,6 +73,13 @@
         el.data('a-b', 'c')
         t.assertEqual('c', el.data().aB)
         t.assertUndefined(el.data()['a-b'])
+      },
+
+      testUnderscore: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('kuuq', el.data('under_score'))
+        t.assertUndefined(el.data('under-score'))
+        t.assertUndefined(el.data('underScore'))
       },
 
       testNotChangingAttribute: function(t){
