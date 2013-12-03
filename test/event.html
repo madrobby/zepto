@@ -158,13 +158,11 @@
         this.el
           .on('click', null, fn)
           .on('click', undefined, fn)
-          .on('click', false, fn)
 
         click(this.el)
-        t.assertEqual(3, log.length)
+        t.assertEqual(2, log.length)
         t.assertIdentical(null, log[0])
         t.assertIdentical(undefined, log[1])
-        t.assertIdentical(false, log[2])
       },
 
       testOffWithObject: function(t){
@@ -370,6 +368,48 @@
         click(this.el)
 
         t.assertFalse(fired)
+      },
+
+      testFalseLiteralAsCallback: function(t){
+        var event = $.Event('click')
+
+        this.el.on('click', false)
+
+        this.el.trigger(event)
+        t.assertTrue(event.isDefaultPrevented())
+        t.assertTrue(event.isPropagationStopped())
+      },
+
+      testFalseLiteralAsCallbackWithDataArgument: function(t){
+        var event = $.Event('click')
+
+        this.el.on('click', null, false)
+
+        this.el.trigger(event)
+        t.assertTrue(event.isDefaultPrevented())
+        t.assertTrue(event.isPropagationStopped())
+      },
+
+      testFalseLiteralAsCallbackForDelegation: function(t){
+        var span = $('<span>').appendTo(this.el)
+            event = $.Event('click')
+
+        this.el.on('click', 'span', false)
+
+        span.trigger(event)
+        t.assertTrue(event.isDefaultPrevented())
+        t.assertTrue(event.isPropagationStopped())
+      },
+
+      testFalseLiteralAsCallbackForDelegationWithDataArgument: function(t){
+        var span = $('<span>').appendTo(this.el)
+            event = $.Event('click')
+
+        this.el.on('click', 'span', null, false)
+
+        span.trigger(event)
+        t.assertTrue(event.isDefaultPrevented())
+        t.assertTrue(event.isPropagationStopped())
       }
 
     })

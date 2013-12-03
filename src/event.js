@@ -172,10 +172,12 @@
       return $this
     }
 
-    if (!isString(selector) && !isFunction(callback))
+    if (!isString(selector) && !isFunction(callback) && callback !== false)
       callback = data, data = selector, selector = undefined
-    if (isFunction(data))
+    if (isFunction(data) || data === false)
       callback = data, data = undefined
+
+    if (callback === false) callback = returnFalse
 
     return $this.each(function(_, element){
       if (one) autoRemove = function(e){
