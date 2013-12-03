@@ -2,7 +2,7 @@
 //     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-;(function(){
+;(function($){
   // __proto__ doesn't exist on IE<11, so redefine
   // the Z function to use object extension instead
   if (!('__proto__' in {})) {
@@ -35,4 +35,4 @@
       }
     }
   }
-})()
+})(Zepto)
