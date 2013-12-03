@@ -132,6 +132,7 @@
       })
 
       if (source.defaultPrevented !== undefined ? source.defaultPrevented :
+          'returnValue' in source ? source.returnValue === false :
           source.getPreventDefault && source.getPreventDefault())
         event.isDefaultPrevented = returnTrue
     }
