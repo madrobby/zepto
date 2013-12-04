@@ -1124,9 +1124,8 @@
       },
 
       testGlobalBeforeSendAbort: function(t) {
-        var xhr
-        $(document).on('ajaxBeforeSend', function(e, x) { xhr = x; return false })
-        t.assertFalse($.ajax())
+        $(document).on('ajaxBeforeSend', false)
+        var xhr = $.ajax()
         t.assert(xhr.aborted)
       },
 
