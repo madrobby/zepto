@@ -34,10 +34,16 @@ cleanTrace = (traceStr) ->
 browser = (ua) ->
   if m = ua.match /(Android .+?);/
     m[1]
+  else if m = ua.match /(iPhone|iPad|iPod).*?OS ([\d_]+)/
+    'iOS ' + m[2].replace(/_/g, '.')
   else if m = ua.match /(Chrome\/[\d.]+)/
     m[1].replace '/', ' '
   else if m = ua.match /(Safari\/[\d.]+)/
     m[1].replace '/', ' '
+  else if m = ua.match /(Firefox\/[\d.]+)/
+    m[1].replace '/', ' '
+  else if m = ua.match /\bMS(IE [\d.]+)/
+    m[1]
   else
     ua
 
