@@ -9,6 +9,7 @@
       isString = function(obj){ return typeof obj == 'string' },
       handlers = {},
       specialEvents={},
+      focusinSupported = 'onfocusin' in window,
       focus = { focus: 'focusin', blur: 'focusout' },
       hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
 
@@ -38,11 +39,12 @@
 
   function eventCapture(handler, captureSetting) {
     return handler.del &&
+      (!focusinSupported && (handler.e in focus)) ||
       !!captureSetting
   }
 
   function realEvent(type) {
-    return hover[type] || focus[type] || type
+    return hover[type] || (focusinSupported && focus[type]) || type
   }
 
   function add(element, events, fn, data, selector, delegator, capture){
