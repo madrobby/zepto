@@ -72,10 +72,7 @@ Zepto modules are individual files in the "src/" directory.
   <tr>
     <th><a href="src/ie.js#files">ie</a></th>
     <td>✔</td>
-    <td>
-      Add support for Internet Explorer 10+ on desktop and Windows Phone 8.
-      (Some tests are failing. Help us fix this!)
-    </td>
+    <td>Support for Internet Explorer 10+ on the desktop and Windows Phone 8</td>
   </tr>
   <tr>
     <th><a href="src/detect.js#files">detect</a></th>
