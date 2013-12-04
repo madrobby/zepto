@@ -90,6 +90,10 @@
         $.ajaxSettings.xhr = OriginalXHR
         $(document).off()
         $.active = 0
+
+        for (var key in window)
+          if (/^jsonp\d+$/.test(key) && window[key] === undefined)
+            delete window[key]
       },
 
       testDone: function(t) {
@@ -147,6 +151,48 @@
         var log = []
 
         var xhr = $.ajax({
+          beforeSend: function() { return false }
+        })
+
+        xhr.done(function(){ log.push('done') })
+          .fail(function(gotXhr, status, error){
+            t.assertIdentical(xhr, gotXhr)
+            t.assertEqual('abort', status)
+            log.push('fail1')
+          })
+
+        t.assertEqualList('fail1', log)
+      },
+
+      testJSONP: function(t) {
+        var log = []
+        t.pause()
+
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
+          success: function() { log.push('success') }
+        })
+          .done(function(){ log.push('done1') })
+          .always(function(){
+            setTimeout(function(){
+              t.resume(function(){
+                t.assertEqualList('success done1', log)
+                xhr.done(function(){ log.push('done2') })
+                t.assertEqualList('success done1 done2', log)
+              })
+            }, 10)
+          })
+
+        t.assertEqual(0, log.length)
+      },
+
+      testJSONPAbortInBeforeSend: function(t) {
+        var log = []
+
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
           beforeSend: function() { return false }
         })
 

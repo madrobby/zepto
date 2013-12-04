@@ -71,7 +71,7 @@
   // Empty function, used as default callback
   function empty() {}
 
-  $.ajaxJSONP = function(options){
+  $.ajaxJSONP = function(options, deferred){
     if (!('type' in options)) return $.ajax(options)
 
     var _callbackName = options.jsonpCallback,
@@ -85,14 +85,16 @@
       },
       xhr = { abort: abort }, abortTimeout
 
+    if (deferred) deferred.promise(xhr)
+
     $(script).on('load error', function(e, errorType){
       clearTimeout(abortTimeout)
       $(script).off().remove()
 
       if (e.type == 'error' || !responseData) {
-        ajaxError(null, errorType || 'error', xhr, options)
+        ajaxError(null, errorType || 'error', xhr, options, deferred)
       } else {
-        ajaxSuccess(responseData[0], xhr, options)
+        ajaxSuccess(responseData[0], xhr, options, deferred)
       }
 
       window[callbackName] = originalCallback
@@ -104,7 +106,7 @@
 
     if (ajaxBeforeSend(xhr, options) === false) {
       abort('abort')
-      return false
+      return xhr
     }
 
     window[callbackName] = function(){
@@ -181,7 +183,8 @@
   }
 
   $.ajax = function(options){
-    var settings = $.extend({}, options || {})
+    var settings = $.extend({}, options || {}),
+        deferred = $.Deferred && $.Deferred()
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
@@ -198,13 +201,12 @@
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
           settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
-      return $.ajaxJSONP(settings)
+      return $.ajaxJSONP(settings, deferred)
     }
 
     var mime = settings.accepts[dataType],
         baseHeaders = { },
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
-        deferred = $.Deferred && $.Deferred(),
         xhr = settings.xhr(), abortTimeout
 
     if (deferred) deferred.promise(xhr)
