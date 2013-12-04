@@ -334,7 +334,7 @@ function TestCase(methodName) {
         this._result.addSkip(this, e);
         break;
       default:
-        this._result.addError(this, e);
+        this._result.addError(this, e + ('stack' in e ? "\n"+e.stack : ''));
     }
   }
 
