@@ -1,7 +1,7 @@
 ---
 title: triggerHandler
 signature: |
-  triggerHandler(event, [data]) ⇒ self
+  triggerHandler(event, [args]) ⇒ self
 ---
 
 Like [trigger](#trigger), but triggers only event handlers on current
