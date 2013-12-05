@@ -406,7 +406,7 @@
       },
 
       testFalseLiteralAsCallbackForDelegation: function(t){
-        var span = $('<span>').appendTo(this.el)
+        var span = $('<span>').appendTo(this.el),
             event = $.Event('click')
 
         this.el.on('click', 'span', false)
@@ -417,7 +417,7 @@
       },
 
       testFalseLiteralAsCallbackForDelegationWithDataArgument: function(t){
-        var span = $('<span>').appendTo(this.el)
+        var span = $('<span>').appendTo(this.el),
             event = $.Event('click')
 
         this.el.on('click', 'span', null, false)
