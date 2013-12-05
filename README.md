@@ -196,17 +196,22 @@ You will need to install [PhantomJS][]. On OS X, that's easy:
 $ brew install phantomjs
 ~~~
 
-To run the test suite, these are all equivalent:
+To run the automated tests:
 
 ~~~ sh
 $ npm test
-$ ./make test
-$ script/test
 ~~~
 
-To manually run tests (all except for the "ajax" module) on a device,
-you can serve the whole Zepto folder on a web server and open
-`test/index.html` in the device's browser.
+To run a test server, which you can hit with your browsers and devices:
+
+~~~ sh
+$ npm start
+~~~
+
+Go to `http://your-ip-address:3000/` on your browser and follow the
+instructions. For your convenience test failures and exceptions will be
+reported to the the console you started the test server in (as well as
+the browser console if available).
 
   [zeptojs.com]: http://zeptojs.com
   [master]: https://github.com/madrobby/zepto/commits/master
