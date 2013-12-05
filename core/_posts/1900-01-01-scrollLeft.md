@@ -1,6 +1,6 @@
 ---
 title: "scrollLeft"
-version: 1.0
+version: 1.1
 signature: |
   scrollLeft() ⇒ number
   scrollLeft(value) ⇒ self
