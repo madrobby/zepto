@@ -2,7 +2,7 @@
 require 'shelljs/make'
 fs = require 'fs'
 
-version   = '1.1.0'
+version   = '1.1.1'
 zepto_js  = 'dist/zepto.js'
 zepto_min = 'dist/zepto.min.js'
 zepto_gz  = 'dist/zepto.min.gz'
