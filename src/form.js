@@ -2,7 +2,7 @@
 //     (c) 2010-2013 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
-;(function ($) {
+;(function($){
   $.fn.serializeArray = function() {
     var result = [], el
     $([].slice.call(this.get(0).elements)).each(function(){
