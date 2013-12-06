@@ -1,4 +1,4 @@
-/* Zepto v1.1 - zepto event ajax form ie - zeptojs.com/license */
+/* Zepto v1.1.1 - zepto event ajax form ie - zeptojs.com/license */
 
 
 var Zepto = (function() {
@@ -1472,7 +1472,7 @@ window.$ === undefined && (window.$ = Zepto)
   }
 })(Zepto)
 
-;(function ($) {
+;(function($){
   $.fn.serializeArray = function() {
     var result = [], el
     $([].slice.call(this.get(0).elements)).each(function(){
@@ -1509,7 +1509,7 @@ window.$ === undefined && (window.$ = Zepto)
 
 })(Zepto)
 
-;(function(){
+;(function($){
   // __proto__ doesn't exist on IE<11, so redefine
   // the Z function to use object extension instead
   if (!('__proto__' in {})) {
@@ -1542,4 +1542,4 @@ window.$ === undefined && (window.$ = Zepto)
       }
     }
   }
-})()
+})(Zepto)
