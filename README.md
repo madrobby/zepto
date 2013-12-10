@@ -40,6 +40,14 @@ $ coffee make dist
 $ MODULES="zepto event data ..." ./make dist
 ~~~
 
+And if you have [Bower](https://github.com/bower/bower), you can simply install it via:
+
+~~~ sh
+$ bower install zeptojs (--save-dev)
+~~~
+
+Once installed, just include what [modules](http://zeptojs.com/#modules) you want coming from `src/`.
+
 ## Zepto modules
 
 Zepto modules are individual files in the "src/" directory.
