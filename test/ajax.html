@@ -218,6 +218,20 @@
         $.get('echo', { sample: 'plain' }, 'text')
       },
 
+      testAjaxBeforeSendSetRequestHeader: function(t){
+        t.pause()
+        $.ajax({
+          url: 'echo',
+          beforeSend: function(xhr, settings){
+            xhr.setRequestHeader('Accept', 'text/plain')
+            t.assertUndefined(settings.headers)
+          },
+          success: t.reg.resumeHandler('success', function(response){
+            t.assertLine("accept: text/plain", response)
+          })
+        })
+      },
+
       testAjaxPost: function(t){
         t.pause()
         var xhr = $.post('echo', t.reg.resumeHandler('success', function(response){
@@ -739,6 +753,7 @@
         this.async = async
       },
       setRequestHeader: function(name, value) {
+        if (!this.method) throw "setRequestHeader() called before open()"
         this.headers.push({ name: name, value: value })
       },
       getResponseHeader: function(name) {
@@ -1088,15 +1103,28 @@
           }
         })
         t.assertEqual('/?a=b', url)
-        t.assertNull(data)
+        t.assertUndefined(data)
       },
 
-      testBeforeSendCanChangeAndAddHeaders: function(t) {
+      testBeforeSendCannotChangeOrAddHeadersViaObject: function(t) {
         var xhr = $.ajax({
           headers: { a:'b', c:'d' },
           beforeSend: function(x, s) {
             s.headers['a'] = 'B'
             s.headers['e'] = 'f'
+          }
+        })
+        t.assert(xhr.headers.some(matchHeader('a', 'b')))
+        t.assert(xhr.headers.some(matchHeader('c', 'd')))
+        t.refute(xhr.headers.some(matchHeader('e', 'f')))
+      },
+
+      testBeforeSendCanChangeAndAddHeadersViaXhr: function(t) {
+        var xhr = $.ajax({
+          headers: { a:'b', c:'d' },
+          beforeSend: function(x, s) {
+            x.setRequestHeader('a', 'B')
+            x.setRequestHeader('e', 'f')
           }
         })
         t.assert(xhr.headers.some(matchHeader('a', 'B')))

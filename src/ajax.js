@@ -179,7 +179,7 @@
     if (options.processData && options.data && $.type(options.data) != "string")
       options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
-      options.url = appendQuery(options.url, options.data), options.data = null
+      options.url = appendQuery(options.url, options.data), options.data = undefined
   }
 
   $.ajax = function(options){
@@ -205,21 +205,26 @@
     }
 
     var mime = settings.accepts[dataType],
-        baseHeaders = { },
+        headers = { },
+        setHeader = function(name, value) { headers[name.toLowerCase()] = [name, value] },
         protocol = /^([\w-]+:)\/\//.test(settings.url) ? RegExp.$1 : window.location.protocol,
-        xhr = settings.xhr(), abortTimeout
+        xhr = settings.xhr(),
+        nativeSetHeader = xhr.setRequestHeader,
+        abortTimeout
 
     if (deferred) deferred.promise(xhr)
 
-    if (!settings.crossDomain) baseHeaders['X-Requested-With'] = 'XMLHttpRequest'
-    baseHeaders['Accept'] = mime || '*/*'
+    if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
+    setHeader('Accept', mime || '*/*')
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
     if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
-      baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
-    settings.headers = $.extend(baseHeaders, settings.headers || {})
+      setHeader('Content-Type', settings.contentType || 'application/x-www-form-urlencoded')
+
+    if (settings.headers) for (name in settings.headers) setHeader(name, settings.headers[name])
+    xhr.setRequestHeader = setHeader
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
@@ -256,7 +261,7 @@
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 
-    for (name in settings.headers) xhr.setRequestHeader(name, settings.headers[name])
+    for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty
