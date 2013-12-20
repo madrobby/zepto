@@ -18,7 +18,7 @@ Instead please donate to [charity: water](http://charitywater.org/).
 The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
 optional modules and remove some of the default ones you don't need, to keep the
-size at minimum. That's when you need to check out Zepto's source code and use
+size at a minimum. That's when you need to check out Zepto's source code and use
 the build commands.
 
 You will need Node.js installed on your system.
