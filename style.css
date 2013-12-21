@@ -338,7 +338,7 @@ table td:nth-child(2) {
     line-height: 25px;
     text-align: center;
     border-radius: 3px;
-    background: #b01df9;
+    background: rgba(255,255,255,0.75);
     color: #fff;
     text-shadow: 0px -1px rgba(0,0,0,0.5);
     padding: 3px 4px;
