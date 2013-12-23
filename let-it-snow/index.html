@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Let it snow with Zepto.js</title>
+    <meta name="name" content="content">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
+    <style>
+      html, body { height: 100%; }
+      body {
+        color: #fff; overflow: hidden;
+        background: #a90329;
+        background: -moz-linear-gradient(top, #a90329 0%, #8f0222 44%, #6d0019 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a90329), color-stop(44%,#8f0222), color-stop(100%,#6d0019));
+        background: -webkit-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%);
+        background: -o-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%);
+        background: -ms-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%);
+        background: linear-gradient(to bottom, #a90329 0%,#8f0222 44%,#6d0019 100%);
+      }
+      div { position: absolute; }
+      div.shameless-plug { position: absolute; font: 12px/12px Helvetica, Arial; right:10px; top:10px; color: #fff; }
+      a { color: inherit; text-decoration: none; }
+      div.greetings {
+        font: 40px/60px "Great Vibes", Palatino, serif;
+        postion: fixed;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        text-shadow: 0 0 30px rgba(255,255,255,0.5);
+      }
+    </style>
+  </head>
+  <body>
+
+  <script src="zepto.min.js"></script>
+
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://zeptojs.com/let-it-snow" data-text="Let it snow with Zepto.js" data-via="zeptojs" data-lang="en">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+  <div class="shameless-plug">
+    <a href="http://zeptojs.com/">&rarr; Zepto.js</b></a>
+  </div>
+
+  <div class="greetings">
+    Happy Holidays!
+  </div>
+
+  <script>
+    $(document).ready(function(){
+      var mobile = ($.os.ios || $.os.android || $.os.webos), i = mobile ? 30 : 100, glyphs = ($.os.webos ? '+*×' : '❄❅❆').split('')
+
+      function rand(max){ return Math.floor(Math.random()*max) }
+
+      function addFlake(){
+        var el = $('<div><div>' + glyphs[rand(glyphs.length)] + '</div></div>')
+        $('body').append(el)
+        el.css({
+          left: rand(100)+'%', top: -100-rand(200),
+          fontSize: 15+rand(100),
+          opacity: 0.5+Math.random()/2
+        }).anim(
+          { translateY: (innerHeight*(mobile ? 3 : 2))+rand(innerHeight/2)+'px', translateX: 50-rand(100)+'px', rotate: (500-rand(1000))+'deg' },
+          6+rand(10),
+          'linear',
+          function(){
+            addFlake()
+            el.remove() // garbage collect
+          }
+        )
+      }
+
+      while(i--) setTimeout(addFlake, rand(6e3))
+
+      window.ondeviceorientation = function(event){
+        ('alpha' in event) &&
+          $('body').css({ '-webkit-transform': 'rotate('+event.alpha+'deg)'})
+      }
+    })
+  </script>
+  </body>
+</html>
