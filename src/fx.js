@@ -57,11 +57,13 @@
   $.fn.anim = function(properties, duration, ease, callback, delay){
     var key, cssValues = {}, cssProperties, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
-        fired = false
+        fired = false,
+        dom = this[0]
 
     if (duration === undefined) duration = $.fx.speeds._default / 1000
     if (delay === undefined) delay = 0
     if ($.fx.off) duration = 0
+    if (dom !== undefined) dom.properties = properties
 
     if (typeof properties == 'string') {
       // keyframe animation
@@ -86,25 +88,31 @@
       }
     }
 
-    wrappedCallback = function(event){
+    wrappedCallback = function(event) {
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, wrappedCallback)
       } else
         $(this).unbind(endEvent, wrappedCallback) // triggered by setTimeout
 
-      fired = true
-      $(this).css(cssReset)
-      callback && callback.call(this)
+      if(dom !== undefined && dom.properties == properties) {
+        dom.properties = undefined
+        fired = true
+        $(this).css(cssReset)
+        callback && callback.call(this)        
+      }
     }
-    if (duration > 0){
+    if (duration > 0) {
       this.bind(endEvent, wrappedCallback)
       // transitionEnd is not always firing on older Android phones
       // so make sure it gets fired
-      setTimeout(function(){
-        if (fired) return
-        wrappedCallback.call(that)
-      }, (duration * 1000) + 25)
+      if(dom !== undefined) {
+        if(dom.timeout !== undefined) clearTimeout(dom.timeout)
+        dom.timeout = setTimeout(function() {
+          if (fired) return
+          wrappedCallback.call(that)
+        }, (duration * 1000) + 25)
+      }
     }
 
     // trigger page reflow so new elements can animate
