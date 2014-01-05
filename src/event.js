@@ -91,7 +91,8 @@
 
   $.proxy = function(fn, context) {
     if (isFunction(fn)) {
-      var proxyFn = function(){ return fn.apply(context, arguments) }
+      var args = Array.prototype.slice.call(arguments, 2),
+      proxyFn = function(){ return fn.apply(context, args) }
       proxyFn._zid = zid(fn)
       return proxyFn
     } else if (isString(context)) {
