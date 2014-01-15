@@ -71,6 +71,13 @@
   // Empty function, used as default callback
   function empty() {}
 
+  // Dummy callback to handle aborted JSONP requests
+  function abortCleanup(callbackName, originalCallback) {
+    window[callbackName] = function() {
+      window[callbackName] = originalCallback
+    }
+  }
+
   $.ajaxJSONP = function(options, deferred){
     if (!('type' in options)) return $.ajax(options)
 
@@ -97,7 +104,17 @@
         ajaxSuccess(responseData[0], xhr, options, deferred)
       }
 
-      window[callbackName] = originalCallback
+      if (errorType == 'abort' || errorType == 'timeout') {
+        // When we are abortted the call continues and will error if/when it loads successfully.
+        // To prevent this we are assigning a cleanup stub.
+        // Note that this could cause unexpected behavior if abort is used in combination with
+        // the jsonpCallback option, if that callback name is reused for a subsequent request
+        // prior to the completion of the script tag's execution.
+        abortCleanup(callbackName, originalCallback)
+      } else  {
+        window[callbackName] = originalCallback
+      }
+
       if (responseData && $.isFunction(originalCallback))
         originalCallback(responseData[0])
 
