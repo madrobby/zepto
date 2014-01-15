@@ -84,7 +84,9 @@ app.get '/test/json', (req, res) ->
 
 app.all '/test/slow', (req, res) ->
   setTimeout ->
-    res.send 'DONE'
+    res.jsonp
+      query: req.query
+      hello: 'world'
   , 200
 
 app.get '/test/cached', (req, res) ->
