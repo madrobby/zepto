@@ -94,7 +94,7 @@
 
   function displayResults(results, seconds) {
     var container = $('results')
-    if (container) {
+    if (container && !container.className) {
       if (results.failureCount || results.errorCount) {
         container.className = 'failed'
         container.innerHTML = printf("Finished in %d s. &ndash; <em>%d failures, %d errors</em> (%d assertions)",
@@ -105,6 +105,14 @@
                                      [seconds, results.testCount, results.assertionCount])
       }
       container.className += ' finished'
+    }
+  }
+
+  window.onerror = function(msg) {
+    var container = $('results')
+    if (container) {
+      container.className = 'failed finished'
+      container.innerHTML = printf("global onerror: %s", [msg])
     }
   }
 
