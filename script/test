@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 port=3999
-pidfile=test/server.pid
 
-./node_modules/.bin/coffee test/server.coffee $port &
+export PATH=node_modules/.bin:"$PATH"
+
+coffee test/server.coffee $port &
 pid=$!
 
 terminate_test_server() {
