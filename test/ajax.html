@@ -338,6 +338,19 @@
         })
       },
 
+      testAjaxEqualQuestionmarkIsNotAlwaysJSONP: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+        $.ajax({
+          url: 'echo=?',
+          dataType: 'text',
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertLine('GET ?{}', data)
+            t.assertLine("accept: text/plain", data)
+          })
+        })
+      },
+
       testAjaxGetJSONP: function(t){
         t.pause()
         $.getJSON(

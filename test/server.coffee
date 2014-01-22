@@ -50,7 +50,7 @@ browser = (ua) ->
 app.all '/', (req, res) ->
   res.redirect '/test'
 
-app.all '/test/echo', (req, res) ->
+app.all '/test/echo=?', (req, res) ->
   res.set 'Cache-Control', 'no-cache'
   res.send """
            #{req.method} ?#{dump(req.query)}

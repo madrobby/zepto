@@ -113,7 +113,7 @@
       responseData = arguments
     }
 
-    script.src = options.url.replace(/=\?/, '=' + callbackName)
+    script.src = options.url.replace(/\?(.+)=\?/, '?$1=' + callbackName)
     document.head.appendChild(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
@@ -196,7 +196,7 @@
     serializeData(settings)
     if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
-    var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
+    var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
