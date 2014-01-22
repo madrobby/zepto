@@ -12,6 +12,7 @@ terminate_test_server() {
 trap terminate_test_server EXIT
 
 phantomjs --disk-cache=true \
-  test/runner.coffee "http://localhost:${port}/" "$@"
+  test/runner.coffee "http://localhost:${port}/" "$@" \
+  2> >(grep -v "CoreText performance note" >&2)
 
 exit $?
