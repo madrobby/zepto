@@ -33,11 +33,12 @@ The resulting files are:
 1. `dist/zepto.js`
 2. `dist/zepto.min.js`
 
-If you install CoffeeScript globally, you can run `make` directly:
+You can also create a custom build by defining the
+`MODULES` environment variable and then using `coffee` to run the
+makefile directly:
 
 ~~~ sh
-$ coffee make dist
-$ MODULES="zepto event data ..." ./make dist
+$ MODULES="zepto event data ..." ./node_modules/.bin/coffee make dist
 ~~~
 
 ## Zepto modules
