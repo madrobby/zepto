@@ -131,23 +131,27 @@
           })
         }, 50)
       },
-      
+
       testScrollDoesNotFireTap: function(t){
-        var element = $('#test').get(0), fired = false
-        
+        var element = $('#test').get(0), count = 0
+
         $('#test').on('tap', function () {
-          fired = true
+          count++
         })
-        
+
         down(element, 0, 0)
         move(element, 0, 20)
         move(element, 0, 20)
-        
         up(element)
-        
-        t.assertEqual(fired, false)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(0, count)
+          })
+        }, 50)
       },
-      
+
       testSingleTapDoesNotInterfereWithTappingTwice: function(t){
         var count = 0, element = $('#test').get(0)
 
@@ -157,7 +161,6 @@
 
         down(element, 10, 10)
         up(element)
-
 
         t.pause()
         setTimeout(function(){

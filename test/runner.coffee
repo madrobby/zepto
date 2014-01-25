@@ -15,7 +15,7 @@ if args.length > 0
   suites = args
 else
   # by default, run all test/*.html pages
-  modules = 'zepto ajax callbacks data deferred ajax_deferred detect event form fx selector stack'.split /\s+/
+  modules = 'zepto ajax callbacks data deferred ajax_deferred detect touch event form fx selector stack'.split /\s+/
   suites = modules.map (name)-> "test/#{name}.html"
 
 page = require('webpage').create()
@@ -27,7 +27,7 @@ page.onError = (msg, trace) ->
   console.log 'ERROR: ' + msg
 
 # used for waiting until the tests finish running
-waitFor = (testFn, onReady, timeout=4000) ->
+waitFor = (testFn, onReady, timeout=30000) ->
   start = new Date()
   interval = setInterval ->
     if testFn()
