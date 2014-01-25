@@ -26,6 +26,9 @@ You will need Node.js installed on your system.
 ~~~ sh
 $ npm install
 $ npm run-script dist
+
+# do a custom build
+$ MODULES="zepto event data" npm run-script dist
 ~~~
 
 The resulting files are:
