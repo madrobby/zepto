@@ -3,8 +3,8 @@ set -e
 
 npm install
 
-if phantom_version="$(phantomjs --version)"; then
-  echo "phantomjs ${phantom_version}"
+if which phantomjs > /dev/null; then
+  echo "phantomjs `phantomjs -v`"
 else
   echo "You should install PhantomJS for \`script/test' to work." >&2
 fi
