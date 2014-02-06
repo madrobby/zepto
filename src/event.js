@@ -265,12 +265,16 @@
     }
   })
 
-  // remove() also removes event listeners
-  var fn_remove = $.fn.remove;
-  $.fn.remove = function() {
-    this.off();
-    return fn_remove.call(this);
-  }
+  // Generate extended `remove` and `empty` functions
+  ;['remove', 'empty'].forEach(function(methodName){
+    var origFn = $.fn[methodName]
+    $.fn[methodName] = function() {
+      var elements = this.find('*')
+      if (methodName === 'remove') elements = elements.add(this)
+      elements.off()
+      return origFn.call(this)
+    }
+  })
 
   $.Event = function(type, props) {
     if (!isString(type)) props = type, type = props.type

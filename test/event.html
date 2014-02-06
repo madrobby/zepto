@@ -436,6 +436,35 @@
         span.remove();
         span.trigger('event');
         t.assertFalse(called);
+      },
+
+      testEmptyingElementRemovesEvents: function(t) {
+        var el = $('<div />'),
+          childEl = $('<span />').appendTo(el),
+          childCalled = false,
+          parentCalled = false;
+        el.on('event', function() {
+          parentCalled = true;
+        })
+        childEl.on('event', function() {
+          childCalled = true;
+        });
+        el.empty();
+        childEl.trigger('event');
+        el.trigger('event');
+        t.assertFalse(childCalled);
+        t.assertTrue(parentCalled);
+      },
+
+      testDetachingElementKeepsEvents: function(t) {
+        var span = $('<span>').appendTo(this.el);
+        var called = false;
+        span.on('event', function() {
+          called = true;
+        });
+        span.detach();
+        span.trigger('event');
+        t.assertTrue(called);
       }
 
     })
