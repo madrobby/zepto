@@ -265,6 +265,13 @@
     }
   })
 
+  // remove() also removes event listeners
+  var fn_remove = $.fn.remove;
+  $.fn.remove = function() {
+    this.off();
+    return fn_remove.call(this);
+  }
+
   $.Event = function(type, props) {
     if (!isString(type)) props = type, type = props.type
     var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true

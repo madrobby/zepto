@@ -425,6 +425,17 @@
         span.trigger(event)
         t.assertTrue(event.isDefaultPrevented())
         t.assertTrue(event.isPropagationStopped())
+      },
+
+      testRemovingElementRemovesEvents: function(t) {
+        var span = $('<span>').appendTo(this.el);
+        var called = false;
+        span.on('event', function() {
+          called = true;
+        });
+        span.remove();
+        span.trigger('event');
+        t.assertFalse(called);
       }
 
     })
