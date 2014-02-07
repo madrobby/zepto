@@ -271,7 +271,9 @@
     $.fn[methodName] = function() {
       var elements = this.find('*')
       if (methodName === 'remove') elements = elements.add(this)
-      elements.off()
+      elements.forEach(function(elem){
+        remove(elem)
+      })
       return origFn.call(this)
     }
   })
