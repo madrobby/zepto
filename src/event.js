@@ -7,7 +7,6 @@
       slice = Array.prototype.slice,
       isFunction = $.isFunction,
       isString = function(obj){ return typeof obj == 'string' },
-      handlers = {},
       specialEvents={},
       focusinSupported = 'onfocusin' in window,
       focus = { focus: 'focusin', blur: 'focusout' },
@@ -18,10 +17,15 @@
   function zid(element) {
     return element._zid || (element._zid = _zid++)
   }
+
+  function handlers(element) {
+    return element._zhandlers || (element._zhandlers = [])
+  }
+
   function findHandlers(element, event, fn, selector) {
     event = parse(event)
     if (event.ns) var matcher = matcherFor(event.ns)
-    return (handlers[zid(element)] || []).filter(function(handler) {
+    return (handlers(element) || []).filter(function(handler) {
       return handler
         && (!event.e  || handler.e == event.e)
         && (!event.ns || matcher.test(handler.ns))
@@ -48,7 +52,7 @@
   }
 
   function add(element, events, fn, data, selector, delegator, capture){
-    var id = zid(element), set = (handlers[id] || (handlers[id] = []))
+    var id = zid(element), set = handlers(element)
     events.split(/\s/).forEach(function(event){
       if (event == 'ready') return $(document).ready(fn)
       var handler   = parse(event)
@@ -80,7 +84,7 @@
     var id = zid(element)
     ;(events || '').split(/\s/).forEach(function(event){
       findHandlers(element, event, fn, selector).forEach(function(handler){
-        delete handlers[id][handler.i]
+        delete handlers(element)[handler.i]
       if ('removeEventListener' in element)
         element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
       })
