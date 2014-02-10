@@ -285,17 +285,17 @@
     }
   }
 
-  $.get = function(url, data, success, dataType){
+  $.get = function(/* url, data, success, dataType */){
     return $.ajax(parseArguments.apply(null, arguments))
   }
 
-  $.post = function(url, data, success, dataType){
+  $.post = function(/* url, data, success, dataType */){
     var options = parseArguments.apply(null, arguments)
     options.type = 'POST'
     return $.ajax(options)
   }
 
-  $.getJSON = function(url, data, success){
+  $.getJSON = function(/* url, data, success */){
     var options = parseArguments.apply(null, arguments)
     options.dataType = 'json'
     return $.ajax(options)

@@ -26,8 +26,6 @@ var Zepto = (function() {
       '*': document.createElement('div')
     },
     readyRE = /complete|loaded|interactive/,
-    classSelectorRE = /^\.([\w-]+)$/,
-    idSelectorRE = /^#([\w-]*)$/,
     simpleSelectorRE = /^[\w-]*$/,
     class2type = {},
     toString = class2type.toString,
