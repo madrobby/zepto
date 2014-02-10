@@ -6,6 +6,7 @@ version   = '1.1.2'
 zepto_js  = 'dist/zepto.js'
 zepto_min = 'dist/zepto.min.js'
 zepto_gz  = 'dist/zepto.min.gz'
+intro     = null
 
 port = 3999
 root = __dirname + '/'
@@ -41,7 +42,7 @@ target.build = ->
   mkdir '-p', 'dist'
   modules = (env['MODULES'] || 'zepto event ajax form ie').split(' ')
   module_files = ( "src/#{module}.js" for module in modules )
-  intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
+  intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */"
   dist = intro + cat(module_files).replace(/^\/[\/*].*$/mg, '').replace(/\n{3,}/g, "\n\n")
   dist.to(zepto_js)
   report_size(zepto_js)
@@ -49,8 +50,7 @@ target.build = ->
 target.minify = ->
   target.build() unless test('-e', zepto_js)
   zepto_code = cat(zepto_js)
-  intro = zepto_code.slice(0, zepto_code.indexOf("\n") + 1)
-  (intro + minify(zepto_code)).to(zepto_min)
+  (intro + '\n' + minify(zepto_code)).to(zepto_min)
   report_size(zepto_min)
 
 target.compress = ->
