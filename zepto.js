@@ -1,4 +1,4 @@
-/* Zepto v1.1.2 - zepto event ajax form ie - zeptojs.com/license */
+/* Zepto v1.1.3 - zepto event ajax form ie - zeptojs.com/license */
 
 
 var Zepto = (function() {
@@ -25,8 +25,6 @@ var Zepto = (function() {
       '*': document.createElement('div')
     },
     readyRE = /complete|loaded|interactive/,
-    classSelectorRE = /^\.([\w-]+)$/,
-    idSelectorRE = /^#([\w-]*)$/,
     simpleSelectorRE = /^[\w-]*$/,
     class2type = {},
     toString = class2type.toString,
@@ -46,7 +44,9 @@ var Zepto = (function() {
       'usemap': 'useMap',
       'frameborder': 'frameBorder',
       'contenteditable': 'contentEditable'
-    }
+    },
+    isArray = Array.isArray ||
+      function(object){ return object instanceof Array }
 
   zepto.matches = function(element, selector) {
     if (!selector || !element || element.nodeType !== 1) return false
@@ -73,7 +73,6 @@ var Zepto = (function() {
   function isPlainObject(obj) {
     return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
   }
-  function isArray(value) { return value instanceof Array }
   function likeArray(obj) { return typeof obj.length == 'number' }
 
   function compact(array) { return filter.call(array, function(item){ return item != null }) }
@@ -865,7 +864,7 @@ window.Zepto = Zepto
 window.$ === undefined && (window.$ = Zepto)
 
 ;(function($){
-  var $$ = $.zepto.qsa, _zid = 1, undefined,
+  var _zid = 1, undefined,
       slice = Array.prototype.slice,
       isFunction = $.isFunction,
       isString = function(obj){ return typeof obj == 'string' },
@@ -1248,7 +1247,7 @@ window.$ === undefined && (window.$ = Zepto)
       responseData = arguments
     }
 
-    script.src = options.url.replace(/=\?/, '=' + callbackName)
+    script.src = options.url.replace(/\?(.+)=\?/, '?$1=' + callbackName)
     document.head.appendChild(script)
 
     if (options.timeout > 0) abortTimeout = setTimeout(function(){
@@ -1331,7 +1330,7 @@ window.$ === undefined && (window.$ = Zepto)
     serializeData(settings)
     if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
-    var dataType = settings.dataType, hasPlaceholder = /=\?/.test(settings.url)
+    var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
     if (dataType == 'jsonp' || hasPlaceholder) {
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
@@ -1411,26 +1410,27 @@ window.$ === undefined && (window.$ = Zepto)
 
   // handle optional data/success arguments
   function parseArguments(url, data, success, dataType) {
-    var hasData = !$.isFunction(data)
+    if ($.isFunction(data)) dataType = success, success = data, data = undefined
+    if (!$.isFunction(success)) dataType = success, success = undefined
     return {
-      url:      url,
-      data:     hasData  ? data : undefined,
-      success:  !hasData ? data : $.isFunction(success) ? success : undefined,
-      dataType: hasData  ? dataType || success : success
+      url: url
+    , data: data
+    , success: success
+    , dataType: dataType
     }
   }
 
-  $.get = function(url, data, success, dataType){
+  $.get = function(/* url, data, success, dataType */){
     return $.ajax(parseArguments.apply(null, arguments))
   }
 
-  $.post = function(url, data, success, dataType){
+  $.post = function(/* url, data, success, dataType */){
     var options = parseArguments.apply(null, arguments)
     options.type = 'POST'
     return $.ajax(options)
   }
 
-  $.getJSON = function(url, data, success){
+  $.getJSON = function(/* url, data, success */){
     var options = parseArguments.apply(null, arguments)
     options.dataType = 'json'
     return $.ajax(options)
