@@ -218,6 +218,30 @@
         $.get('echo', { sample: 'plain' }, 'text')
       },
 
+      testAjaxGetWithParamsAutoParsesJSON: function(t) {
+        t.pause()
+        $.get('json', { sample: 'data' }, t.reg.resumeHandler('success', function(data){
+          t.assertEqual('data', data.query.sample)
+          t.assertEqual('world', data.hello)
+        }))
+      },
+
+      testAjaxGetNoParamsAutoParsesJSON: function(t) {
+        t.pause()
+        $.get('json', t.reg.resumeHandler('success', function(data){
+          t.assertIdentical(0, $.map(data.query).length)
+          t.assertEqual('world', data.hello)
+        }))
+      },
+
+      testAjaxGetNullParamsAutoParsesJSON: function(t) {
+        t.pause()
+        $.get('json', null, t.reg.resumeHandler('success', function(data){
+          t.assertIdentical(0, $.map(data.query).length)
+          t.assertEqual('world', data.hello)
+        }))
+      },
+
       testAjaxBeforeSendSetRequestHeader: function(t){
         t.pause()
         $.ajax({
@@ -252,6 +276,14 @@
           t.assertLine("accept: text/plain", response)
           t.assertLine('{"sample":"data"}', response)
         }), 'text')
+      },
+
+      testAjaxPostAutoParsesJSON: function(t) {
+        t.pause()
+        var payload = { sample: 'data' }
+        $.post('create', payload, t.reg.resumeHandler('success', function(data){
+          t.assertEqual('data', data.payload.sample)
+        }))
       },
 
       testNumberOfActiveRequests: function(t) {

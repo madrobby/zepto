@@ -276,12 +276,13 @@
 
   // handle optional data/success arguments
   function parseArguments(url, data, success, dataType) {
-    var hasData = !$.isFunction(data)
+    if ($.isFunction(data)) dataType = success, success = data, data = undefined
+    if (!$.isFunction(success)) dataType = success, success = undefined
     return {
-      url:      url,
-      data:     hasData  ? data : undefined,
-      success:  !hasData ? data : $.isFunction(success) ? success : undefined,
-      dataType: hasData  ? dataType || success : success
+      url: url
+    , data: data
+    , success: success
+    , dataType: dataType
     }
   }
 
