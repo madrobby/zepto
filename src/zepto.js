@@ -173,7 +173,7 @@ var Zepto = (function() {
   // This method can be overriden in plugins.
   zepto.init = function(selector, context) {
     var dom
-    // If notphing given, return an empty Zepto collection
+    // If nothing given, return an empty Zepto collection
     if (!selector) return zepto.Z()
     // Optimize for string selectors
     else if (typeof selector == 'string') {
@@ -501,7 +501,7 @@ var Zepto = (function() {
           }
         })
       return $(parents)
-	  },
+    },
     parents: function(selector){
       var ancestors = [], nodes = this
       while (nodes.length > 0)
