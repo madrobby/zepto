@@ -490,7 +490,19 @@ var Zepto = (function() {
         node = node !== context && !isDocument(node) && node.parentNode
       return $(node)
     },
-    parents: function(selector){
+    parentsUntil: function(selector, context){
+      var nodes = this, collection = false, parents = []
+      if (typeof selector == 'object') collection = $(selector)
+      while (nodes.length > 0)
+        nodes = $.map(nodes, function(node){
+          while (node && !(collection ? collection.indexOf(node) >= 0 : zepto.matches(node, selector))) {
+            node = node !== context && !isDocument(node) && node.parentNode
+            parents.push(node)
+          }
+        })
+      return $(parents)
+	  },
+	  parents: function(selector){
       var ancestors = [], nodes = this
       while (nodes.length > 0)
         nodes = $.map(nodes, function(node){
