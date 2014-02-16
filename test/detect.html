@@ -30,6 +30,10 @@
   (function(){
 
     var UA = {
+      Safari_OSX_7_0_1: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
+      Safari_OSX_7_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71",
+      Safari_OSX_6_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8) AppleWebKit/536.25 (KHTML, like Gecko) Version/6.0 Safari/536.25",
+
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
       WebOS_1_2_9_Pixi: "Mozilla/5.0 (webOS/Palm webOS 1.2.9; U; en-US) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/1.0 Safari/525.27.1 Pixi/1.0",
@@ -80,7 +84,10 @@
       Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
 
-      Windows_IE: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+      Windows_IE_9: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+      Windows_IE_9_Compat: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)",
+      Windows_IE_10: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+      Windows_IE_11: "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
       Windows_RT_Surface: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch)",
       Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
@@ -92,6 +99,30 @@
     }
 
     Evidence('ZeptoDetectTest', {
+      testSafariOSX: function(t){
+        detect(UA.Safari_OSX_7_0_1, function(os, browser){
+          t.assertUndefined(os.osx)
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("7.0.1",browser.version)
+        });
+        detect(UA.Safari_OSX_7_0, function(os, browser){
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("7.0",browser.version)
+        });
+        detect(UA.Safari_OSX_6_0, function(os, browser){
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("6.0",browser.version)
+        });
+      },
 
       testWebOS: function(t){
         detect(UA.WebOS_1_4_0_Pre, function(os, browser){
@@ -404,7 +435,14 @@
       },
 
       testIE: function(t) {
-        detect(UA.Windows_IE, function(os, browser){
+        detect(UA.Windows_IE_11, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("11", browser.version)
+        })
+
+        detect(UA.Windows_IE_10, function(os, browser){
           t.assertFalse(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.ie)
@@ -424,6 +462,21 @@
           t.assertTrue(browser.ie)
           t.assertEqual("10.0", browser.version)
         })
+
+        detect(UA.Windows_IE_9, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("9.0", browser.version)
+        })
+
+        detect(UA.Windows_IE_9_Compat, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("7.0", browser.version)
+        })
+
       }
     })
   })()
