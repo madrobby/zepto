@@ -584,7 +584,7 @@ var Zepto = (function() {
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
     next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
     html: function(html){
-      return arguments.length === 0 ?
+      return !arguments.length ?
         (this.length > 0 ? this[0].innerHTML : null) :
         this.each(function(idx){
           var originHtml = this.innerHTML
@@ -592,14 +592,14 @@ var Zepto = (function() {
         })
     },
     text: function(text){
-      return arguments.length === 0 ?
+      return !arguments.length ?
         (this.length > 0 ? this[0].textContent : null) :
         this.each(function(){ this.textContent = (text === undefined) ? '' : ''+text })
     },
     attr: function(name, value){
       var result
       return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
+        (!this.length || this[0].nodeType !== 1 ? undefined :
           (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
@@ -625,7 +625,7 @@ var Zepto = (function() {
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
-      return arguments.length === 0 ?
+      return !arguments.length ?
         (this[0] && (this[0].multiple ?
            $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
            this[0].value)
@@ -644,10 +644,10 @@ var Zepto = (function() {
               left: coords.left - parentOffset.left
             }
 
-        if ($this.css('position') == 'static') props['position'] = 'relative'
+        if ($this.css('position') == 'static') props.position = 'relative'
         $this.css(props)
       })
-      if (this.length==0) return null
+      if (!this.length) return null
       var obj = this[0].getBoundingClientRect()
       return {
         left: obj.left + window.pageXOffset,
@@ -823,9 +823,9 @@ var Zepto = (function() {
         parent = inside ? target : target.parentNode
 
         // convert all methods to a "before" operation
-        target = operatorIndex == 0 ? target.nextSibling :
-                 operatorIndex == 1 ? target.firstChild :
-                 operatorIndex == 2 ? target :
+        target = operatorIndex === 0 ? target.nextSibling :
+                 operatorIndex == 1  ? target.firstChild :
+                 operatorIndex == 2  ? target :
                  null
 
         nodes.forEach(function(node){
