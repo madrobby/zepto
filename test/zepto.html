@@ -335,6 +335,19 @@
 
     Evidence('ZeptoTest', {
 
+      testIsNumeric: function (t) {
+        t.assertTrue($.isNumeric(456), 'Integer isNumeric')
+        t.assertTrue($.isNumeric(345.453), 'Float isNumeric')
+        t.assertTrue($.isNumeric("345.453"), 'Float as String isNumeric')
+        t.assertTrue($.isNumeric("1000"), 'Integer as String isNumeric')
+
+        t.assertTrue($.isNumeric(new Number()), 'Instantiated Number isNumeric')
+
+        t.assertFalse($.isNumeric("1,000"))
+        t.assertFalse($.isNumeric("$1,000"))
+        t.assertFalse($.isNumeric("10abc00"))
+      },
+
       testIsFunction: function(t) {
         t.assertTrue($.isFunction(function(){}))
         t.assertTrue($.isFunction(new Function()))
