@@ -7,16 +7,11 @@
     , "dist": "coffee make dist"
     , "start": "coffee test/server.coffee"
   }
-  , "repository": {
-      "type": "git"
-    , "url": "https://github.com/madrobby/zepto.git"
+  , "repository": "madrobby/zepto"
+  , "license": {
+      "type": "MIT"
+    , "url": "http://zeptojs.com/license/"
   }
-  , "licenses": [
-    {
-        "type": "MIT"
-      , "url": "http://zeptojs.com/license/"
-    }
-  ]
   , "devDependencies": {
       "uglify-js": "2.4.x"
     , "express": "3.1.x"
