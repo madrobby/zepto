@@ -30,7 +30,7 @@ $ npm run-script dist
 # do a custom build
 $ MODULES="zepto event data" npm run-script dist
 # if (you.system === window) try the following
-> set MODULES="zepto event data"
+> set MODULES=zepto event data
 > npm run-script dist
 ~~~
 
