@@ -97,7 +97,7 @@
       $(this).css(cssReset)
       callback && callback.call(this)
     }
-    if (duration > 0){
+    if (duration + delay > 0){
       this.bind(endEvent, wrappedCallback)
       // transitionEnd is not always firing on older Android phones
       // so make sure it gets fired
@@ -112,7 +112,7 @@
 
     this.css(cssValues)
 
-    if (duration <= 0) setTimeout(function() {
+    if (duration + delay <= 0) setTimeout(function() {
       that.each(function(){ wrappedCallback.call(this) })
     }, 0)
 
