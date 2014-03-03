@@ -342,9 +342,8 @@
         t.assertTrue($.isNumeric("1000"), 'Integer as String isNumeric')
 
         t.assertTrue($.isNumeric(new Number()), 'Instantiated Number isNumeric')
-
+        
         t.assertFalse($.isNumeric("1,000"))
-        t.assertFalse($.isNumeric("$1,000"))
         t.assertFalse($.isNumeric("10abc00"))
       },
 

@@ -66,7 +66,7 @@ var Zepto = (function() {
     return obj == null ? String(obj) :
       class2type[toString.call(obj)] || "object"
   }
-  function isNumeric(value)  { return type(parseFloat(value)) == "number" }
+  function isNumeric(value)  { return !isNaN(value) }
   function isFunction(value) { return type(value) == "function" }
   function isWindow(obj)     { return obj != null && obj == obj.window }
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
