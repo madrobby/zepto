@@ -124,12 +124,7 @@
         down(element, 10, 10)
         up(element)
 
-        t.pause()
-        setTimeout(function(){
-          t.resume(function(){
-            t.assertEqual(1, count)
-          })
-        }, 50)
+        t.assertEqual(1, count)
       },
 
       testSingleTapDoesNotInterfereWithTappingTwice: function(t){
@@ -201,14 +196,8 @@
           up(element)
 
           t.resume(function(){
-            t.pause()
-
-            setTimeout(function(){
-              t.resume(function(){
-                t.assertEqual(0, singleCount)
-                t.assertEqual(1, doubleCount)
-              })
-            }, 100)
+            t.assertEqual(0, singleCount)
+            t.assertEqual(1, doubleCount)
           })
         }, 100)
       },
