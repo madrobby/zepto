@@ -2202,6 +2202,18 @@
         }
       },
 
+      testNotInDocumentNonEval: function (t) {
+        try {
+          window.someGlobalVariable = 0
+          $('<div></div>')
+            .html('<\script>window.someGlobalVariable += 1<\/script>')
+            .appendTo('body')
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testRemove: function(t) {
         var el = $('<div>').appendTo(document.body)
         t.assertLength(1, el.parent())
