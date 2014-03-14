@@ -832,6 +832,17 @@ var Zepto = (function() {
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
 
+          // executes javascript only if parent node is in the document
+          for (var ancestor = parent.parentNode;
+            ancestor !== null;
+            ancestor = ancestor.parentNode) {
+            if (ancestor === document.documentElement)
+              break;
+          }
+          
+          if (!ancestor) // parent node is not in the document
+            return parent.insertBefore(node, target)
+          
           traverseNode(parent.insertBefore(node, target), function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
                (!el.type || el.type === 'text/javascript') && !el.src)
