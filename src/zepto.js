@@ -33,18 +33,18 @@ var Zepto = (function() {
     camelize, uniq,
     tempParent = document.createElement('div'),
     propMap = {
-      'tabindex': 'tabIndex',
-      'readonly': 'readOnly',
+      tabindex: 'tabIndex',
+      readonly: 'readOnly',
       'for': 'htmlFor',
       'class': 'className',
-      'maxlength': 'maxLength',
-      'cellspacing': 'cellSpacing',
-      'cellpadding': 'cellPadding',
-      'rowspan': 'rowSpan',
-      'colspan': 'colSpan',
-      'usemap': 'useMap',
-      'frameborder': 'frameBorder',
-      'contenteditable': 'contentEditable'
+      maxlength: 'maxLength',
+      cellspacing: 'cellSpacing',
+      cellpadding: 'cellPadding',
+      rowspan: 'rowSpan',
+      colspan: 'colSpan',
+      usemap: 'useMap',
+      frameborder: 'frameBorder',
+      contenteditable: 'contentEditable'
     },
     isArray = Array.isArray ||
       function(object){ return object instanceof Array }
