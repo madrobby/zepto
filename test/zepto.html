@@ -1682,6 +1682,9 @@
         })
         t.assertEqual('0id', els.attr('data-id'))
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
+        
+        t.assertEqual(els, els.attr('data-undef', undefined));
+        t.assertEqual(undefined, els.attr('data-undef'));
       },
 
       testProp: function(t){
@@ -1704,6 +1707,11 @@
         t.assertEqual(td2.prop('colspan'), 2)
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
+        
+        input.prop('readonly', false);
+        t.assertEqual(input.prop('readonly'), false);
+        
+        t.assertEqual(input, input.prop('maxlength', undefined));
       },
 
       testAttrNoElement: function(t){
@@ -1792,6 +1800,10 @@
         // blank values
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
+        
+        // acts as a setter with 2nd parameter undefined
+        t.assertEqual(el, el.data('undef', undefined))
+        t.assertEqual(undefined, el.data('undef'));
       },
 
       testDataNumberType: function(t){
