@@ -457,6 +457,7 @@
         })
 
         detect(UA.Windows_Phone_8, function(os, browser){
+          t.assertTrue(os.wp)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.ie)
