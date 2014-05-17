@@ -1385,6 +1385,18 @@
         t.assertEqual('1', found.get(0).innerHTML)
       },
 
+      testFindWithFalsyValue: function(t){
+        var element = '<div><a>1</a></div>';
+        var found = $(element).find(undefined)
+        t.assertLength(0, found)
+        found = $(element).find(false)
+        t.assertLength(0, found)
+        found = $(element).find(0)
+        t.assertLength(0, found)
+        found = $(element).find('')
+        t.assertLength(0, found)
+      },
+
       testFilter: function(t){
         var found = $('div')
         t.assertLength(2, found.filter('.filtertest'))
