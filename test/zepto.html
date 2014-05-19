@@ -1750,7 +1750,9 @@
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
-        inputs.val(function(i, value){ return value.replace('input', 'changed') })
+        // Only .attr('value', v) changes .attr('value')
+        // rather than .val(v)
+        inputs.attr('value', function(i, value){ return value.replace('input', 'changed') })
 
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
@@ -1872,6 +1874,26 @@
 
         t.assertEqualCollection(['2'], multiple.val(),
           "Expected val() to reflect changes to selected options in a <select multiple> element")
+      },
+
+      testValVsValueAttr: function(t) {
+        var input
+
+        input = $('<input type="text" value="Original">')
+        input.val('By .val(v)')
+        t.assertEqual('Original', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        // .attr('value', v) will change both
+        // without applying .val(v) first
+        input = $('<input type="text" value="Original">')
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .attr("value", v)', input.val())
       },
 
       testChaining: function(t){
