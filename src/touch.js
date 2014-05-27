@@ -97,14 +97,16 @@
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
-      .on('touchend MSPointerUp pointerup', function(e){
+      .on('touchcancel touchend MSPointerUp pointerup', function(e){
+        var swipelength;
         if((_isPointerType = isPointerEventType(e, 'up')) &&
           !isPrimaryTouch(e)) return
         cancelLongTap()
 
         // swipe
-        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
+        swipelength = window.devicePixelRatio >= 2 ? 15 : 30; 
+        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > swipelength) ||
+            (touch.y2 && Math.abs(touch.y1 - touch.y2) > swipelength))
 
           swipeTimeout = setTimeout(function() {
             touch.el.trigger('swipe')
