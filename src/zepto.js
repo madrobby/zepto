@@ -828,7 +828,7 @@ var Zepto = (function() {
                  operatorIndex == 1 ? target.firstChild :
                  operatorIndex == 2 ? target :
                  null
-        
+
         var parentInDocument = function () {
           var ancestor, docElem = document.documentElement
           for (var ancestor = parent;
@@ -836,7 +836,7 @@ var Zepto = (function() {
             ancestor = ancestor.parentNode);
           return ancestor == docElem
         } ()
-        
+
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
