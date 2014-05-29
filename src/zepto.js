@@ -829,13 +829,7 @@ var Zepto = (function() {
                  operatorIndex == 2 ? target :
                  null
 
-        var parentInDocument = function () {
-          var ancestor, docElem = document.documentElement
-          for (var ancestor = parent;
-            ancestor && ancestor != docElem;
-            ancestor = ancestor.parentNode);
-          return ancestor == docElem
-        } ()
+        var parentInDocument = document.documentElement.contains(parent)
 
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)
