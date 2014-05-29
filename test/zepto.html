@@ -2222,6 +2222,18 @@
         t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
       },
 
+      testNotInDocumentNonEval: function (t) {
+        try {
+          window.someGlobalVariable = 0
+          $('<div></div>')
+            .html('<\script>window.someGlobalVariable += 1<\/script>')
+            .appendTo('body')
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0)
 
