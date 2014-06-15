@@ -1653,6 +1653,12 @@
         $('#texttest2').text('')
         t.assertEqual("Let's set it", $('div.texttest').text())
         t.assertEqual('', $('#texttest2').text())
+
+        $('#texttest2').text("Let's set it")
+        $('#texttest2').text(function(idx, text){
+          return text.toUpperCase()
+        })
+        t.assertEqual("LET'S SET IT", $('#texttest2').text())
       },
 
       testEmpty: function(t) {
