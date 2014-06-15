@@ -1634,6 +1634,7 @@
         t.assertEqual('null',     $('<h1/>').text(null).text())
         t.assertEqual('1',        $('<h1/>').text(1).text())
         t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
+        t.assertEqual('a',        $('<h1/>').text(function(idx, text){ return 'a' }).text())
 
         t.assertEqual('&lt;b&gt;a&lt;/b&gt;',
           $('<h1/>').text('<b>a</b>').html())
