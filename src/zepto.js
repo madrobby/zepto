@@ -595,7 +595,10 @@ var Zepto = (function() {
     text: function(text){
       return arguments.length === 0 ?
         (this.length > 0 ? this[0].textContent : null) :
-        this.each(function(){ this.textContent = (text === undefined) ? '' : ''+text })
+        this.each(function(idx){
+          var newText = funcArg(this, text, idx, this.textContent)
+          this.textContent = newText === undefined ? '' : ''+newText
+        })
     },
     attr: function(name, value){
       var result

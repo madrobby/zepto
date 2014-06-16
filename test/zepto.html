@@ -1654,6 +1654,20 @@
         t.assertEqual('', $('#texttest2').text())
       },
 
+      testTextWithFunction: function(t) {
+        var el = $('<div><span>hello</span> <span></span> <span>world</span> <span>again</span></div>'),
+            els = el.find('span')
+
+        els.text(function(idx, oldText){
+          if (idx > 2) return null
+          if (oldText) return oldText.toUpperCase() + ' ' + idx
+        })
+
+        t.assertEqual('HELLO 0', els[0].textContent)
+        t.assertEqual('', els[1].textContent)
+        t.assertEqual('WORLD 2', els[2].textContent)
+      },
+
       testEmpty: function(t) {
         $('#empty_test').empty()
 
