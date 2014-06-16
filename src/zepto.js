@@ -804,7 +804,8 @@ var Zepto = (function() {
 
   function traverseNode(node, fun) {
     fun(node)
-    for (var key in node.childNodes) traverseNode(node.childNodes[key], fun)
+    for (var i = 0, len = node.childNodes.length; i < len; i++)
+      traverseNode(node.childNodes[i], fun)
   }
 
   // Generate the `after`, `prepend`, `before`, `append`,
