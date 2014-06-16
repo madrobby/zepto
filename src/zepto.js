@@ -837,10 +837,8 @@ var Zepto = (function() {
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
 
-          // Do not eval the script if parent is not in document
-          else if (!parentInDocument) return parent.insertBefore(node, target)
-
-          traverseNode(parent.insertBefore(node, target), function(el){
+          parent.insertBefore(node, target)
+          if (parentInDocument) traverseNode(node, function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
                (!el.type || el.type === 'text/javascript') && !el.src)
               window['eval'].call(window, el.innerHTML)
