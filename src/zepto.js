@@ -831,9 +831,14 @@ var Zepto = (function() {
                  operatorIndex == 2 ? target :
                  null
 
+        var parentInDocument = document.documentElement.contains(parent)
+
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
+
+          // Do not eval the script if parent is not in document
+          else if (!parentInDocument) return parent.insertBefore(node, target)
 
           traverseNode(parent.insertBefore(node, target), function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
