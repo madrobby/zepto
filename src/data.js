@@ -52,7 +52,7 @@
           $.each(name, function(key, value){ setData(node, key, value) })
         }) :
         // get value from first element
-        this.length == 0 ? undefined : getData(this[0], name) :
+        (0 in this ? getData(this[0], name) : undefined) :
       // set value on all elements
       this.each(function(){ setData(this, name, value) })
   }

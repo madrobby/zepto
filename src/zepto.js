@@ -585,25 +585,25 @@ var Zepto = (function() {
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
     next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
     html: function(html){
-      return arguments.length === 0 ?
-        (this.length > 0 ? this[0].innerHTML : null) :
+      return 0 in arguments ?
         this.each(function(idx){
           var originHtml = this.innerHTML
           $(this).empty().append( funcArg(this, html, idx, originHtml) )
-        })
+        }) :
+        (0 in this ? this[0].innerHTML : null)
     },
     text: function(text){
-      return arguments.length === 0 ?
-        (this.length > 0 ? this[0].textContent : null) :
+      return 0 in arguments ?
         this.each(function(idx){
           var newText = funcArg(this, text, idx, this.textContent)
           this.textContent = newText == null ? '' : ''+newText
-        })
+        }) :
+        (0 in this ? this[0].textContent : null)
     },
     attr: function(name, value){
       var result
       return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
+        (!this.length || this[0].nodeType !== 1 ? undefined :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
@@ -628,14 +628,14 @@ var Zepto = (function() {
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
-      return arguments.length === 0 ?
+      return 0 in arguments ?
+        this.each(function(idx){
+          this.value = funcArg(this, value, idx, this.value)
+        }) :
         (this[0] && (this[0].multiple ?
            $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
            this[0].value)
-        ) :
-        this.each(function(idx){
-          this.value = funcArg(this, value, idx, this.value)
-        })
+        )
     },
     offset: function(coordinates){
       if (coordinates) return this.each(function(index){
@@ -650,7 +650,7 @@ var Zepto = (function() {
         if ($this.css('position') == 'static') props['position'] = 'relative'
         $this.css(props)
       })
-      if (this.length==0) return null
+      if (!this.length) return null
       var obj = this[0].getBoundingClientRect()
       return {
         left: obj.left + window.pageXOffset,
