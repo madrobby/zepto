@@ -848,6 +848,10 @@
         t.assertEqual(1, index)
       },
 
+      testNoop: function(t){
+        t.assertUndefined($.noop())
+      },
+
       testConcat: function(t){
         var $collection1 = $('#eachtest > *')
         var $collection2 = $('#find1 .findme')
