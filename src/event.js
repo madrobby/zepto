@@ -217,8 +217,8 @@
     })
   }
 
-  $.fn.trigger = function(event, args){
-    event = (isString(event) || $.isPlainObject(event)) ? $.Event(event) : compatible(event)
+  $.fn.trigger = function(event, args, eventprops){
+    event = (isString(event) || $.isPlainObject(event)) ? $.Event(event, eventprops) : compatible(event)
     event._args = args
     return this.each(function(){
       // items in the collection might not be DOM elements
@@ -229,10 +229,10 @@
 
   // triggers event handlers on current element just as if an event occurred,
   // doesn't trigger an actual event, doesn't bubble
-  $.fn.triggerHandler = function(event, args){
+  $.fn.triggerHandler = function(event, args, eventprops){
     var e, result
     this.each(function(i, element){
-      e = createProxy(isString(event) ? $.Event(event) : event)
+      e = createProxy(isString(event) ? $.Event(event, eventprops) : event)
       e._args = args
       e.target = element
       $.each(findHandlers(element, event.type || event), function(i, handler){
