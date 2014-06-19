@@ -1385,6 +1385,18 @@
         t.assertEqual('1', found.get(0).innerHTML)
       },
 
+      testFindWithFalsyValue: function(t){
+        var element = '<div><a>1</a></div>';
+        var found = $(element).find(undefined)
+        t.assertLength(0, found)
+        found = $(element).find(false)
+        t.assertLength(0, found)
+        found = $(element).find(0)
+        t.assertLength(0, found)
+        found = $(element).find('')
+        t.assertLength(0, found)
+      },
+
       testFilter: function(t){
         var found = $('div')
         t.assertLength(2, found.filter('.filtertest'))
@@ -1619,7 +1631,8 @@
         t.assertEqual('',         $('<h1/>').text())
         t.assertEqual('',         $('<h1/>').text('').text())
         t.assertEqual('',         $('<h1/>').text(undefined).text())
-        t.assertEqual('null',     $('<h1/>').text(null).text())
+        t.assertEqual('',         $('<h1/>').text(null).text())
+        t.assertEqual('false',    $('<h1/>').text(false).text())
         t.assertEqual('1',        $('<h1/>').text(1).text())
         t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
 
@@ -1640,6 +1653,21 @@
         $('#texttest2').text('')
         t.assertEqual("Let's set it", $('div.texttest').text())
         t.assertEqual('', $('#texttest2').text())
+      },
+
+      testTextWithFunction: function(t) {
+        var el = $('<div><span>hello</span> <span></span> <span>world</span> <span>again</span></div>'),
+            els = el.find('span')
+
+        els.text(function(idx, oldText){
+          if (idx > 2) return null
+          if (oldText) return oldText.toUpperCase() + ' ' + idx
+        })
+
+        t.assertEqual('HELLO 0', els[0].textContent)
+        t.assertEqual('', els[1].textContent)
+        t.assertEqual('WORLD 2', els[2].textContent)
+        t.assertEqual('', els[3].textContent)
       },
 
       testEmpty: function(t) {
@@ -1738,7 +1766,9 @@
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
-        inputs.val(function(i, value){ return value.replace('input', 'changed') })
+        // Only .attr('value', v) changes .attr('value')
+        // rather than .val(v)
+        inputs.attr('value', function(i, value){ return value.replace('input', 'changed') })
 
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
@@ -1860,6 +1890,26 @@
 
         t.assertEqualCollection(['2'], multiple.val(),
           "Expected val() to reflect changes to selected options in a <select multiple> element")
+      },
+
+      testValVsValueAttr: function(t) {
+        var input
+
+        input = $('<input type="text" value="Original">')
+        input.val('By .val(v)')
+        t.assertEqual('Original', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        // .attr('value', v) will change both
+        // without applying .val(v) first
+        input = $('<input type="text" value="Original">')
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .attr("value", v)', input.val())
       },
 
       testChaining: function(t){
@@ -2208,6 +2258,18 @@
         t.assertIdentical(el, el.remove())
         t.assertLength(0, el.parent())
         t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
+      },
+
+      testNotInDocumentNonEval: function (t) {
+        try {
+          window.someGlobalVariable = 0
+          $('<div></div>')
+            .html('<\script>window.someGlobalVariable += 1<\/script>')
+            .appendTo('body')
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
       },
 
       testAddRemoveClass: function(t){
