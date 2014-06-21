@@ -78,7 +78,7 @@
         t.assertEqual('A123', $.proxy(a.fn, a)(1, 2, 3))
         t.assertEqual('A456', $.proxy(a.fn, a, 4, 5, 6)())
       },
-      testProxyUndefinedProperty: function(t){
+      testProxyInvalidProperty: function(t){
         try {
           $.proxy({num:3}, 'num')
           t.fail("shouldn't be here")
