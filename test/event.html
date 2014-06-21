@@ -80,7 +80,7 @@
       },
       testProxyUndefinedProperty: function(t){
         try {
-          $.proxy({}, 'nonexistent')
+          $.proxy({num:3}, 'num')
           t.fail("shouldn't be here")
         } catch(e) {
           t.assertEqual('TypeError', e.name)
