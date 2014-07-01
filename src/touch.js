@@ -49,6 +49,8 @@
   $(document).ready(function(){
     var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
 
+    var isScrollingFlag = 0, timer, v = 0, currentUid = 0, lastTouchMoveScrollTop, lastTouchMoveTime, scrollDomMap = {}, parentScrollTopMap = {};
+
     if ('MSGesture' in window) {
       gesture = new MSGesture()
       gesture.target = document.body
@@ -64,6 +66,31 @@
         }
       })
       .on('touchstart MSPointerDown pointerdown', function(e){
+        // fix for ios
+        if($.os.ios){
+            // generate an unique random id
+            currentUid = Math.random();
+
+            // clear last interval
+            clearInterval(timer);
+
+            // record all parents' scrollTop for checking scroll DOM element
+            var currEl = e.target;
+            var parent = currEl;
+
+            while(parent){
+                if(parent.id){
+                }else{
+                    parent.id = "zepto_" + (new Date());
+                }
+
+                parentScrollTopMap[parent.id] = $(parent).scrollTop();
+
+                parent = parent.parentNode;
+            }
+
+        }
+
         if((_isPointerType = isPointerEventType(e, 'down')) &&
           !isPrimaryTouch(e)) return
         firstTouch = _isPointerType ? e : e.touches[0]
@@ -83,6 +110,7 @@
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
+
         // adds the current touch contact for IE gesture recognition
         if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
       })
@@ -96,6 +124,36 @@
 
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
+
+        // when touch move, we can check which dom is scrolling
+        if($.os.ios){
+
+            // if checked for this time, then do nothing
+            if(scrollDomMap[currentUid]){
+            }else{
+                var el = e.target;
+                var parent = el;
+
+                // check parents' scrollTop to indentify the scroll element
+                while(parent){
+                    if(Math.abs($(parent).scrollTop() - parentScrollTopMap[parent.id || " "]) > 0){
+                        scrollDomMap[currentUid] = parent;
+
+                        break;
+                    }else{
+                        parent = parent.parentNode;
+                    }
+                }
+            }
+
+            // record the last scrollTop for calculating the velocity
+            if(scrollDomMap[currentUid]){
+
+                var scrollEl = scrollDomMap[currentUid];
+                lastTouchMoveScrollTop = $(scrollEl).scrollTop();
+                lastTouchMoveTime = + new Date();
+            }
+        }
       })
       .on('touchend MSPointerUp pointerup', function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
@@ -104,7 +162,7 @@
 
         // swipe
         if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
+            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)){
 
           swipeTimeout = setTimeout(function() {
             touch.el.trigger('swipe')
@@ -112,8 +170,46 @@
             touch = {}
           }, 0)
 
+            if($.os.ios){
+              if(scrollDomMap[currentUid]){
+
+                  var scrollEl = scrollDomMap[currentUid];
+
+                  lastScrollTop = $(scrollEl).scrollTop();
+
+                  // calculate the velocity 
+                  var time = + new Date();
+                  var dt = (time - lastTouchMoveTime);
+
+                  v = (lastScrollTop - lastTouchMoveScrollTop) / dt;
+
+                  // if velocity > 0.5, we believe that the scroll element will continue scroll
+                  // and at the same time we can't get the correct scrollTop using js
+                  // when it's stopped, scrollTop will be set correct immediately
+                  if(Math.abs(v) > 0.5){
+                      timer = setInterval(function(){
+                        var scrollTop = $(scrollEl).scrollTop();
+
+                        // if current scrollTop always equals to lastScrollTop, scroll element now is scrolling.
+                        if(lastScrollTop == scrollTop){
+                            isScrollingFlag = 1;
+
+                        // else it's stopped
+                        }else{
+                            isScrollingFlag = 0;
+
+                            clearInterval(timer);
+                        }
+                      }, 20);
+                  }else{
+                      isScrollingFlag = 0;
+                  }
+              }else{
+              }
+          }
+
         // normal tap
-        else if ('last' in touch)
+        }else if ('last' in touch)
           // don't fire tap when delta position changed by more than 30 pixels,
           // for instance when moving to a point and back to origin
           if (deltaX < 30 && deltaY < 30) {
@@ -123,6 +219,15 @@
 
               // trigger universal 'tap' with the option to cancelTouch()
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+            // if the scroll dom is scrolling, 
+            // the first tap is to stop scrolling rather than trigger tap events
+            if($.os.ios && isScrollingFlag) {
+                isScrollingFlag = 0;
+                return;
+            }else{
+
+            };
+
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
               touch.el.trigger(event)
