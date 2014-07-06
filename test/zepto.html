@@ -1712,6 +1712,13 @@
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
       },
 
+      testAttrSetterErase: function(t){
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.attr('data-name', undefined), 'setter should return self')
+        t.assertNull(el.get(0).getAttribute('data-name'), 'attribute should be erased')
+        t.assertNull(el.attr('data-name'), 'attr should reflect erased attribute')
+      },
+
       testProp: function(t){
         var label = $('#prop_test1')
         var input = $('#prop_test2')
@@ -1732,6 +1739,17 @@
         t.assertEqual(td2.prop('colspan'), 2)
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
+      },
+
+      testPropSetterErase: function(t){
+        var input = $('<input readonly>')
+        t.assertIdentical(input, input.prop('readonly', false))
+        t.assertFalse(input.prop('readonly'))
+
+        input.get(0)._foo = 'bar'
+        t.assertIdentical(input, input.prop('_foo', undefined))
+        t.assertUndefined(input.get(0)._foo, 'custom property should be cleared')
+        t.assertUndefined(input.prop('_foo'), 'prop should reflect cleared property')
       },
 
       testAttrNoElement: function(t){
@@ -1822,6 +1840,12 @@
         // blank values
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
+      },
+
+      testDataSetterErase: function(t) {
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.data('name', undefined))
+        t.assertUndefined(el.data('name'))
       },
 
       testDataNumberType: function(t){
