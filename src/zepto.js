@@ -602,7 +602,7 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       var result
-      return (typeof name == 'string' && arguments.length == 1) ?
+      return (typeof name == 'string' && !(1 in arguments)) ?
         (!this.length || this[0].nodeType !== 1 ? undefined :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
@@ -617,18 +617,18 @@ var Zepto = (function() {
     },
     prop: function(name, value){
       name = propMap[name] || name
-      return (arguments.length == 1) ?
-        (this[0] && this[0][name]) :
+      return (1 in arguments) ?
         this.each(function(idx){
           this[name] = funcArg(this, value, idx, this[name])
-        })
+        }) :
+        (this[0] && this[0][name])
     },
     data: function(name, value){
-      name = name.replace(capitalRE, '-$1').toLowerCase()
-      
-      var data = arguments.length == 1 ?
-        this.attr('data-' + name) :
-        this.attr('data-' + name, value)
+      var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase()
+
+      var data = (1 in arguments) ?
+        this.attr(attrName, value) :
+        this.attr(attrName)
 
       return data !== null ? deserializeValue(data) : undefined
     },
