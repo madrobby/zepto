@@ -1710,9 +1710,13 @@
         })
         t.assertEqual('0id', els.attr('data-id'))
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
-        
-        t.assertEqual(els, els.attr('data-undef', undefined));
-        t.assertEqual(undefined, els.attr('data-undef'));
+      },
+
+      testAttrSetterErase: function(t){
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.attr('data-name', undefined), 'setter should return self')
+        t.assertNull(el.get(0).getAttribute('data-name'), 'attribute should be erased')
+        t.assertNull(el.attr('data-name'), 'attr should reflect erased attribute')
       },
 
       testProp: function(t){
@@ -1735,11 +1739,17 @@
         t.assertEqual(td2.prop('colspan'), 2)
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
-        
-        input.prop('readonly', false);
-        t.assertEqual(input.prop('readonly'), false);
-        
-        t.assertEqual(input, input.prop('maxlength', undefined));
+      },
+
+      testPropSetterErase: function(t){
+        var input = $('<input readonly maxlength=5>')
+        t.assertIdentical(input, input.prop('readonly', false))
+        t.assertFalse(input.prop('readonly'))
+
+        t.assertIdentical(5, input.get(0).maxLength)
+        t.assertIdentical(input, input.prop('maxlength', undefined))
+        t.assertIdentical(0, input.get(0).maxLength)
+        t.assertIdentical(0, input.prop('maxlength'))
       },
 
       testAttrNoElement: function(t){
@@ -1830,10 +1840,12 @@
         // blank values
         t.assertIdentical('', el.data('empty'))
         t.assertUndefined(el.data('does-not-exist'))
-        
-        // acts as a setter with 2nd parameter undefined
-        t.assertEqual(el, el.data('undef', undefined))
-        t.assertEqual(undefined, el.data('undef'));
+      },
+
+      testDataSetterErase: function(t) {
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.data('name', undefined))
+        t.assertUndefined(el.data('name'))
       },
 
       testDataNumberType: function(t){
