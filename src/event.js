@@ -90,12 +90,14 @@
   $.event = { add: add, remove: remove }
 
   $.proxy = function(fn, context) {
+    var additionalArgs = Array.prototype.slice.call(arguments, 2);
     if (isFunction(fn)) {
-      var proxyFn = function(){ return fn.apply(context, arguments) }
+      var proxyFn = function(){ return fn.apply(context, additionalArgs.length ? additionalArgs : arguments) }
       proxyFn._zid = zid(fn)
       return proxyFn
     } else if (isString(context)) {
-      return $.proxy(fn[context], fn)
+      Array.prototype.unshift.call(additionalArgs || [], fn[context], fn)
+      return $.proxy.apply(this, additionalArgs)
     } else {
       throw new TypeError("expected function")
     }

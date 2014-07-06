@@ -73,7 +73,16 @@
           t.assertEqual("expected function", e.message)
         }
       },
-
+      testProxyAdditionalArguments: function(t){
+        var a = {name: 'A', fn: function(arg1, arg2, arg3){ return this.name + arg1 + arg2 + arg3 }}
+        t.assertEqual('A123', $.proxy(a.fn, a)(1, 2, 3))
+        t.assertEqual('A456', $.proxy(a.fn, a, 4, 5, 6)())
+      },
+      testProxyContextNameAdditionalArguments: function(t){
+        var a = {name: 'A', fn: function(arg1, arg2, arg3){ return this.name + arg1 + arg2 + arg3 }}
+        t.assertEqual('A123', $.proxy(a, 'fn')(1, 2, 3))
+        t.assertEqual('A456', $.proxy(a, 'fn', 4, 5, 6)())
+      },
       testProxyInvalidProperty: function(t){
         try {
           $.proxy({num:3}, 'num')
