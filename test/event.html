@@ -74,6 +74,20 @@
         }
       },
 
+      testProxyAdditionalArguments: function(t){
+        var a = {name: 'A', fn: function(){ return this.name + [].slice.call(arguments).join('') }}
+        t.assertEqual('A123', $.proxy(a.fn, a)(1, 2, 3))
+        t.assertEqual('A456', $.proxy(a.fn, a, 4, 5, 6)())
+        t.assertEqual('A456123', $.proxy(a.fn, a, 4, 5, 6)(1, 2, 3))
+      },
+
+      testProxyContextNameAdditionalArguments: function(t){
+        var a = {name: 'A', fn: function(){ return this.name + [].slice.call(arguments).join('') }}
+        t.assertEqual('A123', $.proxy(a, 'fn')(1, 2, 3))
+        t.assertEqual('A456', $.proxy(a, 'fn', 4, 5, 6)())
+        t.assertEqual('A456123', $.proxy(a, 'fn', 4, 5, 6)(1, 2, 3))
+      },
+
       testProxyInvalidProperty: function(t){
         try {
           $.proxy({num:3}, 'num')
