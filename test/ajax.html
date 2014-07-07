@@ -578,7 +578,8 @@
           })
         })
 
-        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonpBlah\?_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.assert($.isFunction(window.blah))
         t.pause()
       },
@@ -594,7 +595,8 @@
           })
         })
 
-        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonpBlah\?_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.assert($.isFunction(window.blah))
         t.pause()
       },
@@ -648,6 +650,29 @@
             t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
           })
         })
+      },
+
+      testJSONPCacheBustingByDefault: function(t) {
+        $.ajax({
+          url: 'jsonp?callback=?',
+          success: t.reg.resumeHandler('success')
+        })
+
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonp\?callback=jsonp\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
+        t.pause()
+      },
+
+      testJSONPCacheBustingDisabled: function(t) {
+        $.ajax({
+          url: 'jsonp?callback=?',
+          cache: true,
+          success: t.reg.resumeHandler('success')
+        })
+
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonp\?callback=jsonp\d+$/.test(scriptSrc), scriptSrc)
+        t.pause()
       },
 
       testBrowserCaching: function(t) {
@@ -926,6 +951,18 @@
           xhrFields: { withCredentials: true }
         })
         t.assert(xhr.withCredentials)
+      },
+
+      testScriptDataTypeCacheBustByDefault: function(t) {
+        $.ajax({ url: '/', dataType: 'script' })
+        var xhr = MockXHR.last
+        t.assert(/^\/\?_=[\d]{13}$/.test(xhr.url), xhr.url)
+      },
+
+      testScriptDataTypeCacheBustDisable: function(t) {
+        $.ajax({ url: '/', dataType: 'script', cache: true })
+        var xhr = MockXHR.last
+        t.assertEqual('/', xhr.url)
       },
 
       testJSONdataType: function(t) {
