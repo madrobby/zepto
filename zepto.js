@@ -1,5 +1,4 @@
-/* Zepto v1.1.3 - zepto event ajax form ie - zeptojs.com/license */
-
+/* Zepto v1.1.4 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
   var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
@@ -267,9 +266,15 @@ var Zepto = (function() {
     return selector == null ? $(nodes) : $(nodes).filter(selector)
   }
 
-  $.contains = function(parent, node) {
-    return parent !== node && parent.contains(node)
-  }
+  $.contains = document.documentElement.contains ?
+    function(parent, node) {
+      return parent !== node && parent.contains(node)
+    } :
+    function(parent, node) {
+      while (node && (node = node.parentNode))
+        if (node === parent) return true
+      return false
+    }
 
   function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
@@ -471,7 +476,8 @@ var Zepto = (function() {
     },
     find: function(selector){
       var result, $this = this
-      if (typeof selector == 'object')
+      if (!selector) result = []
+      else if (typeof selector == 'object')
         result = $(selector).filter(function(){
           var node = this
           return emptyArray.some.call($this, function(parent){
@@ -583,23 +589,25 @@ var Zepto = (function() {
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
     next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
     html: function(html){
-      return arguments.length === 0 ?
-        (this.length > 0 ? this[0].innerHTML : null) :
+      return 0 in arguments ?
         this.each(function(idx){
           var originHtml = this.innerHTML
           $(this).empty().append( funcArg(this, html, idx, originHtml) )
-        })
+        }) :
+        (0 in this ? this[0].innerHTML : null)
     },
     text: function(text){
-      return arguments.length === 0 ?
-        (this.length > 0 ? this[0].textContent : null) :
-        this.each(function(){ this.textContent = (text === undefined) ? '' : ''+text })
+      return 0 in arguments ?
+        this.each(function(idx){
+          var newText = funcArg(this, text, idx, this.textContent)
+          this.textContent = newText == null ? '' : ''+newText
+        }) :
+        (0 in this ? this[0].textContent : null)
     },
     attr: function(name, value){
       var result
-      return (typeof name == 'string' && value === undefined) ?
-        (this.length == 0 || this[0].nodeType !== 1 ? undefined :
-          (name == 'value' && this[0].nodeName == 'INPUT') ? this.val() :
+      return (typeof name == 'string' && !(1 in arguments)) ?
+        (!this.length || this[0].nodeType !== 1 ? undefined :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
         this.each(function(idx){
@@ -613,25 +621,30 @@ var Zepto = (function() {
     },
     prop: function(name, value){
       name = propMap[name] || name
-      return (value === undefined) ?
-        (this[0] && this[0][name]) :
+      return (1 in arguments) ?
         this.each(function(idx){
           this[name] = funcArg(this, value, idx, this[name])
-        })
+        }) :
+        (this[0] && this[0][name])
     },
     data: function(name, value){
-      var data = this.attr('data-' + name.replace(capitalRE, '-$1').toLowerCase(), value)
+      var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase()
+
+      var data = (1 in arguments) ?
+        this.attr(attrName, value) :
+        this.attr(attrName)
+
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
-      return arguments.length === 0 ?
+      return 0 in arguments ?
+        this.each(function(idx){
+          this.value = funcArg(this, value, idx, this.value)
+        }) :
         (this[0] && (this[0].multiple ?
            $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
            this[0].value)
-        ) :
-        this.each(function(idx){
-          this.value = funcArg(this, value, idx, this.value)
-        })
+        )
     },
     offset: function(coordinates){
       if (coordinates) return this.each(function(index){
@@ -646,7 +659,7 @@ var Zepto = (function() {
         if ($this.css('position') == 'static') props['position'] = 'relative'
         $this.css(props)
       })
-      if (this.length==0) return null
+      if (!this.length) return null
       var obj = this[0].getBoundingClientRect()
       return {
         left: obj.left + window.pageXOffset,
@@ -800,7 +813,8 @@ var Zepto = (function() {
 
   function traverseNode(node, fun) {
     fun(node)
-    for (var key in node.childNodes) traverseNode(node.childNodes[key], fun)
+    for (var i = 0, len = node.childNodes.length; i < len; i++)
+      traverseNode(node.childNodes[i], fun)
   }
 
   // Generate the `after`, `prepend`, `before`, `append`,
@@ -827,11 +841,14 @@ var Zepto = (function() {
                  operatorIndex == 2 ? target :
                  null
 
+        var parentInDocument = $.contains(document.documentElement, parent)
+
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
 
-          traverseNode(parent.insertBefore(node, target), function(el){
+          parent.insertBefore(node, target)
+          if (parentInDocument) traverseNode(node, function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
                (!el.type || el.type === 'text/javascript') && !el.src)
               window['eval'].call(window, el.innerHTML)
@@ -951,12 +968,18 @@ window.$ === undefined && (window.$ = Zepto)
   $.event = { add: add, remove: remove }
 
   $.proxy = function(fn, context) {
+    var args = (2 in arguments) && slice.call(arguments, 2)
     if (isFunction(fn)) {
-      var proxyFn = function(){ return fn.apply(context, arguments) }
+      var proxyFn = function(){ return fn.apply(context, args ? args.concat(slice.call(arguments)) : arguments) }
       proxyFn._zid = zid(fn)
       return proxyFn
     } else if (isString(context)) {
-      return $.proxy(fn[context], fn)
+      if (args) {
+        args.unshift(fn[context], fn)
+        return $.proxy.apply(null, args)
+      } else {
+        return $.proxy(fn[context], fn)
+      }
     } else {
       throw new TypeError("expected function")
     }
@@ -1328,10 +1351,17 @@ window.$ === undefined && (window.$ = Zepto)
 
     if (!settings.url) settings.url = window.location.toString()
     serializeData(settings)
-    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
-    if (dataType == 'jsonp' || hasPlaceholder) {
+    if (hasPlaceholder) dataType = 'jsonp'
+
+    if (settings.cache === false || (
+         (!options || options.cache !== true) &&
+         ('script' == dataType || 'jsonp' == dataType)
+        ))
+      settings.url = appendQuery(settings.url, '_=' + Date.now())
+
+    if ('jsonp' == dataType) {
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
           settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
