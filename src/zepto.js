@@ -268,9 +268,15 @@ var Zepto = (function() {
     return selector == null ? $(nodes) : $(nodes).filter(selector)
   }
 
-  $.contains = function(parent, node) {
-    return parent !== node && parent.contains(node)
-  }
+  $.contains = document.documentElement.contains ?
+    function(parent, node) {
+      return parent !== node && parent.contains(node)
+    } :
+    function(parent, node) {
+      while (node && (node = node.parentNode))
+        if (node === parent) return true
+      return false
+    }
 
   function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
@@ -837,7 +843,7 @@ var Zepto = (function() {
                  operatorIndex == 2 ? target :
                  null
 
-        var parentInDocument = document.documentElement.contains(parent)
+        var parentInDocument = $.contains(document.documentElement, parent)
 
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)
