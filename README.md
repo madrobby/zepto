@@ -24,6 +24,7 @@ the build commands.
 You will need Node.js installed on your system.
 
 ~~~ sh
+$ git clone https://github.com/madrobby/zepto.git
 $ npm install
 $ npm run-script dist
 
