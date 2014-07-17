@@ -29,6 +29,10 @@ $ npm run-script dist
 
 # do a custom build
 $ MODULES="zepto event data" npm run-script dist
+
+# on Windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> npm run-script dist
 ~~~
 
 The resulting files are:
@@ -39,8 +43,15 @@ The resulting files are:
 If you install CoffeeScript globally, you can run `make` directly:
 
 ~~~ sh
+# one-time operation
+$ npm install coffee-script --global
+
 $ coffee make dist
 $ MODULES="zepto event data ..." ./make dist
+
+# on Windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> coffee make dist
 ~~~
 
 ## Zepto modules
