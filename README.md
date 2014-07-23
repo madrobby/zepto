@@ -19,7 +19,7 @@ The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
 optional modules and remove some of the default ones you don't need, to keep the
 size at a minimum. That's when you need to check out Zepto's source code and use
-the build commands.
+the build commands. Alternatively you can use the web based [Zepto Builder](http://github.e-sites.nl/zeptobuilder/)
 
 You will need Node.js installed on your system.
 
