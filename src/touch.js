@@ -147,6 +147,8 @@
 		  var event = $.Event('tap')
 		  event.cancelTouch = cancelAll
 		  touch.el.trigger(event)
+		  deltaX = deltaY = 0
+		  e.preventDefault()
 		}
           deltaX = deltaY = 0
 
