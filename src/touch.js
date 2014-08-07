@@ -90,12 +90,14 @@
         if((_isPointerType = isPointerEventType(e, 'move')) &&
           !isPrimaryTouch(e)) return
         firstTouch = _isPointerType ? e : e.touches[0]
-        cancelLongTap()
+        
         touch.x2 = firstTouch.pageX
         touch.y2 = firstTouch.pageY
 
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
+        
+        if (deltaX > 6 || deltaY > 6)  cancelLongTap()
       })
       .on('touchend MSPointerUp pointerup', function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
