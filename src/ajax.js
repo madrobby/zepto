@@ -194,10 +194,17 @@
 
     if (!settings.url) settings.url = window.location.toString()
     serializeData(settings)
-    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
-    if (dataType == 'jsonp' || hasPlaceholder) {
+    if (hasPlaceholder) dataType = 'jsonp'
+
+    if (settings.cache === false || (
+         (!options || options.cache !== true) &&
+         ('script' == dataType || 'jsonp' == dataType)
+        ))
+      settings.url = appendQuery(settings.url, '_=' + Date.now())
+
+    if ('jsonp' == dataType) {
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
           settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')

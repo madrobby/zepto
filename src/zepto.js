@@ -268,9 +268,15 @@ var Zepto = (function() {
     return selector == null ? $(nodes) : $(nodes).filter(selector)
   }
 
-  $.contains = function(parent, node) {
-    return parent !== node && parent.contains(node)
-  }
+  $.contains = document.documentElement.contains ?
+    function(parent, node) {
+      return parent !== node && parent.contains(node)
+    } :
+    function(parent, node) {
+      while (node && (node = node.parentNode))
+        if (node === parent) return true
+      return false
+    }
 
   function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
@@ -602,7 +608,7 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       var result
-      return (typeof name == 'string' && value === undefined) ?
+      return (typeof name == 'string' && !(1 in arguments)) ?
         (!this.length || this[0].nodeType !== 1 ? undefined :
           (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
         ) :
@@ -617,14 +623,19 @@ var Zepto = (function() {
     },
     prop: function(name, value){
       name = propMap[name] || name
-      return (value === undefined) ?
-        (this[0] && this[0][name]) :
+      return (1 in arguments) ?
         this.each(function(idx){
           this[name] = funcArg(this, value, idx, this[name])
-        })
+        }) :
+        (this[0] && this[0][name])
     },
     data: function(name, value){
-      var data = this.attr('data-' + name.replace(capitalRE, '-$1').toLowerCase(), value)
+      var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase()
+
+      var data = (1 in arguments) ?
+        this.attr(attrName, value) :
+        this.attr(attrName)
+
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
@@ -832,7 +843,7 @@ var Zepto = (function() {
                  operatorIndex == 2 ? target :
                  null
 
-        var parentInDocument = document.documentElement.contains(parent)
+        var parentInDocument = $.contains(document.documentElement, parent)
 
         nodes.forEach(function(node){
           if (copyByClone) node = node.cloneNode(true)

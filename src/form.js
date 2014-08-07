@@ -4,10 +4,10 @@
 
 ;(function($){
   $.fn.serializeArray = function() {
-    var result = [], el
+    var el, type, result = []
     $([].slice.call(this.get(0).elements)).each(function(){
       el = $(this)
-      var type = el.attr('type')
+      type = el.attr('type')
       if (this.nodeName.toLowerCase() != 'fieldset' &&
         !this.disabled && type != 'submit' && type != 'reset' && type != 'button' &&
         ((type != 'radio' && type != 'checkbox') || this.checked))
