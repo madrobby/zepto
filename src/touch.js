@@ -97,7 +97,7 @@
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
         
-        if (deltaX > 6 || deltaY > 6)  cancelLongTap()
+        if (deltaX > 15 || deltaY > 15)  cancelLongTap()
       })
       .on('touchend MSPointerUp pointerup', function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
