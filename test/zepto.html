@@ -2343,6 +2343,9 @@
 
         $('#some_element').removeClass()
         t.assertEqual('', el.className)
+
+        // can't check values here, but make sure it doesn't error out
+        $(window).removeClass('non-existing-class')
       },
 
       testHasClass: function(t){
