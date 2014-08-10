@@ -2345,6 +2345,17 @@
         t.assertEqual('', el.className)
       },
 
+      testWindowClasses: function(t){
+        // check that window is agnostic to class related functions
+        $(window).removeClass('non-existing-class')
+        t.refute('className' in window)
+        $(window).addClass('some-class')
+        t.refute('className' in window)
+        t.refute($(window).hasClass('some-class'))
+        $(window).toggleClass('some-class')
+        t.refute('className' in window)
+      },
+
       testHasClass: function(t){
         var el = $('#some_element')
         el.addClass('green')

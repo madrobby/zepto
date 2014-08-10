@@ -288,7 +288,7 @@ var Zepto = (function() {
 
   // access className property while respecting SVGAnimatedString
   function className(node, value){
-    var klass = node.className,
+    var klass = node.className || '',
         svg   = klass && klass.baseVal !== undefined
 
     if (value === undefined) return svg ? klass.baseVal : klass
@@ -713,6 +713,7 @@ var Zepto = (function() {
     addClass: function(name){
       if (!name) return this
       return this.each(function(idx){
+        if (!('className' in this)) return
         classList = []
         var cls = className(this), newName = funcArg(this, name, idx, cls)
         newName.split(/\s+/g).forEach(function(klass){
@@ -723,6 +724,7 @@ var Zepto = (function() {
     },
     removeClass: function(name){
       return this.each(function(idx){
+        if (!('className' in this)) return
         if (name === undefined) return className(this, '')
         classList = className(this)
         funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass){
