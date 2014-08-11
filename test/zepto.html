@@ -2349,6 +2349,9 @@
         t.refute('className' in window)
         $(window).addClass('some-class')
         t.refute('className' in window)
+        t.refute($(window).hasClass('some-class'))
+        $(window).toggleClass('some-class')
+        t.refute('className' in window)
       },
 
       testHasClass: function(t){
