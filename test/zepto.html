@@ -2344,8 +2344,11 @@
         $('#some_element').removeClass()
         t.assertEqual('', el.className)
 
-        // can't check values here, but make sure it doesn't error out
+        // check that removeClass and addClass can not affect the window
         $(window).removeClass('non-existing-class')
+        t.refute('className' in window)
+        $(window).addClass('some-class')
+        t.refute('className' in window)
       },
 
       testHasClass: function(t){

@@ -712,7 +712,8 @@ var Zepto = (function() {
     },
     addClass: function(name){
       if (!name) return this
-      return this.each(function(idx){
+      return this.each(function(idx, node){
+        if (node === window) return;
         classList = []
         var cls = className(this), newName = funcArg(this, name, idx, cls)
         newName.split(/\s+/g).forEach(function(klass){
@@ -722,7 +723,8 @@ var Zepto = (function() {
       })
     },
     removeClass: function(name){
-      return this.each(function(idx){
+      return this.each(function(idx, node){
+        if (node === window) return;
         if (name === undefined) return className(this, '')
         classList = className(this)
         funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass){
