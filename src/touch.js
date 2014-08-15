@@ -146,7 +146,10 @@
             touch = {}
           }
           deltaX = deltaY = 0
-
+          
+          if( $(e.target).height() == 0 ){
+            e.preventDefault();
+          }
       })
       // when the browser window loses focus,
       // for example when a modal dialog is shown,
