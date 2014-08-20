@@ -117,16 +117,14 @@
           // don't fire tap when delta position changed by more than 30 pixels,
           // for instance when moving to a point and back to origin
           if (deltaX < 30 && deltaY < 30) {
+            // trigger universal 'tap' with the option to cancelTouch()
+            // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+            var event = $.Event('tap')
+            event.cancelTouch = cancelAll
+            touch.el.trigger(event)
             // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
             // ('tap' fires before 'scroll')
             tapTimeout = setTimeout(function() {
-
-              // trigger universal 'tap' with the option to cancelTouch()
-              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-              var event = $.Event('tap')
-              event.cancelTouch = cancelAll
-              touch.el.trigger(event)
-
               // trigger double tap immediately
               if (touch.isDoubleTap) {
                 if (touch.el) touch.el.trigger('doubleTap')
@@ -145,11 +143,11 @@
           } else {
             touch = {}
           }
-          deltaX = deltaY = 0
           
           if( $(e.target).height() == 0 ){
             e.preventDefault();
           }
+          deltaX = deltaY = 0
       })
       // when the browser window loses focus,
       // for example when a modal dialog is shown,
