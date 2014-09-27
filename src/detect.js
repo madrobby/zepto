@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  function detect(ua){
+  function detect(ua, platform){
     var os = this.os = {}, browser = this.browser = {},
       webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
       android = ua.match(/(Android);?[\s\/]+([\d.]+)?/),
@@ -12,6 +12,7 @@
       ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
       iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
       webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
+      win = platform.match(/Win\d{2}|Windows/),
       wp = ua.match(/Windows Phone ([\d.]+)/),
       touchpad = webos && ua.match(/TouchPad/),
       kindle = ua.match(/Kindle\/([\d.]+)/),
@@ -51,7 +52,7 @@
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
     if (ie) browser.ie = true, browser.version = ie[1]
-    if (safari && (osx || os.ios)) {browser.safari = true; if (osx) browser.version = safari[1]}
+    if (safari && (osx || os.ios || win)) {browser.safari = true; if (osx) browser.version = safari[1]}
     if (webview) browser.webview = true
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) ||
@@ -61,7 +62,7 @@
       (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
   }
 
-  detect.call($, navigator.userAgent)
+  detect.call($, navigator.userAgent, navigator.platform)
   // make available to unit tests
   $.__detect = detect
 
