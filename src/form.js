@@ -9,7 +9,7 @@
       el = $(this)
       type = el.attr('type')
       if (this.nodeName.toLowerCase() != 'fieldset' &&
-        !this.disabled && type != 'submit' && type != 'reset' && type != 'button' &&
+        !this.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
         ((type != 'radio' && type != 'checkbox') || this.checked))
         result.push({
           name: el.attr('name'),
