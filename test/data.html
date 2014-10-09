@@ -34,6 +34,7 @@
     ></div>
   <div id="data_full" data-mode="awesome"></div>
   <div id="data_obj" data-mode="awesome"></div>
+  <div id="data_overflow" data-mode="5903509451651483504"></div>
   <ol id="data_list">
     <li data-category="arts"></li>
     <li data-category="science"></li>
@@ -321,6 +322,11 @@
         t.assertUndefined(el.data('foo'))
         el.data('foo', 'bar')
         t.assertEqual(el.data('foo'), 'bar')
+      },
+      testOverflow: function(t) {
+        var el = $('#data_overflow');
+        
+        t.assertEqual('5903509451651483504'. el.data('id'));
       }
 
     })
