@@ -8,7 +8,7 @@
     $([].slice.call(this.get(0).elements)).each(function(){
       el = $(this)
       type = el.attr('type')
-      if (this.nodeName.toLowerCase() != 'fieldset' &&
+      if (this.name && this.nodeName.toLowerCase() != 'fieldset' &&
         !this.disabled && type != 'submit' && type != 'reset' && type != 'button' &&
         ((type != 'radio' && type != 'checkbox') || this.checked))
         result.push({
