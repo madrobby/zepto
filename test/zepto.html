@@ -809,6 +809,12 @@
         t.assertEqual(1, index)
       },
 
+      testNoop: function(t){
+        t.assert($.isFunction($.noop))
+        t.assertEqual($.noop.length, 0)
+        t.assertEqual($.noop(), undefined)
+      },
+
       testMap: function(t){
         var results = $('#eachtest > *').map(function(idx, el) {
           t.assertIdentical(el, this)
