@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 var Zepto = (function() {
-  var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
+  var undefined, key, $, classList, emptyArray = [], concat = emptyArray.concat, filter = emptyArray.filter, slice = emptyArray.slice,
     document = window.document,
     elementDisplay = {}, classCache = {},
     cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
@@ -116,6 +116,13 @@ var Zepto = (function() {
       $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
   }
 
+  function Z(dom, selector) {
+    var i, len = dom ? dom.length : 0
+    for (i = 0; i < len; i++) this[i] = dom[i]
+    this.length = len
+    this.selector = selector || ''
+  }
+
   // `$.zepto.fragment` takes a html string and an optional tag name
   // to generate DOM nodes nodes from the given html string.
   // The generated DOM nodes are returned as an array.
@@ -152,13 +159,9 @@ var Zepto = (function() {
 
   // `$.zepto.Z` swaps out the prototype of the given `dom` array
   // of nodes with `$.fn` and thus supplying all the Zepto functions
-  // to the array. Note that `__proto__` is not supported on Internet
-  // Explorer. This method can be overriden in plugins.
+  // to the array. This method can be overriden in plugins.
   zepto.Z = function(dom, selector) {
-    dom = dom || []
-    dom.__proto__ = $.fn
-    dom.selector = selector || ''
-    return dom
+    return new Z(dom, selector)
   }
 
   // `$.zepto.isZ` should return `true` if the given object is a Zepto
@@ -387,14 +390,25 @@ var Zepto = (function() {
   // Define methods that will be available on all
   // Zepto collections
   $.fn = {
+    constructor: zepto.Z,
+    length: 0,
+
     // Because a collection acts like an array
     // copy over these useful array functions.
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
     push: emptyArray.push,
     sort: emptyArray.sort,
+    splice: emptyArray.splice,
     indexOf: emptyArray.indexOf,
-    concat: emptyArray.concat,
+    concat: function(){
+      var i, value, args = []
+      for (i = 0; i < arguments.length; i++) {
+        value = arguments[i]
+        args[i] = zepto.isZ(value) ? value.toArray() : value
+      }
+      return concat.apply(zepto.isZ(this) ? this.toArray() : this, args)
+    },
 
     // `map` and `slice` in the jQuery API work differently
     // from their array counterparts
@@ -871,7 +885,7 @@ var Zepto = (function() {
     }
   })
 
-  zepto.Z.prototype = $.fn
+  zepto.Z.prototype = Z.prototype = $.fn
 
   // Export internal API functions in the `$.zepto` namespace
   zepto.uniq = uniq
