@@ -5,6 +5,7 @@
   , "scripts": {
       "test": "coffee make test"
     , "dist": "coffee make dist"
+	, "dist-amd": "coffee make amd"
     , "start": "coffee test/server.coffee"
   }
   , "repository": "madrobby/zepto"

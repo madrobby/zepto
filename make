@@ -32,17 +32,27 @@ target[zepto_gz] = ->
   target.compress() if stale(zepto_gz, zepto_min)
 
 target.dist = ->
-  target.build()
+  target.build(false)
+  target.minify()
+  target.compress()
+ 
+target.amd = ->
+  target.build(true)
   target.minify()
   target.compress()
 
-target.build = ->
+target.build = (amd) ->
   cd __dirname
   mkdir '-p', 'dist'
   modules = (env['MODULES'] || 'zepto event ajax form ie').split(' ')
   module_files = ( "src/#{module}.js" for module in modules )
-  intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
-  dist = (intro + cat(module_files).replace(/^\/[\/*].*$/mg, '')).replace(/\n{3,}/g, "\n\n")
+  if amd
+	  intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\ndefine(function(){\nvar amd=true;\n"
+	  outro = "return Zepto;});"
+  else
+	  intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
+	  outro = ""
+  dist = (intro + cat(module_files).replace(/^\/[\/*].*$/mg, '') + outro).replace(/\n{3,}/g, "\n\n")
   dist.to(zepto_js)
   report_size(zepto_js)
 

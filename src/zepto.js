@@ -881,6 +881,8 @@ var Zepto = (function() {
   return $
 })()
 
-// If `$` is not yet defined, point it to `Zepto`
-window.Zepto = Zepto
-window.$ === undefined && (window.$ = Zepto)
+if(!amd) {
+	// If `$` is not yet defined, point it to `Zepto`
+	window.Zepto = Zepto
+	window.$ === undefined && (window.$ = Zepto)
+}
