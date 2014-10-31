@@ -55,8 +55,8 @@
   }
 
   $.fn.anim = function(properties, duration, ease, callback, delay){
-    var key, cssValues = {}, cssProperties, transforms = '',
-        that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
+    var key, cssValues = {}, cssProperties,
+        that = this,  transforms = that.css(transform), wrappedCallback, endEvent = $.fx.transitionEnd,
         fired = false
 
     if (duration === undefined) duration = $.fx.speeds._default / 1000
@@ -72,6 +72,9 @@
       endEvent = $.fx.animationEnd
     } else {
       cssProperties = []
+      if(properties.matrix || properties.matrix3d) {
+        transforms = '';
+      }
       // CSS transitions
       for (key in properties)
         if (supportedTransforms.test(key)) transforms += key + '(' + properties[key] + ') '
