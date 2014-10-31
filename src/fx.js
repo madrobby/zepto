@@ -4,7 +4,7 @@
 
 ;(function($, undefined){
   var prefix = '', eventPrefix, endEventName, endAnimationName,
-    vendors = { Webkit: 'webkit', Moz: '', O: 'o' },
+    vendors = [ '',  'webkit', 'moz', 'o', 'ms' ],
     document = window.document, testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
     transform,
@@ -15,9 +15,10 @@
   function dasherize(str) { return str.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : name.toLowerCase() }
 
-  $.each(vendors, function(vendor, event){
-    if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
-      prefix = '-' + vendor.toLowerCase() + '-'
+  $.each(vendors, function(i, event) {
+    var property = (event) ? event + 'Transform' : 'transform';
+    if (testEl.style[property] !== undefined) {
+      prefix = (event) ? '-' + event + '-' : '';
       eventPrefix = event
       return false
     }
