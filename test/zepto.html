@@ -288,7 +288,7 @@
       })(node)
     }
     
-    function testDocumentFragmentOrShadowRoot($fragment, t) {
+    function testDocumentFragmentOrShadowRootContext($fragment, t) {
       t.assertLength(1, $fragment)
       t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
 
@@ -663,15 +663,9 @@
       },
 
       testDollarWithDocumentFragment: function(t){
-        testDocumentFragmentOrShadowRoot($(document.createDocumentFragment()), t)
-      },
-      
-      testDollarWithShadowRoot: function(t){
-        if ('createShadowRoot' in document.body) {
-          var $subject = $('#test_dollar_with_shadow_root')
-          t.assertLength(1, $subject)
-          testDocumentFragmentOrShadowRoot($($subject[0].createShadowRoot()), t)
-        }
+        var documentFragment = $(document.createDocumentFragment())
+        t.assertLength(1, documentFragment)
+        t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType)
       },
 
       testDollarWithElementInIframe: function(t){
@@ -923,6 +917,18 @@
 
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
+      },
+      
+      testDollarWithDocumentFragmentContext: function(t){
+        testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
+      },
+      
+      testDollarWithShadowRootContext: function(t){
+        if ('createShadowRoot' in document.body) {
+          var $subject = $('#test_dollar_with_shadow_root')
+          t.assertLength(1, $subject)
+          testDocumentFragmentOrShadowRootContext($($subject[0].createShadowRoot()), t)
+        }
       },
 
       testEq: function(t){
