@@ -259,6 +259,7 @@
   <iframe id="link_target_iframe" name="link_target_iframe" width="10" height="10"></iframe>
   <a id="link_that_will_be_prevented" href="fixtures/iframe_document.html" target="link_target_iframe"></a>
 
+  <div id="test_dollar_with_shadow_root" style="display:none;"></div>
 
   </div><!-- fixtures -->
 
@@ -285,6 +286,35 @@
         div = null
         return html
       })(node)
+    }
+    
+    function testDocumentFragmentOrShadowRoot($fragment, t) {
+      t.assertLength(1, $fragment)
+      t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
+
+      var fragment = $fragment[0];
+      var $div = $('<div id="child"><div class="inner"></div></div>')
+
+      t.assertLength(0, $('#child', fragment))
+
+      fragment.appendChild($div[0]);
+
+      var expectedElement = fragment.querySelector('#child')
+
+      t.assertLength(1, $('#child', fragment))
+      t.assertEqual($div[0], $('#child', fragment).get(0))
+      t.assertEqual(expectedElement, $('#child', fragment).get(0))
+
+      expectedElement = fragment.querySelector('.inner')
+
+      t.assertLength(1, $('.inner', fragment))
+      t.assertEqual(expectedElement, $('.inner', fragment).get(0))
+
+      var expectedElements = fragment.querySelectorAll('div');
+
+      t.assertLength(2, $('div', fragment))
+      t.assertEqual(expectedElements[0], $('div', fragment).get(0))
+      t.assertEqual(expectedElements[1], $('div', fragment).get(1))
     }
 
     var globalVarSetFromReady = ""
@@ -633,9 +663,15 @@
       },
 
       testDollarWithDocumentFragment: function(t){
-        var documentFragment = $(document.createDocumentFragment())
-        t.assertLength(1, documentFragment)
-        t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, documentFragment.get(0).nodeType)
+        testDocumentFragmentOrShadowRoot($(document.createDocumentFragment()), t)
+      },
+      
+      testDollarWithShadowRoot: function(t){
+        if ('createShadowRoot' in document.body) {
+          var $subject = $('#test_dollar_with_shadow_root')
+          t.assertLength(1, $subject)
+          testDocumentFragmentOrShadowRoot($($subject[0].createShadowRoot()), t)
+        }
       },
 
       testDollarWithElementInIframe: function(t){
