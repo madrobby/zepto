@@ -70,6 +70,7 @@ var Zepto = (function() {
   function isFunction(value) { return type(value) == "function" }
   function isWindow(obj)     { return obj != null && obj == obj.window }
   function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
+  function isDocumentFragment(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_FRAGMENT_NODE }
   function isObject(obj)     { return type(obj) == "object" }
   function isPlainObject(obj) {
     return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
@@ -250,10 +251,10 @@ var Zepto = (function() {
   zepto.qsa = function(element, selector){
     var found,
         maybeID = selector[0] == '#',
-        maybeClass = !maybeID && selector[0] == '.',
+        maybeClass = !maybeID && selector[0] == '.' && element.getElementsByClassName,
         nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
-        isSimple = simpleSelectorRE.test(nameOnly)
-    return (isDocument(element) && isSimple && maybeID) ?
+        isSimple = simpleSelectorRE.test(nameOnly) && element.getElementsByTagName
+    return ((isDocument(element) || isDocumentFragment(element)) && isSimple && maybeID) ?
       ( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
       (element.nodeType !== 1 && element.nodeType !== 9 && element.nodeType !== 11) ? [] :
       slice.call(
