@@ -884,3 +884,11 @@ var Zepto = (function() {
 // If `$` is not yet defined, point it to `Zepto`
 window.Zepto = Zepto
 window.$ === undefined && (window.$ = Zepto)
+
+// Support for AMD and CMD
+if (typeof define === 'function') {
+  if(define.amd)
+    define('zepto', [], function(){return Zepto})
+  else if(define.cmd)
+    define(function(){return Zepto})
+}
