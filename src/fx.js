@@ -107,7 +107,7 @@
       setTimeout(function(){
         if (fired) return
         wrappedCallback.call(that)
-      }, (duration * 1000) + 25)
+      }, ((duration + delay) * 1000) + 25)
     }
 
     // trigger page reflow so new elements can animate
