@@ -809,6 +809,20 @@
         t.assertEqual(1, index)
       },
 
+      testConcat: function(t){
+        var $collection1 = $('#eachtest > *')
+        var $collection2 = $('#find1 .findme')
+        var $collection3 = $('#some_element, #another_element')
+
+        var result, array = $collection1.toArray().concat($collection2.toArray(), $collection3.toArray())
+
+        result = $collection1.concat($collection2, $collection3.toArray())
+        t.assertEqualCollection(array, result)
+
+        result = $.fn.concat.apply($collection1.toArray(), [$collection2, $collection3.toArray()])
+        t.assertEqualCollection(array, result)
+      },
+
       testMap: function(t){
         var results = $('#eachtest > *').map(function(idx, el) {
           t.assertIdentical(el, this)
