@@ -15,7 +15,7 @@
   function dasherize(str) { return str.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : name.toLowerCase() }
 
-  vendors.forEach(function(vendor) {
+  vendors.every(function(vendor) {
     var property = vendor ? vendor + 'Transform' : 'transform'
     if (testEl.style[property] !== undefined) {
       prefix = vendor ? '-' + vendor + '-' : ''
