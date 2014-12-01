@@ -55,6 +55,7 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   <div id="attr_remove" data-name="boom"></div>
+  <div id="attr_remove_multi" data-id="someId1" data-name="someName1"></div>
   <form><input id="attr_val" value="Hello World"></form>
 
   <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
@@ -1820,6 +1821,16 @@
         var el = $('#attr_remove')
         t.assertEqual('boom', el.attr('data-name'))
         el.removeAttr('data-name')
+        t.assertNull(el.attr('data-name'))
+      },
+      
+      testRemoveMultipleAttr: function(t) {
+        var el = $('#attr_remove_multi')
+        t.assertEqual('someId1', el.attr('data-id'))
+        t.assertEqual('someName1', el.attr('data-name'))
+        
+        el.removeAttr('data-id data-name')
+        t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
       },
 
