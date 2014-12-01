@@ -15,11 +15,11 @@
   function dasherize(str) { return str.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : name.toLowerCase() }
 
-  $.each(vendors, function(i, event) {
-    var property = (event) ? event + 'Transform' : 'transform';
+  vendors.forEach(function(vendor) {
+    var property = vendor ? vendor + 'Transform' : 'transform'
     if (testEl.style[property] !== undefined) {
-      prefix = (event) ? '-' + event + '-' : '';
-      eventPrefix = event
+      prefix = vendor ? '-' + vendor + '-' : ''
+      eventPrefix = vendor
       return false
     }
   })
