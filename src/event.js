@@ -256,7 +256,7 @@
   'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback) {
-      return callback ?
+      return (0 in arguments) ?
         this.bind(event, callback) :
         this.trigger(event)
     }
