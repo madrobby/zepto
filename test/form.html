@@ -145,6 +145,11 @@
         })
         $('#login_form').submit()
         t.assert(eventTriggered)
+      },
+
+      testSerializeEmptyCollection: function(t){
+        t.assertIdentical(0, $().serializeArray().length)
+        t.assertIdentical("", $().serialize())
       }
 
     })
