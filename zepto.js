@@ -1,4 +1,4 @@
-/* Zepto v1.1.4 - zepto event ajax form ie - zeptojs.com/license */
+/* Zepto v1.1.5 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
   var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
@@ -286,7 +286,7 @@ var Zepto = (function() {
 
   // access className property while respecting SVGAnimatedString
   function className(node, value){
-    var klass = node.className,
+    var klass = node.className || '',
         svg   = klass && klass.baseVal !== undefined
 
     if (value === undefined) return svg ? klass.baseVal : klass
@@ -308,7 +308,7 @@ var Zepto = (function() {
         value == "true" ||
         ( value == "false" ? false :
           value == "null" ? null :
-          !/^0/.test(value) && !isNaN(num = Number(value)) ? num :
+          +value + "" == value ? +value :
           /^[\[\{]/.test(value) ? $.parseJSON(value) :
           value )
         : value
@@ -476,7 +476,7 @@ var Zepto = (function() {
     },
     find: function(selector){
       var result, $this = this
-      if (!selector) result = []
+      if (!selector) result = $()
       else if (typeof selector == 'object')
         result = $(selector).filter(function(){
           var node = this
@@ -617,7 +617,9 @@ var Zepto = (function() {
         })
     },
     removeAttr: function(name){
-      return this.each(function(){ this.nodeType === 1 && setAttribute(this, name) })
+      return this.each(function(){ this.nodeType === 1 && name.split(' ').forEach(function(attribute){
+        setAttribute(this, attribute)
+      }, this)})
     },
     prop: function(name, value){
       name = propMap[name] || name
@@ -670,13 +672,14 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (arguments.length < 2) {
-        var element = this[0], computedStyle = getComputedStyle(element, '')
+        var computedStyle, element = this[0]
         if(!element) return
+        computedStyle = getComputedStyle(element, '')
         if (typeof property == 'string')
           return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
         else if (isArray(property)) {
           var props = {}
-          $.each(isArray(property) ? property: [property], function(_, prop){
+          $.each(property, function(_, prop){
             props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
           })
           return props
@@ -711,6 +714,7 @@ var Zepto = (function() {
     addClass: function(name){
       if (!name) return this
       return this.each(function(idx){
+        if (!('className' in this)) return
         classList = []
         var cls = className(this), newName = funcArg(this, name, idx, cls)
         newName.split(/\s+/g).forEach(function(klass){
@@ -721,6 +725,7 @@ var Zepto = (function() {
     },
     removeClass: function(name){
       return this.each(function(idx){
+        if (!('className' in this)) return
         if (name === undefined) return className(this, '')
         classList = className(this)
         funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass){
@@ -1105,8 +1110,10 @@ window.$ === undefined && (window.$ = Zepto)
     event = (isString(event) || $.isPlainObject(event)) ? $.Event(event) : compatible(event)
     event._args = args
     return this.each(function(){
+      // handle focus(), blur() by calling them directly
+      if (event.type in focus && typeof this[event.type] == "function") this[event.type]()
       // items in the collection might not be DOM elements
-      if('dispatchEvent' in this) this.dispatchEvent(event)
+      else if ('dispatchEvent' in this) this.dispatchEvent(event)
       else $(this).triggerHandler(event, args)
     })
   }
@@ -1128,24 +1135,13 @@ window.$ === undefined && (window.$ = Zepto)
   }
 
   // shortcut methods for `.bind(event, fn)` for each event type
-  ;('focusin focusout load resize scroll unload click dblclick '+
+  ;('focusin focusout focus blur load resize scroll unload click dblclick '+
   'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback) {
-      return callback ?
+      return (0 in arguments) ?
         this.bind(event, callback) :
         this.trigger(event)
-    }
-  })
-
-  ;['focus', 'blur'].forEach(function(name) {
-    $.fn[name] = function(callback) {
-      if (callback) this.bind(name, callback)
-      else this.each(function(){
-        try { this[name]() }
-        catch(e) {}
-      })
-      return this
     }
   })
 
@@ -1341,13 +1337,17 @@ window.$ === undefined && (window.$ = Zepto)
 
   $.ajax = function(options){
     var settings = $.extend({}, options || {}),
-        deferred = $.Deferred && $.Deferred()
+        deferred = $.Deferred && $.Deferred(),
+        urlAnchor
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
 
-    if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
-      RegExp.$2 != window.location.host
+    if (!settings.crossDomain) {
+      urlAnchor = document.createElement('a')
+      urlAnchor.href = settings.url
+      settings.crossDomain = (window.location.protocol + '//' + window.location.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
+    }
 
     if (!settings.url) settings.url = window.location.toString()
     serializeData(settings)
@@ -1501,7 +1501,11 @@ window.$ === undefined && (window.$ = Zepto)
 
   $.param = function(obj, traditional){
     var params = []
-    params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
+    params.add = function(key, value) {
+      if ($.isFunction(value)) value = value()
+      if (value == null) value = ""
+      this.push(escape(key) + '=' + escape(value))
+    }
     serialize(params, obj, traditional)
     return params.join('&').replace(/%20/g, '+')
   }
@@ -1509,17 +1513,17 @@ window.$ === undefined && (window.$ = Zepto)
 
 ;(function($){
   $.fn.serializeArray = function() {
-    var result = [], el
-    $([].slice.call(this.get(0).elements)).each(function(){
-      el = $(this)
-      var type = el.attr('type')
-      if (this.nodeName.toLowerCase() != 'fieldset' &&
-        !this.disabled && type != 'submit' && type != 'reset' && type != 'button' &&
-        ((type != 'radio' && type != 'checkbox') || this.checked))
-        result.push({
-          name: el.attr('name'),
-          value: el.val()
-        })
+    var el, name, type, result = [],
+      add = function(value) {
+        if (value.forEach) return value.forEach(add)
+        result.push({ name: name, value: value })
+      }
+    if (this[0]) $.each(this[0].elements, function(_, field){
+      type = field.type, name = field.name
+      if (name && field.nodeName.toLowerCase() != 'fieldset' &&
+        !field.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
+        ((type != 'radio' && type != 'checkbox') || field.checked))
+          add($(field).val())
     })
     return result
   }
@@ -1533,7 +1537,7 @@ window.$ === undefined && (window.$ = Zepto)
   }
 
   $.fn.submit = function(callback) {
-    if (callback) this.bind('submit', callback)
+    if (0 in arguments) this.bind('submit', callback)
     else if (this.length) {
       var event = $.Event('submit')
       this.eq(0).trigger(event)
