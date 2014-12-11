@@ -256,11 +256,11 @@ var Zepto = (function() {
         maybeClass = !maybeID && selector[0] == '.',
         nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
         isSimple = simpleSelectorRE.test(nameOnly)
-    return (isDocument(element) && isSimple && maybeID) ?
+    return (element.getElementById && isSimple && maybeID) ? // Safari DocumentFragment doesn't have getElementById
       ( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
-      (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+      (element.nodeType !== 1 && element.nodeType !== 9 && element.nodeType !== 11) ? [] :
       slice.call(
-        isSimple && !maybeID ?
+        isSimple && !maybeID && element.getElementsByClassName ? // DocumentFragment doesn't have getElementsByClassName/TagName
           maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
           element.getElementsByTagName(selector) : // Or a tag
           element.querySelectorAll(selector) // Or it's not simple, and we need to query all

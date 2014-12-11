@@ -260,6 +260,7 @@
   <iframe id="link_target_iframe" name="link_target_iframe" width="10" height="10"></iframe>
   <a id="link_that_will_be_prevented" href="fixtures/iframe_document.html" target="link_target_iframe"></a>
 
+  <div id="test_dollar_with_shadow_root" style="display:none;"></div>
 
   </div><!-- fixtures -->
 
@@ -286,6 +287,35 @@
         div = null
         return html
       })(node)
+    }
+    
+    function testDocumentFragmentOrShadowRootContext($fragment, t) {
+      t.assertLength(1, $fragment)
+      t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
+
+      var fragment = $fragment[0];
+      var $div = $('<div id="child"><div class="inner"></div></div>')
+
+      t.assertLength(0, $('#child', fragment))
+
+      fragment.appendChild($div[0]);
+
+      var expectedElement = fragment.querySelector('#child')
+
+      t.assertLength(1, $('#child', fragment))
+      t.assertEqual($div[0], $('#child', fragment).get(0))
+      t.assertEqual(expectedElement, $('#child', fragment).get(0))
+
+      expectedElement = fragment.querySelector('.inner')
+
+      t.assertLength(1, $('.inner', fragment))
+      t.assertEqual(expectedElement, $('.inner', fragment).get(0))
+
+      var expectedElements = fragment.querySelectorAll('div');
+
+      t.assertLength(2, $('div', fragment))
+      t.assertEqual(expectedElements[0], $('div', fragment).get(0))
+      t.assertEqual(expectedElements[1], $('div', fragment).get(1))
     }
 
     var globalVarSetFromReady = ""
@@ -910,6 +940,18 @@
 
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
+      },
+      
+      testDollarWithDocumentFragmentContext: function(t){
+        testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
+      },
+      
+      testDollarWithShadowRootContext: function(t){
+        if ('createShadowRoot' in document.body) {
+          var $subject = $('#test_dollar_with_shadow_root')
+          t.assertLength(1, $subject)
+          testDocumentFragmentOrShadowRootContext($($subject[0].createShadowRoot()), t)
+        }
       },
 
       testEq: function(t){
