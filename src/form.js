@@ -4,26 +4,19 @@
 
 ;(function($){
   $.fn.serializeArray = function() {
-    var el, type, result = []
+    var el, name, type, result = [],
+      add = function(value) {
+        if (value.forEach) return value.forEach(add)
+        result.push({ name: name, value: value })
+      }
     $([].slice.call(this.get(0).elements)).each(function(){
       el = $(this)
       type = el.attr('type')
+      name = this.name
       if (this.name && this.nodeName.toLowerCase() != 'fieldset' &&
         !this.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
         ((type != 'radio' && type != 'checkbox') || this.checked))
-        if ($.isArray(el.val())) {
-          $.each (el.val(), function(i, v) {
-            result.push({
-              name: el.attr('name'),
-              value: v
-            });
-          });
-        } else {
-          result.push({
-            name: el.attr('name'),
-            value: el.val()
-          });
-        }
+          add(el.val())
     })
     return result
   }
