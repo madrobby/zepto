@@ -92,9 +92,10 @@
       Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
 
-    function detect(ua, callback){
+    function detect(ua, platform, callback){
+      if (!callback) callback = platform, platform = ""
       var obj = {}
-      $.__detect.call(obj, ua)
+      $.__detect.call(obj, ua, platform)
       callback.call(null, obj.os, obj.browser)
     }
 
