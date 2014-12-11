@@ -304,7 +304,6 @@ var Zepto = (function() {
   // JSON    => parse if valid
   // String  => self
   function deserializeValue(value) {
-    var num
     try {
       return value ?
         value == "true" ||
