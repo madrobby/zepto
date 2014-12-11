@@ -50,6 +50,13 @@
       <option value="selectopt3">select3</option>
     </select>
 
+    <select name="users[id][]" multiple>
+      <option value="1">a</option>
+      <option value="2" selected>b</option>
+      <option value="3" selected>c</option>
+      <option value="4">d</option>
+    </select>
+
     <div class="actions">
       <!--
         The name of the following element can't be "submit",
@@ -117,8 +124,9 @@
               { name: 'checked_hasValue', value: 'myValue' },
               { name: 'checked_noValue', value: 'on' },
               { name: 'radio1', value: 'r2' },
-              { name: 'selectbox', value: 'selectopt1' }
-
+              { name: 'selectbox', value: 'selectopt1' },
+              { name: 'users[id][]', value: '2' },
+              { name: 'users[id][]', value: '3' }
           ],
           loginForm.serializeArray()
         )
@@ -126,7 +134,7 @@
 
       testSerialize: function(t){
         var loginForm = $('#login_form')
-        t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize())
+        t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1&users%5Bid%5D%5B%5D=2&users%5Bid%5D%5B%5D=3', loginForm.serialize())
       },
 
       testFormSubmit: function(t){
