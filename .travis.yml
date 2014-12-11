@@ -2,7 +2,7 @@ language: node_js
 
 node_js: '0.10'
 
-sudo: true
+sudo: false
 
 script: script/test
 
