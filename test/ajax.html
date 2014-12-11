@@ -1443,6 +1443,13 @@
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
       },
 
+      testParamNullValues: function(t) {
+        t.assertEqual("x=&a[b]=&a[c]=",
+          decodeURIComponent($.param({ x: null, a: { b: null, c: undefined }})))
+        t.assertEqual("x=",
+          decodeURIComponent($.param([{ name: "x", value: null }])))
+      },
+
       testParamEscaping: function(t) {
         var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' })
         t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
