@@ -194,12 +194,27 @@
       },
 
       testDelay: function(t){
+        var duration = 100, delay = 50,
+          start = new Date().getTime()
+
+        t.pause()
         var el1 = $('#delaytest').animate({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
-          opacity: 0.5 }, { delay: 200 })
+          opacity: 0.5
+        }, {
+          duration: duration,
+          delay: delay,
+          complete: function() {
+            t.resume(function(){
+              var ms = new Date().getTime() - start
+              t.assert(ms >= (duration + delay),
+                'Fired too early (' + ms + ' ms) after having delay')
+            })
+          }
+        })
 
-        t.assertStyle('0.2s', el1, 'transition-delay', 'expected delay to be set')
+        t.assertStyle('0.05s', el1, 'transition-delay', 'expected delay to be set')
       },
 
       testCallback: function(t){
