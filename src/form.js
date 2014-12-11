@@ -9,7 +9,7 @@
         if (value.forEach) return value.forEach(add)
         result.push({ name: name, value: value })
       }
-    $([].slice.call(this.get(0).elements)).each(function(){
+    if (this[0]) $.each(this[0].elements, function(){
       el = $(this)
       type = el.attr('type')
       name = this.name
