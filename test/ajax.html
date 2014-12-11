@@ -881,49 +881,61 @@
         t.assertEqual(window.location, MockXHR.last.url)
       },
 
-      testCrossDomain: function(t) {
+      testCrossDomainCrossOrigin: function(t) {
         $.ajax({
           url: 'http://example.com/foo',
           beforeSend: function(xhr, settings) {
             t.assertTrue(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainSameOrigin: function(t) {
         $.ajax({
           url: window.location.href,
           beforeSend: function(xhr, settings) {
             t.assertFalse(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainLeadingSpace: function(t) {
         $.ajax({
           url: ' http://example.com/foo',
           beforeSend: function(xhr, settings) {
             t.assertTrue(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainTrippleSlash: function(t) {
         $.ajax({
           url: 'http:///example.com/foo',
           beforeSend: function(xhr, settings) {
             t.assertTrue(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainWithQuery: function(t) {
         $.ajax({
           url: window.location.href + "?foo=bar",
           beforeSend: function(xhr, settings) {
             t.assertFalse(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainDifferentScheme: function(t) {
         $.ajax({
           url: "foo://" + window.location.host,
           beforeSend: function(xhr, settings) {
             t.assertTrue(settings.crossDomain)
           }
         })
+      },
 
+      testCrossDomainPeriodInScheme: function(t) {
         $.ajax({
           url: "foo.bar://example.com/foo",
           beforeSend: function(xhr, settings) {
