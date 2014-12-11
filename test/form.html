@@ -109,9 +109,6 @@
 
       testSerializeArray: function(t){
         var loginForm = $('#login_form')
-
-        t.assertEqual(Function, loginForm.serializeArray.constructor)
-        t.assertEqual(6, loginForm.serializeArray().length)
         t.assertEqualObject(
           [
               { name: 'email', value: 'koss@nocorp.me' },
@@ -128,10 +125,6 @@
 
       testSerialize: function(t){
         var loginForm = $('#login_form')
-
-        t.assertEqual(Function, loginForm.serialize.constructor)
-        t.assertEqual('string', typeof loginForm.serialize())
-
         t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize())
       },
 
