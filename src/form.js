@@ -28,7 +28,7 @@
   }
 
   $.fn.submit = function(callback) {
-    if (callback) this.bind('submit', callback)
+    if (0 in arguments) this.bind('submit', callback)
     else if (this.length) {
       var event = $.Event('submit')
       this.eq(0).trigger(event)
