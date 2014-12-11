@@ -492,7 +492,7 @@ var Zepto = (function() {
     },
     find: function(selector){
       var result, $this = this
-      if (!selector) result = []
+      if (!selector) result = $()
       else if (typeof selector == 'object')
         result = $(selector).filter(function(){
           var node = this
