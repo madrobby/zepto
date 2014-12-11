@@ -193,7 +193,7 @@
     if (!settings.crossDomain) {
       urlAnchor = document.createElement('a')
       urlAnchor.href = settings.url
-      settings.crossDomain = window.location.protocol + '//' + window.location.host !== urlAnchor.protocol + '//' + urlAnchor.host
+      settings.crossDomain = (window.location.protocol + '//' + window.location.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
     }
 
     if (!settings.url) settings.url = window.location.toString()
