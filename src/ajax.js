@@ -348,7 +348,11 @@
 
   $.param = function(obj, traditional){
     var params = []
-    params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
+    params.add = function(key, value) {
+      if ($.isFunction(value)) value = value()
+      if (value == null) value = ""
+      this.push(escape(key) + '=' + escape(value))
+    }
     serialize(params, obj, traditional)
     return params.join('&').replace(/%20/g, '+')
   }
