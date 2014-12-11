@@ -394,6 +394,16 @@
         t.assertTrue(event.isPropagationStopped())
       },
 
+      testFalseLiteralAsCallbackForShorthand: function(t){
+        var event = $.Event('click')
+
+        this.el.click(false)
+
+        this.el.trigger(event)
+        t.assertTrue(event.isDefaultPrevented())
+        t.assertTrue(event.isPropagationStopped())
+      },
+
       testUnbindingFalseLiteral: function(t){
         var event = $.Event('click'), fired
 
