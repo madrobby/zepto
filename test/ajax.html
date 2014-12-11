@@ -1450,6 +1450,13 @@
           decodeURIComponent($.param([{ name: "x", value: null }])))
       },
 
+      testParamFunctionValues: function(t) {
+        t.assertEqual("x=&a[b]=B",
+          decodeURIComponent($.param({ x: function(){}, a: { b: function(){ return "B" }}})))
+        t.assertEqual("x=&a[b]=B",
+          decodeURIComponent($.param([{ name: "x", value: null }, { name: "a[b]", value: function(){ return "B" }}])))
+      },
+
       testParamEscaping: function(t) {
         var result = $.param({ 'equation[1]': 'bananas+peaches=smoothie' })
         t.assertEqual("equation%5B1%5D=bananas%2Bpeaches%3Dsmoothie", result)
