@@ -1,9 +1,13 @@
-script: script/test
 language: node_js
+
+node_js: '0.10'
+
+sudo: false
+
+script: script/test
+
 notifications:
   campfire:
     template: '%{message} [%{branch}] %{repository}/%{commit} %{author} %{build_url}'
     rooms:
       secure: VR6rWk0YhezBWnD8jPjSD8h/Q83S3NT0F34Au1vswt+/+Ku19S8X44vGVUG+NYdYyhg7uOqUaPN1Jr3KCpdcXgHEpUYiyBGJ8ebltavcjeHYWqK6ghcqgSnbDkifuC7Eu/9LcrOMOXgt+zkXjiVXW3+zyGVDcrs4cQ2vGY2DTYA=
-node_js:
-- '0.10'
