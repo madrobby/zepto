@@ -321,6 +321,14 @@
         'Expected length %d, got %d.', expected, actual)
     }
 
+    Evidence.Assertions.assertZeptoCollection = function(expectedLength, object, message) {
+      if (!$.zepto.isZ(object))
+        this._assertExpression(false, message || 'Failed assertion.',
+          'Expected %o to be a Zepto collection.', object)
+      else
+        this.assertLength(expectedLength, object, message)
+    }
+
     Evidence.Assertions.assertEqualCollection = function(expectedCollection, actualCollection, message) {
       var expected = expectedCollection, actual = actualCollection,
           passed = expected.length == actual.length
@@ -530,11 +538,11 @@
       },
 
       testDollarWithNil: function(t){
-        t.assertLength(0, $(null))
-        t.assertLength(0, $(undefined))
-        t.assertLength(0, $(false))
-        t.assertLength(0, $(''))
-        t.assertLength(0, $('#'))
+        t.assertZeptoCollection(0, $(null))
+        t.assertZeptoCollection(0, $(undefined))
+        t.assertZeptoCollection(0, $(false))
+        t.assertZeptoCollection(0, $(''))
+        t.assertZeptoCollection(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)
@@ -542,7 +550,7 @@
 
       testDollarWithNonDOM: function(t){
         var zepto = $(['a', 'b', 'c'])
-        t.assertLength(3, zepto)
+        t.assertZeptoCollection(3, zepto)
         t.assertEqualCollection(['a', 'b', 'c'], zepto)
 
         t.assert($({}))
@@ -719,7 +727,7 @@
       },
 
       testDollarWithDoctypeInFragment: function(t){
-        t.assertLength(0, $('<!DOCTYPE html>'))
+        t.assertZeptoCollection(0, $('<!DOCTYPE html>'))
       },
 
       testNodeCreationViaDollar: function (t) {
@@ -892,12 +900,12 @@
 
       testEq: function(t){
         var $els = $('#eq_test div')
-        t.assertLength(1, $els.eq(0))
-        t.assertLength(1, $els.eq(-1))
+        t.assertZeptoCollection(1, $els.eq(0))
+        t.assertZeptoCollection(1, $els.eq(-1))
         t.assertEqual($els.eq(-1)[0].className, 'eq2')
         t.assertUndefined($els.eq(-1).tagName)
 
-        t.assertLength(0, $('nonexistent').eq(0))
+        t.assertZeptoCollection(0, $('nonexistent').eq(0))
       },
 
       testFirst: function(t){
