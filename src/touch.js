@@ -107,8 +107,10 @@
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
           swipeTimeout = setTimeout(function() {
-            touch.el.trigger('swipe')
-            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            if (touch.el) {
+              touch.el.trigger('swipe')
+              touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            }
             touch = {}
           }, 0)
 
@@ -121,31 +123,34 @@
             // ('tap' fires before 'scroll')
             tapTimeout = setTimeout(function() {
 
-              // trigger universal 'tap' with the option to cancelTouch()
-              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-              var event = $.Event('tap')
-              event.cancelTouch = cancelAll
-              touch.el.trigger(event)
+              if (touch.el) {
+                // trigger universal 'tap' with the option to cancelTouch()
+                // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
+                var event = $.Event('tap')
+                event.cancelTouch = cancelAll
+                touch.el.trigger(event)
 
-              // trigger double tap immediately
-              if (touch.isDoubleTap) {
-                if (touch.el) touch.el.trigger('doubleTap')
-                touch = {}
-              }
-
-              // trigger single tap after 250ms of inactivity
-              else {
-                touchTimeout = setTimeout(function(){
-                  touchTimeout = null
-                  if (touch.el) touch.el.trigger('singleTap')
+                // trigger double tap immediately
+                if (touch.isDoubleTap) {
+                  touch.el.trigger('doubleTap')
                   touch = {}
-                }, 250)
+                }
+
+                // trigger single tap after 250ms of inactivity
+                else {
+                  touchTimeout = setTimeout(function(){
+                    touchTimeout = null
+                    if (touch.el) touch.el.trigger('singleTap')
+                    touch = {}
+                  }, 250)
+                }
               }
             }, 0)
           } else {
             touch = {}
           }
-          deltaX = deltaY = 0
+
+        deltaX = deltaY = 0
 
       })
       // when the browser window loses focus,

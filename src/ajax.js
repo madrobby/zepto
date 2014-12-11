@@ -101,7 +101,7 @@
       if (responseData && $.isFunction(originalCallback))
         originalCallback(responseData[0])
 
-      originalCallback = responseData = undefined
+      script = originalCallback = responseData = undefined
     })
 
     if (ajaxBeforeSend(xhr, options) === false) {
