@@ -1003,7 +1003,7 @@ var UI = (function() {
   function printf(template, args, inspector) {
     var parts = [], m,
         regexp = /(^%|.%)([a-zA-Z])/,
-        args = args.splice(0); // clone args
+        args = args.slice(0); // clone args
 
     inspector = inspector || String;
 
