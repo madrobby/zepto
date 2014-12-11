@@ -1395,14 +1395,10 @@
 
       testFindWithFalsyValue: function(t){
         var element = '<div><a>1</a></div>';
-        var found = $(element).find(undefined)
-        t.assertLength(0, found)
-        found = $(element).find(false)
-        t.assertLength(0, found)
-        found = $(element).find(0)
-        t.assertLength(0, found)
-        found = $(element).find('')
-        t.assertLength(0, found)
+        t.assertZeptoCollection(0, $(element).find(undefined))
+        t.assertZeptoCollection(0, $(element).find(false))
+        t.assertZeptoCollection(0, $(element).find(0))
+        t.assertZeptoCollection(0, $(element).find(''))
       },
 
       testFilter: function(t){
