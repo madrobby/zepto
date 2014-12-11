@@ -11,7 +11,8 @@
       specialEvents={},
       focusinSupported = 'onfocusin' in window,
       focus = { focus: 'focusin', blur: 'focusout' },
-      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
+      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' },
+      inputEvts = ['focus', 'blur']
 
   specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
 
@@ -228,7 +229,8 @@
     event._args = args
     return this.each(function(){
       // items in the collection might not be DOM elements
-      if('dispatchEvent' in this) this.dispatchEvent(event)
+      if(event.type && ~inputEvts.indexOf(event.type)) this[event.type]()
+      else if('dispatchEvent' in this) this.dispatchEvent(event)
       else $(this).triggerHandler(event, args)
     })
   }
@@ -260,7 +262,7 @@
     }
   })
 
-  ;['focus', 'blur'].forEach(function(name) {
+  ;inputEvts.forEach(function(name) {
     $.fn[name] = function(callback) {
       if (callback) this.bind(name, callback)
       else this.each(function(){
