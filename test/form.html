@@ -147,6 +147,22 @@
         t.assert(eventTriggered)
       },
 
+      testFormSubmitBindFalse: function(t){
+        var eventPropagated = false
+        $(document).on('submit', function(){
+          eventPropagated = true
+        })
+
+        try {
+          var form = $('#login_form')
+          form.submit(false)
+          form.submit()
+          t.assertFalse(eventPropagated)
+        } finally {
+          $(document).off('submit')
+        }
+      },
+
       testSerializeEmptyCollection: function(t){
         t.assertIdentical(0, $().serializeArray().length)
         t.assertIdentical("", $().serialize())
