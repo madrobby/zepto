@@ -1870,8 +1870,8 @@
         t.assertIdentical("08",
           $('<div data-notnum=08 />').data('notnum'))
 
-        t.assertIdentical(111111111111111111111111111111111,
-          $('<div data-bignum="111111111111111111111111111111111" />').data('bignum'))
+        t.assertIdentical("5903509451651483504",
+          $('<div data-bignum="5903509451651483504" />').data('bignum'))
       },
 
       testDataBooleanType: function(t){
