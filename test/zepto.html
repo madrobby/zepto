@@ -1923,6 +1923,9 @@
         var el = $('<div data-num=42 />')
         t.assertIdentical(42, el.data('num'))
 
+        t.assertIdentical(42.5,
+          $('<div data-float=42.5 />').data('float'))
+
         t.assertIdentical("08",
           $('<div data-notnum=08 />').data('notnum'))
 
