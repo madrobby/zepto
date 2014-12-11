@@ -12,7 +12,7 @@
       ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
       iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
       webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
-      win = platform.match(/Win\d{2}|Windows/),
+      win = /Win\d{2}|Windows/.test(platform),
       wp = ua.match(/Windows Phone ([\d.]+)/),
       touchpad = webos && ua.match(/TouchPad/),
       kindle = ua.match(/Kindle\/([\d.]+)/),
@@ -54,7 +54,10 @@
     if (firefox) browser.firefox = true, browser.version = firefox[1]
     if (firefoxos) os.firefoxos = true, os.version = firefoxos[1]
     if (ie) browser.ie = true, browser.version = ie[1]
-    if (safari && (osx || os.ios || win)) {browser.safari = true; if (osx) browser.version = safari[1]}
+    if (safari && (osx || os.ios || win)) {
+      browser.safari = true
+      if (!os.ios) browser.version = safari[1]
+    }
     if (webview) browser.webview = true
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) ||
