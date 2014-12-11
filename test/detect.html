@@ -33,6 +33,7 @@
       Safari_OSX_7_0_1: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
       Safari_OSX_7_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71",
       Safari_OSX_6_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8) AppleWebKit/536.25 (KHTML, like Gecko) Version/6.0 Safari/536.25",
+      Safari_Windows_NT: "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27",
 
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
@@ -122,6 +123,18 @@
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("6.0",browser.version)
+        });
+      },
+
+      testSafariWindows: function(t){
+        detect(UA.Safari_Windows_NT, "Windows", function(os, browser){
+          t.assertUndefined(os.osx)
+          t.assertUndefined(os.ios)
+          t.assertUndefined(os.wp)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("5.0.4", browser.version)
         });
       },
 
