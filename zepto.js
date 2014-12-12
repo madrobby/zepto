@@ -1,4 +1,4 @@
-/* Zepto v1.1.5 - zepto event ajax form ie - zeptojs.com/license */
+/* Zepto v1.1.6 - zepto event ajax form ie - zeptojs.com/license */
 
 var Zepto = (function() {
   var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
@@ -302,7 +302,6 @@ var Zepto = (function() {
   // JSON    => parse if valid
   // String  => self
   function deserializeValue(value) {
-    var num
     try {
       return value ?
         value == "true" ||
@@ -1165,7 +1164,10 @@ window.$ === undefined && (window.$ = Zepto)
       xmlTypeRE = /^(?:text|application)\/xml/i,
       jsonType = 'application/json',
       htmlType = 'text/html',
-      blankRE = /^\s*$/
+      blankRE = /^\s*$/,
+      originAnchor = document.createElement('a')
+
+  originAnchor.href = window.location.href
 
   // trigger a custom event and return false if it was cancelled
   function triggerAndReturn(context, eventName, data) {
@@ -1346,7 +1348,8 @@ window.$ === undefined && (window.$ = Zepto)
     if (!settings.crossDomain) {
       urlAnchor = document.createElement('a')
       urlAnchor.href = settings.url
-      settings.crossDomain = (window.location.protocol + '//' + window.location.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
+      urlAnchor.href = urlAnchor.href
+      settings.crossDomain = (originAnchor.protocol + '//' + originAnchor.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
     }
 
     if (!settings.url) settings.url = window.location.toString()
@@ -1513,7 +1516,7 @@ window.$ === undefined && (window.$ = Zepto)
 
 ;(function($){
   $.fn.serializeArray = function() {
-    var el, name, type, result = [],
+    var name, type, result = [],
       add = function(value) {
         if (value.forEach) return value.forEach(add)
         result.push({ name: name, value: value })
