@@ -12,7 +12,10 @@
       xmlTypeRE = /^(?:text|application)\/xml/i,
       jsonType = 'application/json',
       htmlType = 'text/html',
-      blankRE = /^\s*$/
+      blankRE = /^\s*$/,
+      originAnchor = document.createElement('a')
+
+  originAnchor.href = window.location.href
 
   // trigger a custom event and return false if it was cancelled
   function triggerAndReturn(context, eventName, data) {
@@ -193,7 +196,8 @@
     if (!settings.crossDomain) {
       urlAnchor = document.createElement('a')
       urlAnchor.href = settings.url
-      settings.crossDomain = (window.location.protocol + '//' + window.location.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
+      urlAnchor.href = urlAnchor.href
+      settings.crossDomain = (originAnchor.protocol + '//' + originAnchor.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
     }
 
     if (!settings.url) settings.url = window.location.toString()
