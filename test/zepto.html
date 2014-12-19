@@ -143,8 +143,10 @@
   </ul>
 
   <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
+  
+  <iframe id="contentsIframeTest" src="fixtures/iframe_document.html"></iframe>
 
-   <ul id="siblingsTest">
+  <ul id="siblingsTest">
     <li class="child one"><span class="b"></span><em></em><b></b></li>
     <li class="child two"><span class="c"></span><em></em><b></b></li>
     <li class="child three"><span class="d"></span><em></em><b></b></li>
@@ -1247,6 +1249,11 @@
         t.assertLength(3, $contents)
         t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
+      },
+      
+      testIframeContents: function(t){
+        var el = $("#contentsIframeTest")
+        t.assertEqual("Hello from iframe!", el.contents().find("b").first().text())
       },
 
       testSiblings: function(t){
