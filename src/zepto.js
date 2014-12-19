@@ -529,7 +529,7 @@ var Zepto = (function() {
       return filtered(this.map(function(){ return children(this) }), selector)
     },
     contents: function() {
-      return this.map(function() { return slice.call(this.childNodes) })
+      return this.map(function() { return this.contentDocument || slice.call(this.childNodes) })
     },
     siblings: function(selector){
       return filtered(this.map(function(i, el){
