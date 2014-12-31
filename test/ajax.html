@@ -1113,6 +1113,14 @@
         t.assertEqual('test.html?foo=bar', MockXHR.last.url)
       },
 
+      testDataIsAppendedToGETURLWithHashStripped: function(t) {
+        $.ajax({ url:'test.html#?ignore=me', data:'foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?a=b#?ignore=me', data:'foo=bar' })
+        t.assertEqual('test.html?a=b&foo=bar', MockXHR.last.url)
+      },
+
       testScriptResponseIsEvald: function(t) {
         var result
         $.ajax({ success: function(text){ result = text } })
