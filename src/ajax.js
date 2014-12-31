@@ -188,7 +188,7 @@
   $.ajax = function(options){
     var settings = $.extend({}, options || {}),
         deferred = $.Deferred && $.Deferred(),
-        urlAnchor
+        urlAnchor, hashIndex
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
@@ -201,6 +201,7 @@
     }
 
     if (!settings.url) settings.url = window.location.toString()
+    if ((hashIndex = settings.url.indexOf('#')) > -1) settings.url = settings.url.slice(0, hashIndex)
     serializeData(settings)
 
     var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
