@@ -125,7 +125,7 @@
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
-              touch.el.trigger(event)
+          	  touch.el.trigger(event);
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
@@ -145,6 +145,11 @@
           } else {
             touch = {}
           }
+		  
+	  	  if( $(e.target).height() == 0 ){
+	  		e.preventDefault();
+	  	  }
+		
           deltaX = deltaY = 0
 
       })
