@@ -113,7 +113,7 @@
           }, 0)
 
         // normal tap
-        else if ('last' in touch)
+        else if ('last' in touch){
           // don't fire tap when delta position changed by more than 30 pixels,
           // for instance when moving to a point and back to origin
           if (deltaX < 30 && deltaY < 30) {
@@ -125,7 +125,6 @@
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
-              touch.el.trigger(event)
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
@@ -145,6 +144,12 @@
           } else {
             touch = {}
           }
+		  var event = $.Event('tap')
+		  event.cancelTouch = cancelAll
+		  touch.el.trigger(event)
+		  deltaX = deltaY = 0
+		  e.preventDefault()
+		}
           deltaX = deltaY = 0
 
       })
