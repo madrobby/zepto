@@ -107,6 +107,12 @@
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
           swipeTimeout = setTimeout(function() {
+          	//Change by zyh : fix error cause by event.preventDefault because touch={}
+          	//如果外部调用了preventDefault，这里touch={}，避免出错，这里修正
+          	if(!touch.el){
+          		return;
+          	}
+          	//Change end
             touch.el.trigger('swipe')
             touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
             touch = {}
@@ -116,7 +122,16 @@
         else if ('last' in touch)
           // don't fire tap when delta position changed by more than 30 pixels,
           // for instance when moving to a point and back to origin
-          if (deltaX < 30 && deltaY < 30) {
+           //Changed by zyh : It may not fire 'doubleTap' in high resolution device,because 30 pixels is too small.
+        	//We may change it by set fixDevicePixelRatio property.
+        	//在高清屏中30像素的范围太小会导致doubleTap不触发，这里根据具体情况扩大范围
+	        var nOffset=30;
+	        if(typeof fixDevicePixelRatio!=='undefined'){
+	        	nOffset=fixDevicePixelRatio*30;
+	        }
+	        if (deltaX < nOffset && deltaY < nOffset) {
+//          if (deltaX < 30 && deltaY < 30) {
+	        //Changed end
             // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
             // ('tap' fires before 'scroll')
             tapTimeout = setTimeout(function() {
@@ -125,6 +140,11 @@
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
+              //Change by zyh : fix error cause by event.preventDefault because touch={}
+          	  if(!touch.el){
+          		  return;
+          	  }
+          	  //Change end
               touch.el.trigger(event)
 
               // trigger double tap immediately
