@@ -180,7 +180,10 @@
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
     if (options.processData && options.data && $.type(options.data) != "string")
-      options.data = $.param(options.data, options.traditional)
+      if (options.contentType && isJSON(options.contentType))
+        options.data = JSON.stringify(options.data)
+      else
+        options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data), options.data = undefined
   }
@@ -360,5 +363,9 @@
     }
     serialize(params, obj, traditional)
     return params.join('&').replace(/%20/g, '+')
+  }
+
+  function isJSON(contentType){
+    return typeof contentType == 'string' && contentType.toLowerCase().indexOf('application/json') == 0;
   }
 })(Zepto)

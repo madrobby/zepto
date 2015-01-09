@@ -322,6 +322,23 @@
         })
       },
 
+      testAjaxPostJSON: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+
+        $.ajax({
+          url: 'create',
+          type: 'POST',
+          data: { hello: 'world' },
+          dataType: 'json',
+          contentType: 'application/json',
+          headers: { accept: 'application/json' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.payload.hello)
+          })
+        })
+      },
+
       testAjaxGetJSON: function(t){
         t.pause()
         resumeOnAjaxError(t)
