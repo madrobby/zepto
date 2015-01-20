@@ -380,7 +380,7 @@ var Zepto = (function() {
     return filter.call(elements, callback)
   }
 
-  if (window.JSON) $.parseJSON = JSON.parse
+  if (window.JSON) $.parseJSON = function(data){ return JSON.parse(data + "") }
 
   // Populate the class2type map
   $.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
