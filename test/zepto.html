@@ -1095,6 +1095,7 @@
         t.assertNull($('#doesnotexist').offset())
         var el = $('#some_element')
         t.assertIdentical(el, el.offset({}))
+        t.assertSame($('<div>').offset(), {left: 0, top: 0})
       },
 
       testWidth: function(t){
