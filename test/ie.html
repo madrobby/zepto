@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Touch unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto event ie touch')
+    })()
+  </script>
+</head>
+<body>
+  <h1>Zepto Touch unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <style>
+    #test {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100px;
+      height: 50px;
+    }
+  </style>
+
+  <script>
+  (function(){
+    var emitEvent, tests
+
+    // Fire a simulated touch event.
+    // While it is possible to fire real touch events,
+    // there are cross-browser issues, and this way we
+    // can test touch events in browsers that don't
+    // actually support touch input (like desktop Safari).
+    //
+    // Zepto's touch module only uses the `pageX/Y` and `target`
+    // properties of the first touch in the `touches` TouchList
+    function emitTouchEvent(type, element, x, y) {
+      var event = document.createEvent('Event'),
+        touch = { pageX: x, pageY: y, target: element }
+
+      event.initEvent('touch'+type, true, true)
+      event.touches = [touch]
+
+      element.dispatchEvent(event)
+    }
+
+    // IE 10, Windows Phone 8
+    // MSPointer events, same idea, different implementation.
+    // For compatibility accepts the same arguments as `touchEvent`
+    // (touch event names will be mapped to MSPointer event names)
+    function emitMSPointerEvent(type, element, x, y) {
+      var event = document.createEvent('Event'),
+        eventMap = { start: 'Down', move: 'Move', end: 'Up'}
+
+      event.initEvent('MSPointer'+eventMap[type], true, true)
+      event.pageX = x
+      event.pageY = y
+      event.pointerType = 666
+      event.MSPOINTER_TYPE_TOUCH = 666
+      event.isPrimary = true
+
+      element.dispatchEvent(event)
+    }
+
+    // IE 11
+    // Pointer events, same idea again, yet different implementation.
+    // For compatibility accepts the same arguments as `touchEvent`
+    // (touch event names will be mapped to pointer event names)
+    function emitPointerEvent(type, element, x, y) {
+      var event = document.createEvent('Event'),
+        eventMap = { start: 'down', move: 'move', end: 'up'}
+
+      event.initEvent('pointer'+eventMap[type], true, true)
+      event.pageX = x
+      event.pageY = y
+      event.pointerType = 'touch'
+      event.isPrimary = true
+
+      element.dispatchEvent(event)
+    }
+
+    function down(element, x, y) {
+      emitEvent('start', element, x, y)
+    }
+    function move(element, x,y) {
+      emitEvent('move', element, x, y)
+    }
+    function up(element) {
+      emitEvent('end', element)
+    }
+
+    tests = {
+      setUp: function(){
+        emitEvent = this.emitEvent
+        $('<div id=test>TEST ELEMENT</div>').appendTo('body')
+      },
+
+      tearDown: function(){
+        $('#test').off()
+        $('#test').remove()
+      },
+
+      testTap: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, count)
+          })
+        }, 50)
+      },
+
+      testScrollDoesNotFireTap: function(t){
+        var element = $('#test').get(0), count = 0
+
+        $('#test').on('tap', function () {
+          count++
+        })
+
+        down(element, 0, 0)
+        move(element, 0, 20)
+        move(element, 0, 20)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(0, count)
+          })
+        }, 50)
+      },
+
+      testSingleTapDoesNotInterfereWithTappingTwice: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          down(element, 10, 10)
+          up(element)
+
+          t.resume(function(){
+            t.pause()
+
+            setTimeout(function(){
+              t.resume(function(){
+                t.assertEqual(2, count)
+              })
+            }, 200)
+          })
+        }, 200)
+      },
+
+      // should be fired if there is one tap within 250ms
+      testSingleTap: function(t){
+        var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
+
+        $('#test').on('singleTap', function(){
+          singleCount++
+        }).on('doubleTap', function(){
+          doubleCount++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, singleCount)
+            t.assertEqual(0, doubleCount)
+          })
+        }, 300)
+      },
+
+      // should be fired if there are two taps within 250ms
+      testDoubleTap: function(t){
+        var singleCount = 0, doubleCount = 0, element = $('#test').get(0)
+
+        $('#test').on('singleTap', function(){
+          singleCount++
+        }).on('doubleTap', function(){
+          doubleCount++
+        })
+
+        down(element, 10, 10)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          down(element, 12, 12)
+          up(element)
+
+          t.resume(function(){
+            t.pause()
+
+            setTimeout(function(){
+              t.resume(function(){
+                t.assertEqual(0, singleCount)
+                t.assertEqual(1, doubleCount)
+              })
+            }, 100)
+          })
+        }, 100)
+      },
+
+      // should be fired if the finger is down in the same location for >750ms
+      testLongTap: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('longTap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          up(element)
+
+          t.resume(function(){
+            t.assertEqual(1, count)
+          })
+        }, 900)
+      },
+
+      testLongTapDoesNotFireIfFingerIsMoved: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('longTap', function(){
+          count++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          move(element, 50, 10)
+          t.resume(function(){
+            t.pause()
+            setTimeout(function(){
+              up(element)
+              t.resume(function(){
+                t.assertEqual(0, count)
+              })
+            }, 450)
+          })
+        }, 450)
+      },
+
+      testSwipe: function(t){
+        var swipeCount = 0, element = $('#test').get(0)
+
+        $('#test').on('swipe', function(){
+          swipeCount++
+        })
+
+        down(element, 10, 10)
+
+        t.pause()
+        setTimeout(function(){
+          move(element, 70, 10)
+          up(element)
+
+          t.resume(function(){
+            t.pause()
+
+            setTimeout(function(){
+              t.resume(function(){
+                t.assertEqual(1, swipeCount)
+              })
+            }, 50)
+          })
+        }, 50)
+      },
+
+      testTapDoNotFireWhenMoveToPointAndBack: function (t) {
+        var tapCount = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          tapCount++
+        })
+        down(element, 10, 10)
+        move(element, 60, 10)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            move(element, 10, 10)
+            up(element)
+            t.pause()
+            setTimeout(function(){
+              t.resume( function () {
+                t.assertEqual(0, tapCount)
+              })
+            }, 100)
+          })
+        }, 100)
+      }
+
+      // TODO: test swipes in specific directions
+    }
+
+    Evidence('TouchTest',     $.extend({ emitEvent: emitTouchEvent }, tests))
+    Evidence('MSPointerTest', $.extend({ emitEvent: emitMSPointerEvent }, tests))
+    Evidence('PointerTest',   $.extend({ emitEvent: emitPointerEvent }, tests))
+  })()
+  </script>
+</body>
+</html>
