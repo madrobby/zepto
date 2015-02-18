@@ -29,7 +29,7 @@
   </style>
 </head>
 <body>
-  <h1>Zepto IE unit tests</h1>
+  <h1>Zepto ie unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -39,14 +39,20 @@
 
           Evidence('getComputedStyle', {
 
-              //Test to check if styles for elements are returned correctly
+              //Test to check if getComputedStyle does not blow up when no element are provided
+              testGetComputedStyleNoElem: function(t){
+                  t.assertEqual(null, getComputedStyle());
+              },
+
+              //Test to check if computed styles for elements are returned correctly
               testGetComputedStyle: function(t){
                   t.assertEqual('50px', getComputedStyle(document.body).height);
               },
 
-              //Test to check if styles for pseudo-elements are returned correctly
+              //Test to check if computed styles for pseudo-elements are returned correctly
+              //Assertion a bit hacky as IE returns the value in double quotes
               testGetComputedStylePseudoElem: function(t){
-                  t.assertEqual('abc', getComputedStyle(document.body, ':after').content);
+                  t.assert(getComputedStyle(document.body, ':after').content.indexOf('abc') >  -1);
               }
 
           })
