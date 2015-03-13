@@ -286,7 +286,9 @@ var Zepto = (function() {
   }
 
   function setAttribute(node, name, value) {
-    value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
+    node.setAttribute ?
+      (value == null ? node.removeAttribute(name) : node.setAttribute(name, value))
+      :node.prop(name, value)
   }
 
   // access className property while respecting SVGAnimatedString
@@ -624,7 +626,7 @@ var Zepto = (function() {
       var result
       return (typeof name == 'string' && !(1 in arguments)) ?
         (!this.length || this[0].nodeType !== 1 ? undefined :
-          (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
+          (this[0].getAttribute ? this[0].getAttribute(name) : this.prop(name))
         ) :
         this.each(function(idx){
           if (this.nodeType !== 1) return
