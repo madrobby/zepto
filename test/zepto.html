@@ -56,8 +56,8 @@
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   <div id="attr_remove" data-name="boom"></div>
   <div id="attr_remove_multi" data-id="someId1" data-name="someName1"></div>
-  <form><input id="attr_val" value="Hello World"></form>
-
+  <form id="attr_val_form"><input id="attr_val" value="Hello World"></form>
+<input id="attr_val_outside_form" form="attr_val_form">
   <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
 
   <form id="attr_with_text_input">
@@ -143,7 +143,7 @@
   </ul>
 
   <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
-  
+
   <iframe id="contentsIframeTest" src="fixtures/iframe_document.html"></iframe>
 
   <ul id="siblingsTest">
@@ -290,7 +290,7 @@
         return html
       })(node)
     }
-    
+
     function testDocumentFragmentOrShadowRootContext($fragment, t) {
       t.assertLength(1, $fragment)
       t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
@@ -947,11 +947,11 @@
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
       },
-      
+
       testDollarWithDocumentFragmentContext: function(t){
         testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
       },
-      
+
       testDollarWithShadowRootContext: function(t){
         if ('createShadowRoot' in document.body) {
           var $subject = $('#test_dollar_with_shadow_root')
@@ -1251,7 +1251,7 @@
         t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
       },
-      
+
       testIframeContents: function(t){
         var el = $("#contentsIframeTest")
         t.assertEqual("Hello from iframe!", el.contents().find("b").first().text())
@@ -1868,11 +1868,11 @@
       testAttrNullUnset: function(t){
         var el = $('<div id=hi>')
         el.attr('id', null)
-        t.assertIdentical('', el.attr('id'))
+        t.assertIdentical(null, el.attr('id'))
 
         el.attr('id', 'hello')
         el.attr({ id:null })
-        t.assertIdentical('', el.attr('id'))
+        t.assertIdentical(null, el.attr('id'))
       },
 
       testRemoveAttr: function(t) {
@@ -1881,12 +1881,12 @@
         el.removeAttr('data-name')
         t.assertNull(el.attr('data-name'))
       },
-      
+
       testRemoveMultipleAttr: function(t) {
         var el = $('#attr_remove_multi')
         t.assertEqual('someId1', el.attr('data-id'))
         t.assertEqual('someName1', el.attr('data-name'))
-        
+
         el.removeAttr('data-id data-name')
         t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
@@ -1965,6 +1965,16 @@
         t.assertEqual('[boom]', el.data('invalid'))
       },
 
+      testFormAttrNull: function(t) {
+        var input = $("#attr_val");
+
+          t.assertNull(input.attr("form"), "Form should be null");
+      },
+        testFormAttrNotNull: function(t){
+            var input = $("#attr_val_outside_form");
+
+            t.assertEqual("attr_val_form", input.attr("form"), "Form should be null");
+            },
       testVal: function(t) {
         var input = $('#attr_val')
 
