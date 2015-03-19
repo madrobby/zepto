@@ -9,9 +9,9 @@
     getComputedStyle(undefined)
   } catch(e) {
     var nativeGetComputedStyle = getComputedStyle;
-    window.getComputedStyle = function(element){
+    window.getComputedStyle = function(element, pseudoElt){
       try {
-        return nativeGetComputedStyle(element)
+        return nativeGetComputedStyle(element, pseudoElt)
       } catch(e) {
         return null
       }
