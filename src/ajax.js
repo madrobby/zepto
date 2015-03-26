@@ -243,7 +243,7 @@
     if (settings.headers) for (name in settings.headers) setHeader(name, settings.headers[name])
     xhr.setRequestHeader = setHeader
 
-    xhr.onreadystatechange = function(){
+    var callback = function(){
       if (xhr.readyState == 4) {
         xhr.onreadystatechange = empty
         clearTimeout(abortTimeout)
@@ -288,6 +288,7 @@
 
     // avoid sending empty string (#319)
     xhr.send(settings.data ? settings.data : null)
+    xhr.onreadystatechange = callback
     return xhr
   }
 
