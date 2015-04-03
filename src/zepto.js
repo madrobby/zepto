@@ -51,9 +51,9 @@ var Zepto = (function() {
 
   zepto.matches = function(element, selector) {
     if (!selector || !element || element.nodeType !== 1) return false
-    var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
+    var matches = element.matches || element.webkitMatchesSelector || element.mozMatchesSelector ||
                           element.oMatchesSelector || element.matchesSelector
-    if (matchesSelector) return matchesSelector.call(element, selector)
+    if (matches) return matches.call(element, selector)
     // fall back to performing a selector:
     var match, parent = element.parentNode, temp = !parent
     if (temp) (parent = tempParent).appendChild(element)
