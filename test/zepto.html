@@ -2120,11 +2120,16 @@
       },
 
       testAppendWithArrayParams: function(t){
-        var node = document.createElement('b');
+        var zpElement = $('<b>five</b>')
+        var multElements = $('<b>six</b><b>seven</b>')
+        var node = document.createElement('b')
         node.appendChild(document.createTextNode('four'))
+
+        // append elements on this array
+        var arrElements = ['<b>one</b><b>two</b>', '<b>three</b>', node, zpElement, multElements ]
         var el = $('<div></div>')
-        el.append(['<b>one</b><b>two</b>', '<b>three</b>', node])
-        t.assertEqual('<b>one</b><b>two</b><b>three</b><b>four</b>', el.html())
+        el.append(arrElements)
+        t.assertEqual('<b>one</b><b>two</b><b>three</b><b>four</b><b>five</b><b>six</b><b>seven</b>', el.html())
       },
 
       testAppendToPrependTo: function(t){
