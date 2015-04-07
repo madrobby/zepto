@@ -834,7 +834,16 @@ var Zepto = (function() {
       // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
             argType = type(arg)
-            return argType == "object" || argType == "array" || arg == null ?
+            if (argType == "array"){
+              var rtnNodes = []
+              arg.forEach(function(el){
+                if(el.nodeType !== undefined)
+                  return rtnNodes.push(el)
+                rtnNodes = rtnNodes.concat(zepto.fragment(el));
+              })
+              return rtnNodes;
+            }
+            return argType == "object" || arg == null ?
               arg : zepto.fragment(arg)
           }),
           parent, copyByClone = this.length > 1
