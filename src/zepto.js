@@ -838,6 +838,7 @@ var Zepto = (function() {
               var arr = []
               arg.forEach(function(el){
                 if(el.nodeType !== undefined) return arr.push(el)
+                else if($.zepto.isZ(el)) return arr = arr.concat(el.get())
                 arr = arr.concat(zepto.fragment(el))
               })
               return arr
