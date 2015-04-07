@@ -850,13 +850,12 @@ var Zepto = (function() {
       var argType, nodes = $.map(arguments, function(arg) {
             argType = type(arg)
             if (argType == "array"){
-              var rtnNodes = []
+              var arr = []
               arg.forEach(function(el){
-                if(el.nodeType !== undefined)
-                  return rtnNodes.push(el)
-                rtnNodes = rtnNodes.concat(zepto.fragment(el));
+                if(el.nodeType !== undefined) return arr.push(el)
+                arr = arr.concat(zepto.fragment(el))
               })
-              return rtnNodes;
+              return arr
             }
             return argType == "object" || arg == null ?
               arg : zepto.fragment(arg)
