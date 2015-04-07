@@ -143,7 +143,7 @@
   </ul>
 
   <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
-  
+
   <iframe id="contentsIframeTest" src="fixtures/iframe_document.html"></iframe>
 
   <ul id="siblingsTest">
@@ -290,7 +290,7 @@
         return html
       })(node)
     }
-    
+
     function testDocumentFragmentOrShadowRootContext($fragment, t) {
       t.assertLength(1, $fragment)
       t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
@@ -947,11 +947,11 @@
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
       },
-      
+
       testDollarWithDocumentFragmentContext: function(t){
         testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
       },
-      
+
       testDollarWithShadowRootContext: function(t){
         if ('createShadowRoot' in document.body) {
           var $subject = $('#test_dollar_with_shadow_root')
@@ -1251,7 +1251,7 @@
         t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
       },
-      
+
       testIframeContents: function(t){
         var el = $("#contentsIframeTest")
         t.assertEqual("Hello from iframe!", el.contents().find("b").first().text())
@@ -1881,12 +1881,12 @@
         el.removeAttr('data-name')
         t.assertNull(el.attr('data-name'))
       },
-      
+
       testRemoveMultipleAttr: function(t) {
         var el = $('#attr_remove_multi')
         t.assertEqual('someId1', el.attr('data-id'))
         t.assertEqual('someName1', el.attr('data-name'))
-        
+
         el.removeAttr('data-id data-name')
         t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
@@ -2173,6 +2173,14 @@
         )
         t.assertEqual('original one two three four five six',
           $.map(el.children(), function(c){ return $(c).text() }).join(' '))
+      },
+
+      testAppendWithArrayParams: function(t){
+        var node = document.createElement('b');
+        node.appendChild(document.createTextNode('four'))
+        var el = $('<div></div>')
+        el.append(['<b>one</b><b>two</b>', '<b>three</b>', node])
+        t.assertEqual('<b>one</b><b>two</b><b>three</b><b>four</b>', el.html())
       },
 
       testAppendToPrependTo: function(t){
