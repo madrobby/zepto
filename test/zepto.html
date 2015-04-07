@@ -2119,6 +2119,14 @@
           $.map(el.children(), function(c){ return $(c).text() }).join(' '))
       },
 
+      testAppendWithArrayParams: function(t){
+        var node = document.createElement('b');
+        node.appendChild(document.createTextNode('four'))
+        var el = $('<div></div>')
+        el.append(['<b>one</b><b>two</b>', '<b>three</b>', node])
+        t.assertEqual('<b>one</b><b>two</b><b>three</b><b>four</b>', el.html())
+      },
+
       testAppendToPrependTo: function(t){
         // testing with Zepto object
         function div(contents){
