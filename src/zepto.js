@@ -848,12 +848,12 @@ var Zepto = (function() {
     $.fn[operator] = function(){
       // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
+            var arr = []
             argType = type(arg)
-            if (argType == "array"){
-              var arr = []
-              arg.forEach(function(el){
-                if(el.nodeType !== undefined) return arr.push(el)
-                else if($.zepto.isZ(el)) return arr = arr.concat(el.get())
+            if (argType == "array") {
+              arg.forEach(function(el) {
+                if (el.nodeType !== undefined) return arr.push(el)
+                else if ($.zepto.isZ(el)) return arr = arr.concat(el.get())
                 arr = arr.concat(zepto.fragment(el))
               })
               return arr
