@@ -464,6 +464,12 @@
         span.trigger(event)
         t.assertTrue(event.isDefaultPrevented())
         t.assertTrue(event.isPropagationStopped())
+      },
+
+      testThereIsNoLoadShortcut: function(t){
+        var z = $()
+        t.assertUndefined(z.load)
+        t.assertUndefined(z.unload)
       }
 
     })
