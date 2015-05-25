@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto selector tests</title>
+  <title>Zepto Selector unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
   <script src="../src/zepto.js"></script>
@@ -12,7 +12,7 @@
   <script src="../src/ie.js"></script>
 </head>
 <body>
-  <h1>Zepto selector tests</h1>
+  <h1>Zepto Selector unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -69,7 +69,7 @@
             }).get()
 
         t.assertEqual('child1 child2', results.join(' '))
-        t.assertEqual('test', $('#child').prop('className'))
+        t.assertEqual('test', $('#child').prop('class'))
       },
       testChildHas: function(t) {
         var items = $('#child').find('> li:has(ul)'),

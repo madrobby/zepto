@@ -1,12 +1,12 @@
 //     Zepto.js
-//     (c) 2010-2013 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 // The following code is heavily inspired by jQuery's $.fn.data()
 
-;(function($) {
+;(function($){
   var data = {}, dataAttr = $.fn.data, camelize = $.camelCase,
-    exp = $.expando = 'Zepto' + (+new Date())
+    exp = $.expando = 'Zepto' + (+new Date()), emptyArray = []
 
   // Get value from node:
   // 1. first try key as given,
@@ -36,7 +36,7 @@
   // Read all "data-*" attributes from a node
   function attributeData(node) {
     var store = {}
-    $.each(node.attributes, function(i, attr){
+    $.each(node.attributes || emptyArray, function(i, attr){
       if (attr.name.indexOf('data-') == 0)
         store[camelize(attr.name.replace('data-', ''))] =
           $.zepto.deserializeValue(attr.value)
@@ -52,7 +52,7 @@
           $.each(name, function(key, value){ setData(node, key, value) })
         }) :
         // get value from first element
-        this.length == 0 ? undefined : getData(this[0], name) :
+        (0 in this ? getData(this[0], name) : undefined) :
       // set value on all elements
       this.each(function(){ setData(this, name, value) })
   }
@@ -61,7 +61,20 @@
     if (typeof names == 'string') names = names.split(/\s+/)
     return this.each(function(){
       var id = this[exp], store = id && data[id]
-      if (store) $.each(names, function(){ delete store[camelize(this)] })
+      if (store) $.each(names || store, function(key){
+        delete store[names ? camelize(this) : key]
+      })
     })
   }
+
+  // Generate extended `remove` and `empty` functions
+  ;['remove', 'empty'].forEach(function(methodName){
+    var origFn = $.fn[methodName]
+    $.fn[methodName] = function() {
+      var elements = this.find('*')
+      if (methodName === 'remove') elements = elements.add(this)
+      elements.removeData()
+      return origFn.call(this)
+    }
+  })
 })(Zepto)

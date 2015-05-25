@@ -11,36 +11,60 @@
   <p>
     This file is provided for manual testing. If there's a test failure,
     please report the user agent:
-    <script>document.write(navigator.userAgent)</script>
+    <b><script>document.write(navigator.userAgent)</script></b>
   </p>
   <p>
-    To start a test, click or tap it and scroll down to see the results.
+    Start a test server with (you'll need to have <a href="https://npmjs.org">npm</a> installed):<br>
+    <br>
+    <b>$ npm install</b> (if you haven't installed dependencies yet)<br>
+    <b>$ npm run-script start</b>
+    <br><br>
+    On your device, go to<br>
+    <b>http://your-ip-address:3000/test</b>
+  </p>
+  <p>
+    To start a test, click or tap it. Use the back button of
+    your browser to return to this index page.
     Functional tests may require manual interaction.
   </p>
 
-  <h2>Default modules</h2>
+  <h2>Default modules unit tests</h2>
   <ul>
-    <li><a href="polyfill.html" target="test">polyfill</a></li>
-    <li><a href="zepto.html" target="test">zepto</a> (core module, test this first!)</li>
-    <li><a href="detect.html" target="test">detect</a></li>
-    <li><a href="event.html" target="test">event</a></li>
-    <li><a href="ajax.html" target="test">ajax</a> (will fail as it requires server testing components. feel free to fix this!)</li>
-    <li><a href="form.html" target="test">form</a></li>
-    <li><a href="fx.html" target="test">fx</a></li>
+    <li><a href="zepto.html">zepto</a> (core module, test this first!)</li>
+    <li><a href="event.html">event</a></li>
+    <li><a href="ajax.html">ajax</a></li>
+    <li><a href="form.html">form</a></li>
   </ul>
 
-  <h2>Other modules</h2>
+  <h2>Other modules unit test</h2>
   <ul>
-    <li><a href="data.html" target="test">data</a></li>
-    <li><a href="assets_functional.html" target="test">assets (functional)</a></li>
-    <li><a href="fx_functional.html" target="test">fx (functional)</a></li>
-    <li><a href="gesture_functional.html" target="test">gesture (functional)</a></li>
-    <li><a href="selector.html" target="test">selector</a></li>
-    <li><a href="stack.html" target="test">stack</a></li>
-    <li><a href="touch.html" target="test">touch</a></li>
-    <li><a href="touch_functional.html" target="test">touch (functional)</a></li>
-    <li><a href="touchcancel_functional.html" target="test">touchcancel (functional)</a></li>
+    <li><a href="fx.html">fx</a></li>
+    <li><a href="detect.html">detect</a></li>
+    <li><a href="data.html">data</a></li>
+    <li><a href="selector.html">selector</a></li>
+    <li><a href="stack.html">stack</a></li>
+    <li><a href="touch.html">touch</a></li>
+    <li><a href="deferred.html">deferred</a></li>
+    <li><a href="ajax_deferred.html">ajax + deferred</a></li>
+    <li><a href="callbacks.html">callbacks</a></li>
+    <li><a href="ios3.html">ios3</a></li>
   </ul>
 
-  <iframe name="test" width="100%" height="200"></iframe>
+  <h2>Functional tests</h2>
+  <ul>
+    <li><a href="functional/assets.html">assets</a></li>
+    <li><a href="functional/fx.html">fx</a></li>
+    <li><a href="functional/gesture.html">gesture</a></li>
+    <li><a href="functional/touch.html">touch</a></li>
+    <li><a href="functional/touchcancel.html">touchcancel</a></li>
+  </ul>
+
+  <script>
+    // avoid caching
+    (function(){
+      [].slice.apply(document.getElementsByTagName('a')).forEach(function(link){
+        link.href += '?' + (+new Date)
+      })
+    })()
+  </script>
 </body>

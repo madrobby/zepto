@@ -49,9 +49,36 @@
       },
       startSuite: function(suite) {
         this.logger.debug('Started suite ' + suite + '.')
+      },
+      addFailure: function(testcase, reason) {
+        this.logToServer(testcase, reason)
+        _super.addFailure.call(this, testcase, reason)
+      },
+      addError: function(testcase, error) {
+        this.logToServer(testcase, error)
+        _super.addError.call(this, testcase, error)
+      },
+      logToServer: function(testcase, error) {
+        if (location.protocol == 'file:') return
+        var name = testcase.parent.name + '#' + testcase.name,
+            message = error.template ?
+              Evidence.UI.printf(error.template, error.args) + (error.message ? ' ' + error.message : '') :
+              error.message,
+            body = 'name=' + encodeURIComponent(name) + '&' +
+                   'message=' + encodeURIComponent(message) + '&' +
+                   'trace=' + encodeURIComponent(error.stack || '')
+
+        var xhr = new XMLHttpRequest()
+        xhr.open('POST', '/test/log', true)
+        xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded')
+        xhr.send(body)
       }
     }
   })
+
+  Evidence.TestCase.prototype.debug = function(message) {
+    this._result.logToServer(this, { message: message })
+  }
 
   // HACK: force our test runner as default
   ;(function(){

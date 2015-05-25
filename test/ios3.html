@@ -4,15 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto compatibility unit tests</title>
+  <title>Zepto iOS3 unit tests</title>
   <script src="../vendor/evidence.js"></script>
-  <script src="evidence_runner.js"></script>
-  <script src="../src/ios3.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/ie.js"></script>
+  <script src="evidence_runner.js"></script>  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('ios3 zepto ie')
+    })()
+  </script>
 </head>
 <body>
-  <h1>Compatibility tests</h1>
+  <h1>Zepto iOS3 unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>

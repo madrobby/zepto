@@ -4,14 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto FX unit tests</title>
+  <title>Zepto Fx unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/polyfill.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/event.js"></script>
-  <script src="../src/fx.js"></script>
-  <script src="../src/ie.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto event fx ie')
+    })()
+  </script>
   <style>
     @-webkit-keyframes animName {
       0% {
@@ -33,11 +40,22 @@
         opacity: 0.5;
       }
     }
+     @keyframes animName {
+      from {
+        transform: rotate(180deg) scale(.8) translate(0, 0);
+        opacity: 1;
+      }
+      to {
+        transform: rotate(0deg) scale(1) translate(80px, 20px);
+        opacity: 0.5;
+      }
+    }
 
     #keyframetest {
       opacity: 0.5;
       -webkit-transform: translate3d(80px, 20px, 0);
       -moz-transform: translate3d(80px, 20px, 0);
+      transform: translate3d(80px, 20px, 0);
     }
 
     .fixtures-left {
@@ -50,7 +68,7 @@
   </style>
 </head>
 <body>
-  <h1>Zepto effects tests</h1>
+  <h1>Zepto Fx unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -104,7 +122,10 @@
       var actual = object.style[camelize(property)],
         expression = expected instanceof RegExp ? expected.test(actual) : expected === actual
 
-      this._assertExpression(expression, message || 'Failed assertion.', 'Expected %s, got %s.', expected, actual)
+      this._assertExpression(expression, message || 'Failed assertion.',
+        'Expected '+property+' to be '+expected+', got '+actual+'.\n'+
+        $.fx.stylePrefix +':\n' +
+        object.style.cssText)
     }
 
     Evidence('ZeptoFXTest', {
@@ -173,23 +194,86 @@
       },
 
       testDelay: function(t){
+        var duration = 100, delay = 50,
+          start = new Date().getTime()
+
+        t.pause()
         var el1 = $('#delaytest').animate({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
-          opacity: 0.5 }, { delay: 200 })
+          opacity: 0.5
+        }, {
+          duration: duration,
+          delay: delay,
+          complete: function() {
+            t.resume(function(){
+              var ms = new Date().getTime() - start
+              t.assert(ms >= (duration + delay),
+                'Fired too early (' + ms + ' ms) after having delay')
+            })
+          }
+        })
 
-        t.assertStyle('0.2s', el1, 'transition-delay', 'expected delay to be set')
+        t.assertStyle('0.05s', el1, 'transition-delay', 'expected delay to be set')
       },
 
       testCallback: function(t){
         var duration = 250, start = new Date().getTime()
 
         t.pause()
-        $('#callbacktest').anim({
+        $('#callbacktest').animate({
           translate3d: '80px, 20px, 100px',
           rotateZ: '90deg',
           opacity: 0.5
-        }, duration / 1000, 'linear',
+        }, duration, 'linear',
+        function(){
+          var context = this
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong")
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
+          })
+        })
+      },
+
+      testCallbackWithoutEasing: function(t){
+        var duration = 250, start = new Date().getTime()
+
+        t.pause()
+        $('#callbacktest').animate({
+          translate3d: '10px, 20px, 400px',
+          rotateZ: '-90deg',
+          opacity: 0.2
+        }, duration,
+        function(){
+          var context = this
+          t.resume(function(){
+            t.assert($(context).is('#callbacktest'), "context for callback is wrong")
+            t.assert((new Date().getTime() - start) >= duration, 'Fired too early')
+            t.assertStyle('', context, 'transition')
+            t.assertStyle('', context, 'transition-property')
+            t.assertStyle('', context, 'transition-timing-function')
+            t.assertStyle('', context, 'transition-duration')
+            t.assertStyle('', context, 'animation-name')
+            t.assertStyle('', context, 'animation-duration')
+          })
+        })
+      },
+
+      testCallbackWithoutEasingAndWithoutDuration: function(t){
+        var duration = 250, start = new Date().getTime()
+
+        t.pause()
+        $('#callbacktest').animate({
+          translate3d: '30px, 220px, 40px',
+          rotateZ: '180deg',
+          opacity: 0.9
+        },
         function(){
           var context = this
           t.resume(function(){

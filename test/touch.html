@@ -4,16 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto touch unit tests</title>
+  <title>Zepto Touch unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/event.js"></script>
-  <script src="../src/ie.js"></script>
-  <script src="../src/touch.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto event ie touch')
+    })()
+  </script>
 </head>
 <body>
-  <h1>Touch tests</h1>
+  <h1>Zepto Touch unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -40,7 +48,7 @@
     //
     // Zepto's touch module only uses the `pageX/Y` and `target`
     // properties of the first touch in the `touches` TouchList
-    function touchEvent(type, element, x, y) {
+    function emitTouchEvent(type, element, x, y) {
       var event = document.createEvent('Event'),
         touch = { pageX: x, pageY: y, target: element }
 
@@ -50,10 +58,11 @@
       element.dispatchEvent(event)
     }
 
+    // IE 10, Windows Phone 8
     // MSPointer events, same idea, different implementation.
     // For compatibility accepts the same arguments as `touchEvent`
     // (touch event names will be mapped to MSPointer event names)
-    function MSPointerEvent(type, element, x, y) {
+    function emitMSPointerEvent(type, element, x, y) {
       var event = document.createEvent('Event'),
         eventMap = { start: 'Down', move: 'Move', end: 'Up'}
 
@@ -62,6 +71,23 @@
       event.pageY = y
       event.pointerType = 666
       event.MSPOINTER_TYPE_TOUCH = 666
+      event.isPrimary = true
+
+      element.dispatchEvent(event)
+    }
+
+    // IE 11
+    // Pointer events, same idea again, yet different implementation.
+    // For compatibility accepts the same arguments as `touchEvent`
+    // (touch event names will be mapped to pointer event names)
+    function emitPointerEvent(type, element, x, y) {
+      var event = document.createEvent('Event'),
+        eventMap = { start: 'down', move: 'move', end: 'up'}
+
+      event.initEvent('pointer'+eventMap[type], true, true)
+      event.pageX = x
+      event.pageY = y
+      event.pointerType = 'touch'
       event.isPrimary = true
 
       element.dispatchEvent(event)
@@ -79,6 +105,7 @@
 
     tests = {
       setUp: function(){
+        emitEvent = this.emitEvent
         $('<div id=test>TEST ELEMENT</div>').appendTo('body')
       },
 
@@ -105,6 +132,26 @@
         }, 50)
       },
 
+      testScrollDoesNotFireTap: function(t){
+        var element = $('#test').get(0), count = 0
+
+        $('#test').on('tap', function () {
+          count++
+        })
+
+        down(element, 0, 0)
+        move(element, 0, 20)
+        move(element, 0, 20)
+        up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(0, count)
+          })
+        }, 50)
+      },
+
       testSingleTapDoesNotInterfereWithTappingTwice: function(t){
         var count = 0, element = $('#test').get(0)
 
@@ -114,7 +161,6 @@
 
         down(element, 10, 10)
         up(element)
-
 
         t.pause()
         setTimeout(function(){
@@ -283,11 +329,9 @@
       // TODO: test swipes in specific directions
     }
 
-    emitEvent = touchEvent
-    Evidence('TouchTest', tests)
-
-    emitEvent = MSPointerEvent
-    Evidence('MSPointerTest', tests)
+    Evidence('TouchTest',     $.extend({ emitEvent: emitTouchEvent }, tests))
+    Evidence('MSPointerTest', $.extend({ emitEvent: emitMSPointerEvent }, tests))
+    Evidence('PointerTest',   $.extend({ emitEvent: emitPointerEvent }, tests))
   })()
   </script>
 </body>

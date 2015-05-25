@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Deferred unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto callbacks deferred')
+    })()
+  </script>
+</head>
+<body>
+  <h1>Zepto Deferred unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+  (function(){
+    var promiseFns = "resolve reject notify resolveWith rejectWith notifyWith done fail progress always".split(/\s+/),
+        deferredFns = "state always then promise done fail progress".split(/\s+/)
+
+    $.each(['', 'WithNew'], function(_, withNew) {
+      var createDeferred = function(fn) {
+        return withNew ? new $.Deferred(fn) : $.Deferred(fn)
+      }
+
+      Evidence('ZeptoDeferredTest' + withNew, {
+
+        testSuccessOnResolve: function(t) {
+          var called = 0
+          createDeferred().resolve().done(function() {
+            t.assertEqual(0, called++)
+            t.assertEqual("resolved", this.state(), "Deferred is resolved (state)")
+          }).fail(function() {
+            t.fail("Error on resolve")
+          }).always(function() {
+            t.assertEqual(1, called++)
+          })
+          t.assertEqual(2, called, "Success and Always handlers called")
+        },
+
+        testErrorOnReject: function(t) {
+          var called = 0
+          createDeferred().reject().done(function() {
+            t.fail("Success on reject")
+          }).fail(function() {
+            t.assertEqual(0, called++)
+            t.assertEqual( "rejected", this.state(), "Deferred is rejected (state)" )
+          }).always(function() {
+            t.assertEqual(1, called++)
+          })
+          t.assertEqual(2, called, "Error and Always handlers called")
+        },
+
+        testDeferredFnContextIsArg1: function(t) {
+          var called
+          createDeferred(function(defer) {
+            called = true
+            t.assertEqual(defer, this, "Defer passed as this & first argument")
+          })
+          t.assertTrue(called, "Deferred function was called")
+        },
+
+        testDoneWithResolvedValue: function(t) {
+          var called
+          createDeferred(function(defer) {
+            defer.resolve("done")
+          }).done(function(value) {
+            called = true
+            t.assertEqual("done", value, "Done() received resolved value")
+          })
+          t.assertTrue(called, "Deferred function was called")
+        },
+
+        testNoDoneOnReject: function(t) {
+          var called = false
+          createDeferred(function(defer) {
+            defer.reject("done")
+          }).done(function(value) {
+            called = true
+            t.fail("done() should not be called on error")
+          })
+          t.assertFalse(called, "Deferred function was called")
+        },
+
+        testIsChainable: function(t) {
+          var deferred = createDeferred(), each = $.each
+          // Ensure that each of the following methods are chainable
+          each(promiseFns, function(_, method) {
+            var object = {
+              m: deferred[method]
+            }
+            t.assertEqual(object, object.m(), method + " is chainable" )
+          })
+        },
+
+        testFilteringDone: function(t) {
+          var value1, value2, value3,
+              defer = createDeferred(),
+              piped = defer.then(function(a, b) {
+                return a * b
+              })
+          piped.done(function(result) { value3 = result })
+          defer.done(function(a, b) { value1 = a, value2 = b }).resolve(2, 3)
+
+          t.assertEqual(2, value1, "first resolve value ok")
+          t.assertEqual(3, value2, "second resolve value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+
+          createDeferred().reject().then(function() { t.fail("then should not be called on reject") })
+          createDeferred().resolve().then($.noop).done(function(value) {
+            t.assertEqual(undefined, value, "then done callback can return undefined/null")
+          })
+        },
+
+        testSamePromise: function(t) {
+          createDeferred(function(defer) {
+            var promise = defer.promise()
+            t.assertEqual(promise, defer.promise(), "promise is always the same")
+          })
+        },
+
+        testExtendNonObject: function(t) {
+          createDeferred(function(defer) {
+            var func = function() {},
+                funcPromise = defer.promise(func)
+            t.assertEqual(func, funcPromise, "non objects get extended")
+          })
+        },
+
+        testPromiseOnlyFns: function(t) {
+          createDeferred(function(defer) {
+            var promise = defer.promise()
+            $.each(promise, function(key) {
+              var type = typeof promise[key]
+              t.assertEqual("function", type, key + " is a function (" + type + ")")
+              t.assertTrue(deferredFns.indexOf(key) > -1, key + "() is a promise function")
+            })
+          })
+        },
+
+        testExtendObjectWithPromiseFns: function(t) {
+          createDeferred(function(defer) {
+            var promise = defer.promise(),
+                func = function() {},
+                funcPromise = defer.promise(func),
+                fns = 0
+            $.each(promise, function(key) {
+              ++fns
+              t.assertEqual(promise[key], func[key], key + " is the same")
+            })
+            t.assertEqual(deferredFns.length, fns, "should have all of the Deferred functions")
+          })
+        },
+
+        testFilteringReject: function(t) {
+          var value1, value2, value3,
+              defer = createDeferred(),
+              piped = defer.then(null, function(a, b) {
+                return a * b
+              })
+
+          piped.fail(function(result) { value3 = result })
+          defer.fail(function( a, b ) { value1 = a, value2 = b })
+          defer.reject( 2, 3 )
+
+          t.assertEqual(2, value1, "first reject value ok")
+          t.assertEqual(3, value2, "second reject value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+
+          createDeferred().resolve().then(null, function() {
+            t.fail("then should not be called on resolve")
+          })
+
+          createDeferred().reject().then(null, $.noop).fail(function(value) {
+            t.assertEqual(undefined, value, "then fail callback can return undefined/null")
+          })
+        },
+
+        testFilteringProgress: function(t) {
+          var value1, value2, value3,
+              defer = createDeferred(),
+              piped = defer.then(null, null, function(a, b) {
+                return a * b
+              })
+
+          piped.progress(function(result) { value3 = result })
+          defer.progress(function(a, b) { value1 = a, value2 = b })
+
+          defer.notify( 2, 3 )
+
+          t.assertEqual(2, value1, "first progress value ok")
+          t.assertEqual(3, value2, "second progress value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+        },
+
+        testThenDeferredDone: function(t) {
+          var value1, value2, value3,
+              defer = createDeferred(),
+              piped = defer.then(function(a, b) {
+                return createDeferred(function(defer) {
+                  defer.reject(a * b)
+                })
+              })
+
+          piped.fail(function(result) { value3 = result })
+          defer.done(function(a, b) { value1 = a, value2 = b })
+          defer.resolve(2, 3)
+
+          t.assertEqual(2, value1, "first resolve value ok")
+          t.assertEqual(3, value2, "second resolve value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+        },
+
+        testThenDeferredFail: function(t) {
+          var value1, value2, value3,
+              defer = createDeferred(),
+              piped = defer.then(null, function(a, b) {
+                return createDeferred(function(defer) {
+                  defer.resolve(a * b)
+                })
+              })
+
+          piped.done(function(result) { value3 = result })
+          defer.fail(function(a, b) { value1 = a, value2 = b })
+          defer.reject(2, 3)
+
+          t.assertEqual(2, value1, "first reject value ok")
+          t.assertEqual(3, value2, "second reject value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+        },
+
+        testThenDeferredProgress: function(t) {
+          var value1, value2, value3,
+            defer = createDeferred(),
+            piped = defer.then(null, null, function(a, b) {
+              return createDeferred(function(defer) {
+                defer.resolve( a * b )
+              })
+            })
+
+          piped.done(function(result) { value3 = result })
+          defer.progress(function(a, b) { value1 = a, value2 = b })
+          defer.notify(2, 3)
+
+          t.assertEqual(2, value1, "first progress value ok")
+          t.assertEqual(3, value2, "second progress value ok")
+          t.assertEqual(6, value3, "result of filter ok")
+        },
+
+        testThenWithContext: function(t) {
+          var defer, piped, defer2, piped2, context = {}
+
+          createDeferred().resolveWith(context, [2]).then(function(value) {
+            return value * 3
+          }).done(function(value) {
+            t.assertEqual(context, this, "custom context correctly propagated")
+            t.assertEqual(6, value, "proper value received")
+          })
+
+          createDeferred().resolve().then(function() {
+            return createDeferred().resolveWith(context)
+          }).done(function() {
+            t.assertEqual(context, this, "custom context of returned deferred correctly propagated")
+          });
+
+          defer = createDeferred()
+          piped = defer.then(function(value) {
+            return value * 3
+          })
+          defer.resolve( 2 )
+
+          piped.done(function(value) {
+            t.assertEqual(piped, this, "default context gets updated to latest promise in the chain")
+            t.assertEqual(6, value, "proper value received")
+          });
+
+          defer2 = createDeferred()
+          piped2 = defer2.then()
+
+          defer2.resolve(2)
+
+          piped2.done(function(value) {
+            t.assertEqual(piped2, this, "default context gets updated to latest promise in the chain (without passing function)")
+            t.assertEqual(2, value, "proper value received (without passing function)")
+          })
+        },
+
+        testWhenValueCreatesPromise: function(t) {
+          $.each({
+            "an empty string": "",
+            "a non-empty string": "some string",
+            "zero": 0,
+            "a number other than zero": 1,
+            "true": true,
+            "false": false,
+            "null": null,
+            "undefined": undefined,
+            "a plain object": {},
+            "an array": [ 1, 2, 3 ]
+          }, function(message, value) {
+            t.assertTrue(
+              $.isFunction($.when(value).done(function(resolveValue) {
+                t.assertEqual(window, this, "Context is the global object with " + message)
+                t.assertEqual(value, resolveValue, "Test the promise was resolved with " + message)
+              }).promise), "Test " + message + " triggers the creation of a new Promise")
+          })
+        },
+
+        testWhenNoValueCreatesPromise: function(t) {
+          t.assertTrue(
+            $.isFunction($.when().done(function(resolveValue) {
+              t.assertEqual(window, this, "Context is the global object")
+              t.assertEqual(undefined, resolveValue, "Test the promise was resolved with no parameter")
+            }).promise), "Test calling when with no parameter triggers the creation of a new Promise")
+        },
+
+        testWhenPropagatesContext: function(t) {
+          var context = {}, called = false
+          $.when(createDeferred().resolveWith(context)).done(function() {
+              called = true
+              t.assertEqual(context, this, "when( promise ) propagates context")
+            })
+          t.assertTrue(called, "called done() after resolveWith")
+        },
+
+        testWhenDoneOnlyPromise: function(t) {
+          var cache
+          $.each([1,2,3], function(_, i) {
+            $.when(cache || createDeferred(function() {
+              this.resolve(i)
+            })).done(function(value) {
+              t.assertEqual(1, value, "Function executed" + (i > 1 ? " only once" : ""))
+              cache = value
+            })
+          })
+        },
+
+        testWhenJoined: function(t) {
+          var deferreds = {
+                value: 1,
+                success: createDeferred().resolve(1),
+                error: createDeferred().reject(0),
+                futureSuccess: createDeferred().notify(true),
+                futureError: createDeferred().notify(true),
+                notify: createDeferred().notify(true)
+              },
+              willSucceed = {
+                value: true,
+                success: true,
+                futureSuccess: true
+              },
+              willError = {
+                error: true,
+                futureError: true
+              },
+              willNotify = {
+                futureSuccess: true,
+                futureError: true,
+                notify: true
+              }
+
+          $.each(deferreds, function(id1, defer1) {
+            $.each(deferreds, function(id2, defer2) {
+              var shouldResolve = willSucceed[id1] && willSucceed[id2],
+                  shouldError = willError[id1] || willError[id2],
+                  shouldNotify = willNotify[id1] || willNotify[id2],
+                  expected = shouldResolve ? [1, 1] : [0, undefined],
+                  expectedNotify = shouldNotify && [willNotify[id1], willNotify[id2]],
+                  code = id1 + '/' + id2,
+                  context1 = defer1 && $.isFunction(defer1.promise) ? defer1.promise() : undefined,
+                  context2 = defer2 && $.isFunction(defer2.promise) ? defer2.promise() : undefined
+              $.when(defer1, defer2).done(function(a, b) {
+                if (shouldResolve) {
+                  t.assertEqual(expected[0], a, code + " => resolve" )
+                  t.assertEqual(expected[1], b, code + " => resolve" )
+                  t.assertIdentical(context1, this[0], code + " => first context OK")
+                  t.assertIdentical(context2, this[1], code + " => second context OK")
+                } else {
+                  t.fail(code + " => resolve")
+                }
+              }).fail(function(a, b) {
+                if (shouldError) {
+                  t.assertIdentical(expected[0], a, code + " => reject")
+                  t.assertIdentical(expected[1], b, code + " => reject")
+                } else {
+                  t.fail(code + " => reject")
+                }
+              }).progress(function(a, b) {
+                t.assertIdentical( expectedNotify[0], a, code + " => progress")
+                t.assertIdentical( expectedNotify[1], b, code + " => progress")
+                t.assertIdentical(expectedNotify[0] ? context1 : undefined, this[0], code + " => first context OK")
+                t.assertIdentical(expectedNotify[1] ? context2 : undefined, this[1], code + " => second context OK")
+              })
+            })
+          })
+          deferreds.futureSuccess.resolve(1)
+          deferreds.futureError.reject(0)
+        }
+
+      })
+    })
+  })()
+  </script>
+</body>
+</html>

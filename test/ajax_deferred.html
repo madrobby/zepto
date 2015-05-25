@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Ajax deferred</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto event ajax ie callbacks deferred')
+    })()
+  </script>
+</head>
+<body>
+  <h1>Zepto Ajax deferred</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+  <div id="fixtures">
+  </div>
+
+  <script>
+  (function(){
+
+    function toArray(list) {
+      if ($.type(list) == "string") return list.split(/(?:\s*,\s*|\s+)/)
+      else return list
+    }
+
+    Evidence.Assertions.assertEqualList = function(expected, actual, message) {
+      var expectedList = toArray(expected),
+          actualList   = toArray(actual)
+
+      this._assertExpression(
+        expectedList.join(' ') == actualList.join(' '),
+        message || "Lists don't match.",
+        'Expected %o, got %o.', expectedList, actualList
+      )
+    }
+
+    var OriginalXHR = $.ajaxSettings.xhr
+
+    function MockXHR() {
+      this.requestHeaders = {}
+      this.responseHeaders = {}
+      MockXHR.last = this
+    }
+    MockXHR.prototype = {
+      open: function(method, url) {
+        this.method = method
+        this.url = url
+      },
+      setRequestHeader: function(name, value) {
+        this.requestHeaders[name.toLowerCase()] = value
+      },
+      getResponseHeader: function(name) {
+        return this.responseHeaders[name]
+      },
+      send: function(data) {
+        this.data = data
+      },
+      abort: function() {
+        this.aborted = true
+      },
+      ready: function(readyState, status, responseText, headers) {
+        this.readyState = readyState
+        this.status = status
+        this.responseText = responseText
+        $.extend(this.responseHeaders, headers)
+        this.onreadystatechange()
+      },
+      onreadystatechange: function() {}
+    }
+
+    Evidence('ZeptoAjaxDeferred', {
+      setUp: function() {
+        $.ajaxSettings.xhr = function(){ return new MockXHR }
+      },
+
+      tearDown: function() {
+        $.ajaxSettings.xhr = OriginalXHR
+        $(document).off()
+        $.active = 0
+
+        for (var key in window)
+          if (/^jsonp\d+$/.test(key) && window[key] === undefined)
+            delete window[key]
+      },
+
+      testDone: function(t) {
+        var log = []
+
+        var xhr = $.ajax({
+          success: function() { log.push('success') }
+        })
+          .done(function(response, status, gotXhr){
+            t.assertEqual('hello', response)
+            t.assertEqual('success', status)
+            t.assertIdentical(xhr, gotXhr)
+            log.push('done1')
+          })
+          .fail(function(){ log.push('fail') })
+          .always(function(){ log.push('always') })
+          .done(function(){ log.push('done2') })
+
+        xhr.ready(3, 0)
+        t.assertEqual(0, log.length)
+
+        xhr.ready(4, 200, 'hello')
+        t.assertEqualList('success done1 always done2', log)
+
+        xhr.done(function(){ log.push('done3') })
+        t.assertEqualList('success done1 always done2 done3', log)
+      },
+
+      testFail: function(t) {
+        var log = []
+
+        var xhr = $.ajax({
+          error: function() { log.push('error') }
+        })
+          .done(function(){ log.push('done') })
+          .fail(function(gotXhr, status, error){
+            t.assertIdentical(xhr, gotXhr)
+            t.assertEqual('error', status)
+            log.push('fail1')
+          })
+          .always(function(){ log.push('always') })
+          .fail(function(){ log.push('fail2') })
+
+        xhr.ready(3, 0)
+        t.assertEqual(0, log.length)
+
+        xhr.ready(4, 404)
+        t.assertEqualList('error fail1 always fail2', log)
+
+        xhr.fail(function(){ log.push('fail3') })
+        t.assertEqualList('error fail1 always fail2 fail3', log)
+      },
+
+      testAbortInBeforeSend: function(t) {
+        var log = []
+
+        var xhr = $.ajax({
+          beforeSend: function() { return false }
+        })
+
+        xhr.done(function(){ log.push('done') })
+          .fail(function(gotXhr, status, error){
+            t.assertIdentical(xhr, gotXhr)
+            t.assertEqual('abort', status)
+            log.push('fail1')
+          })
+
+        t.assertEqualList('fail1', log)
+      },
+
+      testJSONP: function(t) {
+        var log = []
+        t.pause()
+
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
+          success: function() { log.push('success') }
+        })
+          .done(function(){ log.push('done1') })
+          .always(function(){
+            setTimeout(function(){
+              t.resume(function(){
+                t.assertEqualList('success done1', log)
+                xhr.done(function(){ log.push('done2') })
+                t.assertEqualList('success done1 done2', log)
+              })
+            }, 10)
+          })
+
+        t.assertEqual(0, log.length)
+      },
+
+      testJSONPAbortInBeforeSend: function(t) {
+        var log = []
+
+        var xhr = $.ajax({
+          url: 'jsonp',
+          dataType: 'jsonp',
+          beforeSend: function() { return false }
+        })
+
+        xhr.done(function(){ log.push('done') })
+          .fail(function(gotXhr, status, error){
+            t.assertIdentical(xhr, gotXhr)
+            t.assertEqual('abort', status)
+            log.push('fail1')
+          })
+
+        t.assertEqualList('fail1', log)
+      }
+
+    })
+  })()
+  </script>
+</body>
+</html>

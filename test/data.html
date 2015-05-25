@@ -4,21 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto extended data() unit tests</title>
+  <title>Zepto Data unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/polyfill.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/data.js"></script>
-  <script src="../src/ie.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto data ie')
+    })()
+  </script>
 </head>
 <body>
-  <h1>Zepto data() tests</h1>
+  <h1>Zepto Data unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
   <div id="fixtures">
-  <div id="data_attr" data-one="uno" data-two="due" data-foo-bar="baz"></div>
+  <div id="data_attr"
+    data-one="uno"
+    data-two="due"
+    data-foo-bar="baz"
+    data-under_score="kuuq"
+    ></div>
   <div id="data_full" data-mode="awesome"></div>
   <div id="data_obj" data-mode="awesome"></div>
   <ol id="data_list">
@@ -60,6 +73,13 @@
         el.data('a-b', 'c')
         t.assertEqual('c', el.data().aB)
         t.assertUndefined(el.data()['a-b'])
+      },
+
+      testUnderscore: function(t){
+        var el = $('#data_attr')
+        t.assertEqual('kuuq', el.data('under_score'))
+        t.assertUndefined(el.data('under-score'))
+        t.assertUndefined(el.data('underScore'))
       },
 
       testNotChangingAttribute: function(t){
@@ -166,12 +186,96 @@
         t.assertUndefined(el.data('twoThree'))
       },
 
+      testRemoveAllData: function(t){
+        var el = $('<div data-attr-test=val />')
+
+        el.data('one', { foo: 'bar' })
+        el.data('two', 'two').data('three', 3)
+        el.removeData()
+
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('one'))
+        t.assertUndefined(el.data('two'))
+        t.assertUndefined(el.data('three'))
+      },
+
       testRemoveDataNoop: function(t){
         var empty = $(),
             vanilla = $('<div />')
 
         t.assertIdentical(empty, empty.removeData('foo'))
         t.assertIdentical(vanilla, vanilla.removeData('foo'))
+      },
+
+      testRemoveDataOnElementRemoval: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.remove()
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testRemoveDataOnElementEmpty: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.empty()
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertEqual(elData, el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testRemoveDataOnElementReplacement: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.replaceWith('<div />')
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testRemoveDataOnElementReplacementHtml: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          wrapper = $('<div />'),
+          elData = { foo: 'bar' }
+
+        el.wrap(wrapper).data('test', elData)
+        childEl.data('test', 1)
+
+        wrapper.html('<b>New content</b>')
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertUndefined(el.data('test'))
+        t.assertUndefined(childEl.data('test'))
+      },
+
+      testKeepDataOnElementDetach: function(t){
+        var el = $('<div data-attr-test=val />'),
+          childEl = $('<span />').appendTo(el),
+          elData = { foo: 'bar' }
+
+        el.data('test', elData)
+        childEl.data('test', 1)
+
+        el.detach()
+        t.assertEqual('val', el.data('attrTest'))
+        t.assertEqual(elData, el.data('test'))
+        t.assertEqual(1, childEl.data('test'))
       },
 
       testSettingDataWithObj: function(t){
@@ -209,6 +313,14 @@
 
           var values2 = items.map(function(){ return $(this).data('answer') }).get()
           t.assertEqual('42, 42', values2.join(', '))
+      },
+
+      testSettingDataOnObjectWithoutAttributes: function(t) {
+        var el = $(window)
+
+        t.assertUndefined(el.data('foo'))
+        el.data('foo', 'bar')
+        t.assertEqual(el.data('foo'), 'bar')
       }
 
     })

@@ -4,15 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto environment detection unit tests</title>
+  <title>Zepto Detect unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/detect.js"></script>
-  <script src="../src/ie.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto detect ie')
+    })()
+  </script>
 </head>
 <body>
-  <h1>Browser detection</h1>
+  <h1>Zepto Detect unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -21,6 +30,11 @@
   (function(){
 
     var UA = {
+      Safari_OSX_7_0_1: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
+      Safari_OSX_7_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71",
+      Safari_OSX_6_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8) AppleWebKit/536.25 (KHTML, like Gecko) Version/6.0 Safari/536.25",
+      Safari_Windows_NT: "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27",
+
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
       WebOS_1_2_9_Pixi: "Mozilla/5.0 (webOS/Palm webOS 1.2.9; U; en-US) AppleWebKit/525.27.1 (KHTML, like Gecko) Version/1.0 Safari/525.27.1 Pixi/1.0",
@@ -45,6 +59,7 @@
       Android_1_5: "Mozilla/5.0 (Linux; U; Android 1.5; de-; HTC Magic Build/PLAT-RC33) AppleWebKit/528.5+ (KHTML, like Gecko) Version/3.1.2 Mobile Safari/525.20.1",
       Android_2_1: "Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; Nexus One Build/ERE27) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 Chrome/4.1.249.1025",
       Android_2_3: "Mozilla/5.0 (Linux; U; Android 2.3.7; en-us; Nexus One Build/GRK39F) AppleWebKit/533.1 (KTHML, like Gecko) Version/4.0 Mobile Safari/533.1",
+      Android_2_3_Lenovo_A750: "Lenovo-A750/S102 Linux/2.6.35.7 Android/2.3 Release/12.12.2011 Browser AppleWebkit533.1 Profile/ Configuration/",
       Android_4_1_1: "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03O) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19",
       Android_4_1_1_Tablet: "Mozilla/5.0 (Linux; Android 4.1.1; Nexus 7 Build/JRO03S) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
       Android_4_3: "Mozilla/5.0 (Linux; Android 4.3; Nexus 4 Build/JWR66Y) AppleWebKit/537.36 (KTHML, like Gecko) Chrome/29.0.1547.59 Mobile Safari/537.36",
@@ -69,19 +84,61 @@
       Firefox_13_Phone: "Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0",
       Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+      Firefox_Os_Phone: "Mozilla/5.0 (Mobile; rv:18.0) Gecko/18.0 Firefox/18.0",
+      Firefox_Os_Tablet: "Mozilla/5.0 (Tablet; rv:18.0) Gecko/18.0 Firefox/18.0",
 
-      Windows_IE: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+      Windows_IE_9: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+      Windows_IE_9_Compat: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)",
+      Windows_IE_10: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+      Windows_IE_11: "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
       Windows_RT_Surface: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; ARM; Trident/6.0; Touch)",
       Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
 
-    function detect(ua, callback){
+    function detect(ua, platform, callback){
+      if (!callback) callback = platform, platform = ""
       var obj = {}
-      $.__detect.call(obj, ua)
+      $.__detect.call(obj, ua, platform)
       callback.call(null, obj.os, obj.browser)
     }
 
     Evidence('ZeptoDetectTest', {
+      testSafariOSX: function(t){
+        detect(UA.Safari_OSX_7_0_1, function(os, browser){
+          t.assertUndefined(os.osx)
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("7.0.1",browser.version)
+        });
+        detect(UA.Safari_OSX_7_0, function(os, browser){
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("7.0",browser.version)
+        });
+        detect(UA.Safari_OSX_6_0, function(os, browser){
+          t.assert(!os.ipad)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("6.0",browser.version)
+        });
+      },
+
+      testSafariWindows: function(t){
+        detect(UA.Safari_Windows_NT, "Windows", function(os, browser){
+          t.assertUndefined(os.osx)
+          t.assertUndefined(os.ios)
+          t.assertUndefined(os.wp)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("5.0.4", browser.version)
+        });
+      },
 
       testWebOS: function(t){
         detect(UA.WebOS_1_4_0_Pre, function(os, browser){
@@ -126,6 +183,15 @@
           t.assertEqual("2.3.7", os.version)
           t.assertTrue(os.phone)
           t.assertFalse(!!browser.safari)
+        })
+        detect(UA.Android_2_3_Lenovo_A750, function(os, browser){
+          t.assertTrue(os.android, 'Expected Android')
+          t.assertTrue(browser.webkit, 'Expected WebKit')
+          t.assertEqual("2.3", os.version)
+          // FIXME: Unfortunately we can't detect if it's a phone, as there's
+          // no "mobile" in the UA string.
+          // t.assertTrue(os.phone, 'Expected phone')
+          t.assertFalse(!!browser.safari, 'Expected browser to not be Safari')
         })
         detect(UA.Android_4_1_1, function(os, browser){
           t.assertTrue(os.android)
@@ -332,20 +398,43 @@
           t.assertEqual('6.0.2', browser.version)
 
           t.assertTrue(browser.firefox)
+          t.assertFalse(!!os.firefoxos)
         })
 
         detect(UA.Firefox_13_Tablet, function(os, browser){
           t.assertTrue(browser.firefox)
           t.assertFalse(browser.webkit)
+          t.assertTrue(os.android)
           t.assertFalse(os.phone)
           t.assertTrue(os.tablet)
+          t.assertFalse(!!os.firefoxos)
         })
 
         detect(UA.Firefox_13_Phone, function(os, browser){
           t.assertTrue(browser.firefox)
           t.assertFalse(browser.webkit)
+          t.assertTrue(os.android)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
+          t.assertFalse(!!os.firefoxos)
+        })
+
+        detect(UA.Firefox_Os_Phone, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertTrue(os.firefoxos)
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertEqual('18.0', os.version)
+        })
+
+        detect(UA.Firefox_Os_Tablet, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertTrue(os.firefoxos)
+          t.assertTrue(os.tablet)
+          t.assertFalse(os.phone)
+          t.assertEqual('18.0', os.version)
         })
       },
 
@@ -383,7 +472,14 @@
       },
 
       testIE: function(t) {
-        detect(UA.Windows_IE, function(os, browser){
+        detect(UA.Windows_IE_11, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("11", browser.version)
+        })
+
+        detect(UA.Windows_IE_10, function(os, browser){
           t.assertFalse(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.ie)
@@ -398,11 +494,27 @@
         })
 
         detect(UA.Windows_Phone_8, function(os, browser){
+          t.assertTrue(os.wp)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.ie)
           t.assertEqual("10.0", browser.version)
         })
+
+        detect(UA.Windows_IE_9, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("9.0", browser.version)
+        })
+
+        detect(UA.Windows_IE_9_Compat, function(os, browser){
+          t.assertFalse(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertTrue(browser.ie)
+          t.assertEqual("7.0", browser.version)
+        })
+
       }
     })
   })()

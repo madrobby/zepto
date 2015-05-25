@@ -334,7 +334,7 @@ function TestCase(methodName) {
         this._result.addSkip(this, e);
         break;
       default:
-        this._result.addError(this, e);
+        this._result.addError(this, e + ('stack' in e ? "\n"+e.stack : ''));
     }
   }
 
@@ -1003,7 +1003,7 @@ var UI = (function() {
   function printf(template, args, inspector) {
     var parts = [], m,
         regexp = /(^%|.%)([a-zA-Z])/,
-        args = args.splice(0); // clone args
+        args = args.slice(0); // clone args
 
     inspector = inspector || String;
 

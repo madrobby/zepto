@@ -4,12 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="test.css">
-  <title>Zepto DOM unit tests</title>
+  <title>Zepto Core unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/event.js"></script>
-  <script src="../src/ie.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto event ie')
+    })()
+  </script>
   <style>
     #get_style_element {
       font-size: 48px;
@@ -18,7 +27,7 @@
   </style>
 </head>
 <body>
-  <h1>Zepto DOM unit tests</h1>
+  <h1>Zepto Core unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>
@@ -46,12 +55,32 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   <div id="attr_remove" data-name="boom"></div>
+  <div id="attr_remove_multi" data-id="someId1" data-name="someName1"></div>
   <form><input id="attr_val" value="Hello World"></form>
 
   <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
 
   <form id="attr_with_text_input">
   </form>
+
+  <label for="prop_test2" id="prop_test1"></label>
+  <input id="prop_test2" type="text" tabindex="-1" maxlength="10" readonly class="propTest" />
+  <table id="prop_test3" cellspacing="10" cellpadding="5">
+    <tr>
+      <td id="prop_test4" rowspan="2"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+    <tr>
+      <td id="prop_test5" colspan="2"></td>
+    </tr>
+  </table>
+  <img id="prop_test6" usemap="#imgMap" />
+  <map name="imgMap">
+  </map>
+  <div id="prop_test7" contenteditable="true"></div>
 
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
@@ -114,8 +143,10 @@
   </ul>
 
   <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
+  
+  <iframe id="contentsIframeTest" src="fixtures/iframe_document.html"></iframe>
 
-   <ul id="siblingsTest">
+  <ul id="siblingsTest">
     <li class="child one"><span class="b"></span><em></em><b></b></li>
     <li class="child two"><span class="c"></span><em></em><b></b></li>
     <li class="child three"><span class="d"></span><em></em><b></b></li>
@@ -231,6 +262,7 @@
   <iframe id="link_target_iframe" name="link_target_iframe" width="10" height="10"></iframe>
   <a id="link_that_will_be_prevented" href="fixtures/iframe_document.html" target="link_target_iframe"></a>
 
+  <div id="test_dollar_with_shadow_root" style="display:none;"></div>
 
   </div><!-- fixtures -->
 
@@ -258,12 +290,47 @@
         return html
       })(node)
     }
+    
+    function testDocumentFragmentOrShadowRootContext($fragment, t) {
+      t.assertLength(1, $fragment)
+      t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
+
+      var fragment = $fragment[0];
+      var $div = $('<div id="child"><div class="inner"></div></div>')
+
+      t.assertLength(0, $('#child', fragment))
+
+      fragment.appendChild($div[0]);
+
+      var expectedElement = fragment.querySelector('#child')
+
+      t.assertLength(1, $('#child', fragment))
+      t.assertEqual($div[0], $('#child', fragment).get(0))
+      t.assertEqual(expectedElement, $('#child', fragment).get(0))
+
+      expectedElement = fragment.querySelector('.inner')
+
+      t.assertLength(1, $('.inner', fragment))
+      t.assertEqual(expectedElement, $('.inner', fragment).get(0))
+
+      var expectedElements = fragment.querySelectorAll('div');
+
+      t.assertLength(2, $('div', fragment))
+      t.assertEqual(expectedElements[0], $('div', fragment).get(0))
+      t.assertEqual(expectedElements[1], $('div', fragment).get(1))
+    }
 
     var globalVarSetFromReady = ""
     $(document).ready(function(){ globalVarSetFromReady = 'hi!' })
 
     var globalVarSetFromReady2 = ""
     $(function(){ globalVarSetFromReady2 = 'hi!' })
+
+    var globalVarSetFromReady3 = ""
+    $(document).on('ready', function(){ globalVarSetFromReady3 = 'hi!' })
+
+    var globalVarSetFromReady4 = ""
+    $(document).on('foo ready bar', function(){ globalVarSetFromReady4 = 'hi!' })
 
     Evidence.Assertions.assertSame = function(expected, actual, message) {
       var expectedKeyCount = 0, actualKeyCount = 0, key, passed = true
@@ -284,6 +351,14 @@
       var actual = object.length
       this._assertExpression(expected === actual, message || 'Failed assertion.',
         'Expected length %d, got %d.', expected, actual)
+    }
+
+    Evidence.Assertions.assertZeptoCollection = function(expectedLength, object, message) {
+      if (!$.zepto.isZ(object))
+        this._assertExpression(false, message || 'Failed assertion.',
+          'Expected %o to be a Zepto collection.', object)
+      else
+        this.assertLength(expectedLength, object, message)
     }
 
     Evidence.Assertions.assertEqualCollection = function(expectedCollection, actualCollection, message) {
@@ -495,11 +570,11 @@
       },
 
       testDollarWithNil: function(t){
-        t.assertLength(0, $(null))
-        t.assertLength(0, $(undefined))
-        t.assertLength(0, $(false))
-        t.assertLength(0, $(''))
-        t.assertLength(0, $('#'))
+        t.assertZeptoCollection(0, $(null))
+        t.assertZeptoCollection(0, $(undefined))
+        t.assertZeptoCollection(0, $(false))
+        t.assertZeptoCollection(0, $(''))
+        t.assertZeptoCollection(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)
@@ -507,7 +582,7 @@
 
       testDollarWithNonDOM: function(t){
         var zepto = $(['a', 'b', 'c'])
-        t.assertLength(3, zepto)
+        t.assertZeptoCollection(3, zepto)
         t.assertEqualCollection(['a', 'b', 'c'], zepto)
 
         t.assert($({}))
@@ -684,7 +759,7 @@
       },
 
       testDollarWithDoctypeInFragment: function(t){
-        t.assertLength(0, $('<!DOCTYPE html>'))
+        t.assertZeptoCollection(0, $('<!DOCTYPE html>'))
       },
 
       testNodeCreationViaDollar: function (t) {
@@ -730,6 +805,8 @@
       testReady: function(t){
         t.assertEqual('hi!', globalVarSetFromReady)
         t.assertEqual('hi!', globalVarSetFromReady2)
+        t.assertEqual('hi!', globalVarSetFromReady3)
+        t.assertEqual('hi!', globalVarSetFromReady4)
       },
 
       testNext: function(t){
@@ -771,6 +848,24 @@
         })
         t.assertEqual('SPAN, B', tagnames.join(', '))
         t.assertEqual(1, index)
+      },
+
+      testNoop: function(t){
+        t.assertUndefined($.noop())
+      },
+
+      testConcat: function(t){
+        var $collection1 = $('#eachtest > *')
+        var $collection2 = $('#find1 .findme')
+        var $collection3 = $('#some_element, #another_element')
+
+        var result, array = $collection1.toArray().concat($collection2.toArray(), $collection3.toArray())
+
+        result = $collection1.concat($collection2, $collection3.toArray())
+        t.assertEqualCollection(array, result)
+
+        result = $.fn.concat.apply($collection1.toArray(), [$collection2, $collection3.toArray()])
+        t.assertEqualCollection(array, result)
       },
 
       testMap: function(t){
@@ -852,15 +947,27 @@
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
       },
+      
+      testDollarWithDocumentFragmentContext: function(t){
+        testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
+      },
+      
+      testDollarWithShadowRootContext: function(t){
+        if ('createShadowRoot' in document.body) {
+          var $subject = $('#test_dollar_with_shadow_root')
+          t.assertLength(1, $subject)
+          testDocumentFragmentOrShadowRootContext($($subject[0].createShadowRoot()), t)
+        }
+      },
 
       testEq: function(t){
         var $els = $('#eq_test div')
-        t.assertLength(1, $els.eq(0))
-        t.assertLength(1, $els.eq(-1))
+        t.assertZeptoCollection(1, $els.eq(0))
+        t.assertZeptoCollection(1, $els.eq(-1))
         t.assertEqual($els.eq(-1)[0].className, 'eq2')
         t.assertUndefined($els.eq(-1).tagName)
 
-        t.assertLength(0, $('nonexistent').eq(0))
+        t.assertZeptoCollection(0, $('nonexistent').eq(0))
       },
 
       testFirst: function(t){
@@ -988,6 +1095,7 @@
         t.assertNull($('#doesnotexist').offset())
         var el = $('#some_element')
         t.assertIdentical(el, el.offset({}))
+        t.assertSame($('<div>').offset(), {left: 0, top: 0})
       },
 
       testWidth: function(t){
@@ -1142,6 +1250,11 @@
         t.assertLength(3, $contents)
         t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
+      },
+      
+      testIframeContents: function(t){
+        var el = $("#contentsIframeTest")
+        t.assertEqual("Hello from iframe!", el.contents().find("b").first().text())
       },
 
       testSiblings: function(t){
@@ -1347,6 +1460,14 @@
         var found = $('<div><a>1</a></div>\n<div></div>').find('a')
         t.assertLength(1, found)
         t.assertEqual('1', found.get(0).innerHTML)
+      },
+
+      testFindWithFalsyValue: function(t){
+        var element = '<div><a>1</a></div>';
+        t.assertZeptoCollection(0, $(element).find(undefined))
+        t.assertZeptoCollection(0, $(element).find(false))
+        t.assertZeptoCollection(0, $(element).find(0))
+        t.assertZeptoCollection(0, $(element).find(''))
       },
 
       testFilter: function(t){
@@ -1583,7 +1704,8 @@
         t.assertEqual('',         $('<h1/>').text())
         t.assertEqual('',         $('<h1/>').text('').text())
         t.assertEqual('',         $('<h1/>').text(undefined).text())
-        t.assertEqual('null',     $('<h1/>').text(null).text())
+        t.assertEqual('',         $('<h1/>').text(null).text())
+        t.assertEqual('false',    $('<h1/>').text(false).text())
         t.assertEqual('1',        $('<h1/>').text(1).text())
         t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
 
@@ -1604,6 +1726,21 @@
         $('#texttest2').text('')
         t.assertEqual("Let's set it", $('div.texttest').text())
         t.assertEqual('', $('#texttest2').text())
+      },
+
+      testTextWithFunction: function(t) {
+        var el = $('<div><span>hello</span> <span></span> <span>world</span> <span>again</span></div>'),
+            els = el.find('span')
+
+        els.text(function(idx, oldText){
+          if (idx > 2) return null
+          if (oldText) return oldText.toUpperCase() + ' ' + idx
+        })
+
+        t.assertEqual('HELLO 0', els[0].textContent)
+        t.assertEqual('', els[1].textContent)
+        t.assertEqual('WORLD 2', els[2].textContent)
+        t.assertEqual('', els[3].textContent)
       },
 
       testEmpty: function(t) {
@@ -1648,6 +1785,46 @@
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
       },
 
+      testAttrSetterErase: function(t){
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.attr('data-name', undefined), 'setter should return self')
+        t.assertNull(el.get(0).getAttribute('data-name'), 'attribute should be erased')
+        t.assertNull(el.attr('data-name'), 'attr should reflect erased attribute')
+      },
+
+      testProp: function(t){
+        var label = $('#prop_test1')
+        var input = $('#prop_test2')
+        var table = $('#prop_test3')
+        var td1 = $('#prop_test4')
+        var td2 = $('#prop_test5')
+        var img = $('#prop_test6')
+        var div = $('#prop_test7')
+
+        t.assertEqual(input.prop('tabindex'), -1)
+        t.assertEqual(input.prop('readonly'), true)
+        t.assertEqual(label.prop('for'), 'prop_test2')
+        t.assertEqual(input.prop('class'), 'propTest')
+        t.assertEqual(input.prop('maxlength'), 10)
+        t.assertEqual(table.prop('cellspacing'), 10)
+        t.assertEqual(table.prop('cellpadding'), 5)
+        t.assertEqual(td1.prop('rowspan'), 2)
+        t.assertEqual(td2.prop('colspan'), 2)
+        t.assertEqual(img.prop('usemap'), '#imgMap')
+        t.assertEqual(div.prop('contenteditable'), 'true')
+      },
+
+      testPropSetterErase: function(t){
+        var input = $('<input readonly>')
+        t.assertIdentical(input, input.prop('readonly', false))
+        t.assertFalse(input.prop('readonly'))
+
+        input.get(0)._foo = 'bar'
+        t.assertIdentical(input, input.prop('_foo', undefined))
+        t.assertUndefined(input.get(0)._foo, 'custom property should be cleared')
+        t.assertUndefined(input.prop('_foo'), 'prop should reflect cleared property')
+      },
+
       testAttrNoElement: function(t){
         t.assertUndefined($().attr('yo'))
         t.assertUndefined($(document.createTextNode('')).attr('yo'))
@@ -1680,7 +1857,9 @@
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
-        inputs.val(function(i, value){ return value.replace('input', 'changed') })
+        // Only .attr('value', v) changes .attr('value')
+        // rather than .val(v)
+        inputs.attr('value', function(i, value){ return value.replace('input', 'changed') })
 
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
@@ -1700,6 +1879,16 @@
         var el = $('#attr_remove')
         t.assertEqual('boom', el.attr('data-name'))
         el.removeAttr('data-name')
+        t.assertNull(el.attr('data-name'))
+      },
+      
+      testRemoveMultipleAttr: function(t) {
+        var el = $('#attr_remove_multi')
+        t.assertEqual('someId1', el.attr('data-id'))
+        t.assertEqual('someName1', el.attr('data-name'))
+        
+        el.removeAttr('data-id data-name')
+        t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
       },
 
@@ -1736,9 +1925,24 @@
         t.assertUndefined(el.data('does-not-exist'))
       },
 
+      testDataSetterErase: function(t) {
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.data('name', undefined))
+        t.assertUndefined(el.data('name'))
+      },
+
       testDataNumberType: function(t){
         var el = $('<div data-num=42 />')
         t.assertIdentical(42, el.data('num'))
+
+        t.assertIdentical(42.5,
+          $('<div data-float=42.5 />').data('float'))
+
+        t.assertIdentical("08",
+          $('<div data-notnum=08 />').data('notnum'))
+
+        t.assertIdentical("5903509451651483504",
+          $('<div data-bignum="5903509451651483504" />').data('bignum'))
       },
 
       testDataBooleanType: function(t){
@@ -1789,8 +1993,33 @@
           $('<select multiple><option selected>1</option><option value=2 selected="selected">a</option><option>3</option></select>')
         t.assertEqualCollection(['1','2'], multiple.val())
 
+        // FIXME
+        // This is the "approved" way of de-selecting an option
+        // Unfortunately, this fails on Chrome 29 for Android
         multiple.find('option')[0].selected = false
-        t.assertEqualCollection(['2'], multiple.val())
+
+        t.assertEqualCollection(['2'], multiple.val(),
+          "Expected val() to reflect changes to selected options in a <select multiple> element")
+      },
+
+      testValVsValueAttr: function(t) {
+        var input
+
+        input = $('<input type="text" value="Original">')
+        input.val('By .val(v)')
+        t.assertEqual('Original', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        // .attr('value', v) will change both
+        // without applying .val(v) first
+        input = $('<input type="text" value="Original">')
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .attr("value", v)', input.val())
       },
 
       testChaining: function(t){
@@ -1816,13 +2045,17 @@
         t.assertEqual('plugin!', el.innerHTML)
 
         // test if existing Zepto objects receive new plugins
-        var $some_element = $('#some_element')
-        $.fn.anotherplugin = function(){
-          return this.each(function(){ this.innerHTML = 'anotherplugin!' })
-        }
-        t.assert(typeof $some_element.anotherplugin == 'function')
-        $some_element.anotherplugin()
-        t.assertEqual('anotherplugin!', el.innerHTML)
+        if ('__proto__' in {}) {
+          var $some_element = $('#some_element')
+          $.fn.anotherplugin = function(){
+            return this.each(function(){ this.innerHTML = 'anotherplugin!' })
+          }
+          t.assert(typeof $some_element.anotherplugin == 'function')
+          $some_element.anotherplugin()
+          t.assertEqual('anotherplugin!', el.innerHTML)
+        } else
+          window.console && console.warn &&
+          console.warn("Browser doesn't support __proto__, skipping test of live extension of existing Zepto objects with plugins")
       },
 
       testAppendPrependBeforeAfter: function(t){
@@ -2137,6 +2370,18 @@
         t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
       },
 
+      testNotInDocumentNonEval: function (t) {
+        try {
+          window.someGlobalVariable = 0
+          $('<div></div>')
+            .html('<\script>window.someGlobalVariable += 1<\/script>')
+            .appendTo('body')
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0)
 
@@ -2166,6 +2411,12 @@
         })
         t.assertEqual('red blue green', el.className)
 
+        // addClass with no argument
+        t.assertEqualCollection($('#some_element'), $('#some_element').addClass())
+        t.assertEqual('red blue green', el.className)
+        t.assertEqualCollection($('#some_element'), $('#some_element').addClass(''))
+        t.assertEqual('red blue green', el.className)
+
         //removeClass with function argument
         $('#some_element').removeClass(function(idx,classes){
           //test the value of "this"
@@ -2178,6 +2429,17 @@
 
         $('#some_element').removeClass()
         t.assertEqual('', el.className)
+      },
+
+      testWindowClasses: function(t){
+        // check that window is agnostic to class related functions
+        $(window).removeClass('non-existing-class')
+        t.refute('className' in window)
+        $(window).addClass('some-class')
+        t.refute('className' in window)
+        t.refute($(window).hasClass('some-class'))
+        $(window).toggleClass('some-class')
+        t.refute('className' in window)
       },
 
       testHasClass: function(t){
@@ -2195,6 +2457,9 @@
         t.assert(!el.hasClass('orange'), "body shouldn't have the class")
         el = el.add('#some_element')
         t.assert(el.hasClass('orange'), "an element in collection has the class")
+
+        t.assertFalse(el.hasClass())
+        t.assertFalse(el.hasClass(''))
       },
 
       testHasClassEmpty: function(t){
@@ -2261,6 +2526,12 @@
           return "yellow"
         }, true)
         t.assert(el.hasClass('yellow'))
+
+        // no/empty argument
+        t.assertIdentical(el, el.toggleClass())
+        t.assertEqual('orange brown yellow', el.get(0).className)
+        t.assertIdentical(el, el.toggleClass(''))
+        t.assertEqual('orange brown yellow', el.get(0).className)
       },
 
       testClassSVG: function(t){
@@ -2293,17 +2564,25 @@
 
       testDocumentReady: function (t) {
         // Check that if document is already loaded, ready() immediately executes callback
-        var arg1, arg2, fired = false
+        var arg1, arg2, arg3, arg4, fired = false
         $(function (Z1) {
           arg1 = Z1
           $(document).ready(function (Z2) {
             arg2 = Z2
-            fired = true
+            $(document).on('ready', function (Z3) {
+              arg3 = Z3
+              $(document).on('foo ready bar', function (Z4) {
+                arg4 = Z4
+                fired = true
+              })
+            })
           })
         })
         t.assertTrue(fired)
         t.assertIdentical(Zepto, arg1)
         t.assertIdentical(Zepto, arg2)
+        t.assertIdentical(Zepto, arg3)
+        t.assertIdentical(Zepto, arg4)
       },
 
       testSlice: function (t) {
@@ -2320,6 +2599,15 @@
 
         t.assertIdentical($window.scrollTop(20), $window)
         t.assertIdentical($body.scrollTop(20),   $body)
+      },
+
+      testScrollLeft: function(t) {
+        var $window = $(window), $body = $(document.body)
+        t.assert($window.scrollLeft() >= 0)
+        t.assert($body.scrollLeft() >= 0)
+
+        t.assertIdentical($window.scrollLeft(20), $window)
+        t.assertIdentical($body.scrollLeft(20),   $body)
       },
 
       testSort: function(t){
@@ -2385,13 +2673,19 @@
         t.assertEqualCollection($('#empty_test'), context)
       },
 
-      testBindWithCustomData: function(t) {
-        var counter = 0
-        var handler = function(ev,customData) { counter = customData.counter }
+      testBindWithCustomArgument: function(t) {
+        var data, numArgs, counter = 0,
+            handler = function(ev, arg) {
+              numArgs = arguments.length,
+              data = ev.data
+              counter = arg.counter
+            }
 
         $('#some_element').bind('custom', handler)
         $('#some_element').trigger('custom', { counter: 10 })
         t.assertEqual(10, counter)
+        t.assertEqual(2, numArgs)
+        t.assertUndefined(data)
       },
 
       testBindPreventDefault: function (t) {
@@ -2404,7 +2698,7 @@
             return false
           })
           .bind('click', function (e) {
-            prevented = e.defaultPrevented
+            prevented = e.isDefaultPrevented()
           })
           .trigger('click')
 
@@ -2445,10 +2739,11 @@
       },
 
       testTriggerEventObject: function(t){
-        var counter = 0,
+        var data, counter = 0,
             customEventKey = 0
 
         var handler = function(ev,customData) {
+          data = ev.data
           counter = customData.counter
           customEventKey = ev.customKey
         }
@@ -2460,35 +2755,24 @@
 
         t.assertEqual(10, counter)
         t.assertEqual(20, customEventKey)
+        t.assertUndefined(data)
       },
 
       testTriggerEventCancelled: function(t){
         var event = $.Event('custom'),
           element = $('<div/>'),
-          defaultPrevented = false,
           isDefaultPrevented = false
 
-        t.refute(event.defaultPrevented)
         t.refute(event.isDefaultPrevented())
 
         element.bind('custom', function(e){
           e.preventDefault()
-          defaultPrevented = e.defaultPrevented
           isDefaultPrevented = e.isDefaultPrevented()
         })
 
         element.trigger(event)
 
-        // FIXME: on IE10 the following tests fail because, well,
-        // because IE is a bag of dicks by changing the value of these
-        // variables back to their default states after dispatchEvent
-        // returns. (This works fine on other browsers.)
-        // For the bug and details see
-        // http://connect.microsoft.com/IE/feedback/details/790389/event-defaultprevented-returns-false-after-preventdefault-was-called
-        // t.assertTrue(event.defaultPrevented)
-        // t.assertTrue(event.isDefaultPrevented())
-
-        t.assertTrue(defaultPrevented)
+        t.assertTrue(event.isDefaultPrevented())
         t.assertTrue(isDefaultPrevented)
       },
 
@@ -2509,10 +2793,6 @@
         $(form).bind('submit', function(e) {
           executed.push("2")
           t.assertEqual(form, e.target)
-          // TODO
-          // Android 2.3 doesn't support stopImmediatePropagation,
-          // so the tests throws an error. Ideally Zepto should emulate
-          // stopImmediatePropagation on browsers that don't support it.
           e.stopImmediatePropagation()
           return 2
         })
@@ -2674,14 +2954,12 @@
         var event = $.Event('click')
         $('#link_that_will_be_prevented').trigger(event)
 
-        // IE10 resets this property after dispatchEvent returns.
-        // Let's test if (as expected) there's nothing loaded into the iframe.
-        // t.assertTrue(event.defaultPrevented)
+        t.assertTrue(event.isDefaultPrevented())
 
         t.pause()
         setTimeout(function(){
           t.resume(function(){
-            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            var text = $('#link_target_iframe')[0].contentDocument.body.textContent
             t.assert(!text.match(/Hello from iframe/))
           })
         }, 500)
@@ -2694,14 +2972,12 @@
         var event = $.Event('click')
         $('#link_that_will_be_prevented').trigger(event)
 
-        // IE10 resets this property after dispatchEvent returns.
-        // Let's test if (as expected) there is something loaded into the iframe.
-        // t.assertFalse(event.defaultPrevented)
+        t.assertFalse(event.isDefaultPrevented())
 
         t.pause()
         setTimeout(function(){
           t.resume(function(){
-            var text = $('#link_target_iframe')[0].contentDocument.body.innerText
+            var text = $('#link_target_iframe')[0].contentDocument.body.textContent
             t.assert(text.match(/Hello from iframe/))
           })
         }, 500)
@@ -2711,7 +2987,7 @@
         var counter = 0, received, el = $('p').first(),
           eventData = {
             click: function(){ counter++ },
-            custom: function(e, data){ received = data }
+            custom: function(e, arg){ received = arg }
           }
 
         $(document.body).delegate('p', eventData)
@@ -2731,11 +3007,11 @@
         t.assertEqual('boo', received)
       },
 
-      testDelegateWithCustomData: function(t) {
+      testDelegateWithCustomArgument: function(t) {
         var received
-        $(document).delegate('#some_element', 'custom', function(e, data, more){ received = data + more })
-        $('p').delegate('span.yay', 'custom', function(e, data){ received = data })
-        $(document).delegate('p', 'custom', function(e, data){ received = data })
+        $(document).delegate('#some_element', 'custom', function(e, arg, more){ received = arg + more })
+        $('p').delegate('span.yay', 'custom', function(e, arg){ received = arg })
+        $(document).delegate('p', 'custom', function(e, arg){ received = arg })
 
         $('#some_element').trigger('custom', 'one')
         t.assertEqual('oneundefined', received)
@@ -2914,10 +3190,10 @@
 
       testOne: function(t){
         var counter = 0, context, received, el = $('#some_element')
-        $(document.body).one('click', function(e, data, more){
+        $(document.body).one('click', function(e, arg, more){
           context = this
           counter++
-          received = data + more
+          received = arg + more
           t.assertIn('preventDefault', e)
           return false
         })
@@ -2927,7 +3203,7 @@
         t.assertEqual(1, counter)
         t.assertEqual('onetwo', received)
         t.assertIdentical(document.body, context)
-        t.assertTrue(evt.defaultPrevented)
+        t.assertTrue(evt.isDefaultPrevented())
 
         el.trigger('click')
         t.assertEqual(1, counter, "the event handler didn't unbind itself")

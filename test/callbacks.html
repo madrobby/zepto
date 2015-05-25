@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Callbacks unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto callbacks')
+    })()
+  </script>
+</head>
+<body>
+  <h1>Zepto Callbacks unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+  (function(){
+    var output = "", cb
+    function a() { output += "A" }
+    function b() { output += "B" }
+    function c() { output += "C" }
+    function str(str) { output += str }
+
+    Evidence('ZeptoCallbacksTest', {
+
+      testOptionsAreCopied: function(t) {
+        var options = {"unique": true},
+            cb = $.Callbacks(options),
+            count = 0,
+            fn = function() {
+              t.assertTrue(!(count++), "called once")
+            }
+        options["unique"] = false
+        cb.add(fn, fn)
+        cb.fire()
+      },
+
+      testFireWithOptionsAreCopied: function(t) {
+        var cb = $.Callbacks({memory:1}),
+            args = ["hello"]
+
+        cb.fireWith(null, args)
+        args[0] = "world"
+
+        cb.add(function(hello) {
+          t.assertEqual("hello", hello, "arguments are copied internally")
+        })
+      },
+
+      testRemoveDeletesAllInstances: function(t) {
+        var cb = $.Callbacks()
+        function fn() {
+          t.fail("function wasn't removed")
+        }
+        cb.add( fn, fn, function() {
+          t.assertTrue(true, "end of test")
+        }).remove(fn).fire()
+      },
+
+      testCallbacksHas: function(t) {
+        var cb = $.Callbacks()
+        cb.add(a, b, c)
+        t.assertTrue(cb.has(), "No arguments to .has() returns whether callback function(s) are attached or not")
+        t.assertTrue(cb.has(a), "Check if a specific callback function is in the Callbacks list" )
+
+        cb.remove(b)
+        t.assertFalse(cb.has(b), "Remove a specific callback function and make sure its no longer there" )
+        t.assertTrue(cb.has(a), "Remove a specific callback function and make sure other callback function is still there" )
+
+        cb.empty()
+        t.assertFalse(cb.has(), "Empty list and make sure there are no callback function(s)" )
+        t.assertFalse(cb.has(a), "Check for a specific function in an empty() list" )
+
+        cb.add(a, b, function(){
+          t.assertTrue(cb.has(), "Check if list has callback function(s) from within a callback function" )
+          t.assertTrue(cb.has(a), "Check if list has a specific callback from within a callback function" )
+        }).fire()
+
+        t.assertTrue(cb.has(), "Callbacks list has callback function(s) after firing" )
+
+        cb.disable()
+        t.assertFalse(cb.has(), "disabled() list has no callback functions (returns false)" )
+        t.assertFalse(cb.has(a), "Check for a specific function in a disabled() list" )
+
+        cb = $.Callbacks({unique:1})
+        cb.add(a)
+        cb.add(a)
+        t.assertTrue(cb.has(), "Check if unique list has callback function(s) attached" )
+        cb.lock()
+        t.assertFalse(cb.has(), "locked() list is empty and returns false" )
+      },
+
+      testAddStringNoCrash: function(t) {
+        $.Callbacks().add("hello world")
+        t.assertTrue(true, "no crash adding string" )
+      },
+
+      testUniqueAddIdenticalFn: function(t) {
+        output = "X"
+        $.Callbacks({unique:1}).add(a, function() { output += "A" }).fire()
+        t.assertEqual("XAA", output, "Unique can add different, identical definitions of same function")
+      },
+
+      testUniqueAddSameFn: function(t) {
+        output = "X"
+        $.Callbacks({unique:1}).add(a, a).fire()
+        t.assertEqual("XA", output, "Unique can not add multiple functions with the same reference")
+      },
+
+      testUniqueAddSameFnMultiRef: function(t) {
+        var x = a
+        output = "X"
+        $.Callbacks({unique:1}).add(a, x).fire()
+        t.assertEqual("XA", output, "Unique can not add multiple references to the same function")
+      }
+
+    })
+
+    var configs = {
+      'Undefined': undefined,
+      'Null': null,
+      'Once': {once:1},
+      'Memory': {memory:1},
+      'Unique': {unique:1},
+      'StopOnFalse': {stopOnFalse:1},
+      'OnceMemory': {once:1, memory:1},
+      'OnceUnique': {once:1, unique:1},
+      'OnceStopOnFalse': {once:1, stopOnFalse:1},
+      'MemoryUnique': {memory:1, unique:1},
+      'MemoryStopOnFalse': {memory:1, stopOnFalse:1},
+      'UniqueStopOnFalse': {unique:1, stopOnFalse:1}
+    }
+    var ordering = {
+      "Undefined":         "XABC   X     XABCABCC  X  XBB X   XABA  X   XX",
+      "Null":              "XABC   X     XABCABCC  X  XBB X   XABA  X   XX",
+      "Once":              "XABC   X     X         X  X   X   XABA  X   XX",
+      "Memory":            "XABC   XABC  XABCABCCC XA XBB XB  XABA  XC  XX",
+      "Unique":            "XABC   X     XABCA     X  XB  X   XAB   X   X",
+      "StopOnFalse":       "XABC   X     XABCABCC  X  XBB X   XA    X   XX",
+      "OnceMemory":        "XABC   XABC  X         XA X   XA  XABA  XC  XX",
+      "OnceUnique":        "XABC   X     X         X  X   X   XAB   X   X",
+      "OnceStopOnFalse":   "XABC   X     X         X  X   X   XA    X   XX",
+      "MemoryUnique":      "XABC   XA    XABCA     X  XB  X   XAB   XC  X",
+      "MemoryStopOnFalse": "XABC   XABC  XABCABCCC XA XBB XB  XA    X   XX",
+      "UniqueStopOnFalse": "XABC   X     XABCA     X  XB  X   XA    X   X"
+    }
+
+    $.each(configs, function(name, config) {
+      var results = ordering[name].split(/\s+/)
+
+      Evidence("ZeptoCallbacksTest#" + name, {
+
+        testBindAndFire: function(t) {
+          output = "X", cb = $.Callbacks(config).add(str).fire("A")
+          t.assertEqual("XA", output, "Basic binding and firing")
+          t.assertTrue(cb.fired(), ".fired() detects firing")
+          output = "X"
+          cb.disable().add(str)
+          t.assertEqual( "X", output, "Adding a callback after disabling" )
+          cb.fire("A")
+          t.assertEqual( "X", output, "Firing after disabling" )
+        },
+
+        testNoEmptyWhileFiring: function(t) {
+          var cb = $.Callbacks(config)
+          cb.add(cb.empty, function() { t.fail("not emptied") }).fire()
+        },
+
+        testNoDisablingWhileFiring: function(t) {
+          var cb = $.Callbacks(config)
+          cb.add(cb.disable, function() { t.fail("not disabled") }).fire()
+        },
+
+        testBindFireWithContextAndArgs: function(t) {
+          output = "X"
+          $.Callbacks(config).add(function() {
+            t.assertEqual(window, this, "Basic binding and firing (context)" )
+            output += Array.prototype.join.call(arguments, "")
+          }).fireWith(window, [ "A", "B" ])
+          t.assertEqual( "XAB", output, "Basic binding and firing (arguments)" )
+        },
+
+        testFireWithNoArgs: function(t) {
+          $.Callbacks(config).add(function() {
+            t.assertEqual(window, this, "fireWith with no arguments (context is window)")
+            t.assertEqual(0, arguments.length, "fireWith with no arguments (no arguments)")
+          }).fireWith()
+        },
+
+        testBindRemoveFire: function(t) {
+          output = "X"
+          $.Callbacks(config).add(a, b, c).remove(b, c).fire()
+          t.assertEqual("XA", output)
+        },
+
+        testEmpty: function(t) {
+          output = "X"
+          $.Callbacks(config).add(a, b, c).empty().fire()
+          t.assertEqual( "X", output, "Empty" )
+        },
+
+        testLocking: function(t) {
+          output = "X";
+          $.Callbacks(config).add(str).lock().add(str).fire("A").add(str)
+          t.assertEqual("X", output, "Lock early")
+        },
+
+        testOrdering: function(t) {
+          output = "X", cb = $.Callbacks(config)
+          cb.add(function() {
+            cb.add(c)
+            a()
+          }, b).fire()
+          t.assertEqual( results.shift(), output, "Proper ordering" )
+
+          output = "X"
+          cb.add(function() {
+            cb.add(c)
+            a()
+          }, b)
+          t.assertEqual(results.shift(), output, "Add after fire")
+          output = "X"
+          cb.fire()
+          t.assertEqual(results.shift(), output, "Fire again")
+
+          output = "X", cb = $.Callbacks(config)
+          cb.add(str).fire("A")
+          t.assertEqual("XA", output, "Multiple fire (first fire)")
+          output = "X"
+          cb.add(str)
+          t.assertEqual(results.shift(), output, "Multiple fire (first new callback)")
+          output = "X"
+          cb.fire("B")
+          t.assertEqual(results.shift(), output, "Multiple fire (second fire)")
+          output = "X"
+          cb.add(str)
+          t.assertEqual(results.shift(), output, "Multiple fire (second new callback)")
+
+          output = "X", cb = $.Callbacks(config).add(a, function() { return false }, b).add(a).fire()
+          t.assertEqual(results.shift(), output, "Callback returning false")
+
+          output = "X"
+          cb.add(c)
+          t.assertEqual(results.shift(), output, "Adding a callback after one returned false")
+
+          output = ""
+          function handler() { output += "X" }
+          handler.method = function() { output += "!" }
+          cb = $.Callbacks(config).add(handler).add(handler).fire()
+          t.assertEqual(results.shift(), output, "No callback iteration")
+        }
+
+      })
+
+    })
+  })()
+  </script>
+</body>
+</html>

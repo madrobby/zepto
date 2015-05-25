@@ -1,11 +1,11 @@
 //     Zepto.js
-//     (c) 2010-2013 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($, undefined){
-  var prefix = '', eventPrefix, endEventName, endAnimationName,
-    vendors = { Webkit: 'webkit', Moz: '', O: 'o', ms: 'MS' },
-    document = window.document, testEl = document.createElement('div'),
+  var prefix = '', eventPrefix,
+    vendors = { Webkit: 'webkit', Moz: '', O: 'o' },
+    testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
     transform,
     transitionProperty, transitionDuration, transitionTiming, transitionDelay,
@@ -42,6 +42,10 @@
   }
 
   $.fn.animate = function(properties, duration, ease, callback, delay){
+    if ($.isFunction(duration))
+      callback = duration, ease = undefined, duration = undefined
+    if ($.isFunction(ease))
+      callback = ease, ease = undefined
     if ($.isPlainObject(duration))
       ease = duration.easing, callback = duration.complete, delay = duration.delay, duration = duration.duration
     if (duration) duration = (typeof duration == 'number' ? duration :
@@ -52,9 +56,10 @@
 
   $.fn.anim = function(properties, duration, ease, callback, delay){
     var key, cssValues = {}, cssProperties, transforms = '',
-        that = this, wrappedCallback, endEvent = $.fx.transitionEnd
+        that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
+        fired = false
 
-    if (duration === undefined) duration = 0.4
+    if (duration === undefined) duration = $.fx.speeds._default / 1000
     if (delay === undefined) delay = 0
     if ($.fx.off) duration = 0
 
@@ -85,11 +90,22 @@
       if (typeof event !== 'undefined') {
         if (event.target !== event.currentTarget) return // makes sure the event didn't bubble from "below"
         $(event.target).unbind(endEvent, wrappedCallback)
-      }
+      } else
+        $(this).unbind(endEvent, wrappedCallback) // triggered by setTimeout
+
+      fired = true
       $(this).css(cssReset)
       callback && callback.call(this)
     }
-    if (duration > 0) this.bind(endEvent, wrappedCallback)
+    if (duration > 0){
+      this.bind(endEvent, wrappedCallback)
+      // transitionEnd is not always firing on older Android phones
+      // so make sure it gets fired
+      setTimeout(function(){
+        if (fired) return
+        wrappedCallback.call(that)
+      }, ((duration + delay) * 1000) + 25)
+    }
 
     // trigger page reflow so new elements can animate
     this.size() && this.get(0).clientLeft

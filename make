@@ -2,7 +2,7 @@
 require 'shelljs/make'
 fs = require 'fs'
 
-version   = '1.1.0'
+version   = '1.1.6'
 zepto_js  = 'dist/zepto.js'
 zepto_min = 'dist/zepto.min.js'
 zepto_gz  = 'dist/zepto.min.gz'
@@ -19,7 +19,7 @@ target.all = ->
 target.test = ->
   test_app = require './test/server'
   server = test_app.listen port
-  exec "phantomjs test/runner.coffee 'http://localhost:#{port}/'", (code) ->
+  exec "phantomjs --disk-cache=true test/runner.coffee 'http://localhost:#{port}/'", (code) ->
     server.close -> exit(code)
 
 target[zepto_js] = ->
@@ -39,10 +39,10 @@ target.dist = ->
 target.build = ->
   cd __dirname
   mkdir '-p', 'dist'
-  modules = (env['MODULES'] || 'zepto detect event ajax form fx').split(' ')
+  modules = (env['MODULES'] || 'zepto event ajax form ie').split(' ')
   module_files = ( "src/#{module}.js" for module in modules )
   intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
-  dist = intro + cat(module_files).replace(/^\/[\/*].*$/mg, '').replace(/\n{3,}/g, "\n\n")
+  dist = (intro + cat(module_files).replace(/^\/[\/*].*$/mg, '')).replace(/\n{3,}/g, "\n\n")
   dist.to(zepto_js)
   report_size(zepto_js)
 
@@ -89,7 +89,10 @@ describe_version = ->
 
 minify = (source_code) ->
   uglify = require('uglify-js')
-  ast = uglify.parser.parse(source_code)
-  ast = uglify.uglify.ast_mangle(ast)
-  ast = uglify.uglify.ast_squeeze(ast)
-  uglify.uglify.gen_code(ast)
+  compressor = uglify.Compressor()
+  ast = uglify.parse(source_code)
+  ast.figure_out_scope()
+  ast.compute_char_frequency();
+  ast.mangle_names();
+  ast = ast.transform(compressor)
+  return ast.print_to_string()

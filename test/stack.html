@@ -7,12 +7,21 @@
   <title>Zepto Stack unit tests</title>
   <script src="../vendor/evidence.js"></script>
   <script src="evidence_runner.js"></script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/stack.js"></script>
-  <script src="../src/ie.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('zepto stack ie')
+    })()
+  </script>
 </head>
 <body>
-  <h1>Zepto DOM unit tests</h1>
+  <h1>Zepto Stack unit tests</h1>
   <p id="results">
     Running… see browser console for results
   </p>

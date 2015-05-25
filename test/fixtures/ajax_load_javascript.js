@@ -1,0 +1,1 @@
+window.testValue = 1;
