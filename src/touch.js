@@ -94,7 +94,7 @@
         touch.x2 = firstTouch.pageX
         touch.y2 = firstTouch.pageY
         // in Android webview, long press will fire touchmove, cause longTap event not work
-        if(Math.abs(touch.x1 - touch.x2) > 15 && Math.abs(touch.y1 - touch.y2) > 15){
+        if(Math.abs(touch.x1 - touch.x2) > 5 || Math.abs(touch.y1 - touch.y2) > 5){
           cancelLongTap()
         }
 
