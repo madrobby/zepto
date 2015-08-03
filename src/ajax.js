@@ -42,8 +42,6 @@
     if (settings.beforeSend.call(context, xhr, settings) === false ||
         triggerGlobal(settings, context, 'ajaxBeforeSend', [xhr, settings]) === false)
       return false
-
-    triggerGlobal(settings, context, 'ajaxSend', [xhr, settings])
   }
   function ajaxSuccess(data, xhr, settings, deferred) {
     var context = settings.context, status = 'success'
@@ -108,6 +106,7 @@
       abort('abort')
       return xhr
     }
+    triggerGlobal(options, options.context, 'ajaxSend', [xhr, options])
 
     window[callbackName] = function(){
       responseData = arguments
@@ -253,10 +252,11 @@
     var xhrCopy = $.extend({}, xhr)
 
     if (ajaxBeforeSend(xhrCopy, settings) === false) {
-      xhrCopy.abort()
-      ajaxError(null, 'abort', xhrCopy, settings, deferred)
-      return xhrCopy
+      xhr.abort()
+      ajaxError(null, 'abort', xhr, settings, deferred)
+      return xhr
     }
+    triggerGlobal(settings, settings.context, 'ajaxSend', [xhr, settings])
 
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)

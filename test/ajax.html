@@ -1196,7 +1196,7 @@
         var xhr
         $.ajax({ beforeSend: function(x) { xhr = x; return false } })
 
-        t.assert(xhr.aborted)
+        t.assert(MockXHR.last.aborted)
       },
 
       testGlobalBeforeSendAbort: function(t) {
