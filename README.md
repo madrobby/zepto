@@ -13,13 +13,13 @@ Instead please donate to [charity: water](http://charitywater.org/).
 
 ## Building
 
-[![Build Status](https://secure.travis-ci.org/madrobby/zepto.png?branch=master)](http://travis-ci.org/madrobby/zepto)
+[![Build Status](https://secure.travis-ci.org/madrobby/zepto.svg?branch=master)](http://travis-ci.org/madrobby/zepto)
 
 The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
 optional modules and remove some of the default ones you don't need, to keep the
 size at a minimum. That's when you need to check out Zepto's source code and use
-the build commands.
+the build commands. Alternatively you can use the web based [Zepto Builder](http://github.e-sites.nl/zeptobuilder/).
 
 You will need Node.js installed on your system.
 
@@ -29,6 +29,10 @@ $ npm run-script dist
 
 # do a custom build
 $ MODULES="zepto event data" npm run-script dist
+
+# on Windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> npm run-script dist
 ~~~
 
 The resulting files are:
@@ -39,8 +43,15 @@ The resulting files are:
 If you install CoffeeScript globally, you can run `make` directly:
 
 ~~~ sh
+# one-time operation
+$ npm install coffee-script --global
+
 $ coffee make dist
 $ MODULES="zepto event data ..." ./make dist
+
+# on Windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> coffee make dist
 ~~~
 
 ## Zepto modules

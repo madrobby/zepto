@@ -1,20 +1,20 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
   $.fn.serializeArray = function() {
-    var result = [], el
-    $([].slice.call(this.get(0).elements)).each(function(){
-      el = $(this)
-      var type = el.attr('type')
-      if (this.nodeName.toLowerCase() != 'fieldset' &&
-        !this.disabled && type != 'submit' && type != 'reset' && type != 'button' &&
-        ((type != 'radio' && type != 'checkbox') || this.checked))
-        result.push({
-          name: el.attr('name'),
-          value: el.val()
-        })
+    var name, type, result = [],
+      add = function(value) {
+        if (value.forEach) return value.forEach(add)
+        result.push({ name: name, value: value })
+      }
+    if (this[0]) $.each(this[0].elements, function(_, field){
+      type = field.type, name = field.name
+      if (name && field.nodeName.toLowerCase() != 'fieldset' &&
+        !field.disabled && type != 'submit' && type != 'reset' && type != 'button' && type != 'file' &&
+        ((type != 'radio' && type != 'checkbox') || field.checked))
+          add($(field).val())
     })
     return result
   }
@@ -28,7 +28,7 @@
   }
 
   $.fn.submit = function(callback) {
-    if (callback) this.bind('submit', callback)
+    if (0 in arguments) this.bind('submit', callback)
     else if (this.length) {
       var event = $.Event('submit')
       this.eq(0).trigger(event)

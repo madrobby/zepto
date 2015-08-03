@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -12,7 +12,10 @@
       xmlTypeRE = /^(?:text|application)\/xml/i,
       jsonType = 'application/json',
       htmlType = 'text/html',
-      blankRE = /^\s*$/
+      blankRE = /^\s*$/,
+      originAnchor = document.createElement('a')
+
+  originAnchor.href = window.location.href
 
   // trigger a custom event and return false if it was cancelled
   function triggerAndReturn(context, eventName, data) {
@@ -183,20 +186,34 @@
 
   $.ajax = function(options){
     var settings = $.extend({}, options || {}),
-        deferred = $.Deferred && $.Deferred()
+        deferred = $.Deferred && $.Deferred(),
+        urlAnchor, hashIndex
     for (key in $.ajaxSettings) if (settings[key] === undefined) settings[key] = $.ajaxSettings[key]
 
     ajaxStart(settings)
 
-    if (!settings.crossDomain) settings.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(settings.url) &&
-      RegExp.$2 != window.location.host
+    if (!settings.crossDomain) {
+      urlAnchor = document.createElement('a')
+      urlAnchor.href = settings.url
+      // cleans up URL for .href (IE only), see https://github.com/madrobby/zepto/pull/1049
+      urlAnchor.href = urlAnchor.href
+      settings.crossDomain = (originAnchor.protocol + '//' + originAnchor.host) !== (urlAnchor.protocol + '//' + urlAnchor.host)
+    }
 
     if (!settings.url) settings.url = window.location.toString()
+    if ((hashIndex = settings.url.indexOf('#')) > -1) settings.url = settings.url.slice(0, hashIndex)
     serializeData(settings)
-    if (settings.cache === false) settings.url = appendQuery(settings.url, '_=' + Date.now())
 
     var dataType = settings.dataType, hasPlaceholder = /\?.+=\?/.test(settings.url)
-    if (dataType == 'jsonp' || hasPlaceholder) {
+    if (hasPlaceholder) dataType = 'jsonp'
+
+    if (settings.cache === false || (
+         (!options || options.cache !== true) &&
+         ('script' == dataType || 'jsonp' == dataType)
+        ))
+      settings.url = appendQuery(settings.url, '_=' + Date.now())
+
+    if ('jsonp' == dataType) {
       if (!hasPlaceholder)
         settings.url = appendQuery(settings.url,
           settings.jsonp ? (settings.jsonp + '=?') : settings.jsonp === false ? '' : 'callback=?')
@@ -340,7 +357,11 @@
 
   $.param = function(obj, traditional){
     var params = []
-    params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
+    params.add = function(key, value) {
+      if ($.isFunction(value)) value = value()
+      if (value == null) value = ""
+      this.push(escape(key) + '=' + escape(value))
+    }
     serialize(params, obj, traditional)
     return params.join('&').replace(/%20/g, '+')
   }

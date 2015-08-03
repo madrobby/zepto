@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -90,12 +90,18 @@
   $.event = { add: add, remove: remove }
 
   $.proxy = function(fn, context) {
+    var args = (2 in arguments) && slice.call(arguments, 2)
     if (isFunction(fn)) {
-      var proxyFn = function(){ return fn.apply(context, arguments) }
+      var proxyFn = function(){ return fn.apply(context, args ? args.concat(slice.call(arguments)) : arguments) }
       proxyFn._zid = zid(fn)
       return proxyFn
     } else if (isString(context)) {
-      return $.proxy(fn[context], fn)
+      if (args) {
+        args.unshift(fn[context], fn)
+        return $.proxy.apply(null, args)
+      } else {
+        return $.proxy(fn[context], fn)
+      }
     } else {
       throw new TypeError("expected function")
     }
@@ -176,7 +182,7 @@
 
     if (!isString(selector) && !isFunction(callback) && callback !== false)
       callback = data, data = selector, selector = undefined
-    if (isFunction(data) || data === false)
+    if (callback === undefined || data === false)
       callback = data, data = undefined
 
     if (callback === false) callback = returnFalse
@@ -221,8 +227,10 @@
     event = (isString(event) || $.isPlainObject(event)) ? $.Event(event) : compatible(event)
     event._args = args
     return this.each(function(){
+      // handle focus(), blur() by calling them directly
+      if (event.type in focus && typeof this[event.type] == "function") this[event.type]()
       // items in the collection might not be DOM elements
-      if('dispatchEvent' in this) this.dispatchEvent(event)
+      else if ('dispatchEvent' in this) this.dispatchEvent(event)
       else $(this).triggerHandler(event, args)
     })
   }
@@ -244,24 +252,13 @@
   }
 
   // shortcut methods for `.bind(event, fn)` for each event type
-  ;('focusin focusout load resize scroll unload click dblclick '+
+  ;('focusin focusout focus blur load resize scroll unload click dblclick '+
   'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
   'change select keydown keypress keyup error').split(' ').forEach(function(event) {
     $.fn[event] = function(callback) {
-      return callback ?
+      return (0 in arguments) ?
         this.bind(event, callback) :
         this.trigger(event)
-    }
-  })
-
-  ;['focus', 'blur'].forEach(function(name) {
-    $.fn[name] = function(callback) {
-      if (callback) this.bind(name, callback)
-      else this.each(function(){
-        try { this[name]() }
-        catch(e) {}
-      })
-      return this
     }
   })
 

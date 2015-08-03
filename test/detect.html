@@ -33,6 +33,7 @@
       Safari_OSX_7_0_1: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
       Safari_OSX_7_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71",
       Safari_OSX_6_0: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8) AppleWebKit/536.25 (KHTML, like Gecko) Version/6.0 Safari/536.25",
+      Safari_Windows_NT: "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27",
 
       WebOS_1_4_0_Pre: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pre/1.1",
       WebOS_1_4_0_Pixi: "Mozilla/5.0 (webOS/1.4.0; U; en-US) AppleWebKit/532.2 (KHTML, like Gecko) Version/1.0 Safari/532.2 Pixi/1.1",
@@ -83,6 +84,8 @@
       Firefox_13_Phone: "Mozilla/5.0 (Android; Mobile; rv:13.0) Gecko/13.0 Firefox/13.0",
       Firefox_6_0_2: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
       Firefox_Mobile_Simulator: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:2.1.1) Gecko/ Firefox/4.0.2pre Fennec/4.0.1",
+      Firefox_Os_Phone: "Mozilla/5.0 (Mobile; rv:18.0) Gecko/18.0 Firefox/18.0",
+      Firefox_Os_Tablet: "Mozilla/5.0 (Tablet; rv:18.0) Gecko/18.0 Firefox/18.0",
 
       Windows_IE_9: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
       Windows_IE_9_Compat: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)",
@@ -92,9 +95,10 @@
       Windows_Phone_8: "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; HTC; Windows Phone 8X by HTC)"
     }
 
-    function detect(ua, callback){
+    function detect(ua, platform, callback){
+      if (!callback) callback = platform, platform = ""
       var obj = {}
-      $.__detect.call(obj, ua)
+      $.__detect.call(obj, ua, platform)
       callback.call(null, obj.os, obj.browser)
     }
 
@@ -121,6 +125,18 @@
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("6.0",browser.version)
+        });
+      },
+
+      testSafariWindows: function(t){
+        detect(UA.Safari_Windows_NT, "Windows", function(os, browser){
+          t.assertUndefined(os.osx)
+          t.assertUndefined(os.ios)
+          t.assertUndefined(os.wp)
+          t.assertTrue(browser.webkit)
+          t.assertTrue(browser.safari)
+          t.assertFalse(!!browser.chrome)
+          t.assertEqual("5.0.4", browser.version)
         });
       },
 
@@ -382,6 +398,7 @@
           t.assertEqual('6.0.2', browser.version)
 
           t.assertTrue(browser.firefox)
+          t.assertFalse(!!os.firefoxos)
         })
 
         detect(UA.Firefox_13_Tablet, function(os, browser){
@@ -390,6 +407,7 @@
           t.assertTrue(os.android)
           t.assertFalse(os.phone)
           t.assertTrue(os.tablet)
+          t.assertFalse(!!os.firefoxos)
         })
 
         detect(UA.Firefox_13_Phone, function(os, browser){
@@ -398,6 +416,25 @@
           t.assertTrue(os.android)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
+          t.assertFalse(!!os.firefoxos)
+        })
+
+        detect(UA.Firefox_Os_Phone, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertTrue(os.firefoxos)
+          t.assertTrue(os.phone)
+          t.assertFalse(os.tablet)
+          t.assertEqual('18.0', os.version)
+        })
+
+        detect(UA.Firefox_Os_Tablet, function(os, browser){
+          t.assertTrue(browser.firefox)
+          t.assertFalse(browser.webkit)
+          t.assertTrue(os.firefoxos)
+          t.assertTrue(os.tablet)
+          t.assertFalse(os.phone)
+          t.assertEqual('18.0', os.version)
         })
       },
 
@@ -457,6 +494,7 @@
         })
 
         detect(UA.Windows_Phone_8, function(os, browser){
+          t.assertTrue(os.wp)
           t.assertTrue(os.phone)
           t.assertFalse(os.tablet)
           t.assertTrue(browser.ie)

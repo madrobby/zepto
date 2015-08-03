@@ -35,6 +35,8 @@
     <input name="checked_hasValue" checked value="myValue" type="checkbox">
     <input name="checked_disabled" checked value="ImDisabled" type="checkbox" disabled>
     <input name="checked_noValue" checked type="checkbox">
+    <input type="text" id="no_name">
+    <input type="file" name="file_upload">
 
     <fieldset>
       <input type="radio" name="radio1" value="r1">
@@ -46,6 +48,13 @@
       <option value="selectopt1">select1</option>
       <option value="selectopt2">select2</option>
       <option value="selectopt3">select3</option>
+    </select>
+
+    <select name="users[id][]" multiple>
+      <option value="1">a</option>
+      <option value="2" selected>b</option>
+      <option value="3" selected>c</option>
+      <option value="4">d</option>
     </select>
 
     <div class="actions">
@@ -108,9 +117,6 @@
 
       testSerializeArray: function(t){
         var loginForm = $('#login_form')
-
-        t.assertEqual(Function, loginForm.serializeArray.constructor)
-        t.assertEqual(6, loginForm.serializeArray().length)
         t.assertEqualObject(
           [
               { name: 'email', value: 'koss@nocorp.me' },
@@ -118,8 +124,9 @@
               { name: 'checked_hasValue', value: 'myValue' },
               { name: 'checked_noValue', value: 'on' },
               { name: 'radio1', value: 'r2' },
-              { name: 'selectbox', value: 'selectopt1' }
-
+              { name: 'selectbox', value: 'selectopt1' },
+              { name: 'users[id][]', value: '2' },
+              { name: 'users[id][]', value: '3' }
           ],
           loginForm.serializeArray()
         )
@@ -127,11 +134,7 @@
 
       testSerialize: function(t){
         var loginForm = $('#login_form')
-
-        t.assertEqual(Function, loginForm.serialize.constructor)
-        t.assertEqual('string', typeof loginForm.serialize())
-
-        t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1', loginForm.serialize())
+        t.assertEqual('email=koss%40nocorp.me&password=123456&checked_hasValue=myValue&checked_noValue=on&radio1=r2&selectbox=selectopt1&users%5Bid%5D%5B%5D=2&users%5Bid%5D%5B%5D=3', loginForm.serialize())
       },
 
       testFormSubmit: function(t){
@@ -142,6 +145,27 @@
         })
         $('#login_form').submit()
         t.assert(eventTriggered)
+      },
+
+      testFormSubmitBindFalse: function(t){
+        var eventPropagated = false
+        $(document).on('submit', function(){
+          eventPropagated = true
+        })
+
+        try {
+          var form = $('#login_form')
+          form.submit(false)
+          form.submit()
+          t.assertFalse(eventPropagated)
+        } finally {
+          $(document).off('submit')
+        }
+      },
+
+      testSerializeEmptyCollection: function(t){
+        t.assertIdentical(0, $().serializeArray().length)
+        t.assertIdentical("", $().serialize())
       }
 
     })

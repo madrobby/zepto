@@ -1,11 +1,11 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($, undefined){
-  var prefix = '', eventPrefix, endEventName, endAnimationName,
+  var prefix = '', eventPrefix,
     vendors = { Webkit: 'webkit', Moz: '', O: 'o' },
-    document = window.document, testEl = document.createElement('div'),
+    testEl = document.createElement('div'),
     supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,
     transform,
     transitionProperty, transitionDuration, transitionTiming, transitionDelay,
@@ -104,7 +104,7 @@
       setTimeout(function(){
         if (fired) return
         wrappedCallback.call(that)
-      }, (duration * 1000) + 25)
+      }, ((duration + delay) * 1000) + 25)
     }
 
     // trigger page reflow so new elements can animate

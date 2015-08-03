@@ -578,7 +578,8 @@
           })
         })
 
-        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonpBlah\?_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.assert($.isFunction(window.blah))
         t.pause()
       },
@@ -594,7 +595,8 @@
           })
         })
 
-        t.assertEqual($('head script:last-child').attr('src'), 'jsonpBlah')
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonpBlah\?_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.assert($.isFunction(window.blah))
         t.pause()
       },
@@ -648,6 +650,29 @@
             t.assertLinePattern(/"_":(\[".*",)?"[\d]{13}"/g, response)
           })
         })
+      },
+
+      testJSONPCacheBustingByDefault: function(t) {
+        $.ajax({
+          url: 'jsonp?callback=?',
+          success: t.reg.resumeHandler('success')
+        })
+
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonp\?callback=jsonp\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
+        t.pause()
+      },
+
+      testJSONPCacheBustingDisabled: function(t) {
+        $.ajax({
+          url: 'jsonp?callback=?',
+          cache: true,
+          success: t.reg.resumeHandler('success')
+        })
+
+        var scriptSrc = $('head script:last-child').attr('src')
+        t.assert(/^jsonp\?callback=jsonp\d+$/.test(scriptSrc), scriptSrc)
+        t.pause()
       },
 
       testBrowserCaching: function(t) {
@@ -807,7 +832,7 @@
       overrideMimeType: function(type) {
         this.responseHeaders['content-type'] = type
       },
-      withCredentials: false, 
+      withCredentials: false,
       send: function(data) {
         this.data = data
       },
@@ -856,9 +881,63 @@
         t.assertEqual(window.location, MockXHR.last.url)
       },
 
-      testCrossDomain: function(t) {
+      testCrossDomainCrossOrigin: function(t) {
         $.ajax({
           url: 'http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainSameOrigin: function(t) {
+        $.ajax({
+          url: window.location.href,
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainLeadingSpace: function(t) {
+        $.ajax({
+          url: ' http://example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainTrippleSlash: function(t) {
+        $.ajax({
+          url: 'http:///example.com/foo',
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainWithQuery: function(t) {
+        $.ajax({
+          url: window.location.href + "?foo=bar",
+          beforeSend: function(xhr, settings) {
+            t.assertFalse(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainDifferentScheme: function(t) {
+        $.ajax({
+          url: "foo://" + window.location.host,
+          beforeSend: function(xhr, settings) {
+            t.assertTrue(settings.crossDomain)
+          }
+        })
+      },
+
+      testCrossDomainPeriodInScheme: function(t) {
+        $.ajax({
+          url: "foo.bar://example.com/foo",
           beforeSend: function(xhr, settings) {
             t.assertTrue(settings.crossDomain)
           }
@@ -926,6 +1005,18 @@
           xhrFields: { withCredentials: true }
         })
         t.assert(xhr.withCredentials)
+      },
+
+      testScriptDataTypeCacheBustByDefault: function(t) {
+        $.ajax({ url: '/', dataType: 'script' })
+        var xhr = MockXHR.last
+        t.assert(/^\/\?_=[\d]{13}$/.test(xhr.url), xhr.url)
+      },
+
+      testScriptDataTypeCacheBustDisable: function(t) {
+        $.ajax({ url: '/', dataType: 'script', cache: true })
+        var xhr = MockXHR.last
+        t.assertEqual('/', xhr.url)
       },
 
       testJSONdataType: function(t) {
@@ -1020,6 +1111,14 @@
 
         $.ajax({ url:'test.html', data:{foo:'bar'} })
         t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+      },
+
+      testDataIsAppendedToGETURLWithHashStripped: function(t) {
+        $.ajax({ url:'test.html#?ignore=me', data:'foo=bar' })
+        t.assertEqual('test.html?foo=bar', MockXHR.last.url)
+
+        $.ajax({ url:'test.html?a=b#?ignore=me', data:'foo=bar' })
+        t.assertEqual('test.html?a=b&foo=bar', MockXHR.last.url)
       },
 
       testScriptResponseIsEvald: function(t) {
@@ -1353,6 +1452,20 @@
         })
         result = decodeURIComponent(result)
         t.assertEqual(result, "title=Some+Countries&list[]=Ecuador&list[]=Austria&list[]=England&capitals[ecuador]=Quito&capitals[austria]=Vienna&capitals[GB][england]=London&capitals[GB][scotland]=Edinburgh")
+      },
+
+      testParamNullValues: function(t) {
+        t.assertEqual("x=&a[b]=&a[c]=",
+          decodeURIComponent($.param({ x: null, a: { b: null, c: undefined }})))
+        t.assertEqual("x=",
+          decodeURIComponent($.param([{ name: "x", value: null }])))
+      },
+
+      testParamFunctionValues: function(t) {
+        t.assertEqual("x=&a[b]=B",
+          decodeURIComponent($.param({ x: function(){}, a: { b: function(){ return "B" }}})))
+        t.assertEqual("x=&a[b]=B",
+          decodeURIComponent($.param([{ name: "x", value: null }, { name: "a[b]", value: function(){ return "B" }}])))
       },
 
       testParamEscaping: function(t) {

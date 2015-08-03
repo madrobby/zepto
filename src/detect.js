@@ -1,9 +1,9 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2015 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  function detect(ua){
+  function detect(ua, platform){
     var os = this.os = {}, browser = this.browser = {},
       webkit = ua.match(/Web[kK]it[\/]{0,1}([\d.]+)/),
       android = ua.match(/(Android);?[\s\/]+([\d.]+)?/),
@@ -12,6 +12,8 @@
       ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/),
       iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
       webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/),
+      win = /Win\d{2}|Windows/.test(platform),
+      wp = ua.match(/Windows Phone ([\d.]+)/),
       touchpad = webos && ua.match(/TouchPad/),
       kindle = ua.match(/Kindle\/([\d.]+)/),
       silk = ua.match(/Silk\/([\d._]+)/),
@@ -21,6 +23,7 @@
       playbook = ua.match(/PlayBook/),
       chrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/),
       firefox = ua.match(/Firefox\/([\d.]+)/),
+      firefoxos = ua.match(/\((?:Mobile|Tablet); rv:([\d.]+)\).*Firefox\/[\d.]+/),
       ie = ua.match(/MSIE\s([\d.]+)/) || ua.match(/Trident\/[\d](?=[^\?]+).*rv:([0-9.].)/),
       webview = !chrome && ua.match(/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/),
       safari = webview || ua.match(/Version\/([\d.]+)([^S](Safari)|[^M]*(Mobile)[^S]*(Safari))/)
@@ -37,6 +40,7 @@
     if (iphone && !ipod) os.ios = os.iphone = true, os.version = iphone[2].replace(/_/g, '.')
     if (ipad) os.ios = os.ipad = true, os.version = ipad[2].replace(/_/g, '.')
     if (ipod) os.ios = os.ipod = true, os.version = ipod[3] ? ipod[3].replace(/_/g, '.') : null
+    if (wp) os.wp = true, os.version = wp[1]
     if (webos) os.webos = true, os.version = webos[2]
     if (touchpad) os.touchpad = true
     if (blackberry) os.blackberry = true, os.version = blackberry[2]
@@ -48,8 +52,12 @@
     if (!silk && os.android && ua.match(/Kindle Fire/)) browser.silk = true
     if (chrome) browser.chrome = true, browser.version = chrome[1]
     if (firefox) browser.firefox = true, browser.version = firefox[1]
+    if (firefoxos) os.firefoxos = true, os.version = firefoxos[1]
     if (ie) browser.ie = true, browser.version = ie[1]
-    if (safari && (osx || os.ios)) {browser.safari = true; if (osx) browser.version = safari[1]}
+    if (safari && (osx || os.ios || win)) {
+      browser.safari = true
+      if (!os.ios) browser.version = safari[1]
+    }
     if (webview) browser.webview = true
 
     os.tablet = !!(ipad || playbook || (android && !ua.match(/Mobile/)) ||
@@ -59,7 +67,7 @@
       (firefox && ua.match(/Mobile/)) || (ie && ua.match(/Touch/))))
   }
 
-  detect.call($, navigator.userAgent)
+  detect.call($, navigator.userAgent, navigator.platform)
   // make available to unit tests
   $.__detect = detect
 

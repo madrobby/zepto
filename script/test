@@ -1,18 +1,33 @@
 #!/usr/bin/env bash
 port=3999
+test_url="http://localhost:${port}/"
 
 export PATH=node_modules/.bin:"$PATH"
 
 coffee test/server.coffee $port &
 pid=$!
 
+check_test_server() {
+  curl -fsI "$test_url" >/dev/null
+}
+
 terminate_test_server() {
   kill $pid
 }
+
+tries=1
+while ! check_test_server; do
+  if [ $((tries++)) -eq 20 ]; then
+    echo "error: timed out while waiting for test server" >&2
+    exit 1
+  fi
+  sleep .05
+done
+
 trap terminate_test_server EXIT
 
 phantomjs --disk-cache=true \
-  test/runner.coffee "http://localhost:${port}/" "$@" \
+  test/runner.coffee "$test_url" "$@" \
   2> >(grep -v "CoreText performance note" >&2)
 
 exit $?

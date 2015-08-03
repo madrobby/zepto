@@ -55,6 +55,7 @@
   <div id="attr_1" data-id="someId1" data-name="someName1"></div>
   <div id="attr_2" data-id="someId2" data-name="someName2"></div>
   <div id="attr_remove" data-name="boom"></div>
+  <div id="attr_remove_multi" data-id="someId1" data-name="someName1"></div>
   <form><input id="attr_val" value="Hello World"></form>
 
   <div id="data_attr" data-foo="bar" data-foo-bar="baz" data-empty></div>
@@ -142,8 +143,10 @@
   </ul>
 
   <ul id="contentsTest">1<span>2</span><span id="contentsEmptyTest"></span></ul>
+  
+  <iframe id="contentsIframeTest" src="fixtures/iframe_document.html"></iframe>
 
-   <ul id="siblingsTest">
+  <ul id="siblingsTest">
     <li class="child one"><span class="b"></span><em></em><b></b></li>
     <li class="child two"><span class="c"></span><em></em><b></b></li>
     <li class="child three"><span class="d"></span><em></em><b></b></li>
@@ -259,6 +262,7 @@
   <iframe id="link_target_iframe" name="link_target_iframe" width="10" height="10"></iframe>
   <a id="link_that_will_be_prevented" href="fixtures/iframe_document.html" target="link_target_iframe"></a>
 
+  <div id="test_dollar_with_shadow_root" style="display:none;"></div>
 
   </div><!-- fixtures -->
 
@@ -285,6 +289,35 @@
         div = null
         return html
       })(node)
+    }
+    
+    function testDocumentFragmentOrShadowRootContext($fragment, t) {
+      t.assertLength(1, $fragment)
+      t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
+
+      var fragment = $fragment[0];
+      var $div = $('<div id="child"><div class="inner"></div></div>')
+
+      t.assertLength(0, $('#child', fragment))
+
+      fragment.appendChild($div[0]);
+
+      var expectedElement = fragment.querySelector('#child')
+
+      t.assertLength(1, $('#child', fragment))
+      t.assertEqual($div[0], $('#child', fragment).get(0))
+      t.assertEqual(expectedElement, $('#child', fragment).get(0))
+
+      expectedElement = fragment.querySelector('.inner')
+
+      t.assertLength(1, $('.inner', fragment))
+      t.assertEqual(expectedElement, $('.inner', fragment).get(0))
+
+      var expectedElements = fragment.querySelectorAll('div');
+
+      t.assertLength(2, $('div', fragment))
+      t.assertEqual(expectedElements[0], $('div', fragment).get(0))
+      t.assertEqual(expectedElements[1], $('div', fragment).get(1))
     }
 
     var globalVarSetFromReady = ""
@@ -318,6 +351,14 @@
       var actual = object.length
       this._assertExpression(expected === actual, message || 'Failed assertion.',
         'Expected length %d, got %d.', expected, actual)
+    }
+
+    Evidence.Assertions.assertZeptoCollection = function(expectedLength, object, message) {
+      if (!$.zepto.isZ(object))
+        this._assertExpression(false, message || 'Failed assertion.',
+          'Expected %o to be a Zepto collection.', object)
+      else
+        this.assertLength(expectedLength, object, message)
     }
 
     Evidence.Assertions.assertEqualCollection = function(expectedCollection, actualCollection, message) {
@@ -529,11 +570,11 @@
       },
 
       testDollarWithNil: function(t){
-        t.assertLength(0, $(null))
-        t.assertLength(0, $(undefined))
-        t.assertLength(0, $(false))
-        t.assertLength(0, $(''))
-        t.assertLength(0, $('#'))
+        t.assertZeptoCollection(0, $(null))
+        t.assertZeptoCollection(0, $(undefined))
+        t.assertZeptoCollection(0, $(false))
+        t.assertZeptoCollection(0, $(''))
+        t.assertZeptoCollection(0, $('#'))
 
         var Z1 = $(null), Z2 = $(null)
         t.assert(Z1 !== Z2)
@@ -541,7 +582,7 @@
 
       testDollarWithNonDOM: function(t){
         var zepto = $(['a', 'b', 'c'])
-        t.assertLength(3, zepto)
+        t.assertZeptoCollection(3, zepto)
         t.assertEqualCollection(['a', 'b', 'c'], zepto)
 
         t.assert($({}))
@@ -718,7 +759,7 @@
       },
 
       testDollarWithDoctypeInFragment: function(t){
-        t.assertLength(0, $('<!DOCTYPE html>'))
+        t.assertZeptoCollection(0, $('<!DOCTYPE html>'))
       },
 
       testNodeCreationViaDollar: function (t) {
@@ -809,6 +850,24 @@
         t.assertEqual(1, index)
       },
 
+      testNoop: function(t){
+        t.assertUndefined($.noop())
+      },
+
+      testConcat: function(t){
+        var $collection1 = $('#eachtest > *')
+        var $collection2 = $('#find1 .findme')
+        var $collection3 = $('#some_element, #another_element')
+
+        var result, array = $collection1.toArray().concat($collection2.toArray(), $collection3.toArray())
+
+        result = $collection1.concat($collection2, $collection3.toArray())
+        t.assertEqualCollection(array, result)
+
+        result = $.fn.concat.apply($collection1.toArray(), [$collection2, $collection3.toArray()])
+        t.assertEqualCollection(array, result)
+      },
+
       testMap: function(t){
         var results = $('#eachtest > *').map(function(idx, el) {
           t.assertIdentical(el, this)
@@ -888,15 +947,27 @@
       testDollarParseJSON: function(t) {
         t.assertSame({a:'b'}, $.parseJSON('{"a":"b"}'))
       },
+      
+      testDollarWithDocumentFragmentContext: function(t){
+        testDocumentFragmentOrShadowRootContext($(document.createDocumentFragment()), t)
+      },
+      
+      testDollarWithShadowRootContext: function(t){
+        if ('createShadowRoot' in document.body) {
+          var $subject = $('#test_dollar_with_shadow_root')
+          t.assertLength(1, $subject)
+          testDocumentFragmentOrShadowRootContext($($subject[0].createShadowRoot()), t)
+        }
+      },
 
       testEq: function(t){
         var $els = $('#eq_test div')
-        t.assertLength(1, $els.eq(0))
-        t.assertLength(1, $els.eq(-1))
+        t.assertZeptoCollection(1, $els.eq(0))
+        t.assertZeptoCollection(1, $els.eq(-1))
         t.assertEqual($els.eq(-1)[0].className, 'eq2')
         t.assertUndefined($els.eq(-1).tagName)
 
-        t.assertLength(0, $('nonexistent').eq(0))
+        t.assertZeptoCollection(0, $('nonexistent').eq(0))
       },
 
       testFirst: function(t){
@@ -1024,6 +1095,7 @@
         t.assertNull($('#doesnotexist').offset())
         var el = $('#some_element')
         t.assertIdentical(el, el.offset({}))
+        t.assertSame($('<div>').offset(), {left: 0, top: 0})
       },
 
       testWidth: function(t){
@@ -1178,6 +1250,11 @@
         t.assertLength(3, $contents)
         t.assertLength(2, $contents.filter('span'))
         t.assertLength(0, $("#contentsEmptyTest").contents())
+      },
+      
+      testIframeContents: function(t){
+        var el = $("#contentsIframeTest")
+        t.assertEqual("Hello from iframe!", el.contents().find("b").first().text())
       },
 
       testSiblings: function(t){
@@ -1383,6 +1460,14 @@
         var found = $('<div><a>1</a></div>\n<div></div>').find('a')
         t.assertLength(1, found)
         t.assertEqual('1', found.get(0).innerHTML)
+      },
+
+      testFindWithFalsyValue: function(t){
+        var element = '<div><a>1</a></div>';
+        t.assertZeptoCollection(0, $(element).find(undefined))
+        t.assertZeptoCollection(0, $(element).find(false))
+        t.assertZeptoCollection(0, $(element).find(0))
+        t.assertZeptoCollection(0, $(element).find(''))
       },
 
       testFilter: function(t){
@@ -1619,7 +1704,8 @@
         t.assertEqual('',         $('<h1/>').text())
         t.assertEqual('',         $('<h1/>').text('').text())
         t.assertEqual('',         $('<h1/>').text(undefined).text())
-        t.assertEqual('null',     $('<h1/>').text(null).text())
+        t.assertEqual('',         $('<h1/>').text(null).text())
+        t.assertEqual('false',    $('<h1/>').text(false).text())
         t.assertEqual('1',        $('<h1/>').text(1).text())
         t.assertEqual('<b>a</b>', $('<h1/>').text('<b>a</b>').text())
 
@@ -1640,6 +1726,21 @@
         $('#texttest2').text('')
         t.assertEqual("Let's set it", $('div.texttest').text())
         t.assertEqual('', $('#texttest2').text())
+      },
+
+      testTextWithFunction: function(t) {
+        var el = $('<div><span>hello</span> <span></span> <span>world</span> <span>again</span></div>'),
+            els = el.find('span')
+
+        els.text(function(idx, oldText){
+          if (idx > 2) return null
+          if (oldText) return oldText.toUpperCase() + ' ' + idx
+        })
+
+        t.assertEqual('HELLO 0', els[0].textContent)
+        t.assertEqual('', els[1].textContent)
+        t.assertEqual('WORLD 2', els[2].textContent)
+        t.assertEqual('', els[3].textContent)
       },
 
       testEmpty: function(t) {
@@ -1684,6 +1785,13 @@
         t.assertEqual('1id', $('#attr_2').attr('data-id'))
       },
 
+      testAttrSetterErase: function(t){
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.attr('data-name', undefined), 'setter should return self')
+        t.assertNull(el.get(0).getAttribute('data-name'), 'attribute should be erased')
+        t.assertNull(el.attr('data-name'), 'attr should reflect erased attribute')
+      },
+
       testProp: function(t){
         var label = $('#prop_test1')
         var input = $('#prop_test2')
@@ -1704,6 +1812,17 @@
         t.assertEqual(td2.prop('colspan'), 2)
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
+      },
+
+      testPropSetterErase: function(t){
+        var input = $('<input readonly>')
+        t.assertIdentical(input, input.prop('readonly', false))
+        t.assertFalse(input.prop('readonly'))
+
+        input.get(0)._foo = 'bar'
+        t.assertIdentical(input, input.prop('_foo', undefined))
+        t.assertUndefined(input.get(0)._foo, 'custom property should be cleared')
+        t.assertUndefined(input.prop('_foo'), 'prop should reflect cleared property')
       },
 
       testAttrNoElement: function(t){
@@ -1738,7 +1857,9 @@
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default input, Text input, Email input, Search input', values.join(', '))
 
-        inputs.val(function(i, value){ return value.replace('input', 'changed') })
+        // Only .attr('value', v) changes .attr('value')
+        // rather than .val(v)
+        inputs.attr('value', function(i, value){ return value.replace('input', 'changed') })
 
         values = $.map(inputs, function(i){ return $(i).attr('value') })
         t.assertEqual('Default changed, Text changed, Email changed, Search changed', values.join(', '))
@@ -1758,6 +1879,16 @@
         var el = $('#attr_remove')
         t.assertEqual('boom', el.attr('data-name'))
         el.removeAttr('data-name')
+        t.assertNull(el.attr('data-name'))
+      },
+      
+      testRemoveMultipleAttr: function(t) {
+        var el = $('#attr_remove_multi')
+        t.assertEqual('someId1', el.attr('data-id'))
+        t.assertEqual('someName1', el.attr('data-name'))
+        
+        el.removeAttr('data-id data-name')
+        t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
       },
 
@@ -1794,15 +1925,24 @@
         t.assertUndefined(el.data('does-not-exist'))
       },
 
+      testDataSetterErase: function(t) {
+        var el = $('<div data-name="foo">')
+        t.assertIdentical(el, el.data('name', undefined))
+        t.assertUndefined(el.data('name'))
+      },
+
       testDataNumberType: function(t){
         var el = $('<div data-num=42 />')
         t.assertIdentical(42, el.data('num'))
 
+        t.assertIdentical(42.5,
+          $('<div data-float=42.5 />').data('float'))
+
         t.assertIdentical("08",
           $('<div data-notnum=08 />').data('notnum'))
 
-        t.assertIdentical(111111111111111111111111111111111,
-          $('<div data-bignum="111111111111111111111111111111111" />').data('bignum'))
+        t.assertIdentical("5903509451651483504",
+          $('<div data-bignum="5903509451651483504" />').data('bignum'))
       },
 
       testDataBooleanType: function(t){
@@ -1860,6 +2000,26 @@
 
         t.assertEqualCollection(['2'], multiple.val(),
           "Expected val() to reflect changes to selected options in a <select multiple> element")
+      },
+
+      testValVsValueAttr: function(t) {
+        var input
+
+        input = $('<input type="text" value="Original">')
+        input.val('By .val(v)')
+        t.assertEqual('Original', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .val(v)', input.val())
+
+        // .attr('value', v) will change both
+        // without applying .val(v) first
+        input = $('<input type="text" value="Original">')
+        input.attr('value', 'By .attr("value", v)')
+        t.assertEqual('By .attr("value", v)', input.attr('value'))
+        t.assertEqual('By .attr("value", v)', input.val())
       },
 
       testChaining: function(t){
@@ -2210,6 +2370,18 @@
         t.assertIdentical(el, el.remove())  //=> ensure an error isn't raised
       },
 
+      testNotInDocumentNonEval: function (t) {
+        try {
+          window.someGlobalVariable = 0
+          $('<div></div>')
+            .html('<\script>window.someGlobalVariable += 1<\/script>')
+            .appendTo('body')
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testAddRemoveClass: function(t){
         var el = $('#some_element').get(0)
 
@@ -2257,6 +2429,17 @@
 
         $('#some_element').removeClass()
         t.assertEqual('', el.className)
+      },
+
+      testWindowClasses: function(t){
+        // check that window is agnostic to class related functions
+        $(window).removeClass('non-existing-class')
+        t.refute('className' in window)
+        $(window).addClass('some-class')
+        t.refute('className' in window)
+        t.refute($(window).hasClass('some-class'))
+        $(window).toggleClass('some-class')
+        t.refute('className' in window)
       },
 
       testHasClass: function(t){
