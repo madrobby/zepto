@@ -250,16 +250,19 @@
       }
     }
 
-    if (ajaxBeforeSend(xhr, settings) === false) {
-      xhr.abort()
-      ajaxError(null, 'abort', xhr, settings, deferred)
-      return xhr
+    var xhrCopy = $.extend({}, xhr)
+
+    if (ajaxBeforeSend(xhrCopy, settings) === false) {
+      xhrCopy.abort()
+      ajaxError(null, 'abort', xhrCopy, settings, deferred)
+      return xhrCopy
     }
 
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 
     if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+    for (name in xhrCopy) if (settings.xhr[name]) xhr[name] = xhrCopy[name]
 
     for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 

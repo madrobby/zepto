@@ -1185,7 +1185,10 @@
           }
         })
 
-        t.assertEqual(MockXHR.last, xhr)
+        for (name in xhr) {
+          t.assertIn(name, MockXHR.last)
+          t.assertEqual(xhr[name], MockXHR.last[name])
+        }
         t.assertEqual('GET', settings.type)
       },
 
