@@ -250,7 +250,7 @@
       }
     }
 
-    var xhrCopy = $.extend({}, xhr)
+    var xhrCopy = $.extend(true, {}, xhr)
 
     if (ajaxBeforeSend(xhrCopy, settings) === false) {
       xhrCopy.abort()
