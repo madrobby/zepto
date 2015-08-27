@@ -57,6 +57,14 @@
       this.each(function(){ setData(this, name, value) })
   }
 
+  $.data = function(elem, name, value) {
+    return $(elem).data(name, value)
+  }
+
+  $.hasData = function(elem) {
+    return $(elem).data().length > 0
+  }
+
   $.fn.removeData = function(names) {
     if (typeof names == 'string') names = names.split(/\s+/)
     return this.each(function(){
