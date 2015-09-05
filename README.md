@@ -202,6 +202,12 @@ This will submit a pull request to us that we can review.
    platform information. For better formatting of your report, see
    [GitHub-flavored Markdown][mkd].
 
+### Help! It doesn't work in browserify!
+
+We have received complaints about not supporting popular JavaScript module loaders countless times. [Here](https://github.com/madrobby/zepto/pull/342#issuecomment-3006524) is a short explanation of our decision. A good JS loader should have a way to shim libraries which don't follow the CommonJS/AMD/UMD pattern.
+
+[Here is an example](https://github.com/silvenon/zepto-module-demo) of shimming Zepto for browserify, allowing you to easily import only needed modules while leaving the source code untouched.
+
 ### Running tests
 
 You will need to install [PhantomJS][]. On OS X, that's easy:
