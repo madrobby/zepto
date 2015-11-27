@@ -119,6 +119,12 @@
           if (deltaX < 30 && deltaY < 30) {
             // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
             // ('tap' fires before 'scroll')
+            var pos = {
+              x1 : touch.x1,
+              x2 : touch.x2,
+              y1 : touch.y1,
+              y2 : touch.y2
+            }
             tapTimeout = setTimeout(function() {
 
               // trigger universal 'tap' with the option to cancelTouch()
@@ -129,7 +135,7 @@
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
-                if (touch.el) touch.el.trigger('doubleTap')
+                if (touch.el) touch.el.trigger('doubleTap', pos)
                 touch = {}
               }
 
@@ -137,7 +143,7 @@
               else {
                 touchTimeout = setTimeout(function(){
                   touchTimeout = null
-                  if (touch.el) touch.el.trigger('singleTap')
+                  if (touch.el) touch.el.trigger('singleTap', pos)
                   touch = {}
                 }, 250)
               }
