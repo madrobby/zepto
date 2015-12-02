@@ -618,7 +618,7 @@ var Zepto = (function() {
           var newText = funcArg(this, text, idx, this.textContent)
           this.textContent = newText == null ? '' : ''+newText
         }) :
-        (0 in this ? this[0].textContent : null)
+        (0 in this ? this.pluck('textContent').join("") : null)
     },
     attr: function(name, value){
       var result

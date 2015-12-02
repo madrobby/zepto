@@ -1716,15 +1716,18 @@
         $('#texttest3').text(undefined)
         t.assertEqual('', $('#texttest3').text())
 
-        t.assertEqual('Here is some text', $('div.texttest').text())
+        t.assertEqual('Here is some text', $('#texttest1').text())
         t.assertEqual('And some more', $('#texttest2').text())
+        
+        // gets all text of selectors matching
+        t.assertEqual('Here is some textAnd some more', $('div.texttest').text())
 
         $('div.texttest').text("Let's set it")
         t.assertEqual("Let's set it", $('#texttest1').text())
         t.assertEqual("Let's set it", $('#texttest2').text())
 
         $('#texttest2').text('')
-        t.assertEqual("Let's set it", $('div.texttest').text())
+        t.assertEqual("Let's set it", $('#texttest1').text())
         t.assertEqual('', $('#texttest2').text())
       },
 
