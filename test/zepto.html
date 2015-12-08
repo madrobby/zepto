@@ -1602,6 +1602,15 @@
         t.assert(!errorWasRaised)
       },
 
+      testCSSBatchSetOnNonExistingElementReturnsSelf: function (t) {
+        var el = $('.some-non-exist-elm')
+        var ret = el.css({
+          'border': '2px solid #000',
+          'color': 'rgb(0,255,0)'
+        })
+        t.assertEqual(ret, el)
+      },
+
       testHtml: function(t){
         var div = $('div.htmltest');
 
