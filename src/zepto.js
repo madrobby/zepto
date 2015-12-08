@@ -690,18 +690,20 @@ var Zepto = (function() {
     },
     css: function(property, value){
       if (arguments.length < 2) {
-        var computedStyle, element = this[0]
-        if(!element) return
-        computedStyle = getComputedStyle(element, '')
-        if (typeof property == 'string')
-          return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
-        else if (isArray(property)) {
+        var element = this[0]
+        if (typeof property == 'string') {
+          if (!element) return
+          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(property)
+        } else if (isArray(property)) {
+          if (!element) return
           var props = {}
+          var computedStyle = getComputedStyle(element, '')
           $.each(property, function(_, prop){
             props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
           })
           return props
-        }
+        } else if (!element)
+          return this
       }
 
       var css = ''
