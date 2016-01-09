@@ -274,9 +274,8 @@
   ;(function() {
     // delete handlers from $element
     function clearEvent($element) {
-      $element.map(function() {
-        return this._zid
-      }).forEach(function(id) {
+      $element.each(function() {
+        var id = this._zid
         // If contains events
         if (id && handlers[id]) delete handlers[id]
       })
