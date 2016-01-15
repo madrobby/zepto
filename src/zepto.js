@@ -656,6 +656,7 @@ var Zepto = (function() {
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
+      if (value == null) value = ""
       return 0 in arguments ?
         this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value)
