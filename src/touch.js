@@ -66,6 +66,7 @@
       .on('touchstart MSPointerDown pointerdown', function(e){
         if((_isPointerType = isPointerEventType(e, 'down')) &&
           !isPrimaryTouch(e)) return
+        deltaX = deltaY = 0
         firstTouch = _isPointerType ? e : e.touches[0]
         if (e.touches && e.touches.length === 1 && touch.x2) {
           // Clear out touch movement data if we have it sticking around
