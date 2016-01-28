@@ -1036,6 +1036,14 @@
         t.assertSame($('<div>').offset(), {left: 0, top: 0})
       },
 
+      testOffsetOnHTML: function(t){
+        var offset = $('html').offset()
+        t.assertEqual(offset.left, 0)
+        t.assertEqual(offset.top, 0)
+        t.assert('width' in offset)
+        t.assert('height' in offset)
+      },
+
       testWidth: function(t){
         t.assertNull($('#doesnotexist').width())
         // can't check values here, but make sure it doesn't error out
@@ -1651,7 +1659,7 @@
 
         t.assertEqual('Here is some text', $('#texttest1').text())
         t.assertEqual('And some more', $('#texttest2').text())
-        
+
         // gets all text of selectors matching
         t.assertEqual('Here is some textAnd some more', $('div.texttest').text())
 
@@ -1817,12 +1825,12 @@
         el.removeAttr('data-name')
         t.assertNull(el.attr('data-name'))
       },
-      
+
       testRemoveMultipleAttr: function(t) {
         var el = $('#attr_remove_multi')
         t.assertEqual('someId1', el.attr('data-id'))
         t.assertEqual('someName1', el.attr('data-name'))
-        
+
         el.removeAttr('data-id data-name')
         t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
