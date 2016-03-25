@@ -1401,7 +1401,7 @@ window.$ === undefined && (window.$ = Zepto)
     if (deferred) deferred.promise(xhr)
 
     if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
-    setHeader('Accept', mime || '*/*')
+    setHeader('Accept', mime || '*\/*')
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
