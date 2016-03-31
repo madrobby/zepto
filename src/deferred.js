@@ -50,6 +50,7 @@
             return obj != null ? $.extend( obj, promise ) : promise
           },
 	  destory: function(){
+		state = null;
 		deferred = {};
     	  }
         },
