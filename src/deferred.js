@@ -51,7 +51,7 @@
           },
 	  destory: function(){
 		state = null;
-		deferred = {};
+		deferred = {}
     	  }
         },
         deferred = {}
