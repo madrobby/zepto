@@ -835,9 +835,11 @@ var Zepto = (function() {
   })
 
   function traverseNode(node, fun) {
-    fun(node)
-    for (var i = 0, len = node.childNodes.length; i < len; i++)
-      traverseNode(node.childNodes[i], fun)
+    if (typeof node != "undefined") { 
+          fun(node)
+          for (var i = 0, len = node.childNodes.length; i < len; i++)
+            traverseNode(node.childNodes[i], fun)
+    }
   }
 
   // Generate the `after`, `prepend`, `before`, `append`,
@@ -871,8 +873,8 @@ var Zepto = (function() {
           else if (!parent) return $(node).remove()
 
           parent.insertBefore(node, target)
-          if (parentInDocument) traverseNode(node, function(el){
-            if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
+          if (parentInDocument && typeof node != "undefined") traverseNode(node, function (el) {
+            if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
                (!el.type || el.type === 'text/javascript') && !el.src)
               window['eval'].call(window, el.innerHTML)
           })
