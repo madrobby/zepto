@@ -1,23 +1,23 @@
 //Mimic jQuery No Conflict. Credit: Bryce
 if ( typeof define === "function" && define.amd ) {
-  define( "nquery", [], function() {
-    return nQuery;
+  define( "zepto", [], function() {
+    return Zepto;
   });
 }
 var
-  // Map over nQuery in case of overwrite
-  _nQuery = window.nQuery,
+  // Map over Zepto in case of overwrite
+  _nQuery = window.Zepto,
 
   // Map over the $ in case of overwrite
   _$ = window.$;
 
-nQuery.noConflict = function( deep ) {
-  if ( window.$ === nQuery ) {
+Zepto.noConflict = function( deep ) {
+  if ( window.$ === Zepto ) {
     window.$ = _$;
   }
 
-  if ( deep && window.nQuery === nQuery ) {
-    window.nQuery = _nQuery;
+  if ( deep && window.Zepto === Zepto ) {
+    window.Zepto = _nQuery;
   }
-  return nQuery;
+  return Zepto;
 };
