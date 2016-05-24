@@ -12,6 +12,8 @@ var Zepto = (function() {
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
     rootNodeRE = /^(?:body|html)$/i,
     capitalRE = /([A-Z])/g,
+    scriptNodeRE = /^(<script){1}(.+)(src=("|\'){1}(.*)("|\'){1}){1}(.*)>(<\/script>){1}$/, // Used to find script tags that load extenal JS -- AC 5/23/16
+
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -833,6 +835,13 @@ var Zepto = (function() {
       })
     }
   })
+  
+  // Because innerHTML doesn't execute script tags, we will convert to a node using scriptNodeRE and append the node -- AC 5/23/16
+  function createScriptNodeFromString(value) { 
+    var jsnode = document.createElement("script")
+    jsnode.src = scriptNodeRE.exec(value)[5]
+    return jsnode
+  }
 
   function traverseNode(node, fun) {
     if (typeof node != "undefined") { 
@@ -852,7 +861,7 @@ var Zepto = (function() {
       var argType, nodes = $.map(arguments, function(arg) {
             argType = type(arg)
             return argType == "object" || argType == "array" || arg == null ?
-              arg : zepto.fragment(arg)
+              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  nquery.fragment(arg)
           }),
           parent, copyByClone = this.length > 1
       if (nodes.length < 1) return this
