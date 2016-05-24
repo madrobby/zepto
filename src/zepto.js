@@ -843,13 +843,23 @@ var Zepto = (function() {
     return jsnode
   }
 
+  /* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
+     The function is called during the recursive dom tree parsing to find inline script tags -- AC 5/23/2016 */
+  function compileInlineJavaScript(el) {
+            if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
+               (!el.type || el.type === 'text/javascript') && !el.src)
+              window['eval'].call(window, el.innerHTML)
+  }
+
   function traverseNode(node, fun) {
-    if (typeof node != "undefined") { 
-          fun(node)
+    if (typeof node != "undefined") {
+         fun(node) // Doc: If script tag with inline code, parse
           for (var i = 0, len = node.childNodes.length; i < len; i++)
-            traverseNode(node.childNodes[i], fun)
+          traverseNode(node.childNodes[i],fun) //Doc: determine each child if they are script tags with inline code. If not find the child's children --AC 5/23/16
     }
   }
+  
+
 
   // Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
@@ -857,7 +867,7 @@ var Zepto = (function() {
     var inside = operatorIndex % 2 //=> prepend, append
 
     $.fn[operator] = function(){
-      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
+      // arguments can be nodes, arrays of nodes, nQuery objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
             argType = type(arg)
             return argType == "object" || argType == "array" || arg == null ?
@@ -882,11 +892,8 @@ var Zepto = (function() {
           else if (!parent) return $(node).remove()
 
           parent.insertBefore(node, target)
-          if (parentInDocument && typeof node != "undefined") traverseNode(node, function (el) {
-            if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src)
-              window['eval'].call(window, el.innerHTML)
-          })
+          
+          if (parentInDocument && typeof node != "undefined" || node.children.length) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
         })
       })
     }
