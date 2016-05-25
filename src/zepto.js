@@ -893,7 +893,7 @@ var Zepto = (function() {
 
           parent.insertBefore(node, target)
           
-          if (parentInDocument && typeof node != "undefined" || node.children.length) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
+          if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" && node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
         })
       })
     }
