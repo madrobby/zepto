@@ -836,19 +836,32 @@ var Zepto = (function() {
     }
   })
   
-  // Because innerHTML doesn't execute script tags, we will convert to a node using scriptNodeRE and append the node -- AC 5/23/16
+// Because innerHTML doesn't execute script tags, we will convert to a node using scriptNodeRE and append the node -- AC 5/23/16
   function createScriptNodeFromString(value) { 
     var jsnode = document.createElement("script")
     jsnode.src = scriptNodeRE.exec(value)[5]
     return jsnode
   }
 
+ // Used to remove script node once node is loaded -- AC 5/26/2016
+  function removeScriptNodeOnLoad(e) { 
+      document.head.removeChild(e.target)
+  }
+  // Used to clone script node and append it to the dom. Set onload event handler to removeScriptNodeOnLoad, which removes node -- AC 5/26/2016
+  function createScriptNodeFromNode(node) {
+    var jsnode = node.cloneNode(true);
+    jsnode.onload = removeScriptNodeOnLoad
+    document.head.appendChild( jsnode )
+  }  
+
   /* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
      The function is called during the recursive dom tree parsing to find inline script tags -- AC 5/23/2016 */
   function compileInlineJavaScript(el) {
-            if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src)
-              window['eval'].call(window, el.innerHTML)
+    if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && !el.src) {
+      window['eval'].call(window, el.innerHTML)
+    } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
+      createScriptNodeFromNode(el) // Used to load external script and remove node once loaded -- AC 5/26/2016
+    }
   }
 
   function traverseNode(node, fun) {
@@ -858,8 +871,6 @@ var Zepto = (function() {
           traverseNode(node.childNodes[i],fun) //Doc: determine each child if they are script tags with inline code. If not find the child's children --AC 5/23/16
     }
   }
-  
-
 
   // Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
@@ -887,13 +898,14 @@ var Zepto = (function() {
 
         var parentInDocument = $.contains(document.documentElement, parent)
 
-        nodes.forEach(function(node){
+        nodes.forEach(function (node) {
+          
           if (copyByClone) node = node.cloneNode(true)
           else if (!parent) return $(node).remove()
 
           parent.insertBefore(node, target)
           
-          if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" && node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
+          if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" &&  node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
         })
       })
     }
