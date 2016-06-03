@@ -100,7 +100,7 @@
         ajaxSuccess(responseData[0], xhr, options, deferred)
       }
 
-      window[callbackName] = originalCallback
+      window[callbackName] = originalCallback || empty
       if (responseData && $.isFunction(originalCallback))
         originalCallback(responseData[0])
 
