@@ -854,14 +854,17 @@ var Zepto = (function() {
     document.head.appendChild( jsnode )
   }  
 
-  /* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
+/* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
      The function is called during the recursive dom tree parsing to find inline script tags -- AC 5/23/2016 */
   function compileInlineJavaScript(el) {
     if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && !el.src) {
       window['eval'].call(window, el.innerHTML)
+      return true;
     } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
       createScriptNodeFromNode(el) // Used to load external script and remove node once loaded -- AC 5/26/2016
+      return true;
     }
+    return false;
   }
 
   function traverseNode(node, fun) {
@@ -884,7 +887,8 @@ var Zepto = (function() {
             return argType == "object" || argType == "array" || arg == null ?
               arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  nquery.fragment(arg)
           }),
-          parent, copyByClone = this.length > 1
+        parent, copyByClone = this.length > 1
+
       if (nodes.length < 1) return this
 
       return this.each(function(_, target){
@@ -899,16 +903,17 @@ var Zepto = (function() {
         var parentInDocument = $.contains(document.documentElement, parent)
 
         nodes.forEach(function (node) {
-          
-          if (copyByClone) node = node.cloneNode(true)
-          else if (!parent) return $(node).remove()
-
-          parent.insertBefore(node, target)
-          
-          if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" &&  node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
-        })
+          if (compileInlineJavaScript(node)) {
+          } else { 
+            if (copyByClone) node = node.cloneNode(true)
+            else if (!parent) return $(node).remove()
+            parent.insertBefore(node, target)
+            if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" &&  node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
+          }
+         })
       })
     }
+
 
     // after    => insertAfter
     // prepend  => prependTo
