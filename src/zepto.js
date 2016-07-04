@@ -51,9 +51,12 @@ var Zepto = (function() {
 
   zepto.matches = function(element, selector) {
     if (!selector || !element || element.nodeType !== 1) return false
-    var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
-                          element.oMatchesSelector || element.matchesSelector
-    if (matchesSelector) return matchesSelector.call(element, selector)
+    //matchesSelector has been renamed to matches. Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches.
+    //Ranges of browsers's support. Ref http://caniuse.com/#search=matches
+    //oMatchesSelector is defined in Opera12.
+    var matches = element.matches || element.webkitMatchesSelector || element.msMatchesSelector ||
+                    element.mozMatchesSelector || element.oMatchesSelector || element.matchesSelector
+    if (matches) return matches.call(element, selector)
     // fall back to performing a selector:
     var match, parent = element.parentNode, temp = !parent
     if (temp) (parent = tempParent).appendChild(element)
