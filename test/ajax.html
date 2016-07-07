@@ -322,6 +322,23 @@
         })
       },
 
+      testAjaxDataFilterJSON: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+
+        $.ajax({
+          url: 'taintedJSON',
+          dataFilter: function(data, type) {
+            if (!data) return
+            return data.replace(/^\s*while\(1\);\s*/, '')
+          },
+          headers: { accept: 'application/json' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
+          })
+        })
+      },
+
       testAjaxGetJSON: function(t){
         t.pause()
         resumeOnAjaxError(t)
