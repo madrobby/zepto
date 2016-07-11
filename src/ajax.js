@@ -71,6 +71,12 @@
     ajaxStop(settings)
   }
 
+  function ajaxDataFilter(data, type, settings) {
+    if (settings.dataFilter == empty) return data
+    var context = settings.context
+    return settings.dataFilter.call(context, data, type)
+  }
+
   // Empty function, used as default callback
   function empty() {}
 
@@ -161,7 +167,11 @@
     // Whether data should be serialized to string
     processData: true,
     // Whether the browser should be allowed to cache GET responses
-    cache: true
+    cache: true,
+    //Used to handle the raw response data of XMLHttpRequest.
+    //This is a pre-filtering function to sanitize the response.
+    //The sanitized response should be returned
+    dataFilter: empty
   }
 
   function mimeToDataType(mime) {
@@ -258,6 +268,8 @@
 
             try {
               // http://perfectionkills.com/global-eval-what-are-the-options/
+              // sanitize response accordingly if data filter callback provided
+              result = ajaxDataFilter(result, dataType, settings)
               if (dataType == 'script')    (1,eval)(result)
               else if (dataType == 'xml')  result = xhr.responseXML
               else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
