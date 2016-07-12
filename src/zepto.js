@@ -656,14 +656,17 @@ var Zepto = (function() {
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
-      return 0 in arguments ?
-        this.each(function(idx){
+      if (value == null) value = ""
+      if (0 in arguments) {
+        return this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value)
-        }) :
-        (this[0] && (this[0].multiple ?
-           $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
-           this[0].value)
+        })
+      } else {
+        return (this[0] && (this[0].multiple ?
+          $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
+          this[0].value)
         )
+      }
     },
     offset: function(coordinates){
       if (coordinates) return this.each(function(index){
