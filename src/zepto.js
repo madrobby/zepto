@@ -655,15 +655,16 @@ var Zepto = (function() {
       return data !== null ? deserializeValue(data) : undefined
     },
     val: function(value){
-      if (value == null) value = ""
-      return 0 in arguments ?
-        this.each(function(idx){
+      if (0 in arguments) {
+        if (value == null) value = ""
+        return this.each(function(idx){
           this.value = funcArg(this, value, idx, this.value)
-        }) :
-        (this[0] && (this[0].multiple ?
+        })
+      } else {
+        return this[0] && (this[0].multiple ?
            $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
            this[0].value)
-        )
+      }
     },
     offset: function(coordinates){
       if (coordinates) return this.each(function(index){
