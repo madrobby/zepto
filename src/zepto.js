@@ -12,7 +12,7 @@ var Zepto = (function() {
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
     rootNodeRE = /^(?:body|html)$/i,
     capitalRE = /([A-Z])/g,
-
+    booleanAttributesRE = /^(?:checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped)$/i,
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
 
@@ -287,7 +287,9 @@ var Zepto = (function() {
   }
 
   function setAttribute(node, name, value) {
-    value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
+    node.setAttribute ?
+      (value == null ? node.removeAttribute(name) : node.setAttribute(name, value))
+      :node.prop(name, value)
   }
 
   // access className property while respecting SVGAnimatedString
@@ -623,9 +625,11 @@ var Zepto = (function() {
     },
     attr: function(name, value){
       var result
+
       return (typeof name == 'string' && !(1 in arguments)) ?
-        (!this.length || this[0].nodeType !== 1 ? undefined :
-          (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
+        (!this.length || this[0].nodeType !== 1 ? undefined :(
+          booleanAttributesRE.test(name) ? this[0][name] :
+          (this[0].getAttribute ? this[0].getAttribute(name) : this.prop(name)))
         ) :
         this.each(function(idx){
           if (this.nodeType !== 1) return
