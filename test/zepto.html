@@ -894,6 +894,24 @@
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','))
       },
 
+      testDollarMapArrayLike: function(t){
+        var results
+        results = $.map({ length: 1, a: 'b' }, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual('a=b,length=1', results.sort().join(','))
+
+        results = $.map({ length: 0, a: 'b' }, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual(0, results.length)
+
+        results = $.map(function(){}, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual(0, results.length)
+      },
+
       testDollarGrep: function(t){
         var fruits = ['apples', 'oranges', 'pineapple', 'peach']
         var result = $.grep(fruits, function(name){ return /apple/.test(name) })
