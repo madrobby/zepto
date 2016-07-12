@@ -163,7 +163,7 @@
           t.resume(function(){
             t.assertStyle('translate3d(80px, 20px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
             t.assertStyle('0.5', el, 'opacity')
-            t.assertStyle('50%', el, 'background-position-y')
+            t.assertStyle(/^(50%|center)$/, el, 'background-position-y')
             t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
           })
         })
