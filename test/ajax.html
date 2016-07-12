@@ -163,7 +163,7 @@
       tearDown: function() {
         $(document).off()
         for (var key in window)
-          if (/^(jsonp\d+|blah)$/.test(key) && window[key] === undefined)
+          if (/^(Zepto\d+|blah)$/.test(key) && window[key] === undefined)
             delete window[key]
       },
 
@@ -676,7 +676,7 @@
         })
 
         var scriptSrc = $('head script:last-child').attr('src')
-        t.assert(/^jsonp\?callback=jsonp\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
+        t.assert(/^jsonp\?callback=Zepto\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.pause()
       },
 
@@ -688,7 +688,7 @@
         })
 
         var scriptSrc = $('head script:last-child').attr('src')
-        t.assert(/^jsonp\?callback=jsonp\d+$/.test(scriptSrc), scriptSrc)
+        t.assert(/^jsonp\?callback=Zepto\d+$/.test(scriptSrc), scriptSrc)
         t.pause()
       },
 
