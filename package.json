@@ -8,10 +8,7 @@
     , "start": "coffee test/server.coffee"
   }
   , "repository": "madrobby/zepto"
-  , "license": {
-      "type": "MIT"
-    , "url": "http://zeptojs.com/license/"
-  }
+  , "license": "MIT"
   , "devDependencies": {
       "uglify-js": "2.4.x"
     , "express": "3.1.x"
