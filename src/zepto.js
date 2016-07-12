@@ -687,8 +687,7 @@ var Zepto = (function() {
             props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
           })
           return props
-        } else if (!element)
-          return this
+        }
       }
 
       var css = ''
