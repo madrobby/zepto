@@ -1990,8 +1990,11 @@
 
         t.assertEqual('Hello World', input.val())
 
-        input.val(undefined);
-        t.assertEqual('undefined', input.val());
+        input.val(undefined)
+        t.assertEqual('', input.val())
+
+        input.val(null)
+        t.assertEqual('', input.val())
 
         input.val('')
         t.assertEqual('', input.val())
