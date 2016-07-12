@@ -45,8 +45,6 @@
     if (settings.beforeSend.call(context, xhr, settings) === false ||
         triggerGlobal(settings, context, 'ajaxBeforeSend', [xhr, settings]) === false)
       return false
-
-    triggerGlobal(settings, context, 'ajaxSend', [xhr, settings])
   }
   function ajaxSuccess(data, xhr, settings, deferred) {
     var context = settings.context, status = 'success'
@@ -117,6 +115,7 @@
       abort('abort')
       return xhr
     }
+    triggerGlobal(options, options.context, 'ajaxSend', [xhr, options])
 
     window[callbackName] = function(){
       responseData = arguments
@@ -285,16 +284,20 @@
       }
     }
 
-    if (ajaxBeforeSend(xhr, settings) === false) {
+    var xhrCopy = $.extend({}, xhr)
+
+    if (ajaxBeforeSend(xhrCopy, settings) === false) {
       xhr.abort()
       ajaxError(null, 'abort', xhr, settings, deferred)
       return xhr
     }
-
-    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+    triggerGlobal(settings, settings.context, 'ajaxSend', [xhr, settings])
 
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
+
+    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+    for (name in xhrCopy) if (settings.xhr[name]) xhr[name] = xhrCopy[name]
 
     for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 
