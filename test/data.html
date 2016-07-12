@@ -321,6 +321,8 @@
         t.assertUndefined(el.data('foo'))
         el.data('foo', 'bar')
         t.assertEqual(el.data('foo'), 'bar')
+
+        delete window[$.expando]
       }
 
     })
