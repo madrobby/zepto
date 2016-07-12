@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-files = Dir['*/_posts/*'].reject {|f| f.index('changelog/') == 0 }
+files = Dir['*/_posts/*']
 missing = []
 
 for file in files

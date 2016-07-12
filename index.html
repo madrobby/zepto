@@ -19,7 +19,7 @@ github_url: https://github.com/madrobby/zepto
     <li><a href="#download">Download</a></li>
     <li><a href="#browsers">Browser support</a></li>
     <li><a href="#modules">Modules</a></li>
-    <li><a href="#changelog">Change Log</a></li>
+    <li><a href="https://github.com/madrobby/zepto/releases">Change Log</a></li>
     <li><a href="#thanks">Acknowledgements</a></li>
   </ul>
 
@@ -403,17 +403,10 @@ github_url: https://github.com/madrobby/zepto
     <hr>
     <h2 id="changelog">Change Log</h2>
 
-    {% for change in site.categories.changelog %}
-    <article class=changelog id="changelog-{{ change.title }}">
-      <h3>
-        {{ change.title }}
-        <small>&mdash; <i>{{ change.date | date_to_string }}</i>
-        {% if change.diff %}&mdash; <a href="{{ page.github_url }}/compare/{{ change.diff }}">diff</a>{% endif %}
-        </small>
-      </h3>
-      {{ change.content }}
-    </article>
-    {% endfor %}
+    <p>
+      See the <a href="https://github.com/madrobby/zepto/releases">change log</a>
+      on Github.
+    </p>
 
     <hr>
     <h2 id=thanks>Acknowledgements &amp; Thanks</h2>
@@ -438,7 +431,7 @@ github_url: https://github.com/madrobby/zepto
 
     <p>
       <small>
-        &copy; 2010-2014 Thomas Fuchs, <a href="http://letsfreckle.com">Freckle Online Time Tracking</a><br>
+        &copy; 2010-2016 Thomas Fuchs, <a href="http://letsfreckle.com">Freckle Online Time Tracking</a><br>
         Zepto and this documentation is released under the terms of the <a href="{{ page.github_url }}/blob/master/MIT-LICENSE">MIT license</a>.
       </small>
     </p>

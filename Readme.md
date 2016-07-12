@@ -5,8 +5,7 @@ Site is built with [Jekyll][], where each Zepto method is a Jekyll "post". They
 each render to individual files, but they don't matter because the docs are all
 compiled in one page (index.html).
 
-Jekyll categories correspond to Zepto modules, e.g. "ajax" and "event". The
-exception is the "changelog" category, which contains release notes.
+Jekyll categories correspond to Zepto modules, e.g. "ajax" and "event".
 
 The site can be built with:
 
