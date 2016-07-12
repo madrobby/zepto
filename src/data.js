@@ -62,7 +62,8 @@
   }
 
   $.hasData = function(elem) {
-    return $(elem).data().length > 0
+    var id = elem[exp], store = id && data[id]
+    return store ? !$.isEmptyObject(store) : false
   }
 
   $.fn.removeData = function(names) {
