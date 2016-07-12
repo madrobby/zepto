@@ -601,6 +601,19 @@
         t.pause()
       },
 
+      testAjaxJSONPWithData: function(t) {
+        t.pause()
+        $.ajax({
+          url: 'jsonp',
+          type: 'post',
+          data: { foo: 'bar' },
+          dataType: 'jsonp',
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('bar', data.query.foo)
+          })
+        })
+      },
+
       testNoCacheParam: function(t) {
         t.pause()
         var xhr = $.ajax({
