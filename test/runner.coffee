@@ -23,7 +23,9 @@ page = require('webpage').create()
 page.onConsoleMessage = (msg) ->
   console.log msg
 
+globalError = false
 page.onError = (msg, trace) ->
+  globalError = msg
   console.log 'ERROR: ' + msg
 
 # used for waiting until the tests finish running
@@ -64,9 +66,10 @@ loadNextSuite = ->
           console.log "#{paths[paths.length - 1]} - " + res.textContent
           /passed/.test res.className
 
-        if passed
+        if passed and not globalError
           loadNextSuite()
         else
+          console.log "#{paths[paths.length - 1]} - global error #{globalError}" if globalError
           phantom.exit(1)
 
 loadNextSuite()
