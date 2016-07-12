@@ -1652,13 +1652,8 @@
       },
 
       testCSSOnNonExistingElement: function (t) {
-        var errorWasRaised = false
-        try {
-          var color = $('.some-non-exist-elm').css('color')
-        } catch (e) {
-          errorWasRaised = true
-        }
-        t.assert(!errorWasRaised)
+        var el = $('.some-non-exist-elm')
+        t.assertUndefined(el.css('color'))
       },
 
       testCSSBatchSetOnNonExistingElementReturnsSelf: function (t) {
@@ -1667,7 +1662,7 @@
           'border': '2px solid #000',
           'color': 'rgb(0,255,0)'
         })
-        t.assertEqual(ret, el)
+        t.assertIdentical(ret, el)
       },
 
       testHtml: function(t){
