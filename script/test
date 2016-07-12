@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 port=3999
 test_url="http://localhost:${port}/"
 
@@ -29,5 +31,3 @@ trap terminate_test_server EXIT
 phantomjs --disk-cache=true \
   test/runner.js "$test_url" "$@" \
   2> >(grep -v "CoreText performance note" >&2)
-
-exit $?
