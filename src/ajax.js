@@ -291,10 +291,12 @@
       return xhr
     }
 
-    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
+    if (settings.xhrFields) for (name in settings.xhrFields) if(name !== "withCredentials") xhr[name] = settings.xhrFields[name]
 
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
+
+    if (settings.xhrFields && typeof settings.xhrFields["withCredentials"] !== undefined) xhr["withCredentials"] = settings.xhrFields["withCredentials"]
 
     for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 
