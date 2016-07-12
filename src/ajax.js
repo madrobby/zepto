@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var jsonpID = 0,
+  var jsonpID = +new Date(),
       document = window.document,
       key,
       name,
@@ -79,7 +79,7 @@
 
     var _callbackName = options.jsonpCallback,
       callbackName = ($.isFunction(_callbackName) ?
-        _callbackName() : _callbackName) || ('jsonp' + (++jsonpID)),
+        _callbackName() : _callbackName) || ('Zepto' + (jsonpID++)),
       script = document.createElement('script'),
       originalCallback = window[callbackName],
       responseData,
