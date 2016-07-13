@@ -158,6 +158,7 @@
 
         $(document).on(reg.handlers.apply(reg, globals))
         this.reg = reg
+        window.jsonpDummy = $.noop
       },
 
       tearDown: function() {
@@ -470,6 +471,7 @@
         $.ajax({
           url:      'slow?timestamp='+(+new Date),
           dataType: 'jsonp',
+          jsonpCallback: 'jsonpDummy',
           timeout:  20,
           success:  t.reg.handler('success'),
           error:    t.reg.handler('error'),
@@ -489,6 +491,7 @@
         var xhr = $.ajax({
           url:      'slow?timestamp='+(+new Date),
           dataType: 'jsonp',
+          jsonpCallback: 'jsonpDummy',
           timeout:  30,
           success:  t.reg.handler('success'),
           error:    t.reg.handler('error'),
