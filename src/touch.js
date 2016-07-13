@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2014 Thomas Fuchs
+//     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -57,7 +57,7 @@
     $(document)
       .bind('MSGestureEnd', function(e){
         var swipeDirectionFromVelocity =
-          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null
         if (swipeDirectionFromVelocity) {
           touch.el.trigger('swipe')
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
@@ -84,7 +84,7 @@
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
         // adds the current touch contact for IE gesture recognition
-        if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
+        if (gesture && _isPointerType) gesture.addPointer(e.pointerId)
       })
       .on('touchmove MSPointerMove pointermove', function(e){
         if((_isPointerType = isPointerEventType(e, 'move')) &&
@@ -107,8 +107,10 @@
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
           swipeTimeout = setTimeout(function() {
-            touch.el.trigger('swipe')
-            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            if (touch.el){
+              touch.el.trigger('swipe')
+              touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
+            }
             touch = {}
           }, 0)
 
@@ -125,7 +127,8 @@
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
-              touch.el.trigger(event)
+              // [by paper] fix -> "TypeError: 'undefined' is not an object (evaluating 'touch.el.trigger'), when double tap
+              if (touch.el) touch.el.trigger(event)
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {

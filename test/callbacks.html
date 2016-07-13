@@ -213,7 +213,7 @@
         },
 
         testLocking: function(t) {
-          output = "X";
+          output = "X"
           $.Callbacks(config).add(str).lock().add(str).fire("A").add(str)
           t.assertEqual("X", output, "Lock early")
         },

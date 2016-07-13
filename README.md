@@ -19,7 +19,7 @@ The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
 optional modules and remove some of the default ones you don't need, to keep the
 size at a minimum. That's when you need to check out Zepto's source code and use
-the build commands. Alternatively you can use the web based [Zepto Builder](http://github.e-sites.nl/zeptobuilder/)
+the build commands. Alternatively you can use the web based [Zepto Builder](http://github.e-sites.nl/zeptobuilder/).
 
 You will need Node.js installed on your system.
 
@@ -196,11 +196,16 @@ This will submit a pull request to us that we can review.
 
 ### Report a bug
 
-1. Check if the bug is already fixed in the [master branch][master] since the
-   last release.
+1. Check if the bug is already fixed in the master branch since the last release.
 2. Check [existing issues][issues]. Open a new one, including exact browser &
    platform information. For better formatting of your report, see
    [GitHub-flavored Markdown][mkd].
+
+### Help! It doesn't work in browserify!
+
+We have received complaints about not supporting popular JavaScript module loaders countless times. [Here](https://github.com/madrobby/zepto/pull/342#issuecomment-3006524) is a short explanation of our decision. A good JS loader should have a way to shim libraries which don't follow the CommonJS/AMD/UMD pattern.
+
+[Here is an example](https://github.com/silvenon/zepto-module-demo) of shimming Zepto for browserify, allowing you to easily import only needed modules while leaving the source code untouched.
 
 ### Running tests
 
@@ -228,9 +233,8 @@ reported to the the console you started the test server in (as well as
 the browser console if available).
 
   [zeptojs.com]: http://zeptojs.com
-  [master]: https://github.com/madrobby/zepto/commits/master
   [issues]: https://github.com/madrobby/zepto/issues
   [docs]: https://github.com/madrobby/zepto/tree/gh-pages#readme
-  [mkd]: http://github.github.com/github-flavored-markdown/
+  [mkd]: https://help.github.com/articles/creating-and-highlighting-code-blocks/
   [evidence.js]: https://github.com/tobie/Evidence
-  [phantomjs]: http://code.google.com/p/phantomjs/wiki/Installation
+  [phantomjs]: http://phantomjs.org/download.html

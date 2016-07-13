@@ -109,21 +109,21 @@
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("7.0.1",browser.version)
-        });
+        })
         detect(UA.Safari_OSX_7_0, function(os, browser){
           t.assert(!os.ipad)
           t.assertTrue(browser.webkit)
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("7.0",browser.version)
-        });
+        })
         detect(UA.Safari_OSX_6_0, function(os, browser){
           t.assert(!os.ipad)
           t.assertTrue(browser.webkit)
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("6.0",browser.version)
-        });
+        })
       },
 
       testSafariWindows: function(t){
@@ -135,7 +135,7 @@
           t.assertTrue(browser.safari)
           t.assertFalse(!!browser.chrome)
           t.assertEqual("5.0.4", browser.version)
-        });
+        })
       },
 
       testWebOS: function(t){

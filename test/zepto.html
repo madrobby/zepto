@@ -619,11 +619,11 @@
         t.assertLength(4, $('span.findme', domElement))
 
         // Selector with DOM Element Context
-        var domElement = document.getElementById('find1');
-        t.assertLength(4, $('span.findme', domElement));
+        var domElement = document.getElementById('find1')
+        t.assertLength(4, $('span.findme', domElement))
 
         // DOM Element with DOM Element Context
-        t.assertLength(1, $(domElement, domElement));
+        t.assertLength(1, $(domElement, domElement))
       },
 
       testDollarWithDocument: function(t){
@@ -844,6 +844,24 @@
         t.assertEqual('name=banana,taste=sweet', results.sort().join(','))
       },
 
+      testDollarMapArrayLike: function(t){
+        var results
+        results = $.map({ length: 1, a: 'b' }, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual('a=b,length=1', results.sort().join(','))
+
+        results = $.map({ length: 0, a: 'b' }, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual(0, results.length)
+
+        results = $.map(function(){}, function(value, key) {
+          return key + '=' + value
+        })
+        t.assertEqual(0, results.length)
+      },
+
       testDollarGrep: function(t){
         var fruits = ['apples', 'oranges', 'pineapple', 'peach']
         var result = $.grep(fruits, function(name){ return /apple/.test(name) })
@@ -1033,6 +1051,15 @@
         t.assertNull($('#doesnotexist').offset())
         var el = $('#some_element')
         t.assertIdentical(el, el.offset({}))
+        t.assertSame($('<div>').offset(), {left: 0, top: 0})
+      },
+
+      testOffsetOnHTML: function(t){
+        var offset = $('html').offset()
+        t.assertEqual(offset.left, 0)
+        t.assertEqual(offset.top, 0)
+        t.assert('width' in offset)
+        t.assert('height' in offset)
       },
 
       testWidth: function(t){
@@ -1085,6 +1112,13 @@
         t.assertLength(0, el.closest('#parents', $('#li1').get(0)))
         // no ancestor matched
         t.assertLength(0, el.closest('form'))
+      },
+
+      testClosestMultiple: function(t){
+        var els = $('#parents ul li')
+        var uls = els.closest('ul')
+        t.assertEqualCollection($('#parents ul'), uls)
+        t.assertEqualCollection($('#parents'), uls.closest('#parents'))
       },
 
       testClosestWithCollection: function(t){
@@ -1395,7 +1429,7 @@
       },
 
       testFindWithFalsyValue: function(t){
-        var element = '<div><a>1</a></div>';
+        var element = '<div><a>1</a></div>'
         t.assertZeptoCollection(0, $(element).find(undefined))
         t.assertZeptoCollection(0, $(element).find(false))
         t.assertZeptoCollection(0, $(element).find(0))
@@ -1584,20 +1618,24 @@
       },
 
       testCSSOnNonExistingElement: function (t) {
-        var errorWasRaised = false
-        try {
-          var color = $('.some-non-exist-elm').css('color')
-        } catch (e) {
-          errorWasRaised = true
-        }
-        t.assert(!errorWasRaised)
+        var el = $('.some-non-exist-elm')
+        t.assertUndefined(el.css('color'))
+      },
+
+      testCSSBatchSetOnNonExistingElementReturnsSelf: function (t) {
+        var el = $('.some-non-exist-elm')
+        var ret = el.css({
+          'border': '2px solid #000',
+          'color': 'rgb(0,255,0)'
+        })
+        t.assertIdentical(ret, el)
       },
 
       testHtml: function(t){
-        var div = $('div.htmltest');
+        var div = $('div.htmltest')
 
-        div.text(undefined);
-        t.assertEqual('', div.html());
+        div.text(undefined)
+        t.assertEqual('', div.html())
 
         t.assertIdentical(div, div.html('yowza'))
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
@@ -1648,15 +1686,18 @@
         $('#texttest3').text(undefined)
         t.assertEqual('', $('#texttest3').text())
 
-        t.assertEqual('Here is some text', $('div.texttest').text())
+        t.assertEqual('Here is some text', $('#texttest1').text())
         t.assertEqual('And some more', $('#texttest2').text())
+
+        // gets all text of selectors matching
+        t.assertEqual('Here is some textAnd some more', $('div.texttest').text())
 
         $('div.texttest').text("Let's set it")
         t.assertEqual("Let's set it", $('#texttest1').text())
         t.assertEqual("Let's set it", $('#texttest2').text())
 
         $('#texttest2').text('')
-        t.assertEqual("Let's set it", $('div.texttest').text())
+        t.assertEqual("Let's set it", $('#texttest1').text())
         t.assertEqual('', $('#texttest2').text())
       },
 
@@ -1813,12 +1854,12 @@
         el.removeAttr('data-name')
         t.assertNull(el.attr('data-name'))
       },
-      
+
       testRemoveMultipleAttr: function(t) {
         var el = $('#attr_remove_multi')
         t.assertEqual('someId1', el.attr('data-id'))
         t.assertEqual('someName1', el.attr('data-name'))
-        
+
         el.removeAttr('data-id data-name')
         t.assertNull(el.attr('data-id'))
         t.assertNull(el.attr('data-name'))
@@ -1907,8 +1948,11 @@
 
         t.assertEqual('Hello World', input.val())
 
-        input.val(undefined);
-        t.assertEqual('undefined', input.val());
+        input.val(undefined)
+        t.assertEqual('', input.val())
+
+        input.val(null)
+        t.assertEqual('', input.val())
 
         input.val('')
         t.assertEqual('', input.val())
@@ -2105,6 +2149,19 @@
         )
         t.assertEqual('original one two three four five six',
           $.map(el.children(), function(c){ return $(c).text() }).join(' '))
+      },
+
+      testAppendWithArrayParams: function(t){
+        var zpElement = $('<b>five</b>')
+        var multElements = $('<b>six</b><b>seven</b>')
+        var node = document.createElement('b')
+        node.appendChild(document.createTextNode('four'))
+
+        // append elements on this array
+        var arrElements = ['<b>one</b><b>two</b>', '<b>three</b>', node, zpElement, multElements ]
+        var el = $('<div></div>')
+        el.append(arrElements)
+        t.assertEqual('<b>one</b><b>two</b><b>three</b><b>four</b><b>five</b><b>six</b><b>seven</b>', el.html())
       },
 
       testAppendToPrependTo: function(t){

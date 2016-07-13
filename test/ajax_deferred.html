@@ -92,7 +92,7 @@
         $.active = 0
 
         for (var key in window)
-          if (/^jsonp\d+$/.test(key) && window[key] === undefined)
+          if (/^Zepto\d+$/.test(key) && window[key] === undefined)
             delete window[key]
       },
 

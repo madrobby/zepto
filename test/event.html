@@ -207,6 +207,15 @@
         t.assertIdentical(this.el.get(0), currentTarget)
       },
 
+      testDelegateEventTimestamp: function(t){
+        var timestamp
+        $(document).on('click', 'div', function(e){
+          timestamp = e.timeStamp
+        })
+        click($('<span>').appendTo(this.el))
+        t.assert(timestamp > 0, 'timestamp was ' + timestamp)
+      },
+
       testPreventDefaultWithDelegatedEvent: function(t){
         var isDefaultPrevented, span = $('<span>').appendTo(this.el)
 
@@ -223,14 +232,14 @@
 
       testEventsOnPlainObjects: function (t){
         var obj = {},
-        	log = [],
-        	fn1 = function(){ log.push('a') },
+          log = [],
+          fn1 = function(){ log.push('a') },
           fn2 = function(evt, value){ log.push(value)    },
-        	fn3 = function(evt, value){ log.push("event2") }
+          fn3 = function(evt, value){ log.push("event2") }
         $(obj)
-        	.on('event', fn1)
-        	.on('event', fn2)
-        	.on('event2', fn3)
+          .on('event', fn1)
+          .on('event', fn2)
+          .on('event2', fn3)
 
         $(obj).trigger('event', 'b')
         t.assertEqual('a b', log.join(' '))
@@ -245,8 +254,8 @@
         t.assertEqual('d', log.join(' '))
 
         log = []
-        $(obj).trigger('event2');
-        t.assertEqual('event2', log.join(' '));
+        $(obj).trigger('event2')
+        t.assertEqual('event2', log.join(' '))
       },
 
       testHandlerWithoutData: function(t){
@@ -264,6 +273,21 @@
       testHandlerWithData: function(t){
         var data = {}, gotData, numArgs
 
+        $(document).on('click', data, function(event){
+          gotData = event.data
+          numArgs = arguments.length
+        })
+        t.assertUndefined(gotData)
+
+        click(this.el)
+        t.assertEqual(1, numArgs)
+        t.assertIdentical(data, gotData)
+      },
+      
+      testHandlerWithFunctionAsData: function(t){
+        var data = function () { console.log('foo') },
+            gotData, numArgs
+        
         $(document).on('click', data, function(event){
           gotData = event.data
           numArgs = arguments.length
