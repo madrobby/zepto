@@ -121,7 +121,7 @@ li + li {
 li > ul { margin-top: .3em }
 li li { margin-top: 0 }
 code, pre, tt {
-  font: normal 12px/18px Monaco, Consolas, "Lucida Console", monospace;
+  font: normal 13px/18px Consolas, "Lucida Sans Typewriter", monospace;
 }
 pre {
   background: #f8f8ff;
