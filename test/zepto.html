@@ -1798,7 +1798,7 @@
         t.assertEqual('someOtherName', els.attr("data-name"))
         t.assertEqual('someOtherId', $('#attr_2').attr('data-id'))
 
-        t.assertNull(els.attr("nonExistentAttribute"))
+        t.assertUndefined(els.attr("nonExistentAttribute"))
 
         els.attr("data-id", false)
         t.assertEqual("false", els.attr("data-id"))
@@ -1822,7 +1822,7 @@
         var el = $('<div data-name="foo">')
         t.assertIdentical(el, el.attr('data-name', undefined), 'setter should return self')
         t.assertNull(el.get(0).getAttribute('data-name'), 'attribute should be erased')
-        t.assertNull(el.attr('data-name'), 'attr should reflect erased attribute')
+        t.assertUndefined(el.attr('data-name'), 'attr should reflect erased attribute')
       },
 
       testProp: function(t){
@@ -1909,18 +1909,18 @@
       testAttrNullUnset: function(t){
         var el = $('<div id=hi>')
         el.attr('id', null)
-        t.assertIdentical('', el.attr('id'))
+        t.assertUndefined(el.attr('id'))
 
         el.attr('id', 'hello')
         el.attr({ id:null })
-        t.assertIdentical('', el.attr('id'))
+        t.assertUndefined(el.attr('id'))
       },
 
       testRemoveAttr: function(t) {
         var el = $('#attr_remove')
         t.assertEqual('boom', el.attr('data-name'))
         el.removeAttr('data-name')
-        t.assertNull(el.attr('data-name'))
+        t.assertUndefined(el.attr('data-name'))
       },
 
       testRemoveMultipleAttr: function(t) {
@@ -1929,8 +1929,8 @@
         t.assertEqual('someName1', el.attr('data-name'))
 
         el.removeAttr('data-id data-name')
-        t.assertNull(el.attr('data-id'))
-        t.assertNull(el.attr('data-name'))
+        t.assertUndefined(el.attr('data-id'))
+        t.assertUndefined(el.attr('data-name'))
       },
 
       testRemoveAttrNoElement: function(t){
@@ -1939,9 +1939,9 @@
 
         var els = $('<b rel=up></b> <i rel=next></i>')
         t.assertIdentical(els, els.removeAttr('rel'))
-        t.assertNull(els.eq(0).attr('rel'))
+        t.assertUndefined(els.eq(0).attr('rel'))
         t.assertUndefined(els.eq(1).attr('rel'))
-        t.assertNull(els.eq(2).attr('rel'))
+        t.assertUndefined(els.eq(2).attr('rel'))
       },
 
       testData: function(t) {
@@ -2615,8 +2615,9 @@
       },
 
       testBoolAttr: function (t) {
-        t.assertEqual($('#BooleanInput').attr('required'), true)
-        t.assertEqual($('#BooleanInput').attr('non_existant_attr'), undefined)
+        var el = $('#BooleanInput')
+        t.assertEqual('', el.attr('required'))
+        t.assertUndefined(el.attr('non_existant_attr'))
       },
 
       testDocumentReady: function (t) {
