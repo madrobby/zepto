@@ -120,6 +120,7 @@ li + li {
 }
 li > ul { margin-top: .3em }
 li li { margin-top: 0 }
+figure { margin: 0; }
 code, pre, tt {
   font: normal 13px/18px Consolas, "Lucida Sans Typewriter", monospace;
 }
