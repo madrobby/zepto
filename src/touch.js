@@ -57,7 +57,7 @@
     $(document)
       .bind('MSGestureEnd', function(e){
         var swipeDirectionFromVelocity =
-          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
+          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null
         if (swipeDirectionFromVelocity) {
           touch.el.trigger('swipe')
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
@@ -84,7 +84,7 @@
         touch.last = now
         longTapTimeout = setTimeout(longTap, longTapDelay)
         // adds the current touch contact for IE gesture recognition
-        if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
+        if (gesture && _isPointerType) gesture.addPointer(e.pointerId)
       })
       .on('touchmove MSPointerMove pointermove', function(e){
         if((_isPointerType = isPointerEventType(e, 'move')) &&

@@ -1,0 +1,17 @@
+#!/usr/bin/awk -f
+
+BEGIN { if (length(ARGV) < 2) exit 0 }
+
+/<script/ { script=FILENAME }
+/<\/script/ { script="" }
+
+/;\s*$/ && (FILENAME !~ /.html$/ || script == FILENAME) {
+  printf("%s:%d: no semicolons, please\n", FILENAME, FNR)
+  warns++
+}
+/\t/ {
+  printf("%s:%d: use spaces instead of tabs\n", FILENAME, FNR)
+  warns++
+}
+
+END { if (warns) exit 1 }

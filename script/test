@@ -6,6 +6,8 @@ test_url="http://localhost:${port}/"
 
 export PATH=node_modules/.bin:"$PATH"
 
+git ls-files \*.js \*.html | grep -v ^vendor/ | xargs script/lint
+
 coffee test/server.coffee $port &
 pid=$!
 

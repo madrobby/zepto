@@ -8,7 +8,7 @@
   try {
     getComputedStyle(undefined)
   } catch(e) {
-    var nativeGetComputedStyle = getComputedStyle;
+    var nativeGetComputedStyle = getComputedStyle
     window.getComputedStyle = function(element, pseudoElement){
       try {
         return nativeGetComputedStyle(element, pseudoElement)
