@@ -207,6 +207,15 @@
         t.assertIdentical(this.el.get(0), currentTarget)
       },
 
+      testDelegateEventTimestamp: function(t){
+        var timestamp
+        $(document).on('click', 'div', function(e){
+          timestamp = e.timeStamp
+        })
+        click($('<span>').appendTo(this.el))
+        t.assert(timestamp > 0, 'timestamp was ' + timestamp)
+      },
+
       testPreventDefaultWithDelegatedEvent: function(t){
         var isDefaultPrevented, span = $('<span>').appendTo(this.el)
 
