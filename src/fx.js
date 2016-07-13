@@ -10,10 +10,42 @@
     transform,
     transitionProperty, transitionDuration, transitionTiming, transitionDelay,
     animationName, animationDuration, animationTiming, animationDelay,
-    cssReset = {}
-
+    cssReset = {},
+    animationJSProperties = ['scrollTop'] // a filter of valid node properites that deal with positioning -- AC 5/24/2016
+  
+  function findAnimationJSProperties(obj) {
+    var jsProperties = []
+    for (var key in obj)
+      (animationJSProperties.indexOf(key) != -1) ? jsProperties.push(key) : null
+    return jsProperties
+  }
   function dasherize(str) { return str.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : name.toLowerCase() }
+
+  // scrollUp is a recursive function that will continue to execute until the taget and current scoll position match -- AC 5/24/2016  ( refactor in future)
+  function scrollUp(node,currentPosition, target ,marker) {
+      if (currentPosition > target) {
+        node.scrollTop = node.scrollTop - marker;
+        setTimeout(function () {
+          scrollUp(node,node.scrollTop,target,marker)
+        },0)
+      }
+  }
+  
+  // scrollToPosition takes a series of nodes and adjust their scroll position to the target postion in 
+  // increments that are derived from the distance/duration -- AC 5/24/2016 ( refactor in future)
+  function scrollToPosition(nodes, targetPosition, duration) {
+    duration *= 10;
+    var counter = nodes.length;
+    for (var i = 0; i <= nodes.length; i++) {
+      if (typeof nodes[i] != "undefined" && typeof nodes[i].scrollTop != "undefined"){
+          var currentPosition = nodes[i].scrollTop,
+            distance = currentPosition - targetPosition,
+            marker = distance / duration;
+          scrollUp(nodes[i],currentPosition, targetPosition ,marker)
+      }
+    }
+  }
 
   $.each(vendors, function(vendor, event){
     if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
@@ -56,8 +88,8 @@
 
   $.fn.anim = function(properties, duration, ease, callback, delay){
     var key, cssValues = {}, cssProperties, transforms = '',
-        that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
-        fired = false
+      that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
+      fired = false
 
     if (duration === undefined) duration = $.fx.speeds._default / 1000
     if (delay === undefined) delay = 0
@@ -70,6 +102,22 @@
       cssValues[animationDelay] = delay + 's'
       cssValues[animationTiming] = (ease || 'linear')
       endEvent = $.fx.animationEnd
+    } else if (typeof properties == "object" && findAnimationJSProperties(properties).length) {
+          // Because the animation plugin doesn't accept node properties and adjust values, 
+          // a condition was added specifically for scroll top whereby we adjust a nodes' scrollTop to a 
+          // provided target position.  -- AC 5/24/2016  ( refactor in future)
+            var animationProperties = findAnimationJSProperties(properties),
+              counter = animationProperties.length - 1;
+            do {
+              switch (animationProperties[counter]){ 
+                case "scrollTop":
+                    scrollToPosition(this,properties[animationProperties[counter]],duration)
+                  break;
+                default:
+                  break;
+              }
+              counter--;
+            }while(counter >= 0)
     } else {
       cssProperties = []
       // CSS transitions
@@ -120,4 +168,4 @@
   }
 
   testEl = null
-})(Zepto)
+})(nQuery)
