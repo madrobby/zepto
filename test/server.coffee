@@ -91,7 +91,7 @@ app.post '/test/create', (req, res) ->
 
 app.all '/test/slow', (req, res) ->
   setTimeout ->
-    res.send 'DONE'
+    res.jsonp result: 'ok'
   , 200
 
 app.get '/test/cached', (req, res) ->
