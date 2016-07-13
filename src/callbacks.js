@@ -93,7 +93,7 @@
             return !list
           },
           lock: function() {
-            stack = undefined;
+            stack = undefined
             if (!memory) Callbacks.disable()
             return this
           },

@@ -295,12 +295,12 @@
       t.assertLength(1, $fragment)
       t.assertEqual(Node.DOCUMENT_FRAGMENT_NODE, $fragment.get(0).nodeType)
 
-      var fragment = $fragment[0];
+      var fragment = $fragment[0]
       var $div = $('<div id="child"><div class="inner"></div></div>')
 
       t.assertLength(0, $('#child', fragment))
 
-      fragment.appendChild($div[0]);
+      fragment.appendChild($div[0])
 
       var expectedElement = fragment.querySelector('#child')
 
@@ -313,7 +313,7 @@
       t.assertLength(1, $('.inner', fragment))
       t.assertEqual(expectedElement, $('.inner', fragment).get(0))
 
-      var expectedElements = fragment.querySelectorAll('div');
+      var expectedElements = fragment.querySelectorAll('div')
 
       t.assertLength(2, $('div', fragment))
       t.assertEqual(expectedElements[0], $('div', fragment).get(0))
@@ -651,11 +651,11 @@
         t.assertLength(4, $('span.findme', domElement))
 
         // Selector with DOM Element Context
-        var domElement = document.getElementById('find1');
-        t.assertLength(4, $('span.findme', domElement));
+        var domElement = document.getElementById('find1')
+        t.assertLength(4, $('span.findme', domElement))
 
         // DOM Element with DOM Element Context
-        t.assertLength(1, $(domElement, domElement));
+        t.assertLength(1, $(domElement, domElement))
       },
 
       testDollarWithDocument: function(t){
@@ -1489,7 +1489,7 @@
       },
 
       testFindWithFalsyValue: function(t){
-        var element = '<div><a>1</a></div>';
+        var element = '<div><a>1</a></div>'
         t.assertZeptoCollection(0, $(element).find(undefined))
         t.assertZeptoCollection(0, $(element).find(false))
         t.assertZeptoCollection(0, $(element).find(0))
@@ -1692,10 +1692,10 @@
       },
 
       testHtml: function(t){
-        var div = $('div.htmltest');
+        var div = $('div.htmltest')
 
-        div.text(undefined);
-        t.assertEqual('', div.html());
+        div.text(undefined)
+        t.assertEqual('', div.html())
 
         t.assertIdentical(div, div.html('yowza'))
         t.assertEqual('yowza', document.getElementById('htmltest1').innerHTML)
