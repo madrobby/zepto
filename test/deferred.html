@@ -274,7 +274,7 @@
             return createDeferred().resolveWith(context)
           }).done(function() {
             t.assertEqual(context, this, "custom context of returned deferred correctly propagated")
-          });
+          })
 
           defer = createDeferred()
           piped = defer.then(function(value) {
@@ -285,7 +285,7 @@
           piped.done(function(value) {
             t.assertEqual(piped, this, "default context gets updated to latest promise in the chain")
             t.assertEqual(6, value, "proper value received")
-          });
+          })
 
           defer2 = createDeferred()
           piped2 = defer2.then()
