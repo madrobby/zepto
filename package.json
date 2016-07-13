@@ -1,6 +1,7 @@
 {
     "name": "zepto"
   , "version": "1.1.6"
+  , "main": "dist/zepto.js"
   , "homepage": "http://zeptojs.com"
   , "scripts": {
       "test": "coffee make test"
