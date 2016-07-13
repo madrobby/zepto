@@ -196,8 +196,7 @@ This will submit a pull request to us that we can review.
 
 ### Report a bug
 
-1. Check if the bug is already fixed in the [master branch][master] since the
-   last release.
+1. Check if the bug is already fixed in the master branch since the last release.
 2. Check [existing issues][issues]. Open a new one, including exact browser &
    platform information. For better formatting of your report, see
    [GitHub-flavored Markdown][mkd].
@@ -234,9 +233,8 @@ reported to the the console you started the test server in (as well as
 the browser console if available).
 
   [zeptojs.com]: http://zeptojs.com
-  [master]: https://github.com/madrobby/zepto/commits/master
   [issues]: https://github.com/madrobby/zepto/issues
   [docs]: https://github.com/madrobby/zepto/tree/gh-pages#readme
-  [mkd]: http://github.github.com/github-flavored-markdown/
+  [mkd]: https://help.github.com/articles/creating-and-highlighting-code-blocks/
   [evidence.js]: https://github.com/tobie/Evidence
-  [phantomjs]: http://code.google.com/p/phantomjs/wiki/Installation
+  [phantomjs]: http://phantomjs.org/download.html
