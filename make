@@ -65,7 +65,7 @@ target.compress = ->
 target.publish = ->
   tag = 'v' + package_version()
   if git_version() == tag
-    rm '-r', zepto_js
+    rm '-f', zepto_js
     env['MODULES'] = env['NOAMD'] = ''
     target.dist()
     res = exec 'npm publish'
