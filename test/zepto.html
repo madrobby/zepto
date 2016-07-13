@@ -1847,6 +1847,14 @@
         t.assertEqual(div.prop('contenteditable'), 'true')
       },
 
+      testRemoveProp: function(t){
+        var el = $('<span>')
+        el.prop('hello', 'world')
+        t.assertEqual('world', el[0].hello)
+        el.removeProp('hello')
+        t.assertUndefined(el[0].hello)
+      },
+
       testPropSetterErase: function(t){
         var input = $('<input readonly>')
         t.assertIdentical(input, input.prop('readonly', false))
