@@ -2,7 +2,6 @@
 require 'shelljs/make'
 fs = require 'fs'
 
-version   = '1.1.6'
 zepto_js  = 'dist/zepto.js'
 zepto_min = 'dist/zepto.min.js'
 zepto_gz  = 'dist/zepto.min.gz'
@@ -63,6 +62,18 @@ target.compress = ->
     factor = fsize(zepto_js) / fsize(zepto_gz)
     echo "compression factor: #{format_number(factor)}"
 
+target.publish = ->
+  tag = 'v' + package_version()
+  if git_version() == tag
+    rm '-r', zepto_js
+    env['MODULES'] = env['NOAMD'] = ''
+    target.dist()
+    res = exec 'npm publish'
+    exit res.code
+  else
+    console.error 'error: latest commit should be tagged with ' + tag
+    exit 1
+
 ## HELPERS ##
 
 stale = (file, source) ->
@@ -83,9 +94,15 @@ format_number = (size, precision = 1) ->
 report_size = (file) ->
   echo "#{file}: #{format_number(fsize(file) / 1024)} KiB"
 
-describe_version = ->
+package_version = ->
+  JSON.parse(cat('package.json')).version
+
+git_version = ->
   desc = exec "git --git-dir='#{root + '.git'}' describe --tags HEAD", silent: true
-  if desc.code is 0 then desc.output.replace(/\s+$/, '') else version
+  desc.output.replace(/\s+$/, '') if desc.code is 0
+
+describe_version = ->
+  git_version() || package_version()
 
 minify = (source_code) ->
   uglify = require('uglify-js')
