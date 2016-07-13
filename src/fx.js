@@ -47,7 +47,7 @@
     }
   }
 
-  $.each(vendors, function(vendor, event){
+  if (testEl.style.transform === undefined) $.each(vendors, function(vendor, event){
     if (testEl.style[vendor + 'TransitionProperty'] !== undefined) {
       prefix = '-' + vendor.toLowerCase() + '-'
       eventPrefix = event
@@ -168,4 +168,4 @@
   }
 
   testEl = null
-})(nQuery)
+})(Zepto)

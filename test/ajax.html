@@ -158,12 +158,13 @@
 
         $(document).on(reg.handlers.apply(reg, globals))
         this.reg = reg
+        window.jsonpDummy = $.noop
       },
 
       tearDown: function() {
         $(document).off()
         for (var key in window)
-          if (/^(jsonp\d+|blah)$/.test(key) && window[key] === undefined)
+          if (/^(Zepto\d+|blah)$/.test(key) && window[key] === undefined)
             delete window[key]
       },
 
@@ -322,6 +323,23 @@
         })
       },
 
+      testAjaxDataFilterJSON: function(t){
+        t.pause()
+        resumeOnAjaxError(t)
+
+        $.ajax({
+          url: 'taintedJSON',
+          dataFilter: function(data, type) {
+            if (!data) return
+            return data.replace(/^\s*while\(1\);\s*/, '')
+          },
+          headers: { accept: 'application/json' },
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('world', data.hello)
+          })
+        })
+      },
+
       testAjaxGetJSON: function(t){
         t.pause()
         resumeOnAjaxError(t)
@@ -470,6 +488,7 @@
         $.ajax({
           url:      'slow?timestamp='+(+new Date),
           dataType: 'jsonp',
+          jsonpCallback: 'jsonpDummy',
           timeout:  20,
           success:  t.reg.handler('success'),
           error:    t.reg.handler('error'),
@@ -489,6 +508,7 @@
         var xhr = $.ajax({
           url:      'slow?timestamp='+(+new Date),
           dataType: 'jsonp',
+          jsonpCallback: 'jsonpDummy',
           timeout:  30,
           success:  t.reg.handler('success'),
           error:    t.reg.handler('error'),
@@ -601,6 +621,19 @@
         t.pause()
       },
 
+      testAjaxJSONPWithData: function(t) {
+        t.pause()
+        $.ajax({
+          url: 'jsonp',
+          type: 'post',
+          data: { foo: 'bar' },
+          dataType: 'jsonp',
+          success: t.reg.resumeHandler('success', function(data){
+            t.assertEqual('bar', data.query.foo)
+          })
+        })
+      },
+
       testNoCacheParam: function(t) {
         t.pause()
         var xhr = $.ajax({
@@ -659,7 +692,7 @@
         })
 
         var scriptSrc = $('head script:last-child').attr('src')
-        t.assert(/^jsonp\?callback=jsonp\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
+        t.assert(/^jsonp\?callback=Zepto\d+&_=[\d]{13}$/.test(scriptSrc), scriptSrc)
         t.pause()
       },
 
@@ -671,7 +704,7 @@
         })
 
         var scriptSrc = $('head script:last-child').attr('src')
-        t.assert(/^jsonp\?callback=jsonp\d+$/.test(scriptSrc), scriptSrc)
+        t.assert(/^jsonp\?callback=Zepto\d+$/.test(scriptSrc), scriptSrc)
         t.pause()
       },
 
