@@ -245,8 +245,8 @@
         t.assertEqual('d', log.join(' '))
 
         log = []
-        $(obj).trigger('event2');
-        t.assertEqual('event2', log.join(' '));
+        $(obj).trigger('event2')
+        t.assertEqual('event2', log.join(' '))
       },
 
       testHandlerWithoutData: function(t){
