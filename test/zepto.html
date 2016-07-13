@@ -1114,6 +1114,13 @@
         t.assertLength(0, el.closest('form'))
       },
 
+      testClosestMultiple: function(t){
+        var els = $('#parents ul li')
+        var uls = els.closest('ul')
+        t.assertEqualCollection($('#parents ul'), uls)
+        t.assertEqualCollection($('#parents'), uls.closest('#parents'))
+      },
+
       testClosestWithCollection: function(t){
         var targets = $('#parents > li')
         var result = $('#li2').closest(targets)
