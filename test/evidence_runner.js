@@ -108,7 +108,7 @@
     }
   }
 
-  var globals = [], expected = ['Zepto', '$', 'Evidence']
+  var globals = [], expected = ['Zepto', '$', 'Evidence', '_zid']
   for (var key in window) globals.push(key)
 
   function checkLeakedGlobals() {
