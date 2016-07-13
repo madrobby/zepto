@@ -440,6 +440,27 @@
         t.assertTrue($.isWindow($('iframe').get(0).contentWindow))
       },
 
+      testDollarIsNumeric: function(t){
+        t.assertTrue($.isNumeric( '-10' ))
+        t.assertTrue($.isNumeric( '0' ))
+        t.assertTrue($.isNumeric( 0xFF ))
+        t.assertTrue($.isNumeric( '0xFF' ))
+        t.assertTrue($.isNumeric( '8e5' ))
+        t.assertTrue($.isNumeric( '3.1415' ))
+        t.assertTrue($.isNumeric( +10 ))
+        t.assertTrue($.isNumeric( 0144 ))
+
+        t.assertFalse($.isNumeric( '-0x42' ), '-0x42')
+        t.assertFalse($.isNumeric( '7.2acdgs' ), '7.2acdgs')
+        t.assertFalse($.isNumeric( '' ), 'empty string')
+        t.assertFalse($.isNumeric( {} ), 'empty hash')
+        t.assertFalse($.isNumeric( NaN ), 'NaN')
+        t.assertFalse($.isNumeric( null ), 'null')
+        t.assertFalse($.isNumeric( true ), 'true')
+        t.assertFalse($.isNumeric( Infinity ), 'Infinity')
+        t.assertFalse($.isNumeric( undefined ), 'undefined')
+      },
+
       // test to see if we augment iOS 3.2 with String#trim()
       testTrim: function(t){
         t.assertEqual("blah", " blah ".trim())
