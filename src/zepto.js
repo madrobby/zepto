@@ -655,6 +655,10 @@ var Zepto = (function() {
         }) :
         (this[0] && this[0][name])
     },
+    removeProp: function(name){
+      name = propMap[name] || name
+      return this.each(function(){ delete this[name] })
+    },
     data: function(name, value){
       var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase()
 
