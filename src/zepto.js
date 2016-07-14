@@ -905,7 +905,7 @@ var Zepto = (function() {
     var inside = operatorIndex % 2 //=> prepend, append
 
     $.fn[operator] = function(){
-      // arguments can be nodes, arrays of nodes, nQuery objects and HTML strings
+      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
             var arr = []
             argType = type(arg)
