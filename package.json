@@ -1,6 +1,7 @@
 {
     "name": "zepto"
-  , "version": "1.1.6"
+  , "version": "1.2.0"
+  , "main": "dist/zepto.js"
   , "homepage": "http://zeptojs.com"
   , "scripts": {
       "test": "coffee make test"
@@ -8,10 +9,7 @@
     , "start": "coffee test/server.coffee"
   }
   , "repository": "madrobby/zepto"
-  , "license": {
-      "type": "MIT"
-    , "url": "http://zeptojs.com/license/"
-  }
+  , "license": "MIT"
   , "devDependencies": {
       "uglify-js": "2.4.x"
     , "express": "3.1.x"

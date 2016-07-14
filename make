@@ -2,7 +2,6 @@
 require 'shelljs/make'
 fs = require 'fs'
 
-version   = '1.1.6'
 zepto_js  = 'dist/zepto.js'
 zepto_min = 'dist/zepto.min.js'
 zepto_gz  = 'dist/zepto.min.gz'
@@ -19,7 +18,7 @@ target.all = ->
 target.test = ->
   test_app = require './test/server'
   server = test_app.listen port
-  exec "phantomjs --disk-cache=true test/runner.coffee 'http://localhost:#{port}/'", (code) ->
+  exec "phantomjs --disk-cache=true test/runner.js 'http://localhost:#{port}/'", (code) ->
     server.close -> exit(code)
 
 target[zepto_js] = ->
@@ -42,8 +41,9 @@ target.build = ->
   modules = (env['MODULES'] || 'zepto event ajax form ie').split(' ')
   module_files = ( "src/#{module}.js" for module in modules )
   intro = "/* Zepto #{describe_version()} - #{modules.join(' ')} - zeptojs.com/license */\n"
-  dist = (intro + cat(module_files).replace(/^\/[\/*].*$/mg, '')).replace(/\n{3,}/g, "\n\n")
-  dist.to(zepto_js)
+  dist = cat(module_files).replace(/^\/[\/*].*$/mg, '').replace(/\n{3,}/g, "\n\n")
+  dist = cat('src/amd_layout.js').replace(/YIELD/, -> dist.trim()) unless env['NOAMD']
+  (intro + dist).to(zepto_js)
   report_size(zepto_js)
 
 target.minify = ->
@@ -62,6 +62,18 @@ target.compress = ->
     report_size(zepto_gz)
     factor = fsize(zepto_js) / fsize(zepto_gz)
     echo "compression factor: #{format_number(factor)}"
+
+target.publish = ->
+  tag = 'v' + package_version()
+  if git_version() == tag
+    rm '-f', zepto_js
+    env['MODULES'] = env['NOAMD'] = ''
+    target.dist()
+    res = exec 'npm publish'
+    exit res.code
+  else
+    console.error 'error: latest commit should be tagged with ' + tag
+    exit 1
 
 ## HELPERS ##
 
@@ -83,16 +95,22 @@ format_number = (size, precision = 1) ->
 report_size = (file) ->
   echo "#{file}: #{format_number(fsize(file) / 1024)} KiB"
 
-describe_version = ->
+package_version = ->
+  JSON.parse(cat('package.json')).version
+
+git_version = ->
   desc = exec "git --git-dir='#{root + '.git'}' describe --tags HEAD", silent: true
-  if desc.code is 0 then desc.output.replace(/\s+$/, '') else version
+  desc.output.replace(/\s+$/, '') if desc.code is 0
+
+describe_version = ->
+  git_version() || package_version()
 
 minify = (source_code) ->
   uglify = require('uglify-js')
   compressor = uglify.Compressor()
   ast = uglify.parse(source_code)
   ast.figure_out_scope()
-  ast.compute_char_frequency();
-  ast.mangle_names();
+  ast.compute_char_frequency()
+  ast.mangle_names()
   ast = ast.transform(compressor)
   return ast.print_to_string()

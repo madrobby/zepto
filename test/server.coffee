@@ -83,6 +83,10 @@ app.get '/test/json', (req, res) ->
   else
     res.send 400, 'FAIL'
 
+app.get '/test/taintedJSON', (req, res) ->
+  res.set 'Content-Type', 'application/json'
+  res.send 'while(1);{"hello" : "world"}'
+
 app.post '/test/create', (req, res) ->
   res.json
     action: 'created'
@@ -91,7 +95,7 @@ app.post '/test/create', (req, res) ->
 
 app.all '/test/slow', (req, res) ->
   setTimeout ->
-    res.send 'DONE'
+    res.jsonp result: 'ok'
   , 200
 
 app.get '/test/cached', (req, res) ->
