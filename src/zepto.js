@@ -873,7 +873,7 @@ var Zepto = (function() {
   }
   // Used to clone script node and append it to the dom. Set onload event handler to removeScriptNodeOnLoad, which removes node -- AC 5/26/2016
   function createScriptNodeFromNode(node) {
-    var jsnode = node.cloneNode(true);
+    var jsnode = node.cloneNode(true)
     jsnode.onload = removeScriptNodeOnLoad
     document.head.appendChild( jsnode )
   }  
@@ -883,12 +883,12 @@ var Zepto = (function() {
   function compileInlineJavaScript(el) {
     if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && !el.src) {
       window['eval'].call(window, el.innerHTML)
-      return true;
+      return true
     } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
       createScriptNodeFromNode(el) // Used to load external script and remove node once loaded -- AC 5/26/2016
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   function traverseNode(node, fun) {

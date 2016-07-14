@@ -107,16 +107,14 @@
           // a condition was added specifically for scroll top whereby we adjust a nodes' scrollTop to a 
           // provided target position.  -- AC 5/24/2016  ( refactor in future)
             var animationProperties = findAnimationJSProperties(properties),
-              counter = animationProperties.length - 1;
+              counter = animationProperties.length - 1
             do {
               switch (animationProperties[counter]){ 
                 case "scrollTop":
                     scrollToPosition(this,properties[animationProperties[counter]],duration)
-                  break;
-                default:
-                  break;
+                  break
               }
-              counter--;
+              counter--
             }while(counter >= 0)
     } else {
       cssProperties = []
