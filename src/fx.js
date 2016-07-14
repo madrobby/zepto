@@ -25,7 +25,7 @@
   // scrollUp is a recursive function that will continue to execute until the taget and current scoll position match -- AC 5/24/2016  ( refactor in future)
   function scrollUp(node,currentPosition, target ,marker) {
       if (currentPosition > target) {
-        node.scrollTop = node.scrollTop - marker;
+        node.scrollTop = node.scrollTop - marker
         setTimeout(function () {
           scrollUp(node,node.scrollTop,target,marker)
         },0)
@@ -35,13 +35,13 @@
   // scrollToPosition takes a series of nodes and adjust their scroll position to the target postion in 
   // increments that are derived from the distance/duration -- AC 5/24/2016 ( refactor in future)
   function scrollToPosition(nodes, targetPosition, duration) {
-    duration *= 10;
-    var counter = nodes.length;
+    duration *= 10
+    var counter = nodes.length
     for (var i = 0; i <= nodes.length; i++) {
       if (typeof nodes[i] != "undefined" && typeof nodes[i].scrollTop != "undefined"){
           var currentPosition = nodes[i].scrollTop,
             distance = currentPosition - targetPosition,
-            marker = distance / duration;
+            marker = distance / duration
           scrollUp(nodes[i],currentPosition, targetPosition ,marker)
       }
     }
