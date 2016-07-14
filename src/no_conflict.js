@@ -6,7 +6,7 @@ if ( typeof define === "function" && define.amd ) {
 }
 var
   // Map over Zepto in case of overwrite
-  _nQuery = window.Zepto,
+  _Zepto = window.Zepto,
 
   // Map over the $ in case of overwrite
   _$ = window.$;
@@ -17,7 +17,7 @@ Zepto.noConflict = function( deep ) {
   }
 
   if ( deep && window.Zepto === Zepto ) {
-    window.Zepto = _nQuery;
+    window.Zepto = _Zepto;
   }
   return Zepto;
 };

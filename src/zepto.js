@@ -881,11 +881,11 @@ var Zepto = (function() {
     var inside = operatorIndex % 2 //=> prepend, append
 
     $.fn[operator] = function(){
-      // arguments can be nodes, arrays of nodes, nQuery objects and HTML strings
+      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
             argType = type(arg)
             return argType == "object" || argType == "array" || arg == null ?
-              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  nquery.fragment(arg)
+              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  Zepto.fragment(arg)
           }),
         parent, copyByClone = this.length > 1
 

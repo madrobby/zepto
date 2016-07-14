@@ -168,4 +168,4 @@
   }
 
   testEl = null
-})(nQuery)
+})(Zepto)
