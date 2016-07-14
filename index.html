@@ -451,9 +451,6 @@ $(function(){
       el.attr('title', "This feature is only available in Zepto " + el.text())
   })
 
-  if ($.os.ios || /\bMac.+\bSafari\b/.test(navigator.userAgent))
-    $(document.body).addClass('emoji-enabled')
-
   // don't follow links when the sidebar is tap-enabled
   $('#sidebar').on('click', 'a', function(e){
     return !$('body').hasClass('navigating')
