@@ -538,9 +538,6 @@ $(function(){
   tour.on('click swipeLeft', function(){ advanceTourSlide(+1) })
       .on('swipeRight', function(){ advanceTourSlide(-1) })
 
-  if (/^localhost|\.(dev|local)$/.test(location.hostname) && $.os.iphone && !/Simulator/.test(navigator.userAgent))
-    injectScript('livereload.js')
-
   if (/\.com$/.test(location.hostname))
     injectScript('http://platform.twitter.com/widgets.js')
 })

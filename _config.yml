@@ -6,5 +6,4 @@ markdown:    rdiscount
 rdiscount:   { extensions: [smart] }
 exclude:
   - script
-  - Guardfile
   - Readme.md
