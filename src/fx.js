@@ -19,7 +19,7 @@
       (animationJSProperties.indexOf(key) != -1) ? jsProperties.push(key) : null
     return jsProperties
   }
-  function dasherize(str) { return str.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() }
+  function dasherize(str) { return str.replace(/([A-Z])/g, '-$1').toLowerCase() }
   function normalizeEvent(name) { return eventPrefix ? eventPrefix + name : name.toLowerCase() }
 
   // scrollUp is a recursive function that will continue to execute until the taget and current scoll position match -- AC 5/24/2016  ( refactor in future)
