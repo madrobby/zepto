@@ -20,4 +20,4 @@ Zepto.noConflict = function( deep ) {
     window.Zepto = _Zepto
   }
   return Zepto
-};
+}
