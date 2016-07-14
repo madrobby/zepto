@@ -899,7 +899,7 @@ var Zepto = (function() {
     }
   }
 
-  // Generate the `after`, `prepend`, `before`, `append`,
+/// Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
   adjacencyOperators.forEach(function(operator, operatorIndex) {
     var inside = operatorIndex % 2 //=> prepend, append
@@ -907,9 +907,18 @@ var Zepto = (function() {
     $.fn[operator] = function(){
       // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
       var argType, nodes = $.map(arguments, function(arg) {
+            var arr = []
             argType = type(arg)
-            return argType == "object" || argType == "array" || arg == null ?
-              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  Zepto.fragment(arg)
+            if (argType == "array") {
+              arg.forEach(function(el) {
+                if (el.nodeType !== undefined) return arr.push(el)
+                else if ($.zepto.isZ(el)) return arr = arr.concat(el.get())
+                arr = arr.concat(zepto.fragment(el))
+              })
+              return arr
+            }
+            return  argType == "object" || arg == null ?
+              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  zepto.fragment(arg)
           }),
         parent, copyByClone = this.length > 1
 
@@ -937,6 +946,8 @@ var Zepto = (function() {
          })
       })
     }
+
+
 
 
     // after    => insertAfter
