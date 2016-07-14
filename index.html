@@ -93,18 +93,6 @@ github_url: https://github.com/madrobby/zepto
 
   <h3 id=download>Download Zepto</h3>
 
-  <p>
-    The default build includes the following modules:<br>
-    <em>Core, Ajax, Event, Form, IE</em>.
-  </p>
-
-  <p class=important>
-    Zepto v1.0 used to bundle Effects, iOS3, and Detect modules in the default build.
-    <br>
-    See below for
-    <a href="#modules">optional modules</a>.
-  </p>
-
   <ul class=downloads>
     <li>
       <a href="zepto.js" class="download">zepto.js v{{ page.version }} (for development)</a>
@@ -117,37 +105,27 @@ github_url: https://github.com/madrobby/zepto
   </ul>
 
   <p>
-    Or <b><a href="{{ page.github_url }}">grab the latest version on GitHub</a></b>.
+    Other download alternatives:
   </p>
-
-  <ul class=downloads>
+  <ul>
+    <li><code>npm install zepto</code>; or</li>
     <li>
+      <a href="{{ page.github_url }}">grab the latest version on GitHub</a>.
       <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&amp;repo=zepto&amp;type=watch&amp;count=true"
-      allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+        style="margin-left:10px" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
       <iframe src="http://ghbtns.com/github-btn.html?user=madrobby&amp;repo=zepto&amp;type=fork&amp;count=true"
-      allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+        allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
     </li>
   </ul>
 
   <p>
-    Include Zepto with a script tag near the end of your page:
+    The default build includes the following <a href="#modules">modules:</a>
+    <em>Core, Ajax, Event, Form, IE</em>.
   </p>
-
-{% highlight html %}
-...
-<script src=zepto.min.js></script>
-</body>
-</html>
-{% endhighlight %}
 
   <p class=compat>
     Zepto will only set the <code>$</code> global to itself if it is
     not yet defined. There is no <code>Zepto.noConflict</code> method.
-  </p>
-
-  <p>
-    <b>If you need to support older browsers, like Internet Explorer 9
-    and lower, you can fall back to jQuery 1.x.</b>
   </p>
 
   <h3 id=browsers>Browser support</h3>
