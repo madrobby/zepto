@@ -2,3 +2,7 @@
 dist/
 public/
 .rbenv-version
+.bundle
+bin/
+vendor/
+Gemfile.lock

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+bundle install --path vendor/bundle
+bundle binstub jekyll --path bin

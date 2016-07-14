@@ -10,6 +10,7 @@ Jekyll categories correspond to Zepto modules, e.g. "ajax", "event".
 The site can be built with:
 
 ~~~ sh
-$ jekyll
+$ script/bootstrap
+$ bin/jekyll build
 $ open public/index.html
 ~~~

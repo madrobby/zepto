@@ -1,9 +1,13 @@
 permalink:   none
 lsi:         false
-pygments:    true
 destination: public
-markdown:    rdiscount
-rdiscount:   { extensions: [smart] }
+kramdown:
+  auto_ids:  false
+  syntax_highlighter_opts:
+    disable: true
 exclude:
-  - script
   - Readme.md
+  - bin
+  - script
+  - vendor
+  - Gemfile
