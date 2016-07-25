@@ -280,7 +280,12 @@
 
           ajaxSuccess(result, xhr, settings, deferred)
         } else {
-          ajaxError(xhr.statusText || null, xhr.status ? 'error' : 'abort', xhr, settings, deferred)
+          // if status is not 0, invoke ajaxError for reason 'error' with status code
+          // else onabort or onerror event will  be fired to identify event type
+          if(xhr.status){
+              ajaxError(xhr.statusText || null, 'error', xhr, settings, deferred)
+              xhr.onerror = xhr.onabort = empty
+          }
         }
       }
     }
@@ -291,6 +296,7 @@
       return xhr
     }
 
+  
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 
@@ -300,9 +306,24 @@
 
     if (settings.timeout > 0) abortTimeout = setTimeout(function(){
         xhr.onreadystatechange = empty
+        xhr.onabort = null
         xhr.abort()
         ajaxError(null, 'timeout', xhr, settings, deferred)
       }, settings.timeout)
+
+    xhr.onerror = function(){
+        xhr.onreadystatechange = empty
+
+        ajaxError(xhr.statusText || null, 'error', xhr, settings, deferred)
+    }
+
+    xhr.onabort = function(){
+        xhr.onreadystatechange = empty
+
+        ajaxError(xhr.statusText || null, 'abort', xhr, settings, deferred)
+    }
+
+
 
     // avoid sending empty string (#319)
     xhr.send(settings.data ? settings.data : null)

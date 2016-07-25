@@ -1443,6 +1443,10 @@
         MockXHR.last.abort()
         MockXHR.last.ready(4, 0, 'Aborted')
 
+        // abort needs to fire abort event
+        MockXHR.last.onabort();
+        
+
         setTimeout(function(){
           t.resume(function(){
             t.assertFalse(successFired)
