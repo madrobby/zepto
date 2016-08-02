@@ -1,8 +1,8 @@
 {% for post in posts reversed %}
 <article class=method id="{{post.title }}">
   <h3>{{ post.title }}
-  {% if post.deprecated %}<span class=emoji title=deprecated>🐶🔫</span>{% endif %}
-  {% if post.version %}<span class=version>v{{ post.version }}+</span>{% endif %} 
+  {% if post.deprecated %}<span class=emoji title=deprecated>🦄🔨</span>{% endif %}
+  {% if post.version %}<span class=version>v{{ post.version }}+</span>{% endif %}
   </h3>
   {% if post.deprecated %}
   <p class=warning>
