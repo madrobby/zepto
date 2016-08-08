@@ -99,8 +99,11 @@ package_version = ->
   JSON.parse(cat('package.json')).version
 
 git_version = ->
-  desc = exec "git --git-dir='#{root + '.git'}' describe --tags HEAD", silent: true
-  desc.output.replace(/\s+$/, '') if desc.code is 0
+  desc = exec "git --git-dir='#{root + '.git'}' describe --tags HEAD"
+  console.log(desc)
+  console.log(desc.output)
+       #, silent: false
+  desc.stdout.replace(/\s+$/, '') if desc.code is 0
 
 describe_version = ->
   git_version() || package_version()
