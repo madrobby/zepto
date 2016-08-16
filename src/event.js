@@ -139,7 +139,9 @@
         event[predicate] = returnFalse
       })
 
-      event.timeStamp || (event.timeStamp = Date.now())
+      try {
+        event.timeStamp || (event.timeStamp = Date.now())
+      } catch (ignored) { }
 
       if (source.defaultPrevented !== undefined ? source.defaultPrevented :
           'returnValue' in source ? source.returnValue === false :
