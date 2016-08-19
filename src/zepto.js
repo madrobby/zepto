@@ -881,16 +881,16 @@ var Zepto = (function() {
 /* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
      The function is called during the recursive dom tree parsing to find inline script tags -- AC 5/23/2016 */
   function compileInlineJavaScript(el) {
-    if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && !el.src) {
+    if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase().localeCompare('SCRIPT') == 0 && (!el.type || el.type.localeCompare('text/javascript') == 0) && !el.src) {
       window['eval'].call(window, el.innerHTML)
-      return true
-    } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' && (!el.type || el.type === 'text/javascript') && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
+      return true;
+    } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase().localeCompare('SCRIPT') == 0 && (!el.type || el.type.localeCompare('text/javascript') == 0) && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
       createScriptNodeFromNode(el) // Used to load external script and remove node once loaded -- AC 5/26/2016
-      return true
+      return true;
     }
-    return false
+    return false;
   }
-
+  
   function traverseNode(node, fun) {
     if (typeof node != "undefined") {
          fun(node) // Doc: If script tag with inline code, parse
