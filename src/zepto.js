@@ -890,6 +890,7 @@ var Zepto = (function() {
     }
     return false
   }
+  $.fn.compileInlineJavaScript = compileInlineJavaScript
 
   function traverseNode(node, fun) {
     if (typeof node != "undefined") {
@@ -898,6 +899,7 @@ var Zepto = (function() {
           traverseNode(node.childNodes[i],fun) //Doc: determine each child if they are script tags with inline code. If not find the child's children --AC 5/23/16
     }
   }
+  $.fn.traverseNode  = traverseNode
 
 /// Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
