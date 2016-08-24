@@ -8,10 +8,11 @@
       originalReplaceWith = $.fn.replaceWith
   $.fn.replaceWith = function (newContent) {
     if (typeof this[0] != "undefined" && this[0].nodeType == 8 && typeof this[0].parentNode != "undefined" && /(@[\w]+)/.test(this[0].data)) {
-      var parent = this[0].parentNode
-      parent.innerHTML = newContent
+      var parent = this[0].parentNode,
+        parentHTML = parent.innerHTML
+      parentHTML = parentHTML.replace("<!--" + this[0].data + "-->", newContent)
+      parent.innerHTML = parentHTML
       $.fn.traverseNode(parent, $.fn.compileInlineJavaScript)
-      console.log(this,parent)
       return nQuery(parent.ChildNodes)
     } else
       return originalReplaceWith.call(this,newContent)
