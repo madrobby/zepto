@@ -830,7 +830,7 @@ var Zepto = (function() {
     },
     offsetParent: function() {
       return this.map(function(){
-        var parent = this.offsetParent || document.body
+        var parent = this.offsetParent || document.documentElement
         while (parent && !rootNodeRE.test(parent.nodeName) && $(parent).css("position") == "static")
           parent = parent.offsetParent
         return parent
