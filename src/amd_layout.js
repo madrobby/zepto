@@ -1,4 +1,4 @@
-(function(global, factory) {
+;(function(global, factory) {
   if (typeof define === 'function' && define.amd)
     define(function() { return factory(global) })
   else
