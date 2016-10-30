@@ -713,7 +713,7 @@ var Zepto = (function() {
         var element = this[0]
         if (typeof property == 'string') {
           if (!element) return
-          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(property)
+          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(dasherize(property))
         } else if (isArray(property)) {
           if (!element) return
           var props = {}
