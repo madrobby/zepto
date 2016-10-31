@@ -439,7 +439,7 @@ var Zepto = (function() {
       // don't use "interactive" on IE <= 10 (it can fired premature)
       if (document.readyState === "complete" ||
           (document.readyState !== "loading" && !document.documentElement.doScroll))
-        callback($)
+        setTimeout(function(){ callback($) }, 0)
       else
         document.addEventListener("DOMContentLoaded", function(){ callback($) }, false)
       return this
