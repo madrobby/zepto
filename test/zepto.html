@@ -2649,8 +2649,10 @@
       },
 
       testDocumentReady: function (t) {
-        // Check that if document is already loaded, ready() immediately executes callback
-        var arg1, arg2, arg3, arg4, fired = false
+        // Check that ready() callback fired and get Zepto as an argument
+        var arg1, arg2, arg3, arg4
+
+        t.pause()
         $(function (Z1) {
           arg1 = Z1
           $(document).ready(function (Z2) {
@@ -2659,16 +2661,16 @@
               arg3 = Z3
               $(document).on('foo ready bar', function (Z4) {
                 arg4 = Z4
-                fired = true
+                t.resume(function(){
+                  t.assertIdentical(Zepto, arg1)
+                  t.assertIdentical(Zepto, arg2)
+                  t.assertIdentical(Zepto, arg3)
+                  t.assertIdentical(Zepto, arg4)
+                })
               })
             })
           })
         })
-        t.assertTrue(fired)
-        t.assertIdentical(Zepto, arg1)
-        t.assertIdentical(Zepto, arg2)
-        t.assertIdentical(Zepto, arg3)
-        t.assertIdentical(Zepto, arg4)
       },
 
       testSlice: function (t) {
