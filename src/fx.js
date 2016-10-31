@@ -55,6 +55,26 @@
   }
 
   $.fn.anim = function(properties, duration, ease, callback, delay){
+    var el = this.get(0)
+    if ((typeof properties.queue === 'undefined' || properties.queue) && el) {
+      if (!el.hasOwnProperty('animToDo'))
+          el.animToDo = []
+      el.animToDo.push(arguments)
+      if (el.animToDo.length == 1)
+        doNextAnim.apply(this)
+    } else {
+      doAnim.apply(this, arguments)
+    }
+    return this
+  }
+
+  function doNextAnim() {
+    var el = this.get(0)
+    if (el.animToDo.length > 0)
+      doAnim.apply(this, el.animToDo[0])
+  }
+
+  function doAnim(properties, duration, ease, callback, delay) {
     var key, cssValues = {}, cssProperties, transforms = '',
         that = this, wrappedCallback, endEvent = $.fx.transitionEnd,
         fired = false
@@ -96,6 +116,11 @@
       fired = true
       $(this).css(cssReset)
       callback && callback.call(this)
+      var el = that.get(0)
+      if (el && el.animToDo !== 'undefined') {
+        el.animToDo.shift()
+        doNextAnim.apply(that)
+      }
     }
     if (duration > 0){
       this.bind(endEvent, wrappedCallback)
@@ -115,8 +140,6 @@
     if (duration <= 0) setTimeout(function() {
       that.each(function(){ wrappedCallback.call(this) })
     }, 0)
-
-    return this
   }
 
   testEl = null
