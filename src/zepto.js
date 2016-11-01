@@ -25,7 +25,6 @@ var Zepto = (function() {
       'td': tableRow, 'th': tableRow,
       '*': document.createElement('div')
     },
-    readyRE = /complete|loaded|interactive/,
     simpleSelectorRE = /^[\w-]*$/,
     class2type = {},
     toString = class2type.toString,
@@ -437,10 +436,12 @@ var Zepto = (function() {
     },
 
     ready: function(callback){
-      // need to check if document.body exists for IE as that browser reports
-      // document ready when it hasn't yet created the body element
-      if (readyRE.test(document.readyState) && document.body) callback($)
-      else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false)
+      // don't use "interactive" on IE <= 10 (it can fired premature)
+      if (document.readyState === "complete" ||
+          (document.readyState !== "loading" && !document.documentElement.doScroll))
+        setTimeout(function(){ callback($) }, 0)
+      else
+        document.addEventListener("DOMContentLoaded", function(){ callback($) }, false)
       return this
     },
     get: function(idx){
