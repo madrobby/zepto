@@ -719,7 +719,7 @@ var Zepto = (function() {
           var props = {}
           var computedStyle = getComputedStyle(element, '')
           $.each(property, function(_, prop){
-            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
+            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(dasherize(prop)))
           })
           return props
         }
