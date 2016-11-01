@@ -1672,6 +1672,20 @@
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
       },
 
+      testCamelizeCSSQuery:function(t){
+        var el=$('#some_element'),
+            dom=el.get(0)
+        t.assertEqual(el.css('background-color'),el.css('backgroundColor'))
+        t.assertEqual(el.css('borderRadius'),el.css('border-radius'))
+        t.assertEqual(el.css('background-position-x'),el.css('backgroundPositionX'))
+        t.assertEqual(el.css('color'),getComputedStyle(dom,null).getPropertyValue('color'))
+
+        el.css('backgroundColor', 'rgba(100,100,100,.5)')
+
+        t.assertEqual(el.css('background-color'),el.css('backgroundColor'))
+        t.assertEqual(el.css('backgroundColor'),getComputedStyle(dom,null).getPropertyValue('background-color'))
+      },
+
       testCSSUnset: function (t) {
         var el = $('#some_element').css({ 'margin-top': '1px', 'margin-bottom': '1px' }),
             dom = el.get(0)
