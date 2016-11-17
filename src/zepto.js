@@ -436,12 +436,16 @@ var Zepto = (function() {
     },
 
     ready: function(callback){
-      // don't use "interactive" on IE <= 10 (it can fired premature)
+      // don't use "interactive" and "DOMContentLoaded" on IE <= 10 (it can fired premature)
+      var oldIE = !!document.documentElement.doScroll
+      var invokeCallback = function(){ callback($) }
       if (document.readyState === "complete" ||
-          (document.readyState !== "loading" && !document.documentElement.doScroll))
-        setTimeout(function(){ callback($) }, 0)
+          (document.readyState !== "loading" && !oldIE))
+        setTimeout(invokeCallback, 0)
+      else if (!oldIE)
+        document.addEventListener("DOMContentLoaded", invokeCallback, false)
       else
-        document.addEventListener("DOMContentLoaded", function(){ callback($) }, false)
+        window.addEventListener("load", invokeCallback, false)
       return this
     },
     get: function(idx){
