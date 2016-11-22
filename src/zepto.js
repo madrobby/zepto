@@ -440,8 +440,15 @@ var Zepto = (function() {
       if (document.readyState === "complete" ||
           (document.readyState !== "loading" && !document.documentElement.doScroll))
         setTimeout(function(){ callback($) }, 0)
-      else
-        document.addEventListener("DOMContentLoaded", function(){ callback($) }, false)
+      else {
+        var handler = function() {
+          document.removeEventListener("DOMContentLoaded", handler, false)
+          window.removeEventListener("load", handler, false)
+          callback($)
+        }
+        document.addEventListener("DOMContentLoaded", handler, false)
+        window.addEventListener("load", handler, false)
+      }
       return this
     },
     get: function(idx){
