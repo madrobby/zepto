@@ -15,7 +15,7 @@
           move: 'touchmove',
           cancel: 'touchcancel'
         }
-      }else if('onponinterdown' in document){
+      }else if('onpointerdown' in document){
         return {
           down: 'pointerdown',
           up: 'pointerup',
@@ -122,6 +122,7 @@
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
       .on(touchEventMap.up, function(e){
+        debugger;
         if((_isPointerType = isPointerEventType(e, 'up')) &&
           !isPrimaryTouch(e)) return
         cancelLongTap()
