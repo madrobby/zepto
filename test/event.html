@@ -142,7 +142,7 @@
 
       testOneWithData: function(t){
         var obj = {}, gotObj, count = 0
-        $(document).one('click', obj, function(e){ gotObj = e.data; count++ })
+        $(document).one('click', obj, function(e){ gotObj = e.customData; count++ })
 
         click(this.el)
         click(this.el)
@@ -168,7 +168,7 @@
       },
 
       testOnWithBlankData: function(t){
-        var log = [], fn = function(e){ log.push(e.data) }
+        var log = [], fn = function(e){ log.push(e.customData) }
         this.el
           .on('click', null, fn)
           .on('click', undefined, fn)
@@ -262,7 +262,7 @@
         var gotData
 
         $(document).on('click', function(event){
-          gotData = event.data
+          gotData = event.customData
         })
         t.assertUndefined(gotData)
 
@@ -274,7 +274,7 @@
         var data = {}, gotData, numArgs
 
         $(document).on('click', data, function(event){
-          gotData = event.data
+          gotData = event.customData
           numArgs = arguments.length
         })
         t.assertUndefined(gotData)
@@ -283,13 +283,13 @@
         t.assertEqual(1, numArgs)
         t.assertIdentical(data, gotData)
       },
-      
+
       testHandlerWithFunctionAsData: function(t){
         var data = function () { console.log('foo') },
             gotData, numArgs
-        
+
         $(document).on('click', data, function(event){
-          gotData = event.data
+          gotData = event.customData
           numArgs = arguments.length
         })
         t.assertUndefined(gotData)
@@ -303,7 +303,7 @@
         var data = {}, gotData, numArgs
 
         $(document).on('click', 'div', data, function(event){
-          gotData = event.data
+          gotData = event.customData
           numArgs = arguments.length
         })
         t.assertUndefined(gotData)
@@ -317,7 +317,7 @@
         var data = {}, gotData
 
         $(document).on('myevent', data, function(event){
-          gotData = event.data
+          gotData = event.customData
         })
         t.assertUndefined(gotData)
 
