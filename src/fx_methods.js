@@ -3,7 +3,7 @@
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($, undefined){
-  var document = window.document, docElem = document.documentElement,
+  var document = window.document,
     origShow = $.fn.show, origHide = $.fn.hide, origToggle = $.fn.toggle
 
   function anim(el, speed, opacity, scale, callback) {
