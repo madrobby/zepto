@@ -3,6 +3,7 @@
   , "version": "1.2.0"
   , "main": "dist/zepto.js"
   , "homepage": "http://zeptojs.com"
+  , "main": "dist/zepto.js"
   , "scripts": {
       "test": "coffee make test"
     , "dist": "coffee make dist"
