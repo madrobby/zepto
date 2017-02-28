@@ -1,0 +1,55 @@
+{
+  "name": "zeptojs",
+  "version": "1.1.3",
+  "homepage": "http://zeptojs.com",
+  "description": "A minimalist JavaScript library for modern browsers, with a jQuery-compatible API",
+  "main": [
+    "src/zepto.js",
+    "src/event.js",
+    "src/ajax.js",
+    "src/form.js",
+    "src/ie.js",
+    "src/detect.js",
+    "src/fx.js",
+    "src/fx_methods.js",
+    "src/assets.js",
+    "src/data.js",
+    "src/deferred.js",
+    "src/callbacks.js",
+    "src/selector.js",
+    "src/touch.js",
+    "src/gesture.js",
+    "src/stack.js",
+    "src/ios3.js"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "javascript",
+    "event",
+    "ajax",
+    "form",
+    "ie",
+    "detect",
+    "fx",
+    "assets",
+    "data",
+    "deferred",
+    "callbacks",
+    "selector",
+    "touch",
+    "gesture",
+    "stack",
+    "ios",
+    "browser"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
