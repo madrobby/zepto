@@ -3,11 +3,11 @@
     if (typeof define === 'function' && define.amd) {
         define(function() { return factory(global) })
     } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(global);
+        module.exports = factory(global)
     } else {
-        root.returnExportsGlobal = factory(global);
+        root.returnExportsGlobal = factory(global)
     }
 }(this, function (window) {
   YIELD
   return Zepto
-}));
+}))
