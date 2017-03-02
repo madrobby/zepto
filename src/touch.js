@@ -55,7 +55,7 @@
     }
 
     $(document)
-      .bind('MSGestureEnd', function(e){
+      .on('MSGestureEnd', function(e){
         var swipeDirectionFromVelocity =
           e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null
         if (swipeDirectionFromVelocity) {
