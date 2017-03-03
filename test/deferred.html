@@ -29,7 +29,7 @@
   <script>
   (function(){
     var promiseFns = "resolve reject notify resolveWith rejectWith notifyWith done fail progress always".split(/\s+/),
-        deferredFns = "state always then promise done fail progress".split(/\s+/)
+        deferredFns = "state always then promise done fail progress destroy".split(/\s+/)
 
     $.each(['', 'WithNew'], function(_, withNew) {
       var createDeferred = function(fn) {

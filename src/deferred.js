@@ -48,6 +48,11 @@
 
           promise: function(obj) {
             return obj != null ? $.extend( obj, promise ) : promise
+          },
+      	  destroy: function(){
+        		state = null;
+        		deferred = {};
+            return this;
           }
         },
         deferred = {}
@@ -65,7 +70,7 @@
       }
 
       deferred[tuple[0]] = function(){
-        deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments)
+        deferred[tuple[0] + "With"] && deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments)
         return this
       }
       deferred[tuple[0] + "With"] = list.fireWith
