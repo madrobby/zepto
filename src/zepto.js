@@ -211,9 +211,6 @@ var Zepto = (function() {
       // Wrap DOM nodes.
       else if (isObject(selector))
         dom = [selector], selector = null
-      // If it's a html fragment, create nodes from it
-      else if (fragmentRE.test(selector))
-        dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null
       // If there's a context, create a collection on that context first, and select
       // nodes from there
       else if (context !== undefined) return $(context).find(selector)
@@ -724,13 +721,13 @@ var Zepto = (function() {
         var element = this[0]
         if (typeof property == 'string') {
           if (!element) return
-          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(property)
+          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(dasherize(property))
         } else if (isArray(property)) {
           if (!element) return
           var props = {}
           var computedStyle = getComputedStyle(element, '')
           $.each(property, function(_, prop){
-            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
+            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(dasherize(prop)))
           })
           return props
         }

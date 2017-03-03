@@ -1672,6 +1672,35 @@
         t.assertEqual('rgb(0, 0, 0)', div.css('color'))
       },
 
+      testCamelizeQueryByComputedStyle:function(t){
+        var el=$('#some_element'),
+            dom=el.get(0)
+        t.assertEqual(el.css('background-color'),el.css('backgroundColor'))
+        t.assertEqual(el.css('borderRadius'),el.css('border-radius'))
+        t.assertEqual(el.css('background-position-x'),el.css('backgroundPositionX'))
+        t.assertEqual(el.css('color'),getComputedStyle(dom,null).getPropertyValue('color'))
+         
+        //query style by a array
+        var styleMap,styleMapWithCamelize,styleArr,styleArrWithCamelize,len,i
+
+        el.css('borderLeftWidth', '5px')
+        
+        styleMap=el.css(['background-repeat','background-clip','font-size','border-left-width'])
+        styleMapWithCamelize=el.css(['backgroundRepeat','backgroundClip','fontSize','borderLeftWidth'])
+        styleArr=['background-repeat','background-clip','font-size','border-left-width']
+        styleArrWithCamelize=['backgroundRepeat','backgroundClip','fontSize','borderLeftWidth']
+        len=styleArr.length
+   
+        for (i = 0; i < len; i++) {
+          t.assertEqual(styleMap[styleArr[i]],styleMapWithCamelize[styleArrWithCamelize[i]])
+        }
+
+        el.css('backgroundColor', 'rgba(100,100,100,.5)')
+
+        t.assertEqual(el.css('background-color'),el.css('backgroundColor'))
+        t.assertEqual(el.css('backgroundColor'),getComputedStyle(dom,null).getPropertyValue('background-color'))
+      },
+
       testCSSUnset: function (t) {
         var el = $('#some_element').css({ 'margin-top': '1px', 'margin-bottom': '1px' }),
             dom = el.get(0)
