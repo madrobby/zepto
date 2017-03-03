@@ -274,4 +274,40 @@
     return compatible(event)
   }
 
+  // fix `remove()、empty()、text()、html()` delete Event of handlers
+  ;(function() {
+    // delete handlers from $element
+    function clearEvent($element) {
+      $element.each(function() {
+        var id = this._zid
+        // If contains events
+        if (id && handlers[id]) delete handlers[id]
+      })
+    }
+
+    ;('empty remove').split(' ').forEach(function(val) {
+      var _old = $.fn[val]
+      $.fn[val] = function(text) {
+        var $element = this.find('*')
+        // If it is remove, it contains the current element.
+        if (val === 'remove') $element = $element.add(this)
+
+        clearEvent($element)
+
+        return _old.call(this)
+      }
+    })
+
+    ;('html text').split(' ').forEach(function(val) {
+      var _old = $.fn[val]
+      $.fn[val] = function(text) {
+        // If there is no parameter
+        return arguments.length === 0 ?
+          _old.call(this) :
+          clearEvent(this.find('*')), _old.apply(this, arguments)
+      }
+    })
+  })()
+
+
 })(Zepto)

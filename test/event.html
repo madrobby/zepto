@@ -476,6 +476,83 @@
       }
 
     })
+
+    // Due to delete event rewritten empty,html,text,remove, so after testing the method is effective binding events
+    Evidence('DeleteEvent', {
+      setUp: function(){
+        this.el = $('<div />').appendTo('#fixtures')
+      },
+
+      appendDom: function() {
+        this.el.html('<a><b>1</b></a><b></b><b></b>').find('b').on('click hover change', false)
+      },
+
+      tearDown: function() {
+        this.el.off().remove()
+      },
+
+      testEmpty: function(t) {
+        this.appendDom()
+        this.el.empty()
+
+        this.appendDom()
+        this.el.parent().empty()
+
+        this.appendDom()
+        this.el.empty()
+      },
+
+      testHtml: function(t) {
+        this.appendDom()
+        this.el.html()
+
+        this.appendDom()
+        this.el.html('')
+
+        this.appendDom()
+        this.el.parent().html()
+
+        this.appendDom()
+        this.el.parent().html('')
+
+        this.appendDom()
+        this.el.html()
+
+        this.appendDom()
+        this.el.html('')
+      },
+
+      testText: function(t) {
+        this.appendDom()
+        this.el.text()
+
+        this.appendDom()
+        this.el.text('')
+
+        this.appendDom()
+        this.el.parent().text()
+
+        this.appendDom()
+        this.el.parent().text('')
+
+        this.appendDom()
+        this.el.text()
+
+        this.appendDom()
+        this.el.text('')
+      },
+
+      testRemove: function(t) {
+        this.appendDom()
+        this.el.remove()
+
+        this.appendDom()
+        this.el.parent().remove()
+
+        this.appendDom()
+        this.el.remove()
+      }
+    })
   })()
   </script>
 </body>
