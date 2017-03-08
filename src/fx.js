@@ -48,8 +48,17 @@
       callback = ease, ease = undefined
     if ($.isPlainObject(duration))
       ease = duration.easing, callback = duration.complete, delay = duration.delay, duration = duration.duration
-    if (duration) duration = (typeof duration == 'number' ? duration :
-                    ($.fx.speeds[duration] || $.fx.speeds._default)) / 1000
+    if (duration){
+      if(typeof duration == 'string' && $.fx.speeds.hasOwnProperty(duration)){
+        duration = $.fx.speeds[duration]
+      }else{
+        duration = parseFloat(duration,10) // support `number-string` , e.g. `'500'`
+        if(isNaN(duration)){
+          duration = $.fx.speeds._default
+        }
+      }
+      duration /= 1000
+    }
     if (delay) delay = parseFloat(delay) / 1000
     return this.anim(properties, duration, ease, callback, delay)
   }
