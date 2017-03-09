@@ -242,7 +242,7 @@
     if (deferred) deferred.promise(xhr)
 
     if (!settings.crossDomain) setHeader('X-Requested-With', 'XMLHttpRequest')
-    setHeader('Accept', mime || '*/*')
+    setHeader('Accept', mime || '*\/*')
     if (mime = settings.mimeType || mime) {
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
@@ -253,7 +253,7 @@
     if (settings.headers) for (name in settings.headers) setHeader(name, settings.headers[name])
     xhr.setRequestHeader = setHeader
 
-    xhr.onreadystatechange = function(){
+    var callback = function(){
       if (xhr.readyState == 4) {
         xhr.onreadystatechange = empty
         clearTimeout(abortTimeout)
@@ -306,6 +306,7 @@
 
     // avoid sending empty string (#319)
     xhr.send(settings.data ? settings.data : null)
+    xhr.onreadystatechange = callback
     return xhr
   }
 
