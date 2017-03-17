@@ -23,16 +23,17 @@
     })
   }
 
+  function show(el, speed, scale, callback) {
+    origShow.call(el)
+    return anim(el, speed, 1, scale, callback)
+  }
+
   $.fn.show = function(speed, callback) {
-    origShow.call(this)
-    if (speed === undefined) speed = 0
-    else this.css('opacity', 0)
-    return anim(this, speed, 1, '1,1', callback)
+    return (speed === undefined) ? origShow.call(this) : show(this, speed, '1,1', callback)
   }
 
   $.fn.hide = function(speed, callback) {
-    if (speed === undefined) return origHide.call(this)
-    else return hide(this, speed, '0,0', callback)
+    return (speed === undefined) ? origHide.call(this) : hide(this, speed, '0,0', callback)
   }
 
   $.fn.toggle = function(speed, callback) {
