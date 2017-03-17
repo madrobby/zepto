@@ -35,12 +35,18 @@ c:\zepto> SET MODULES=zepto event data
 c:\zepto> npm run-script dist
 ~~~
 
+~~~ batch
+# on windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> npm run-script dist
+~~~
+
 The resulting files are:
 
 1. `dist/zepto.js`
 2. `dist/zepto.min.js`
 
-If you install CoffeeScript globally, you can run `make` directly:
+If you install CoffeeScript globally (`npm install coffee-script -g`), you can run `make` directly:
 
 ~~~ sh
 # one-time operation
@@ -50,6 +56,12 @@ $ coffee make dist
 $ MODULES="zepto event data ..." ./make dist
 
 # on Windows
+c:\zepto> SET MODULES=zepto event data
+c:\zepto> coffee make dist
+~~~
+
+~~~ batch
+# on windows
 c:\zepto> SET MODULES=zepto event data
 c:\zepto> coffee make dist
 ~~~
