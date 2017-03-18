@@ -1,0 +1,327 @@
+html,body {
+  color:#333;
+  font-family:"HelveticaNeue", Helvetica, Arial, sans-serif;
+  font-size:12px;
+  line-height:18px;
+  margin: 0;
+}
+
+html,body{
+background: rgb(35,35,35);
+background: -webkit-gradient(radial, 25% 10%, 0, 25% 10%, 300, from(rgb(72,74,75)), to(rgb(35,35,35))) no-repeat rgb(35,35,35);
+}
+
+h1 {
+  color:#5840ae;
+  font-size:11px;
+  font-weight:bold;
+  text-transform:uppercase;
+  text-align:right;
+}
+
+body.desktop h1 {
+  font-size: 19px;
+}
+
+p {
+  margin-bottom:1em;
+}
+
+p.license {
+  clear: both;
+  font-size: 80%;
+  color: rgb(80,80,80);
+}
+
+a {  -webkit-transition-property: border-color, color, opacity; -webkit-transition-duration: 0.5s; }
+
+a {
+  color: #000;
+}
+
+#container {
+  position:relative;
+  width:320px;
+  margin:0 auto;
+  padding:0 0 20px 0;
+}
+
+body.ios #container {
+  -webkit-box-reflect:below -134px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.65, transparent), to(rgba(255,255,255,0.15)));
+}
+
+body.desktop #container {
+  width: 640px;
+}
+
+
+#logo {
+  position:relative;
+  top:10px;
+  right:0px;
+  width:100%;
+  height:70px;
+  text-indent:-5000px;
+  background-size: 50%;
+  background:transparent url(../images/zeptojs-aerogelweight-big.png) no-repeat center right;
+}
+
+body.desktop #logo {
+  background-size: auto;
+  height: 140px;
+}
+
+@-webkit-keyframes pulse {
+0% { opacity: 0 }
+100% { opacity: 100 }
+}
+
+#pulse {
+  position:absolute;
+  top:14px;
+  right:1px;
+  width:36px;
+  height:37px;
+  background-size: 80%;
+  opacity:0;
+  background:transparent url(../images/logo-big.png) no-repeat center right;
+}
+
+body.desktop #pulse, body.ios #pulse {
+  -webkit-animation: pulse 1s infinite alternate ease-in-out;
+}
+
+body.desktop #pulse {
+  top: 13px;
+  right: 0px;
+  width: 72px;
+  height: 73px;
+  background-size: 100%;
+}
+
+#beta {
+  position:absolute;
+  top:-2px;
+  left:-1px;
+  width:68px;
+  height:41px;
+  background-size: 100%;
+  background:transparent url(../images/beta-stripe-big.png) no-repeat;
+}
+
+body.desktop #beta {
+  width:136px;
+  height:82px;
+}
+
+#main_content {
+  position:relative;
+  top:20px;
+  min-height:100px;
+  padding:15px 30px;
+  border-top:1px solid rgba(255,255,255,0.1);
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  background-size:100%;
+  background:#f7f9fa url(../images/box-bg-big.png) no-repeat bottom center;
+  -webkit-border-radius:7px;
+  -moz-border-radius:7px;
+  border-radius:7px;
+  -webkit-box-shadow:0px 2px 3px rgba(0,0,0,0.35);
+  -moz-box-shadow:0px 2px 3px rgba(0,0,0,0.35);
+  box-shadow:0px 2px 3px rgba(0,0,0,0.35);
+}
+
+body.desktop #main_content {
+  font-size: 22px;
+  line-height: 32px;
+  background-size: 200%;
+  padding:30px 60px;
+}
+
+#main_content .github {
+  width:45%;
+  cursor:pointer;
+}
+
+#main_content .github a {
+  display:block;
+  width:65px;
+  height:34px;
+  margin:5px 0;
+  text-indent:-5000px;
+  background-size: 100%;
+  background:transparent url(../images/github-big.png) no-repeat;
+  opacity:0.75;
+}
+
+body.desktop #main_content .github a {
+  width: 110px;
+  height: 68px;
+}
+
+#main_content .github h1 {
+  text-align:left;
+}
+
+#main_content .download {
+  float:right;
+  width:50%;
+  text-align:right;
+  cursor:pointer;
+}
+
+body.desktop #main_content .download {
+  float:right;
+  width:50%;
+  text-align:right;
+  cursor:pointer;
+}
+
+#main_content .download p {
+  width:80px;
+  padding-top:6px;
+  font-size:11px;
+  line-height:13px;
+  padding-right:40px;
+}
+
+body.desktop #main_content .download p {
+  padding-top: 12px;
+  width: 160px;
+  font-size: 20px;
+  line-height: 26px;
+  padding-right: 80px;
+}
+
+#main_content .download a {
+  display:block;
+  position:relative;
+  float:right;
+  width:38px;
+  height:38px;
+  margin:5px 0;
+  text-indent:-500px;
+  line-height:1000px;
+  background-size:100%;
+  background:transparent url(../images/package-big.png) no-repeat center right;
+  opacity:0.75;
+  overflow:hidden;
+}
+
+body.desktop #main_content .download a {
+  width: 76px;
+  height: 76px;
+}
+
+#main_content .github a:hover,
+#main_content .download a:hover {
+  opacity:1.0;
+}
+
+#twitter {
+  position:absolute;left:10px;top:15px;
+}
+
+body.desktop #twitter {
+  position:absolute;left:20px;top:80px;
+}
+
+#supported_platforms {
+  margin:30px 10px 0 0;
+  float:right;
+  width:110px;
+  height:40px;
+  color:#65686a;
+  font-size:10px;
+  text-align:right;
+  text-shadow:0px 1px 0px #222;
+  line-height:60px;
+  background-size: 100%;
+  background:transparent url(../images/supported-platforms-big.png) no-repeat top right;
+  clear:both;
+  overflow:hidden;
+}
+
+body.desktop #supported_platforms {
+  margin:60px 20px 0 0;
+  width: 220px;
+  height: 80px;
+  line-height: 120px;
+  font-size: 16px;
+}
+
+#navigation {
+  position:absolute;
+  bottom:0px;
+  left:0px;
+  width:979px;
+  height:40px;
+  border:1px solid rgba(78,76,235,1);  
+  overflow:hidden;
+  -webkit-border-radius:7px;
+  -moz-border-radius:7px;
+  border-radius:7px;
+  -webkit-background-clip:border-box;
+}
+
+#navigation li {
+  float:left;
+  width:244px;
+  height:40px;
+  color:#fff;
+  font-family:"HelveticaNeue-Bold";
+  line-height:230%;
+  text-align:center;
+  text-shadow:rgba(0,0,0,0.25);
+  background: -webkit-gradient(linear, left top, left bottom, 
+    color-stop(0.0,   rgb(126,122,241)), 
+    /* color-stop(0.499, rgb(232,232,232)), */
+    /* color-stop(0.500, rgb(222,222,222)), */
+    color-stop(1,     rgb(95,92,238)) );
+  border-left:1px solid rgba(78,76,235,1);  
+  -webkit-background-clip:border-box;
+}
+
+#navigation li:first-child {
+  border-left:none;
+  -webkit-background-clip:border-box;
+}
+
+body.ipad #logo {
+  background-size: auto;
+  background:transparent url(../images/zeptojs-aerogelweight.png) no-repeat center right;
+}
+
+body.ipad #pulse {
+  display: none;
+}
+
+body.ipad #beta {
+  background-size: auto;
+  background:transparent url(../images/beta-stripe.png) no-repeat;
+}
+
+body.ipad #main_content {
+  background-size:auto;
+  background:#f7f9fa url(../images/box-bg.png) no-repeat bottom center;
+}
+
+body.ipad #main_content .github a {
+  background-size: auto;
+  background:transparent url(../images/github.png) no-repeat;
+}
+
+body.ipad #main_content .download a {
+  background-size:auto;
+  background:transparent url(../images/package.png) no-repeat center right;
+}
+
+body.ipad #supported_platforms {
+  background-size: auto;
+  background:transparent url(../images/supported-platforms.png) no-repeat top right;
+}
+
+em {
+  background: #ffc;
+  padding: 0 3px;
+}

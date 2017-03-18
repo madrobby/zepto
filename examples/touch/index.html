@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> zepto.js — the aerogel-weight mobile javascript framework </title>
+		<meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+		<link href="stylesheets/base.css" media="screen" rel="stylesheet" />
+		<link href="stylesheets/skeleton.css" media="screen" rel="stylesheet" />
+		<link href="stylesheets/layout.css" media="screen" rel="stylesheet" />
+		<link href="stylesheets/demo.css" \media="screen" rel="stylesheet" />
+		<meta name="viewport" content="width=device-width; initial-scale=0.9"/>
+	</head>
+	<body>
+		<div id="main" class="container">
+			<h1><a href="http://zeptojs.com/" target="_blank">zepto.js</a> Touch Events demo</h1>
+		
+			<div class="full-width button" data-type="tap">Tap</div>
+			<div class="full-width button" data-type="doubleTap">Double tap</div>			
+			<div class="button full-width" data-type="swipeRight">Swipe &rarr;</div>
+			<div class="button full-width" data-type="swipeLeft">Swipe &larr;</div>
+			<div class="button full-width" data-type="swipe">Swipe &larr; &uarr; &rarr; &darr;</div>
+			<div class="full-width swipeV one columns" data-type="swipeUp">Swipe &uarr;</div>
+			<div class="full-width swipeV one columns" data-type="swipeDown">Swipe &darr;</div>	
+					
+			<div class="off full-width one columns" data-type="longTap">Long tap</div>			
+			<div class="off full-width pinch one columns" data-type="pinch">Pinch</div>
+			<div class="off full-width pinch one columns" data-type="pinchIn">Pinch In</div>
+			<div class="off full-width pinch one columns" data-type="pinchOut">Pinch Out</div>
+		</div>
+		<script src="javascripts/zepto.min.js"></script>
+		<script>
+			if($.os.ios)
+				$('body').addClass('ios');
+			if(!$.os.ios && !$.os.webos && !$.os.android)
+				$('body').addClass('desktop');
+			if($.os.ipad)
+				$('body').addClass('ipad');
+
+		</script>
+		<script src="javascripts/demo.js"></script>
+	</body>
+</html>
