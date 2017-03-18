@@ -1,0 +1,6 @@
+{
+    "name": "madrobby/zepto"
+  , "description": "Zepto.js is a minimalist JavaScript library for modern browsers, with a jQuery-compatible API"
+  , "homepage": "http://zeptojs.com"
+  , "license": "MIT"
+}
