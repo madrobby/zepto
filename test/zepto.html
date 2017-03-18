@@ -2486,6 +2486,11 @@
         $('#some_element').removeClass('green')
         t.assertEqual('red blue', el.className)
 
+        //calling without arguments (or null/undefined)should reuturn the unchanged
+        //object, and shouldnt change the classes either (or freeze  Zepto)
+        t.assertIdentical(el, el.addClass()) 
+        t.assertEqual('red blue', el.className)
+
         //addClass with function argument
         $('#some_element').addClass(function(idx,classes){
           //test the value of "this"
@@ -2557,6 +2562,11 @@
         var el = $('#toggle_element').removeClass()
 
         t.assertIdentical(el, el.toggleClass('green'))
+        t.assertTrue(el.hasClass('green'))
+        t.assertFalse(el.hasClass('orange'))
+
+        //shouldn't change the classes (or freeze the script)
+        t.assertIdentical(el, el.toggleClass())
         t.assertTrue(el.hasClass('green'))
         t.assertFalse(el.hasClass('orange'))
 
