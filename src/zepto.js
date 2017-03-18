@@ -335,6 +335,7 @@ var Zepto = (function() {
   $.isWindow = isWindow
   $.isArray = isArray
   $.isPlainObject = isPlainObject
+  $.camelCase = camelize
 
   $.isEmptyObject = function(obj) {
     var name
