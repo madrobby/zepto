@@ -413,6 +413,7 @@ var Zepto = (function() {
     // copy over these useful array functions.
     forEach: emptyArray.forEach,
     reduce: emptyArray.reduce,
+    every: emptyArray.every,
     push: emptyArray.push,
     sort: emptyArray.sort,
     splice: emptyArray.splice,
