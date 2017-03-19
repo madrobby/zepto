@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>0.8</version>
+    <authors>rodrigoi</authors>
+    <owners />
+    <projectUrl>http://zeptojs.com/</projectUrl>
+    <id>zepto.js</id>
+    <title>zepto.js</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Zepto.js is a minimalist JavaScript framework for modern web browsers, with a jQuery-compatible syntax.</description>
+    <tags>JavaScript zepto.js jQuery</tags>
+  </metadata>
+  <files>
+    <file src="..\dist\zepto.min.js" target="content\Scripts\zepto.min.js" />
+  </files>
+</package>
