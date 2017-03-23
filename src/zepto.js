@@ -626,7 +626,7 @@ var Zepto = (function() {
     toggle: function(setting){
       return this.each(function(){
         var el = $(this)
-        ;(setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
+        (setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
       })
     },
     prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
