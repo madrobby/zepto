@@ -91,17 +91,16 @@
 
           // swipe
           if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-              (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)){
+              (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30)) {
 
             if (touch.el) {
               touch.el.trigger('swipe')
               touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
             }
-            
             touch = {}
 
             // normal tap
-          }else if ('last' in touch){
+          } else if ('last' in touch) {
             // don't fire tap when delta position changed by more than 30 pixels,
             // for instance when moving to a point and back to origin
             // 当touch.x2不存在时说明没有touchmove发生，那就应该视为tap
@@ -110,9 +109,8 @@
               // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
-              if (touch.el){
-                touch.el.trigger(event)
-              }
+              // [by paper] fix -> "TypeError: 'undefined' is not an object (evaluating 'touch.el.trigger'), when double tap
+              if (touch.el) touch.el.trigger(event)
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
@@ -141,11 +139,9 @@
       // cancel all ongoing events
         .on('touchcancel', function(){
           cancelAll();
-          // 上下滑动在U3下会促发cancel事件导致touch={}，但deltaX、deltaY没有重置，这样下一次tap时如果没有促发touchmove，那么deltaY不会更新，还是上下滑动时记录的大于30px的值
           deltaX = deltaY = 0
         })
 
-    // 浏览器的滚动都有惯性，如果在scroll里直接cancel掉所有事件就会导致用户的操作失效，从TES的数据看，置顶tab点击无效的情况非常多，并且Native的做法也是滚动过程允许用户操作
     // scrolling the window indicates intention of the user
     // to scroll, not tap or swipe, so cancel all ongoing events
     //$(window).on('scroll', cancelAll)
