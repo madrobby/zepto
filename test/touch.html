@@ -132,26 +132,6 @@
         }, 50)
       },
 
-      testScrollDoesNotFireTap: function(t){
-        var element = $('#test').get(0), count = 0
-
-        $('#test').on('tap', function () {
-          count++
-        })
-
-        down(element, 0, 0)
-        move(element, 0, 20)
-        move(element, 0, 20)
-        up(element)
-
-        t.pause()
-        setTimeout(function(){
-          t.resume(function(){
-            t.assertEqual(0, count)
-          })
-        }, 50)
-      },
-
       testSingleTapDoesNotInterfereWithTappingTwice: function(t){
         var count = 0, element = $('#test').get(0)
 
@@ -330,8 +310,6 @@
     }
 
     Evidence('TouchTest',     $.extend({ emitEvent: emitTouchEvent }, tests))
-    Evidence('MSPointerTest', $.extend({ emitEvent: emitMSPointerEvent }, tests))
-    Evidence('PointerTest',   $.extend({ emitEvent: emitPointerEvent }, tests))
   })()
   </script>
 </body>
