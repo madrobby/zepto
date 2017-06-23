@@ -2386,6 +2386,19 @@
         }
       },
 
+      testAppendApplicationScriptEval: function (t) {
+        window.someGlobalVariable = 0
+        try {
+          $('#fixtures').append(
+            '<div><b id="newByAppendApplicationScript">Hi</b>' +
+            '<\script type="application/javascript">this.someGlobalVariable += $("#newByAppendApplicationScript").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
       testNoEvalWithSrc: function (t) {
         try {
           window.someGlobalVariable = false
@@ -2402,6 +2415,19 @@
           $('<div>').appendTo('#fixtures').html(
             '<div><b id="newByHtml">Hi</b>' +
             '<\script>this.someGlobalVariable += $("#newByHtml").size()<\/script></div>'
+          )
+          t.assertIdentical(1, window.someGlobalVariable)
+        } finally {
+          delete window.someGlobalVariable
+        }
+      },
+
+      testHtmlApplicationScriptEval: function (t) {
+        window.someGlobalVariable = 0
+        try {
+          $('<div>').appendTo('#fixtures').html(
+            '<div><b id="newByHtmlApplicationScript">Hi</b>' +
+            '<\script type="application/javascript">this.someGlobalVariable += $("#newByHtmlApplicationScript").size()<\/script></div>'
           )
           t.assertIdentical(1, window.someGlobalVariable)
         } finally {
