@@ -81,6 +81,7 @@
   <map name="imgMap">
   </map>
   <div id="prop_test7" contenteditable="true"></div>
+  <input id="prop_test8" type="checkbox" checked />
 
   <div class="htmltest" id="htmltest1"></div>
   <div class="htmltest" id="htmltest2"></div>
@@ -1861,6 +1862,7 @@
         var td2 = $('#prop_test5')
         var img = $('#prop_test6')
         var div = $('#prop_test7')
+        var checkbox = $('#prop_test8')
 
         t.assertEqual(input.prop('tabindex'), -1)
         t.assertEqual(input.prop('readonly'), true)
@@ -1873,6 +1875,10 @@
         t.assertEqual(td2.prop('colspan'), 2)
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
+
+        checkbox.prop({'checked': false, 'disabled': true})
+        t.assertEqual(checkbox.prop('checked'), false)
+        t.assertEqual(checkbox.prop('disabled'), true)
       },
 
       testRemoveProp: function(t){
