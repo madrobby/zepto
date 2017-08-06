@@ -664,11 +664,12 @@ var Zepto = (function() {
     },
     prop: function(name, value){
       name = propMap[name] || name
-      return (1 in arguments) ?
+      return (typeof name == 'string' && !(1 in arguments)) ?
+        (this[0] && this[0][name]) :
         this.each(function(idx){
-          this[name] = funcArg(this, value, idx, this[name])
-        }) :
-        (this[0] && this[0][name])
+          if (isObject(name)) for (key in name) this[key] = name[key]
+          else this[name] = funcArg(this, value, idx, this[name])
+        })
     },
     removeProp: function(name){
       name = propMap[name] || name
