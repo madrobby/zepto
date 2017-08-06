@@ -1879,7 +1879,8 @@
         t.assertEqual(img.prop('usemap'), '#imgMap')
         t.assertEqual(div.prop('contenteditable'), 'true')
 
-        checkbox.prop({'checked': false, 'disabled': true})
+        checkbox.prop({'class': 'propTest', 'checked': false, 'disabled': true})
+        t.assertEqual(checkbox.prop('class'), 'propTest')
         t.assertEqual(checkbox.prop('checked'), false)
         t.assertEqual(checkbox.prop('disabled'), true)
       },

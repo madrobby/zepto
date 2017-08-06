@@ -668,7 +668,7 @@ var Zepto = (function() {
       return (typeof name == 'string' && !(1 in arguments)) ?
         (this[0] && this[0][name]) :
         this.each(function(idx){
-          if (isObject(name)) for (key in name) this[key] = name[key]
+          if (isObject(name)) for (key in name) this[propMap[key] || key] = name[key]
           else this[name] = funcArg(this, value, idx, this[name])
         })
     },
