@@ -3,7 +3,7 @@
     define(function() { return factory(global) })
   else
     factory(global)
-}(this, function(window) {
+}(window, function(window) {
   YIELD
   return Zepto
 }))
