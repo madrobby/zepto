@@ -480,7 +480,8 @@ var Zepto = (function() {
       return $(uniq(this.concat($(selector,context))))
     },
     is: function(selector){
-      return this.length > 0 && zepto.matches(this[0], selector)
+      return typeof selector == 'string' ? this.length > 0 && zepto.matches(this[0], selector) : 
+          selector && this.selector == selector.selector
     },
     not: function(selector){
       var nodes=[]

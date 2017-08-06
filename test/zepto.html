@@ -1591,9 +1591,12 @@
         t.assert($('#li2').is(':first-child'))
         t.assert(!$('#find1').is('doesnotexist'))
         t.assert(!$('#find1').is())
+        t.assert($('#find1').is($('#find1')))
+        t.assert(!$('#find1').is($('#find2')))
 
         t.assert($('#fixtures div').is('#some_element'))
         t.assert(!$('#doesnotexist').is('p'))
+        t.assert(!$('#doesnotexist').is($('#find1')))
 
         t.assert(!$(window).is('p'))
       },
