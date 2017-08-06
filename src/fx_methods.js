@@ -27,7 +27,7 @@
     origShow.call(this)
     if (speed === undefined) speed = 0
     else this.css('opacity', 0)
-    return anim(this, speed, 1, '1,1', callback)
+    return anim(this, speed, this.css('opacity'), '1,1', callback) // Removed Hard Coded Opacity  - AC (6/14/2016)
   }
 
   $.fn.hide = function(speed, callback) {

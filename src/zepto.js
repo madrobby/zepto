@@ -12,6 +12,8 @@ var Zepto = (function() {
     tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
     rootNodeRE = /^(?:body|html)$/i,
     capitalRE = /([A-Z])/g,
+    scriptNodeRE = /^(<script){1}(.+)(src=("|\'){1}(.*)("|\'){1}){1}(.*)>(<\/script>){1}$/, // Used to find script tags that load extenal JS -- AC 5/23/16
+
 
     // special attributes that should be get/set via method calls
     methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
@@ -867,14 +869,49 @@ var Zepto = (function() {
       })
     }
   })
-
-  function traverseNode(node, fun) {
-    fun(node)
-    for (var i = 0, len = node.childNodes.length; i < len; i++)
-      traverseNode(node.childNodes[i], fun)
+  
+// Because innerHTML doesn't execute script tags, we will convert to a node using scriptNodeRE and append the node -- AC 5/23/16
+  function createScriptNodeFromString(value) { 
+    var jsnode = document.createElement("script")
+    jsnode.src = scriptNodeRE.exec(value)[5]
+    return jsnode
   }
 
-  // Generate the `after`, `prepend`, `before`, `append`,
+ // Used to remove script node once node is loaded -- AC 5/26/2016
+  function removeScriptNodeOnLoad(e) { 
+      document.head.removeChild(e.target)
+  }
+  // Used to clone script node and append it to the dom. Set onload event handler to removeScriptNodeOnLoad, which removes node -- AC 5/26/2016
+  function createScriptNodeFromNode(node) {
+    var jsnode = node.cloneNode(true)
+    jsnode.onload = removeScriptNodeOnLoad
+    document.head.appendChild( jsnode )
+  }  
+
+/* Moved inline callback for the traverNode to it's own function named compileInlineJavaScript
+     The function is called during the recursive dom tree parsing to find inline script tags -- AC 5/23/2016 */
+  function compileInlineJavaScript(el) {
+    if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase().localeCompare('SCRIPT') == 0 && (!el.type || el.type.localeCompare('text/javascript') == 0) && !el.src) {
+      window['eval'].call(window, el.innerHTML)
+      return true
+    } else if (typeof el != "undefined" && typeof el.nodeName != "undefined" && el.nodeName != null && el.nodeName.toUpperCase().localeCompare('SCRIPT') == 0 && (!el.type || el.type.localeCompare('text/javascript') == 0) && el.src){ // Added Condition to find script nodes with src  -- AC 5/26/2016
+      createScriptNodeFromNode(el) // Used to load external script and remove node once loaded -- AC 5/26/2016
+      return true
+    }
+    return false
+  }
+  $.fn.compileInlineJavaScript = compileInlineJavaScript
+
+  function traverseNode(node, fun) {
+    if (typeof node != "undefined") {
+         fun(node) // Doc: If script tag with inline code, parse
+          for (var i = 0, len = node.childNodes.length; i < len; i++)
+          traverseNode(node.childNodes[i],fun) //Doc: determine each child if they are script tags with inline code. If not find the child's children --AC 5/23/16
+    }
+  }
+  $.fn.traverseNode  = traverseNode
+
+/// Generate the `after`, `prepend`, `before`, `append`,
   // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
   adjacencyOperators.forEach(function(operator, operatorIndex) {
     var inside = operatorIndex % 2 //=> prepend, append
@@ -892,10 +929,11 @@ var Zepto = (function() {
               })
               return arr
             }
-            return argType == "object" || arg == null ?
-              arg : zepto.fragment(arg)
+            return  argType == "object" || arg == null ?
+              arg : (scriptNodeRE.test(arg)) ?  createScriptNodeFromString(arg) :  zepto.fragment(arg)
           }),
-          parent, copyByClone = this.length > 1
+        parent, copyByClone = this.length > 1
+
       if (nodes.length < 1) return this
 
       return this.each(function(_, target){
@@ -909,21 +947,20 @@ var Zepto = (function() {
 
         var parentInDocument = $.contains(document.documentElement, parent)
 
-        nodes.forEach(function(node){
-          if (copyByClone) node = node.cloneNode(true)
-          else if (!parent) return $(node).remove()
-
-          parent.insertBefore(node, target)
-          if (parentInDocument) traverseNode(node, function(el){
-            if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src){
-              var target = el.ownerDocument ? el.ownerDocument.defaultView : window
-              target['eval'].call(target, el.innerHTML)
-            }
-          })
-        })
+        nodes.forEach(function (node) {
+          if (compileInlineJavaScript(node)) {
+          } else { 
+            if (copyByClone) node = node.cloneNode(true)
+            else if (!parent) return $(node).remove()
+            parent.insertBefore(node, target)
+            if (parentInDocument && typeof node != "undefined" || (typeof node.children != "undefined" &&  node.children.length)) traverseNode(node,compileInlineJavaScript) // moved inline script to named function: compileInlineJavaScript -- AC 5/23/2016
+          }
+         })
       })
     }
+
+
+
 
     // after    => insertAfter
     // prepend  => prependTo
