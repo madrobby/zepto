@@ -6,7 +6,31 @@
   var touch = {},
     touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
     longTapDelay = 750,
-    gesture
+    gesture,
+    touchEventMap = function(){
+      if('ontouchstart' in document){
+        return {
+          down: 'touchstart',
+          up: 'touchend',
+          move: 'touchmove',
+          cancel: 'touchcancel'
+        }
+      }else if('onpointerdown' in document){
+        return {
+          down: 'pointerdown',
+          up: 'pointerup',
+          move: 'pointermove',
+          cancel: 'pointercancel'
+        }
+      }else if('onmspointerdown' in document){
+        return {
+          down: 'MSPointerDown',
+          up: 'MSPointerUP',
+          move: 'MSPointerMove',
+          cancel: 'MSPointerCancel'
+        }
+      }
+    }()
 
   function swipeDirection(x1, x2, y1, y2) {
     return Math.abs(x1 - x2) >=
@@ -63,7 +87,7 @@
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
-      .on('touchstart MSPointerDown pointerdown', function(e){
+      .on(touchEventMap.down, function(e){
         if((_isPointerType = isPointerEventType(e, 'down')) &&
           !isPrimaryTouch(e)) return
         firstTouch = _isPointerType ? e : e.touches[0]
@@ -86,7 +110,7 @@
         // adds the current touch contact for IE gesture recognition
         if (gesture && _isPointerType) gesture.addPointer(e.pointerId)
       })
-      .on('touchmove MSPointerMove pointermove', function(e){
+      .on(touchEventMap.move, function(e){
         if((_isPointerType = isPointerEventType(e, 'move')) &&
           !isPrimaryTouch(e)) return
         firstTouch = _isPointerType ? e : e.touches[0]
@@ -97,7 +121,7 @@
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
-      .on('touchend MSPointerUp pointerup', function(e){
+      .on(touchEventMap.up, function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
           !isPrimaryTouch(e)) return
         cancelLongTap()
@@ -154,7 +178,7 @@
       // when the browser window loses focus,
       // for example when a modal dialog is shown,
       // cancel all ongoing events
-      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
+      .on(touchEventMap.cancel, cancelAll)
 
     // scrolling the window indicates intention of the user
     // to scroll, not tap or swipe, so cancel all ongoing events
