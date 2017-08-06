@@ -47,7 +47,7 @@
     return hover[type] || (focusinSupported && focus[type]) || type
   }
 
-  function add(element, events, fn, data, selector, delegator, capture){
+  function add(element, events, fn, customData, selector, delegator, capture){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     events.split(/\s/).forEach(function(event){
       if (event == 'ready') return $(document).ready(fn)
@@ -65,7 +65,7 @@
       handler.proxy = function(e){
         e = compatible(e)
         if (e.isImmediatePropagationStopped()) return
-        e.data = data
+        e.customData = customData
         var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
