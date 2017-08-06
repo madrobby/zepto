@@ -12,13 +12,18 @@
     (function(){
       function load(scripts){
         scripts.split(' ').forEach(function(script){
-          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+          console.info('Loading script "'+script+'"')
+          var s = document.createElement('script')
+          s.src = '../src/'+script+'.js?'+(+new Date)
+          document.getElementsByTagName('head')[0].appendChild(s)
         })
       }
-
-      load('zepto event ie touch')
+      window.__load = load
     })()
   </script>
+  <script src="../src/zepto.js"></script>
+  <script src="../src/event.js"></script>
+  <script src="../src/ie.js"></script>
 </head>
 <body>
   <h1>Zepto Touch unit tests</h1>
@@ -38,7 +43,7 @@
 
   <script>
   (function(){
-    var emitEvent, tests
+    var emitEvent, tests, lastLoaded
 
     // Fire a simulated touch event.
     // While it is possible to fire real touch events,
@@ -106,7 +111,8 @@
     tests = {
       setUp: function(){
         emitEvent = this.emitEvent
-        $('<div id=test>TEST ELEMENT</div>').appendTo('body')
+        this.setupTouchLibrary()
+        $('<div id=test>').appendTo('body')
       },
 
       tearDown: function(){
@@ -123,6 +129,28 @@
 
         down(element, 10, 10)
         up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, count)
+          })
+        }, 50)
+      },
+
+      testOnlyOneTouchAPIIsActive: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        emitTouchEvent('start', element, 10, 10)
+        emitPointerEvent('start', element, 10, 10)
+        emitMSPointerEvent('start', element, 10, 10)
+        emitTouchEvent('end', element)
+        emitPointerEvent('end', element)
+        emitMSPointerEvent('end', element)
 
         t.pause()
         setTimeout(function(){
@@ -329,9 +357,45 @@
       // TODO: test swipes in specific directions
     }
 
-    Evidence('TouchTest',     $.extend({ emitEvent: emitTouchEvent }, tests))
-    Evidence('MSPointerTest', $.extend({ emitEvent: emitMSPointerEvent }, tests))
-    Evidence('PointerTest',   $.extend({ emitEvent: emitPointerEvent }, tests))
+    function resetMockTouchAPIs(){
+      delete document.ontouchstart
+      delete document.onmspointerdown
+      delete document.onpointerdown
+      if ($.unregisterTouchEvents) $.unregisterTouchEvents()
+    }
+
+    Evidence('TouchTest', $.extend({
+      setupTouchLibrary: function(){
+        if (lastLoaded == 'ontouchstart') return
+        resetMockTouchAPIs()
+        document.ontouchstart = true
+        __load('touch')
+        lastLoaded = 'ontouchstart'
+      },
+      emitEvent: emitTouchEvent
+    }, tests))
+
+    Evidence('PointerTest', $.extend({
+      setupTouchLibrary: function(){
+        if (lastLoaded == 'onpointerdown') return
+        resetMockTouchAPIs()
+        document.onpointerdown = true
+        __load('touch')
+        lastLoaded = 'onpointerdown'
+      },
+      emitEvent: emitPointerEvent
+    }, tests))
+
+    Evidence('MSPointerTest', $.extend({
+      setupTouchLibrary: function(){
+        if (lastLoaded == 'onmspointerdown') return
+        resetMockTouchAPIs()
+        document.onmspointerdown = true
+        __load('touch')
+        lastLoaded = 'onmspointerdown'
+      },
+      emitEvent: emitMSPointerEvent
+    }, tests))
   })()
   </script>
 </body>
