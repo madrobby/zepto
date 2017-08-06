@@ -12,8 +12,9 @@
   , "license": "MIT"
   , "devDependencies": {
       "uglify-js": "2.4.x"
-    , "express": "3.1.x"
-    , "coffee-script": "1.5.x"
-    , "shelljs": "0.1.x"
+      , "express": "*"
+      , "body-parser":"*"
+      , "coffee-script": "1.5.x"
+      , "shelljs": "0.1.x"
   }
 }
