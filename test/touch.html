@@ -38,7 +38,7 @@
 
   <script>
   (function(){
-    var emitEvent, tests
+    var emitEvent, tests, lastLoaded
 
     // Fire a simulated touch event.
     // While it is possible to fire real touch events,
@@ -106,7 +106,8 @@
     tests = {
       setUp: function(){
         emitEvent = this.emitEvent
-        $('<div id=test>TEST ELEMENT</div>').appendTo('body')
+        this.setupTouchLibrary()
+        $('<div id=test>').appendTo('body')
       },
 
       tearDown: function(){
@@ -123,6 +124,28 @@
 
         down(element, 10, 10)
         up(element)
+
+        t.pause()
+        setTimeout(function(){
+          t.resume(function(){
+            t.assertEqual(1, count)
+          })
+        }, 50)
+      },
+
+      testOnlyOneTouchAPIIsActive: function(t){
+        var count = 0, element = $('#test').get(0)
+
+        $('#test').on('tap', function(){
+          count++
+        })
+
+        emitTouchEvent('start', element, 10, 10)
+        emitPointerEvent('start', element, 10, 10)
+        emitMSPointerEvent('start', element, 10, 10)
+        emitTouchEvent('end', element)
+        emitPointerEvent('end', element)
+        emitMSPointerEvent('end', element)
 
         t.pause()
         setTimeout(function(){
@@ -329,9 +352,39 @@
       // TODO: test swipes in specific directions
     }
 
-    Evidence('TouchTest',     $.extend({ emitEvent: emitTouchEvent }, tests))
-    Evidence('MSPointerTest', $.extend({ emitEvent: emitMSPointerEvent }, tests))
-    Evidence('PointerTest',   $.extend({ emitEvent: emitPointerEvent }, tests))
+    Evidence('TouchTest', $.extend({
+      setupTouchLibrary: function(){
+        console.info('Setting up touch library for TouchEvent test')
+        $.touch.setup({
+          'down': 'touchstart', 'up': 'touchend',
+          'move': 'touchmove', 'cancel': 'touchcancel'
+        })
+      },
+      emitEvent: emitTouchEvent
+    }, tests))
+
+    Evidence('PointerTest', $.extend({
+      setupTouchLibrary: function(){
+        console.info('Setting up touch library for PointerEvent test')
+        $.touch.setup({
+          'down': 'pointerdown', 'up': 'pointerup',
+          'move': 'pointermove', 'cancel': 'pointercancel'
+        })
+      },
+      emitEvent: emitPointerEvent
+    }, tests))
+
+    Evidence('MSPointerTest', $.extend({
+      setupTouchLibrary: function(){
+        console.info('Setting up touch library for MSPointerEvent test')
+        $.touch.setup({
+          'down': 'MSPointerDown', 'up': 'MSPointerUp',
+          'move': 'MSPointerMove', 'cancel': 'MSPointerCancel'
+        })
+      },
+      emitEvent: emitMSPointerEvent
+    }, tests))
+
   })()
   </script>
 </body>
