@@ -321,7 +321,7 @@ var Zepto = (function() {
         value == "true" ||
         ( value == "false" ? false :
           value == "null" ? null :
-          +value + "" == value ? +value :
+          (num = +value) + '' === value ? num :
           /^[\[\{]/.test(value) ? $.parseJSON(value) :
           value )
         : value
@@ -916,7 +916,7 @@ var Zepto = (function() {
           parent.insertBefore(node, target)
           if (parentInDocument) traverseNode(node, function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src){
+               (el.type.match(/^$|\/(?:emca|java)script/i)) && !el.src){
               var target = el.ownerDocument ? el.ownerDocument.defaultView : window
               target['eval'].call(target, el.innerHTML)
             }
