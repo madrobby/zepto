@@ -31,6 +31,7 @@ var Zepto = (function() {
     zepto = {},
     camelize, uniq,
     tempParent = document.createElement('div'),
+    boolAttrRE = /^allowfullscreen|allowpaymentrequest|allowusermedia|async|autofocus|autoplay|checked|controls|default|defer|disabled|formnovalidate|hidden|ismap|itemscope|loop|multiple|muted|nomodule|novalidate|open|playsinline|readonly|required|reversed|selected|typemustmatch$/i,
     propMap = {
       'tabindex': 'tabIndex',
       'readonly': 'readOnly',
@@ -292,6 +293,12 @@ var Zepto = (function() {
 
   function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
+  }
+
+  function getAttribute(node, name) {
+    var result
+    if (boolAttrRE.test(name)) return node.getAttribute(name) != null ? name.toLowerCase() : undefined
+    else return (result = node.getAttribute(name)) != null ? result : undefined
   }
 
   function setAttribute(node, name, value) {
@@ -649,13 +656,12 @@ var Zepto = (function() {
         (0 in this ? this.pluck('textContent').join("") : null)
     },
     attr: function(name, value){
-      var result
       return (typeof name == 'string' && !(1 in arguments)) ?
-        (0 in this && this[0].nodeType == 1 && (result = this[0].getAttribute(name)) != null ? result : undefined) :
+        (0 in this && this[0].nodeType == 1 ? getAttribute(this[0], name) : undefined) :
         this.each(function(idx){
           if (this.nodeType !== 1) return
           if (isObject(name)) for (key in name) setAttribute(this, key, name[key])
-          else setAttribute(this, name, funcArg(this, value, idx, this.getAttribute(name)))
+          else setAttribute(this, name, funcArg(this, value, idx, getAttribute(this, name)))
         })
     },
     removeAttr: function(name){
