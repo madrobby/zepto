@@ -12,18 +12,13 @@
     (function(){
       function load(scripts){
         scripts.split(' ').forEach(function(script){
-          console.info('Loading script "'+script+'"')
-          var s = document.createElement('script')
-          s.src = '../src/'+script+'.js?'+(+new Date)
-          document.getElementsByTagName('head')[0].appendChild(s)
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
         })
       }
-      window.__load = load
+
+      load('zepto event ie touch')
     })()
   </script>
-  <script src="../src/zepto.js"></script>
-  <script src="../src/event.js"></script>
-  <script src="../src/ie.js"></script>
 </head>
 <body>
   <h1>Zepto Touch unit tests</h1>
@@ -357,45 +352,39 @@
       // TODO: test swipes in specific directions
     }
 
-    function resetMockTouchAPIs(){
-      delete document.ontouchstart
-      delete document.onmspointerdown
-      delete document.onpointerdown
-      if ($.unregisterTouchEvents) $.unregisterTouchEvents()
-    }
-
     Evidence('TouchTest', $.extend({
       setupTouchLibrary: function(){
-        if (lastLoaded == 'ontouchstart') return
-        resetMockTouchAPIs()
-        document.ontouchstart = true
-        __load('touch')
-        lastLoaded = 'ontouchstart'
+        console.info('Setting up touch library for TouchEvent test')
+        $.touch.setup({
+          'down': 'touchstart', 'up': 'touchend',
+          'move': 'touchmove', 'cancel': 'touchcancel'
+        })
       },
       emitEvent: emitTouchEvent
     }, tests))
 
     Evidence('PointerTest', $.extend({
       setupTouchLibrary: function(){
-        if (lastLoaded == 'onpointerdown') return
-        resetMockTouchAPIs()
-        document.onpointerdown = true
-        __load('touch')
-        lastLoaded = 'onpointerdown'
+        console.info('Setting up touch library for PointerEvent test')
+        $.touch.setup({
+          'down': 'pointerdown', 'up': 'pointerup',
+          'move': 'pointermove', 'cancel': 'pointercancel'
+        })
       },
       emitEvent: emitPointerEvent
     }, tests))
 
     Evidence('MSPointerTest', $.extend({
       setupTouchLibrary: function(){
-        if (lastLoaded == 'onmspointerdown') return
-        resetMockTouchAPIs()
-        document.onmspointerdown = true
-        __load('touch')
-        lastLoaded = 'onmspointerdown'
+        console.info('Setting up touch library for MSPointerEvent test')
+        $.touch.setup({
+          'down': 'MSPointerDown', 'up': 'MSPointerUp',
+          'move': 'MSPointerMove', 'cancel': 'MSPointerCancel'
+        })
       },
       emitEvent: emitMSPointerEvent
     }, tests))
+
   })()
   </script>
 </body>
