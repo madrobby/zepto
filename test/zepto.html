@@ -591,6 +591,13 @@
         t.refuteIdentical($('#nonexistent'), $('#nonexistent'))
       },
 
+      testDollarWithZepto: function(t){
+        var z1 = $('#some_element')
+        var z2 = $(z1)
+        t.refuteIdentical(z1, z2)
+        t.assertEqual(z1.get(0), z2.get(0))
+      },
+
       testDollarWithNil: function(t){
         t.assertZeptoCollection(0, $(null))
         t.assertZeptoCollection(0, $(undefined))
