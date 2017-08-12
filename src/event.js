@@ -34,7 +34,7 @@
     return {e: parts[0], ns: parts.slice(1).sort().join(' ')}
   }
   function matcherFor(ns) {
-    return new RegExp('(?:^| )' + ns.replace(/\s{1}/g, ' .* ?') + '(?: |$)')
+    return new RegExp('(?:^| )' + ns.replace(/ /g, ' .* ?') + '(?: |$)')
   }
 
   function eventCapture(handler, captureSetting) {
