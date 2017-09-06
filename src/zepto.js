@@ -480,7 +480,7 @@ var Zepto = (function() {
       return $(uniq(this.concat($(selector,context))))
     },
     is: function(selector){
-      return typeof selector == 'string' ? this.length > 0 && zepto.matches(this[0], selector) : 
+      return typeof selector == 'string' ? this.length > 0 && zepto.matches(this[0], selector) :
           selector && this.selector == selector.selector
     },
     not: function(selector){
@@ -916,7 +916,7 @@ var Zepto = (function() {
           parent.insertBefore(node, target)
           if (parentInDocument) traverseNode(node, function(el){
             if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src){
+               el.type.match(/^$|\/(?:emca|java)script/i) && !el.src){
               var target = el.ownerDocument ? el.ownerDocument.defaultView : window
               target['eval'].call(target, el.innerHTML)
             }
