@@ -689,7 +689,13 @@ var Zepto = (function() {
       if (0 in arguments) {
         if (value == null) value = ""
         return this.each(function(idx){
-          this.value = funcArg(this, value, idx, this.value)
+          if(this.multiple && isArray(value)){
+            $(this).find('option').each(function(){
+              this.selected = value.indexOf(this.value) > -1
+            })
+          } else {
+            this.value = funcArg(this, value, idx, this.value)
+          }
         })
       } else {
         return this[0] && (this[0].multiple ?

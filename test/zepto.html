@@ -2082,6 +2082,13 @@
 
         t.assertEqualCollection(['2'], multiple.val(),
           "Expected val() to reflect changes to selected options in a <select multiple> element")
+
+        // set multiple value
+        multiple.val('')
+        t.assertEqualCollection([], multiple.val())
+
+        multiple.val(['1','2'])
+        t.assertEqualCollection(['1','2'], multiple.val())
       },
 
       testValVsValueAttr: function(t) {
