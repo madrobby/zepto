@@ -399,7 +399,7 @@ var Zepto = (function() {
   if (window.JSON) $.parseJSON = JSON.parse
 
   // Populate the class2type map
-  $.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
+  $.each("Boolean Number String Function Array Date RegExp Object Symbol Error".split(" "), function(i, name) {
     class2type[ "[object " + name + "]" ] = name.toLowerCase()
   })
 
