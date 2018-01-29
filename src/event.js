@@ -65,9 +65,11 @@
       handler.proxy = function(e){
         e = compatible(e)
         if (e.isImmediatePropagationStopped()) return
-        var dataPropDescriptor = Object.getOwnPropertyDescriptor(e, 'data')
-        if (!dataPropDescriptor || dataPropDescriptor.writable)
-            e.data = data
+        try {
+          var dataPropDescriptor = Object.getOwnPropertyDescriptor(e, 'data')
+          if (!dataPropDescriptor || dataPropDescriptor.writable)
+              e.data = data
+        } catch (e) {} // when using strict mode dataPropDescriptor will be undefined when e is InputEvent (even though data property exists). So we surround with try/catch
         var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result
