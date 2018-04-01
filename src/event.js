@@ -6,6 +6,21 @@
   var _zid = 1, undefined,
       slice = Array.prototype.slice,
       isFunction = $.isFunction,
+      isPlainObject = $.isPlainObject,
+      supportsPassiveOption = function () {
+        var supportsPassiveOption = false
+        try {
+          var opts = Object.defineProperty ({}, 'passive', {
+            get : function () {
+              supportsPassiveOption = true
+            }
+          })
+          window.addEventListener ('test', null, opts)
+        } catch (e) {
+          supportsPassiveOption = false
+        }
+        return supportsPassiveOption
+      } (),
       isString = function(obj){ return typeof obj == 'string' },
       handlers = {},
       specialEvents={},
@@ -47,7 +62,7 @@
     return hover[type] || (focusinSupported && focus[type]) || type
   }
 
-  function add(element, events, fn, data, selector, delegator, capture){
+  function add(element, events, fn, data, selector, delegator, capture, options){
     var id = zid(element), set = (handlers[id] || (handlers[id] = []))
     events.split(/\s/).forEach(function(event){
       if (event == 'ready') return $(document).ready(fn)
@@ -72,8 +87,13 @@
       }
       handler.i = set.length
       set.push(handler)
+      options = (supportsPassiveOption && isPlainObject(options)) ? {
+        capture : eventCapture(handler, capture),
+        once : !!options.once,
+        passive : !!options.passive
+      } : eventCapture(handler, capture)
       if ('addEventListener' in element)
-        element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
+        element.addEventListener(realEvent(handler.e), handler.proxy, options)
     })
   }
   function remove(element, events, fn, selector, capture){
@@ -107,14 +127,14 @@
     }
   }
 
-  $.fn.bind = function(event, data, callback){
-    return this.on(event, data, callback)
+  $.fn.bind = function(event, data, callback, options){
+    return this.on(event, data, callback, options)
   }
   $.fn.unbind = function(event, callback){
     return this.off(event, callback)
   }
-  $.fn.one = function(event, selector, data, callback){
-    return this.on(event, selector, data, callback, 1)
+  $.fn.one = function(event, selector, data, callback, options){
+    return this.on(event, selector, data, callback, options, 1)
   }
 
   var returnTrue = function(){return true},
@@ -159,15 +179,15 @@
     return compatible(proxy, event)
   }
 
-  $.fn.delegate = function(selector, event, callback){
-    return this.on(event, selector, callback)
+  $.fn.delegate = function(selector, event, callback, options){
+    return this.on(event, selector, callback, options)
   }
   $.fn.undelegate = function(selector, event, callback){
     return this.off(event, selector, callback)
   }
 
-  $.fn.live = function(event, callback){
-    $(document.body).delegate(this.selector, event, callback)
+  $.fn.live = function(event, callback, options){
+    $(document.body).delegate(this.selector, event, callback, options)
     return this
   }
   $.fn.die = function(event, callback){
@@ -175,19 +195,19 @@
     return this
   }
 
-  $.fn.on = function(event, selector, data, callback, one){
+  $.fn.on = function(event, selector, data, callback, options, one){
     var autoRemove, delegator, $this = this
     if (event && !isString(event)) {
       $.each(event, function(type, fn){
-        $this.on(type, selector, data, fn, one)
+        $this.on(type, selector, data, fn, options, one)
       })
       return $this
     }
 
     if (!isString(selector) && !isFunction(callback) && callback !== false)
-      callback = data, data = selector, selector = undefined
-    if (callback === undefined || data === false)
-      callback = data, data = undefined
+      options = callback, callback = data, data = selector, selector = undefined
+    if (callback === undefined || isFunction(data) || data === false)
+      options = callback, callback = data, data = undefined
 
     if (callback === false) callback = returnFalse
 
@@ -205,7 +225,7 @@
         }
       }
 
-      add(element, event, callback, data, selector, delegator || autoRemove)
+      add(element, event, callback, data, selector, delegator || autoRemove, undefined, options)
     })
   }
   $.fn.off = function(event, selector, callback){
