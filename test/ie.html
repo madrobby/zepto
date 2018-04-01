@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="test.css">
+  <title>Zepto Touch unit tests</title>
+  <script src="../vendor/evidence.js"></script>
+  <script src="evidence_runner.js"></script>
+  <script>
+    // avoid caching
+    (function(){
+      function load(scripts){
+        scripts.split(' ').forEach(function(script){
+          document.write('<script src="../src/'+script+'.js?'+(+new Date)+'"></scr'+'ipt>')
+        })
+      }
+
+      load('ie')
+    })()
+  </script>
+  <style>
+      body {
+          height: 50px;
+      }
+      body:after {
+          content: 'abc';
+      }
+  </style>
+</head>
+<body>
+  <h1>Zepto ie unit tests</h1>
+  <p id="results">
+    Running… see browser console for results
+  </p>
+
+  <script>
+    (function(){
+
+      Evidence('getComputedStyle', {
+
+        //Test to check if getComputedStyle does not blow up when no element are provided
+        testGetComputedStyleNoElem: function(t){
+          t.assertEqual(null, getComputedStyle())
+        },
+
+        //Test to check if computed styles for elements are returned correctly
+        testGetComputedStyle: function(t){
+          t.assertEqual('50px', getComputedStyle(document.body).height)
+        },
+
+        //Test to check if computed styles for pseudo-elements are returned correctly
+        //Assertion a bit hacky as IE returns the value in double quotes
+        testGetComputedStylePseudoElem: function(t){
+          t.assert(getComputedStyle(document.body, ':after').content.indexOf('abc') >  -1)
+        }
+
+      })
+    })()
+  </script>
+
+</body>
+</html>

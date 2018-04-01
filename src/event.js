@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2015 Thomas Fuchs
+//     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -119,7 +119,7 @@
 
   var returnTrue = function(){return true},
       returnFalse = function(){return false},
-      ignoreProperties = /^([A-Z]|returnValue$|layer[XY]$)/,
+      ignoreProperties = /^([A-Z]|returnValue$|layer[XY]$|webkitMovement[XY]$)/,
       eventMethods = {
         preventDefault: 'isDefaultPrevented',
         stopImmediatePropagation: 'isImmediatePropagationStopped',
@@ -138,6 +138,10 @@
         }
         event[predicate] = returnFalse
       })
+
+      try {
+        event.timeStamp || (event.timeStamp = Date.now())
+      } catch (ignored) { }
 
       if (source.defaultPrevented !== undefined ? source.defaultPrevented :
           'returnValue' in source ? source.returnValue === false :

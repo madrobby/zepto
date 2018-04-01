@@ -1,9 +1,9 @@
 //     Zepto.js
-//     (c) 2010-2015 Thomas Fuchs
+//     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
-  var jsonpID = 0,
+  var jsonpID = +new Date(),
       document = window.document,
       key,
       name,
@@ -71,6 +71,12 @@
     ajaxStop(settings)
   }
 
+  function ajaxDataFilter(data, type, settings) {
+    if (settings.dataFilter == empty) return data
+    var context = settings.context
+    return settings.dataFilter.call(context, data, type)
+  }
+
   // Empty function, used as default callback
   function empty() {}
 
@@ -79,7 +85,7 @@
 
     var _callbackName = options.jsonpCallback,
       callbackName = ($.isFunction(_callbackName) ?
-        _callbackName() : _callbackName) || ('jsonp' + (++jsonpID)),
+        _callbackName() : _callbackName) || ('Zepto' + (jsonpID++)),
       script = document.createElement('script'),
       originalCallback = window[callbackName],
       responseData,
@@ -161,7 +167,11 @@
     // Whether data should be serialized to string
     processData: true,
     // Whether the browser should be allowed to cache GET responses
-    cache: true
+    cache: true,
+    //Used to handle the raw response data of XMLHttpRequest.
+    //This is a pre-filtering function to sanitize the response.
+    //The sanitized response should be returned
+    dataFilter: empty
   }
 
   function mimeToDataType(mime) {
@@ -181,7 +191,7 @@
   function serializeData(options) {
     if (options.processData && options.data && $.type(options.data) != "string")
       options.data = $.param(options.data, options.traditional)
-    if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
+    if (options.data && (!options.type || options.type.toUpperCase() == 'GET' || 'jsonp' == options.dataType))
       options.url = appendQuery(options.url, options.data), options.data = undefined
   }
 
@@ -250,17 +260,25 @@
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
           dataType = dataType || mimeToDataType(settings.mimeType || xhr.getResponseHeader('content-type'))
-          result = xhr.responseText
 
-          try {
-            // http://perfectionkills.com/global-eval-what-are-the-options/
-            if (dataType == 'script')    (1,eval)(result)
-            else if (dataType == 'xml')  result = xhr.responseXML
-            else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
-          } catch (e) { error = e }
+          if (xhr.responseType == 'arraybuffer' || xhr.responseType == 'blob')
+            result = xhr.response
+          else {
+            result = xhr.responseText
 
-          if (error) ajaxError(error, 'parsererror', xhr, settings, deferred)
-          else ajaxSuccess(result, xhr, settings, deferred)
+            try {
+              // http://perfectionkills.com/global-eval-what-are-the-options/
+              // sanitize response accordingly if data filter callback provided
+              result = ajaxDataFilter(result, dataType, settings)
+              if (dataType == 'script')    (1,eval)(result)
+              else if (dataType == 'xml')  result = xhr.responseXML
+              else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
+            } catch (e) { error = e }
+
+            if (error) return ajaxError(error, 'parsererror', xhr, settings, deferred)
+          }
+
+          ajaxSuccess(result, xhr, settings, deferred)
         } else {
           ajaxError(xhr.statusText || null, xhr.status ? 'error' : 'abort', xhr, settings, deferred)
         }
@@ -273,10 +291,10 @@
       return xhr
     }
 
-    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
-
     var async = 'async' in settings ? settings.async : true
     xhr.open(settings.type, settings.url, async, settings.username, settings.password)
+
+    if (settings.xhrFields) for (name in settings.xhrFields) xhr[name] = settings.xhrFields[name]
 
     for (name in headers) nativeSetHeader.apply(xhr, headers[name])
 

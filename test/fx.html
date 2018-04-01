@@ -138,7 +138,8 @@
           rotateZ: '90deg',
           scale: '0.8',
           opacity: 0.5,
-          backgroundColor: '#BADA55'
+          backgroundColor: '#BADA55',
+          backgroundPositionY: '50%'
         }, 200, 'ease-out')
 
         el2.animate({
@@ -153,6 +154,7 @@
         t.assertStyle('ease-out', el, 'transition-timing-function')
         t.assertStyle('0.2s', el, 'transition-duration')
         t.assertStyle(/\bbackground-color\b/, el, 'transition-property')
+        t.assertStyle(/\bbackground-position-y\b/, el, 'transition-property')
         t.assertStyle(/\btransform\b/, el, 'transition-property')
         t.assertStyle('0.18s', el2, 'transition-duration')
 
@@ -161,6 +163,7 @@
           t.resume(function(){
             t.assertStyle('translate3d(80px, 20px, 100px) rotateZ(90deg) scale(0.8)', el, 'transform')
             t.assertStyle('0.5', el, 'opacity')
+            t.assertStyle(/^(50%|center)$/, el, 'background-position-y')
             t.assertEqual('#BADA55', colorToHex(el.get(0).style.backgroundColor).toUpperCase())
           })
         })

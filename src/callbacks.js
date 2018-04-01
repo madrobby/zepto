@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2015 Thomas Fuchs
+//     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 ;(function($){
@@ -93,7 +93,7 @@
             return !list
           },
           lock: function() {
-            stack = undefined;
+            stack = undefined
             if (!memory) Callbacks.disable()
             return this
           },

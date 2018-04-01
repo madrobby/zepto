@@ -1,5 +1,5 @@
 //     Zepto.js
-//     (c) 2010-2015 Thomas Fuchs
+//     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
 
 // The following code is heavily inspired by jQuery's $.fn.data()
@@ -55,6 +55,15 @@
         (0 in this ? getData(this[0], name) : undefined) :
       // set value on all elements
       this.each(function(){ setData(this, name, value) })
+  }
+
+  $.data = function(elem, name, value) {
+    return $(elem).data(name, value)
+  }
+
+  $.hasData = function(elem) {
+    var id = elem[exp], store = id && data[id]
+    return store ? !$.isEmptyObject(store) : false
   }
 
   $.fn.removeData = function(names) {

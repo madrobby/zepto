@@ -321,6 +321,38 @@
         t.assertUndefined(el.data('foo'))
         el.data('foo', 'bar')
         t.assertEqual(el.data('foo'), 'bar')
+
+        delete window[$.expando]
+      },
+
+      testDollarData: function(t) {
+        var el = $('<div>')
+        el.data('hello', 'world')
+        t.assertEqual($.data(el, 'hello'), 'world')
+        t.assertEqual($.data(el[0], 'hello'), 'world')
+
+        $.data(el[0], 'hello', 'again')
+        t.assertEqual($.data(el, 'hello'), 'again')
+        t.assertEqual($.data(el[0], 'hello'), 'again')
+      },
+
+      testDollarHasData: function(t) {
+        var el = $('<div>')
+        t.assertFalse($.hasData(el[0]))
+
+        el.data('hello', 'world')
+        t.assertTrue($.hasData(el[0]))
+
+        el.removeData()
+        t.assertFalse($.hasData(el[0]))
+
+        var error
+        try {
+          $.hasData()
+        } catch (e) {
+          error = e
+        }
+        t.assert(error)
       }
 
     })
