@@ -93,7 +93,7 @@
         if (typeof roots[i] != "undefined" && roots[i].hasOwnProperty("_zid")) {
           delete handlers[roots[i]._zid]
         }
-        let child = $(roots[i]);
+        let child = $(roots[i])
         if (child.children().length !== 0) {
           traveseDeleteHandlers(child.children())
         }
@@ -108,7 +108,7 @@
 
   $.fn.remove = function () {
     if (typeof this[0] != "undefined" && this[0].hasOwnProperty("")) {
-      delete handlers[this[0]._zid];
+      delete handlers[this[0]._zid]
     }
     traveseDeleteHandlers(this.children())
     return this.each(function () {
