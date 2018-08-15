@@ -88,12 +88,12 @@
   }
   
   function traveseDeleteHandlers(roots) {
-    for (let i in roots) {
+    for (var i=0;i<roots.length;i++) {
       if (roots[i].nodeType == 1 || roots[i].nodeType == 9) {
         if (typeof roots[i] != "undefined" && roots[i].hasOwnProperty("_zid")) {
           delete handlers[roots[i]._zid]
         }
-        let child = $(roots[i])
+        var child = $(roots[i])
         if (child.children().length !== 0) {
           traveseDeleteHandlers(child.children())
         }
