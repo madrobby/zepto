@@ -187,7 +187,7 @@ Get in touch:
 ### Write documentation
 
 Zepto docs are written in Markdown and live in the ["gh-pages" branch][docs].
-They are published on [zeptojs.com][].
+They are published on [zeptojs.com][zeptojs.com].
 
 You can use GitHub's web interface to make quick changes to documentation for
 specific Zepto features
@@ -203,7 +203,7 @@ This will submit a pull request to us that we can review.
 
 ### Running tests
 
-You will need to install [PhantomJS][]. On OS X, that's easy:
+You will need to install [PhantomJS][phantomjs]. On OS X, that's easy:
 
 ~~~ sh
 $ brew install phantomjs
