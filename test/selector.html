@@ -20,6 +20,7 @@
     <ul id=list><li>one</li><li>two</li></ul>
     <div class=visibility id=vis>look at me!</div>
     <div class=visibility id=invis style="display:none">can't see me</div>
+    <input type=text id=in />
     <ol id=child class=test>
       <li><span>child1</span></li>
       <li><span>child2</span>
@@ -56,6 +57,9 @@
       testVisibility: function(t) {
         t.assertEqual('vis', $('.visibility:visible').attr('id'))
         t.assertEqual('invis', $('.visibility:hidden').attr('id'))
+      },
+      testInput: function(t) {
+        t.assertEqual('in', $('#in:input').attr('id'))
       },
       testIs: function(t) {
         t.assert($('#list').is('ul'))

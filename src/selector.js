@@ -26,6 +26,7 @@
     hidden:   function(){ if (!visible(this)) return this },
     selected: function(){ if (this.selected) return this },
     checked:  function(){ if (this.checked) return this },
+    input:    function(){ if (('disabled' in this) || this.contentEditable === 'true') return this },
     parent:   function(){ return this.parentNode },
     first:    function(idx){ if (idx === 0) return this },
     last:     function(idx, nodes){ if (idx === nodes.length - 1) return this },
