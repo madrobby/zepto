@@ -1,1 +1,0 @@
-window.testValue = 1
