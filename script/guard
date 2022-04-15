@@ -1,6 +1,0 @@
-#!/bin/sh
-if [ -z "$BUNDLE_GEMFILE" ]; then
-  export BUNDLE_GEMFILE=shutup
-fi
-
-exec guard --no-notify "$@"
