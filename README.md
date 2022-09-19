@@ -49,9 +49,7 @@ $ npm install coffee-script --global
 $ coffee make dist
 $ MODULES="zepto event data ..." ./make dist
 
-# on Windows
-c:\zepto> SET MODULES=zepto event data
-c:\zepto> coffee make dist
+
 ~~~
 
 ## Zepto modules
