@@ -65,7 +65,7 @@
       handler.proxy = function(e){
         e = compatible(e)
         if (e.isImmediatePropagationStopped()) return
-        e.data = data
+        try{e.data = data}catch(e){}
         var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
         if (result === false) e.preventDefault(), e.stopPropagation()
         return result

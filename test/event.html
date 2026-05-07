@@ -283,11 +283,10 @@
         t.assertEqual(1, numArgs)
         t.assertIdentical(data, gotData)
       },
-      
+
       testHandlerWithFunctionAsData: function(t){
         var data = function () { console.log('foo') },
             gotData, numArgs
-        
         $(document).on('click', data, function(event){
           gotData = event.data
           numArgs = arguments.length
