@@ -18,7 +18,7 @@ target.all = ->
 target.test = ->
   test_app = require './test/server'
   server = test_app.listen port
-  exec "phantomjs --disk-cache=true test/runner.js 'http://localhost:#{port}/'", (code) ->
+  exec "node test/playwright-runner.js 'http://localhost:#{port}/'", (code) ->
     server.close -> exit(code)
 
 target[zepto_js] = ->

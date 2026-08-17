@@ -9,7 +9,8 @@ app.use express.static(project_root)
 app.use express.static(project_root + 'node_modules/mocha')
 app.use express.static(project_root + 'node_modules/chai')
 
-app.use express.bodyParser()
+app.use express.json()
+app.use express.urlencoded(extended: true)
 
 mime = (req) ->
   type = req.headers['content-type'] or ''
@@ -50,7 +51,7 @@ browser = (ua) ->
 app.all '/', (req, res) ->
   res.redirect '/test'
 
-app.all '/test/echo=?', (req, res) ->
+app.all /^\/test\/echo/, (req, res) ->
   res.set 'Cache-Control', 'no-cache'
   res.send """
            #{req.method} ?#{dump(req.query)}
