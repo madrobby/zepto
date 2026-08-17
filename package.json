@@ -11,9 +11,11 @@
     "repository": "madrobby/zepto",
     "license": "MIT",
     "devDependencies": {
-        "uglify-js": "2.4.x",
-        "express": "3.1.x",
+        "@playwright/test": "^1.62.1",
+        "body-parser": "^2.3.0",
         "coffee-script": "1.5.x",
-        "shelljs": "0.1.x"
+        "express": "^5.2.1",
+        "shelljs": "^0.10.0",
+        "uglify-js": "^2.8.29"
     }
 }

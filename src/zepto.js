@@ -30,6 +30,12 @@ var Zepto = (function() {
     toString = class2type.toString,
     zepto = {},
     camelize, uniq,
+    camelizeRE = /-+(.)?/g,
+    camelizeReplacer = function(match, chr){ return chr ? chr.toUpperCase() : '' },
+    dasherizeColonsRE = /::/g,
+    dasherizeUpperCamelRE = /([A-Z]+)([A-Z][a-z])/g,
+    dasherizeLowerUpperRE = /([a-z\d])([A-Z])/g,
+    dasherizeUnderscoreRE = /_/g,
     tempParent = document.createElement('div'),
     propMap = {
       'tabindex': 'tabIndex',
@@ -87,12 +93,12 @@ var Zepto = (function() {
 
   function compact(array) { return filter.call(array, function(item){ return item != null }) }
   function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
-  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
+  camelize = function(str){ return str.replace(camelizeRE, camelizeReplacer) }
   function dasherize(str) {
-    return str.replace(/::/g, '/')
-           .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-           .replace(/([a-z\d])([A-Z])/g, '$1_$2')
-           .replace(/_/g, '-')
+    return str.replace(dasherizeColonsRE, '/')
+           .replace(dasherizeUpperCamelRE, '$1_$2')
+           .replace(dasherizeLowerUpperRE, '$1_$2')
+           .replace(dasherizeUnderscoreRE, '-')
            .toLowerCase()
   }
   uniq = function(array){ return filter.call(array, function(item, idx){ return array.indexOf(item) == idx }) }
